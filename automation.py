@@ -22,10 +22,9 @@ def start_gate():
 
     class GateApp(App):
         CSS = """
-        Screen { background: #06060A; color: #F3F4F6; align: center middle; }
-        #gate_card { width: 94%; height: auto; border: round #4C1D95; background: #0E0D16; padding: 1 2; }
-        #gate_title { width: 100%; text-align: center; text-style: bold; color: #DDD6FE; margin-bottom: 1; }
-        #gate_msg { width: 100%; text-align: center; color: #9CA3AF; margin-bottom: 1; }
+        Screen { background: #06060A; color: #F3F4F6; align: center top; }
+        #gate_card { width: 94%; height: auto; margin-top: 1; border: round #4C1D95; background: #0E0D16; padding: 1 2; }
+        #gate_msg { width: 100%; text-align: center; color: #DDD6FE; text-style: bold; }
         #gate_card Button { width: 100%; min-width: 0; height: 3; text-style: bold; margin-top: 1; }
         #go { background: #052E16; color: #6EE7B7; border: round #10B981; }
         #cancel { background: #350D15; color: #FCA5A5; border: round #EF4444; }
@@ -34,13 +33,18 @@ def start_gate():
 
         def compose(self) -> ComposeResult:
             with Vertical(id="gate_card"):
-                yield Static("Automation", id="gate_title")
-                yield Static("Press Continue to start.", id="gate_msg")
+                yield Static("Press continue to setup", id="gate_msg")
                 yield Button("Continue", id="go")
                 yield Button("Cancel", id="cancel")
 
         def on_button_pressed(self, event: Button.Pressed):
-            self.exit(event.button.id == "go")
+            # Keep the screen (and its mouse tracking) alive for a moment so the finger-lift of
+            # the tap is still swallowed by the app; exiting instantly lets Termux treat it as a
+            # tap on the terminal and pop the keyboard up.
+            for btn in self.query(Button):
+                btn.disabled = True
+            choice = event.button.id == "go"
+            self.set_timer(0.8, lambda: self.exit(choice))
 
     return GateApp().run() is True
 
