@@ -1400,6 +1400,11 @@ class AdbScreen(ModalScreen):
         finally:
             button.disabled = False
 
+def license_error_text():
+    """Short, friendly text for a failed license check."""
+    known = {"invalid license key": "Invalid license key", "license expired": "License expired"}
+    return known.get((LICENSE_MSG or "").strip().lower(), LICENSE_MSG)
+
 class BotApp(App):
     """Modern Automation dashboard with internal tile headings and full-width state-aware controls."""
 
