@@ -1421,18 +1421,6 @@ class BotApp(App):
         border: round #F59E0B;
     }
 
-    #buttons Button.terminal {
-        background: #0F1E3A;
-        color: #93C5FD;
-        border: round #3B82F6;
-    }
-
-    #buttons Button.exit {
-        background: #350D15;
-        color: #FCA5A5;
-        border: round #EF4444;
-    }
-
     #buttons Button.login {
         background: #2E1065;
         color: #DDD6FE;
@@ -1444,6 +1432,40 @@ class BotApp(App):
     }
 
     #buttons Button:disabled {
+        background: #0D0D14;
+        color: #4B5563;
+        border: round #1F1E2B;
+    }
+
+    #bottom_buttons {
+        width: 100%;
+        height: auto;
+        margin: 0 1;
+    }
+
+    #bottom_buttons Button {
+        width: 1fr;
+        min-width: 0;
+        height: 3;
+        text-style: bold;
+        background: #14131D;
+        color: #E5E7EB;
+        border: round #2E2B40;
+    }
+
+    #bottom_buttons Button.terminal {
+        background: #0F1E3A;
+        color: #93C5FD;
+        border: round #3B82F6;
+    }
+
+    #bottom_buttons Button.exit {
+        background: #350D15;
+        color: #FCA5A5;
+        border: round #EF4444;
+    }
+
+    #bottom_buttons Button:disabled {
         background: #0D0D14;
         color: #4B5563;
         border: round #1F1E2B;
@@ -1495,11 +1517,12 @@ class BotApp(App):
         with Vertical(id="buttons"):
             yield Button("Start Automation", id="toggle_run", classes="start")
             yield Button("Login to Telegram", id="login", classes="login")
-            yield Button("Go to terminal", id="terminal", classes="terminal")
-            yield Button("Exit to system", id="exit", classes="exit")
         with Vertical(id="log_card"):
             yield Static("System logs", classes="tile_heading")
             yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False, max_lines=2000)
+        with Horizontal(id="bottom_buttons"):
+            yield Button("Go to terminal", id="terminal", classes="terminal")
+            yield Button("Exit to system", id="exit", classes="exit")
 
     # ---- panel / log helpers ----
     def state_style(self):
@@ -1545,8 +1568,12 @@ class BotApp(App):
             pass
 
     def refresh_panel(self):
-        account_val = self.account_name or self.account_text
-        account_style = "bold #F9FAFB" if self.account_name else "bold #FBBF24"
+        if self.account_name:
+            account_val = f"● {self.account_name}"
+            account_style = "bold #F9FAFB"
+        else:
+            account_val = f"◌ {self.account_text}"
+            account_style = "bold #FBBF24"
 
         if LICENSE_OK:
             license_val = f"● Expires on {LICENSE_EXPIRES}" if LICENSE_EXPIRES else "● ACTIVE (VALID)"
@@ -1583,32 +1610,25 @@ class BotApp(App):
         self.update_buttons()
 
     def add_log(self, message):
+        """Show only the latest log line: each new message replaces the previous one."""
         try:
             box = self.query_one("#log", RichLog)
         except Exception:
             return
         stamp = datetime.now().strftime("%H:%M:%S")
+        box.clear()
         for line in (str(message).splitlines() or [""]):
             lowered = line.lower()
             if any(w in lowered for w in ("error", "failed", "not found", "stopped", "expired", "cancel")):
                 color = "#FCA5A5"
-                badge = "✖"
-                badge_style = "bold #EF4444"
             elif any(w in lowered for w in ("success", "connected", "logged in", "started", "valid", "passed", "computed", "completed")):
                 color = "#A7F3D0"
-                badge = "●"
-                badge_style = "bold #10B981"
             elif any(w in lowered for w in ("captcha", "scan", "switching", "task detected", "clicking", "uploading")):
                 color = "#BFDBFE"
-                badge = "▸"
-                badge_style = "bold #3B82F6"
             else:
                 color = "#D1D5DB"
-                badge = "·"
-                badge_style = "bold #6B7280"
             entry = Text()
-            entry.append(f"{stamp} ", style="#6B7280")
-            entry.append(f"{badge} ", style=badge_style)
+            entry.append(f"{stamp}  ", style="#6B7280")
             entry.append(line, style=color)
             box.write(entry)
 
