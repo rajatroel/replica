@@ -389,6 +389,27 @@ def run_adb_shell_cmd(command, show_output=False):
         print(result.stdout.strip())
     return (result.stdout + result.stderr).lower()
 
+ADB_NAME = ""
+
+def get_device_name(serial):
+    """Marketing name of the phone (e.g. 'Redmi Note 13'); falls back to the model, then the serial."""
+    def prop(key):
+        if not serial:
+            return ""
+        out = run_adb("-s", serial, "shell", "getprop", key, timeout=8).strip()
+        return "" if out.lower().startswith("error") else out
+    name = prop("ro.product.marketname") or prop("ro.config.marketing_name")
+    if not name:
+        name = prop("ro.product.model")
+        brand = prop("ro.product.manufacturer")
+        if name and brand and brand.lower() not in name.lower():
+            name = f"{brand.title()} {name}"
+    return name or serial or ""
+
+async def load_device_name():
+    global ADB_NAME
+    ADB_NAME = await asyncio.to_thread(get_device_name, adb_serial)
+
 def hide_keyboard():
     """
     Close the soft keyboard with one BACK key press.
@@ -1319,71 +1340,10 @@ class PasswordScreen(ModalScreen):
         else:
             self.dismiss(None)
 
-class ConfirmDeleteConfigScreen(ModalScreen):
-    """Confirmation dialog before permanently deleting /sdcard/config.json."""
-
-    CSS = """
-    ConfirmDeleteConfigScreen { align: center middle; background: #050508 92%; }
-    #confirm_box { width: 94%; height: auto; border: round #C026D3; background: #0D0C14; padding: 1 2; }
-    #confirm_title { text-style: bold; color: #F5D0FE; margin-bottom: 1; text-align: center; width: 100%; }
-    #confirm_msg { color: #E5E7EB; text-align: center; width: 100%; margin-bottom: 1; }
-    #confirm_buttons { height: auto; margin-top: 1; }
-    #confirm_buttons Button { width: 1fr; height: 3; margin-right: 1; text-style: bold; }
-    #confirm_yes { background: #450A0A; color: #FCA5A5; border: round #EF4444; }
-    #confirm_no { background: #1F2937; color: #E5E7EB; border: round #4B5563; }
-    """
-    BINDINGS = [("escape", "cancel", "Cancel")]
-
-    def compose(self) -> ComposeResult:
-        with Vertical(id="confirm_box"):
-            yield Static("Confirm Delete Config", id="confirm_title")
-            yield Static(
-                "Are you sure you want to permanently delete\n"
-                "/sdcard/config.json?",
-                id="confirm_msg",
-            )
-            with Horizontal(id="confirm_buttons"):
-                yield Button("Delete", id="confirm_yes")
-                yield Button("Cancel", id="confirm_no")
-
-    def action_cancel(self):
-        self.dismiss(False)
-
-    def on_button_pressed(self, event: Button.Pressed):
-        self.dismiss(event.button.id == "confirm_yes")
-
-class ConfirmLogoutScreen(ModalScreen):
-    """Confirmation dialog before logging out of Telegram and deleting userbot.session."""
-
-    CSS = """
-    ConfirmLogoutScreen { align: center middle; background: #050508 92%; }
-    #confirm_box { width: 94%; height: auto; border: round #F97316; background: #0D0C14; padding: 1 2; }
-    #confirm_title { text-style: bold; color: #FDBA74; margin-bottom: 1; text-align: center; width: 100%; }
-    #confirm_msg { color: #E5E7EB; text-align: center; width: 100%; margin-bottom: 1; }
-    #confirm_buttons { height: auto; margin-top: 1; }
-    #confirm_buttons Button { width: 1fr; height: 3; margin-right: 1; text-style: bold; }
-    #confirm_yes { background: #450A0A; color: #FCA5A5; border: round #EF4444; }
-    #confirm_no { background: #1F2937; color: #E5E7EB; border: round #4B5563; }
-    """
-    BINDINGS = [("escape", "cancel", "Cancel")]
-
-    def compose(self) -> ComposeResult:
-        with Vertical(id="confirm_box"):
-            yield Static("Confirm Telegram Logout", id="confirm_title")
-            yield Static(
-                "Are you sure you want to log out of Telegram\n"
-                "and delete /sdcard/userbot.session?",
-                id="confirm_msg",
-            )
-            with Horizontal(id="confirm_buttons"):
-                yield Button("Logout", id="confirm_yes")
-                yield Button("Cancel", id="confirm_no")
-
-    def action_cancel(self):
-        self.dismiss(False)
-
-    def on_button_pressed(self, event: Button.Pressed):
-        self.dismiss(event.button.id == "confirm_yes")
+def license_error_text():
+    """Short, friendly text for a failed license check."""
+    known = {"invalid license key": "Invalid license key", "license expired": "License expired"}
+    return known.get((LICENSE_MSG or "").strip().lower(), LICENSE_MSG)
 
 class BotApp(App):
     """Modern Automation dashboard with internal tile headings and full-width state-aware controls."""
@@ -1461,18 +1421,6 @@ class BotApp(App):
         border: round #F59E0B;
     }
 
-    #buttons Button.delete_cfg {
-        background: #2A1228;
-        color: #F5D0FE;
-        border: round #C026D3;
-    }
-
-    #buttons Button.logout_tg {
-        background: #2C1608;
-        color: #FDBA74;
-        border: round #F97316;
-    }
-
     #buttons Button.terminal {
         background: #0F1E3A;
         color: #93C5FD;
@@ -1533,7 +1481,7 @@ class BotApp(App):
         self._login_busy = False
         self.account_text = "checking..."
         self.tg_state = "checking"     # checking | logged_in | logged_out | offline
-        self.adb_text = adb_serial or "checking..."
+        self.adb_text = ADB_NAME or adb_serial or "checking..."
         self.state_text = "Starting up..."
         self._busy = False
         self._cooldown = 0             # seconds left before Login can be pressed again
@@ -1547,10 +1495,8 @@ class BotApp(App):
         with Vertical(id="buttons"):
             yield Button("Start Automation", id="toggle_run", classes="start")
             yield Button("Login to Telegram", id="login", classes="login")
-            yield Button("Delete Config", id="delete_config", classes="delete_cfg")
-            yield Button("Logout Telegram", id="logout_tg", classes="logout_tg")
-            yield Button("Terminal", id="terminal", classes="terminal")
-            yield Button("Exit", id="exit", classes="exit")
+            yield Button("Go to terminal", id="terminal", classes="terminal")
+            yield Button("Exit to system", id="exit", classes="exit")
         with Vertical(id="log_card"):
             yield Static("System logs", classes="tile_heading")
             yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False, max_lines=2000)
@@ -1560,7 +1506,7 @@ class BotApp(App):
         lowered = self.state_text.lower()
         if RUNNING:
             return "bold #34D399"
-        if any(word in lowered for word in ("error", "failed", "offline")):
+        if any(word in lowered for word in ("error", "failed", "offline", "contact developer")):
             return "bold #F87171"
         if any(word in lowered for word in ("not logged", "not connected", "scan", "starting", "checking", "logging", "wait")):
             return "bold #FBBF24"
@@ -1585,8 +1531,6 @@ class BotApp(App):
 
             # Grey out all other buttons whenever automation is running
             lock_others = RUNNING or self._busy
-            self.query_one("#delete_config", Button).disabled = lock_others
-            self.query_one("#logout_tg", Button).disabled = lock_others
             self.query_one("#terminal", Button).disabled = lock_others
             self.query_one("#exit", Button).disabled = lock_others
 
@@ -1611,7 +1555,7 @@ class BotApp(App):
             license_val = "◌ VERIFYING..."
             license_style = "bold #FBBF24"
         else:
-            license_val = f"✖ {LICENSE_MSG.upper()}"
+            license_val = f"● {license_error_text()}"
             license_style = "bold #F87171"
 
         if adb_serial:
@@ -1689,17 +1633,10 @@ class BotApp(App):
         ui = None
 
     async def boot(self):
-        log("Checking license...")
         await asyncio.to_thread(check_license)
-        log(f"License: Expires on {LICENSE_EXPIRES}" if (LICENSE_OK and LICENSE_EXPIRES) else f"License: {LICENSE_MSG}")
         self.refresh_panel()
-        if not LICENSE_OK:
-            self.account_text = "unavailable"
-            self.set_adb("unavailable")
-            self.set_state("License error")
-            return
 
-        # Telegram and ADB are checked at the same time, so one slow step never blocks the other
+        # Account and device are always checked (even with a bad license), at the same time
         results = await asyncio.gather(self.check_login(), self.ensure_adb(), return_exceptions=True)
         for result in results:
             if isinstance(result, Exception):
@@ -1709,6 +1646,9 @@ class BotApp(App):
     def update_ready_state(self):
         """Show what the user should do next."""
         if RUNNING or self._busy or self._login_busy:
+            return
+        if not LICENSE_OK and LICENSE_MSG != "checking...":
+            self.set_state("Contact developer")
             return
         if self._cooldown > 0 and not self.logged_in:
             self.set_state(f"Wait {self._cooldown // 60}:{self._cooldown % 60:02d} before trying again")
@@ -1721,7 +1661,7 @@ class BotApp(App):
         elif not adb_serial:
             self.set_state("ADB not connected")
         else:
-            self.set_state("Ready - press Start")
+            self.set_state("Ready to start")
 
     async def wait_with_progress(self, coro, label, tick=5):
         """Await a slow call and log a progress line every few seconds."""
@@ -1757,11 +1697,8 @@ class BotApp(App):
                 me = await self.wait_with_progress(client.get_me(), "Reading account")
                 name = f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown"
                 self.set_logged_in(name)
-                log(f"Logged in as {name}")
                 return True
             self.set_logged_in(None)
-            if not quiet:
-                log("Not logged in - press Login")
         except Exception as e:
             self.set_logged_in(None, "connection failed")
             log(f"Telegram connection failed: {e}")
@@ -1819,8 +1756,7 @@ class BotApp(App):
         self.update_buttons()
         try:
             if not LICENSE_OK:
-                log(f"License error: {LICENSE_MSG}")
-                return
+                return   # the status line already says "Contact developer"
             self.set_state("Connecting to Telegram...")
             if await self.check_login(quiet=True):
                 return   # session was fine after all
@@ -1856,7 +1792,6 @@ class BotApp(App):
             me = await client.get_me()
             self.set_logged_in(f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown")
             self.query_one("#log", RichLog).clear()
-            log(f"Logged in successfully as {self.account_name}")
         except Exception as e:
             log(f"Login failed: {e}")
         finally:
@@ -1881,8 +1816,7 @@ class BotApp(App):
     async def ensure_adb(self):
         global adb_serial
         if adb_serial and await asyncio.to_thread(adb_alive, adb_serial):
-            self.set_adb(adb_serial)
-            log(f"ADB connected: {adb_serial}")
+            self.set_adb(await asyncio.to_thread(get_device_name, adb_serial))
             self.update_ready_state()
             return True
         self.set_adb("checking...")
@@ -1894,8 +1828,7 @@ class BotApp(App):
             serial = await self.open_adb_screen()
         if serial:
             adb_serial = serial
-            self.set_adb(serial)
-            log(f"ADB connected: {serial}")
+            self.set_adb(await asyncio.to_thread(get_device_name, serial))
             self.update_ready_state()
             return True
         self.set_adb("not connected")
@@ -1933,80 +1866,6 @@ class BotApp(App):
         # Close Termux right now, with the dashboard still showing (no flash back to the terminal)
         await exit_termux_now()
 
-    async def delete_config_flow(self):
-        """Ask for confirmation, then permanently delete /sdcard/config.json."""
-        if RUNNING or self._busy:
-            return
-        done = asyncio.get_running_loop().create_future()
-        self.push_screen(ConfirmDeleteConfigScreen(), lambda result: done.done() or done.set_result(result))
-        confirmed = await done
-        if not confirmed:
-            log("Config deletion cancelled.")
-            return
-
-        self._busy = True
-        self.update_buttons()
-        try:
-            if os.path.exists(CONFIG_PATH):
-                try:
-                    os.remove(CONFIG_PATH)
-                    log("Permanently deleted: config.json")
-                    self.set_state("Config deleted")
-                except Exception as e:
-                    log(f"Error deleting config.json: {e}")
-            else:
-                log("config.json was already deleted.")
-                self.set_state("Config deleted")
-        finally:
-            self._busy = False
-            self.refresh_panel()
-
-    async def logout_telegram_flow(self):
-        """Ask for confirmation, then log out of Telegram and delete /sdcard/userbot.session."""
-        if RUNNING or self._busy:
-            return
-        done = asyncio.get_running_loop().create_future()
-        self.push_screen(ConfirmLogoutScreen(), lambda result: done.done() or done.set_result(result))
-        confirmed = await done
-        if not confirmed:
-            log("Telegram logout cancelled.")
-            return
-
-        self._busy = True
-        self.update_buttons()
-        try:
-            try:
-                if client.is_connected():
-                    await client.log_out()
-            except Exception:
-                try:
-                    await client.disconnect()
-                except Exception:
-                    pass
-
-            targets = [
-                f"{SESSION_PATH}.session",
-                f"{SESSION_PATH}.session-journal",
-            ]
-            removed = []
-            for path in targets:
-                if os.path.exists(path):
-                    try:
-                        os.remove(path)
-                        removed.append(os.path.basename(path))
-                    except Exception as e:
-                        log(f"Error deleting {os.path.basename(path)}: {e}")
-
-            self.set_logged_in(None, "Not logged in")
-            self.set_state("Logged out of Telegram")
-            if removed:
-                log(f"Logged out and deleted: {', '.join(removed)}")
-            else:
-                log("Logged out of Telegram (session already deleted).")
-        finally:
-            self._busy = False
-            self.refresh_panel()
-
     async def start_flow(self):
         if RUNNING or self._busy:
             log("Already running")
@@ -2021,8 +1880,7 @@ class BotApp(App):
             await asyncio.to_thread(check_license)
             self.refresh_panel()
             if not LICENSE_OK:
-                log(f"License error: {LICENSE_MSG}")
-                self.set_state("License error")
+                self.set_state("Contact developer")
                 return
             if not await self.ensure_adb():
                 self.set_state("Stopped")
@@ -2052,10 +1910,6 @@ class BotApp(App):
                 self.action_start()
         elif button_id == "login":
             self.action_login()
-        elif button_id == "delete_config":
-            self.run_worker(self.delete_config_flow(), exclusive=True)
-        elif button_id == "logout_tg":
-            self.run_worker(self.logout_telegram_flow(), exclusive=True)
         elif button_id == "terminal":
             await self.action_quit()
         elif button_id == "exit":
@@ -2370,6 +2224,7 @@ async def main():
     if await connect_telegram_early():
         await login_before_ui()
 
+    await load_device_name()
     await BotApp(None).run_async()
     try:
         await client.disconnect()
