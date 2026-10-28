@@ -385,8 +385,9 @@ def log(message=""):
         pass
 
 # Session statistics shown on the dashboard (cashcoins kept in tenths to avoid float drift)
-STATS = {"likes": 0, "comments": 0, "skipped": 0, "tenths": 0}
-RUN_STARTED = None   # time.time() when the automation started (None while stopped)
+STATS = {"likes": 0, "comments": 0, "skipped": 0, "captchas": 0, "tenths": 0}
+RUN_STARTED = None   # time.time() when the automation started (None until the first start)
+RUN_ENDED = None     # time.time() when it stopped (None while running); freezes the runtime on screen
 LIKE_REWARD_TENTHS = 11      # 1.1 cashcoins
 COMMENT_REWARD_TENTHS = 60   # 6.0 cashcoins
 
@@ -398,13 +399,9 @@ STALL_BAD_SECONDS = 600      # ... for 10 min -> red
 
 HEALTH = {
     "last_ok_ts": None,        # time of the last successfully finished task (like / comment)
-    "captcha_ok": 0,           # CAPTCHAs the bot confirmed ("verification passed")
-    "captcha_ok_ts": None,
-    "captcha_fail": 0,         # CAPTCHAs the bot rejected ("verification failed")
-    "captcha_fail_ts": None,
-    "error_ts": None,          # last error (kept after a stop and across restarts of the automation)
+    "error_ts": None,          # last error
     "error_msg": "",
-    "stop_ts": None,           # last stop (kept after a stop and across restarts of the automation)
+    "stop_ts": None,           # last stop
     "stop_msg": "",
 }
 
@@ -467,20 +464,13 @@ def record_stop(reason):
     HEALTH["stop_msg"] = " ".join(str(reason).split())[:140] or "Unknown reason"
     refresh_ui()
 
-def record_captcha(passed):
-    """Count a CAPTCHA result the moment the bot's passed/failed message arrives."""
-    key = "captcha_ok" if passed else "captcha_fail"
-    HEALTH[key] += 1
-    HEALTH[key + "_ts"] = time.time()
-    refresh_ui()
-
 def reset_health():
-    """New run: clear the per-run indicators. The last error and last stop are kept on purpose."""
+    """Clear the health monitor (done when the user presses Start Automation)."""
     HEALTH["last_ok_ts"] = None
-    HEALTH["captcha_ok"] = 0
-    HEALTH["captcha_ok_ts"] = None
-    HEALTH["captcha_fail"] = 0
-    HEALTH["captcha_fail_ts"] = None
+    HEALTH["error_ts"] = None
+    HEALTH["error_msg"] = ""
+    HEALTH["stop_ts"] = None
+    HEALTH["stop_msg"] = ""
 
 def record_stat(kind):
     """Count a finished task and refresh the dashboard tile."""
@@ -494,14 +484,16 @@ def record_stat(kind):
         HEALTH["last_ok_ts"] = time.time()
     elif kind == "skip":
         STATS["skipped"] += 1
+    elif kind == "captcha":
+        STATS["captchas"] += 1
     refresh_ui()
 
 def reset_stats():
-    """Zero the task counters and the runtime (done every time the automation stops).
-    The health monitor (last task, last error / stop, CAPTCHA results) is NOT cleared here,
-    so the reason for a stop is still on screen afterwards."""
-    global RUN_STARTED
+    """Zero the task counters and the runtime. Done when the user presses Start Automation,
+    NOT when it stops, so the numbers of the finished run stay on screen."""
+    global RUN_STARTED, RUN_ENDED
     RUN_STARTED = None
+    RUN_ENDED = None
     for key in STATS:
         STATS[key] = 0
     refresh_ui()
@@ -510,7 +502,7 @@ def runtime_text():
     """Time since the automation started as HH:MM:SS (00:00:00 while stopped)."""
     if RUN_STARTED is None:
         return "00:00:00"
-    seconds = max(0, int(time.time() - RUN_STARTED))
+    seconds = max(0, int((RUN_ENDED or time.time()) - RUN_STARTED))
     return f"{seconds // 3600:02d}:{seconds % 3600 // 60:02d}:{seconds % 60:02d}"
 
 class TelethonLogHandler(logging.Handler):
@@ -1096,16 +1088,18 @@ def stop_device_apps():
 
 async def stop_automation(reason="Stopped by user"):
     """Stop handling bot messages and close the apps. The Telegram session stays connected."""
-    global RUNNING
+    global RUNNING, RUN_ENDED
     was_running = RUNNING
     RUNNING = False
+    if was_running:
+        RUN_ENDED = time.time()       # freeze the runtime; numbers stay until the next Start
     log(f"Stopped: {reason}")
     if was_running and reason not in ("Quit", "Exit"):
         record_stop(reason)
         if reason != "Stopped by user":
             record_error(reason)      # a stop that was not the user's choice is also an error
     await asyncio.to_thread(stop_device_apps)
-    reset_stats()
+    refresh_ui()
     ui_set_state("Stopped")
 
 async def kill_everything(reason):
@@ -1223,7 +1217,6 @@ async def process_bot_message(event):
     # Stop everything when verification fails
     if "verification failed" in text_lower:
         log("Verification Failed!")
-        record_captcha(False)
         await stop_automation("CAPTCHA verification failed")
         return
 
@@ -1369,7 +1362,7 @@ async def process_bot_message(event):
         
     elif "verification passed" in text_lower:
         log("Verification successful")
-        record_captcha(True)
+        record_stat("captcha")
         if d:
             await asyncio.to_thread(d.app_stop, "com.android.chrome")
         await smart_send("✅Completed")
@@ -1394,7 +1387,6 @@ async def start_automation():
 
     pending_task = None
     pending_text = None
-    reset_health()
     RUNNING = True
     RUN_STARTED = time.time()
     ui_set_state("Running")
@@ -1649,12 +1641,6 @@ class BotApp(App):
         border: round #5E4FB3;
     }
 
-    #bottom_buttons Button.terminal {
-        background: #06142B;
-        color: #8CC8FF;
-        border: round #3D9BFF;
-    }
-
     #bottom_buttons Button.exit {
         background: #2A0710;
         color: #FF8A96;
@@ -1736,8 +1722,7 @@ class BotApp(App):
             yield Static("System logs", classes="tile_heading")
             yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False, max_lines=2000)
         with Horizontal(id="bottom_buttons"):
-            yield Button("Go to terminal", id="terminal", classes="terminal")
-            yield Button("Exit to system", id="exit", classes="exit")
+            yield Button("Exit", id="exit", classes="exit")
 
     # ---- panel / log helpers ----
     def state_style(self):
@@ -1769,7 +1754,6 @@ class BotApp(App):
 
             # Grey out all other buttons whenever automation is running
             lock_others = RUNNING or self._busy
-            self.query_one("#terminal", Button).disabled = lock_others
             self.query_one("#exit", Button).disabled = lock_others
 
         except Exception:
@@ -1845,9 +1829,13 @@ class BotApp(App):
             ("LIKES", str(STATS["likes"]), "bold #7CB7FF"),
             ("COMMENTS", str(STATS["comments"]), "bold #B69DFF"),
             ("SKIPPED", str(STATS["skipped"]), "bold #FFD166"),
+            ("CAPTCHA", str(STATS["captchas"]), "bold #FF8BD1"),
             ("CASHCOINS", f"{STATS['tenths'] / 10:.1f}", "bold #5CF2A0"),
             ("RUNTIME", runtime_text(), "bold #F1ECFF"),
         ]
+        # Nothing yet (0, 0.0, 00:00:00) is shown as a quiet "none"
+        rows = [(label, "none", "#9A93B5") if value in ("0", "0.0", "00:00:00") else (label, value, style)
+                for label, value, style in rows]
         text = Text()
         for index, (label, value, style) in enumerate(rows):
             if index:
@@ -1873,7 +1861,7 @@ class BotApp(App):
             value = f"{fmt_time(last_ok)} · {fmt_age(now - last_ok)} ago"
             style = "bold #F1ECFF"
         else:
-            value = "waiting for first task" if RUNNING else "none yet"
+            value = "waiting for first task" if RUNNING else "none"
             style = muted
         if RUNNING:
             idle = now - (last_ok or RUN_STARTED or now)
@@ -1894,14 +1882,6 @@ class BotApp(App):
             rows.append(("LAST STOP", f"{fmt_time(HEALTH['stop_ts'])} · {HEALTH['stop_msg']}", "bold #FFD166"))
         else:
             rows.append(("LAST STOP", "none", muted))
-
-        ok_n, fail_n = HEALTH["captcha_ok"], HEALTH["captcha_fail"]
-        rows.append(("CAPTCHA OK",
-                     f"{ok_n} · last {fmt_time(HEALTH['captcha_ok_ts'])}" if ok_n else "0",
-                     "bold #5CF2A0" if ok_n else muted))
-        rows.append(("CAPTCHA ERR",
-                     f"{fail_n} · last {fmt_time(HEALTH['captcha_fail_ts'])}" if fail_n else "0",
-                     "bold #FF6B7A" if fail_n else muted))
 
         try:
             panel = self.query_one("#health_panel", Static)
@@ -2068,6 +2048,8 @@ class BotApp(App):
             if not self.logged_in:
                 log("Not logged in")
                 return
+            reset_stats()        # a new run starts from zero
+            reset_health()
             self.set_state("Starting...")
             await asyncio.to_thread(check_license)
             self.refresh_panel()
@@ -2103,8 +2085,6 @@ class BotApp(App):
                 self.action_stop()
             else:
                 self.action_start()
-        elif button_id == "terminal":
-            await self.action_quit()
         elif button_id == "exit":
             await self.action_exit()
 
