@@ -254,13 +254,24 @@ def check_license():
             LICENSE_OK = False
             LICENSE_EXPIRES = ""
             LICENSE_MSG = response.json().get("error", "Invalid or Expired License")
-        else:
-            LICENSE_OK = True
-            LICENSE_MSG = "valid"
-            try:
-                LICENSE_EXPIRES = format_expiry(response.json().get("expires"))
-            except Exception:
+        elif response.status_code == 200:
+            body = response.json()
+            if body.get("success") is True:
+                LICENSE_OK = True
+                LICENSE_MSG = "valid"
+                LICENSE_EXPIRES = format_expiry(body.get("expires"))
+            else:
+                LICENSE_OK = False
                 LICENSE_EXPIRES = ""
+                LICENSE_MSG = body.get("error", "unexpected server reply")
+        else:
+            # Any other status (500, 1101 worker error, ...) is NOT a valid license
+            LICENSE_OK = False
+            LICENSE_EXPIRES = ""
+            try:
+                LICENSE_MSG = response.json().get("error", f"server error (HTTP {response.status_code})")
+            except Exception:
+                LICENSE_MSG = f"server error (HTTP {response.status_code})"
     except Exception as e:
         LICENSE_OK = False
         LICENSE_EXPIRES = ""
