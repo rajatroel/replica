@@ -338,6 +338,45 @@ def log(message=""):
     except Exception:
         pass
 
+# Session statistics shown on the dashboard (cashcoins kept in tenths to avoid float drift)
+STATS = {"likes": 0, "comments": 0, "skipped": 0, "tenths": 0}
+LIKE_REWARD_TENTHS = 11      # 1.1 cashcoins
+COMMENT_REWARD_TENTHS = 60   # 6.0 cashcoins
+
+def record_stat(kind):
+    """Count a finished task and refresh the dashboard tile."""
+    if kind == "like":
+        STATS["likes"] += 1
+        STATS["tenths"] += LIKE_REWARD_TENTHS
+    elif kind == "comment":
+        STATS["comments"] += 1
+        STATS["tenths"] += COMMENT_REWARD_TENTHS
+    elif kind == "skip":
+        STATS["skipped"] += 1
+    app = ui
+    if app is None:
+        return
+    try:
+        app.call_from_thread(app.refresh_stats)
+    except RuntimeError:
+        app.refresh_stats()
+    except Exception:
+        pass
+
+def reset_stats():
+    """Zero the statistics (done every time the automation stops)."""
+    for key in STATS:
+        STATS[key] = 0
+    app = ui
+    if app is None:
+        return
+    try:
+        app.call_from_thread(app.refresh_stats)
+    except RuntimeError:
+        app.refresh_stats()
+    except Exception:
+        pass
+
 class TelethonLogHandler(logging.Handler):
     """Forward Telethon warnings (e.g. failed connection attempts) to the log screen."""
     def emit(self, record):
@@ -913,8 +952,9 @@ async def stop_automation(reason="Stopped by user"):
     """Stop handling bot messages and close the apps. The Telegram session stays connected."""
     global RUNNING
     RUNNING = False
-    log(f"Stopped: {reason}")
+    log("Stopped")
     await asyncio.to_thread(stop_device_apps)
+    reset_stats()
     ui_set_state("Stopped")
 
 async def kill_everything(reason):
@@ -924,6 +964,8 @@ async def smart_send(text_to_send):
     """Send a message to the bot and wait for its reply, retrying once."""
     await asyncio.sleep(random.uniform(5.0, 7.0))
     if not RUNNING: return
+    if text_to_send == "❌Skip":
+        record_stat("skip")
     for attempt in range(1, 3): 
         bot_replied_event.clear() 
         log(f"Clicking : {text_to_send} (Attempt {attempt}/2)")
@@ -971,6 +1013,7 @@ async def do_like_task(link):
     log(f"Like task detected")
     success = await asyncio.to_thread(perform_like, d, link)
     if success:
+        record_stat("like")
         await smart_send("✅Completed")
     else: await smart_send("❌Skip")
     
@@ -986,7 +1029,10 @@ async def do_comment_task(link, full_msg_text):
     log("Performing action...")
     success = await asyncio.to_thread(perform_comment, d, link, comment_text)
     if success:
-        if not await smart_send_photo(): await smart_send("❌Skip")
+        if await smart_send_photo():
+            record_stat("comment")
+        else:
+            await smart_send("❌Skip")
     else:
         await smart_send("❌Skip")
 
@@ -1371,6 +1417,20 @@ class BotApp(App):
         color: #DDD6FE;
     }
 
+    #stats_card {
+        width: 100%;
+        height: auto;
+        margin: 0 1;
+        padding: 0 2;
+        background: #0B0B12;
+        border: round #2E2B40;
+    }
+
+    #stats_panel {
+        width: 100%;
+        height: auto;
+    }
+
     #info_card {
         width: 100%;
         height: auto;
@@ -1514,6 +1574,9 @@ class BotApp(App):
         with Vertical(id="info_card"):
             yield Static("System information", classes="tile_heading")
             yield Static(id="panel")
+        with Vertical(id="stats_card"):
+            yield Static("Task statistics", classes="tile_heading")
+            yield Static(id="stats_panel")
         with Vertical(id="buttons"):
             yield Button("Start Automation", id="toggle_run", classes="start")
             yield Button("Login to Telegram", id="login", classes="login")
@@ -1632,6 +1695,25 @@ class BotApp(App):
             entry.append(line, style=color)
             box.write(entry)
 
+    def refresh_stats(self):
+        rows = [
+            ("LIKES", str(STATS["likes"]), "bold #60A5FA"),
+            ("COMMENTS", str(STATS["comments"]), "bold #A78BFA"),
+            ("SKIPPED", str(STATS["skipped"]), "bold #FBBF24"),
+            ("CASHCOINS", f"{STATS['tenths'] / 10:.1f}", "bold #34D399"),
+        ]
+        text = Text()
+        for index, (label, value, style) in enumerate(rows):
+            if index:
+                text.append("\n")
+            text.append(f"{label:<10} ", style="bold #6B7280")
+            text.append("│ ", style="#374151")
+            text.append(value, style=style)
+        try:
+            self.query_one("#stats_panel", Static).update(text)
+        except Exception:
+            pass
+
     def set_state(self, state):
         self.state_text = state
         self.refresh_panel()
@@ -1645,6 +1727,7 @@ class BotApp(App):
         global ui
         ui = self
         self.refresh_panel()
+        self.refresh_stats()
         self.query_one("#login", Button).display = False   # shown only when not logged in
         self.run_worker(self.boot(), exclusive=False)
 
