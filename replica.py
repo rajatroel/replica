@@ -339,7 +339,8 @@ def log(message=""):
         pass
 
 # Session statistics shown on the dashboard (cashcoins kept in tenths to avoid float drift)
-STATS = {"likes": 0, "comments": 0, "skipped": 0, "tenths": 0}
+STATS = {"likes": 0, "comments": 0, "skipped": 0, "captchas": 0, "tenths": 0}
+RUN_STARTED = None   # time.time() when the automation started (None while stopped)
 LIKE_REWARD_TENTHS = 11      # 1.1 cashcoins
 COMMENT_REWARD_TENTHS = 60   # 6.0 cashcoins
 
@@ -353,6 +354,8 @@ def record_stat(kind):
         STATS["tenths"] += COMMENT_REWARD_TENTHS
     elif kind == "skip":
         STATS["skipped"] += 1
+    elif kind == "captcha":
+        STATS["captchas"] += 1
     app = ui
     if app is None:
         return
@@ -364,7 +367,9 @@ def record_stat(kind):
         pass
 
 def reset_stats():
-    """Zero the statistics (done every time the automation stops)."""
+    """Zero the statistics and the runtime (done every time the automation stops)."""
+    global RUN_STARTED
+    RUN_STARTED = None
     for key in STATS:
         STATS[key] = 0
     app = ui
@@ -376,6 +381,13 @@ def reset_stats():
         app.refresh_stats()
     except Exception:
         pass
+
+def runtime_text():
+    """Time since the automation started as HH:MM:SS (00:00:00 while stopped)."""
+    if RUN_STARTED is None:
+        return "00:00:00"
+    seconds = max(0, int(time.time() - RUN_STARTED))
+    return f"{seconds // 3600:02d}:{seconds % 3600 // 60:02d}:{seconds % 60:02d}"
 
 class TelethonLogHandler(logging.Handler):
     """Forward Telethon warnings (e.g. failed connection attempts) to the log screen."""
@@ -1192,6 +1204,7 @@ async def handle_msg(event):
         
     elif "verification passed" in text_lower:
         log("Verification successful")
+        record_stat("captcha")
         if d:
             await asyncio.to_thread(d.app_stop, "com.android.chrome")
         await smart_send("✅Completed")
@@ -1206,7 +1219,7 @@ async def handle_msg(event):
 # ==========================================
 async def start_automation():
     """Connect to the phone, reset the bot chat and start the task flow."""
-    global d, RUNNING, pending_task, pending_text
+    global d, RUNNING, pending_task, pending_text, RUN_STARTED
 
     log("Initializing UIAutomator2 connection...")
     d = await asyncio.to_thread(connect_with_retry)
@@ -1216,6 +1229,7 @@ async def start_automation():
     pending_task = None
     pending_text = None
     RUNNING = True
+    RUN_STARTED = time.time()
     ui_set_state("Running")
     log("AUTOMATION STARTED SUCCESSFULLY")
 
@@ -1700,7 +1714,9 @@ class BotApp(App):
             ("LIKES", str(STATS["likes"]), "bold #60A5FA"),
             ("COMMENTS", str(STATS["comments"]), "bold #A78BFA"),
             ("SKIPPED", str(STATS["skipped"]), "bold #FBBF24"),
+            ("CAPTCHA", str(STATS["captchas"]), "bold #F472B6"),
             ("CASHCOINS", f"{STATS['tenths'] / 10:.1f}", "bold #34D399"),
+            ("RUNTIME", runtime_text(), "bold #E5E7EB"),
         ]
         text = Text()
         for index, (label, value, style) in enumerate(rows):
@@ -1728,6 +1744,7 @@ class BotApp(App):
         ui = self
         self.refresh_panel()
         self.refresh_stats()
+        self.set_interval(1, self.refresh_stats)   # keeps the runtime ticking
         self.query_one("#login", Button).display = False   # shown only when not logged in
         self.run_worker(self.boot(), exclusive=False)
 
