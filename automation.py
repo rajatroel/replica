@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import shutil
+import socket
 import subprocess
 import tty
 import termios
@@ -13,7 +14,43 @@ def clear_terminal():
     """Clear the terminal screen completely."""
     os.system("clear" if os.name != "nt" else "cls")
 
+def start_gate():
+    """First screen: Continue starts the script, Cancel returns to a cleared terminal."""
+    from textual.app import App, ComposeResult
+    from textual.containers import Vertical
+    from textual.widgets import Button, Static
+
+    class GateApp(App):
+        CSS = """
+        Screen { background: #06060A; color: #F3F4F6; align: center middle; }
+        #gate_card { width: 94%; height: auto; border: round #4C1D95; background: #0E0D16; padding: 1 2; }
+        #gate_title { width: 100%; text-align: center; text-style: bold; color: #DDD6FE; margin-bottom: 1; }
+        #gate_msg { width: 100%; text-align: center; color: #9CA3AF; margin-bottom: 1; }
+        #gate_card Button { width: 100%; min-width: 0; height: 3; text-style: bold; margin-top: 1; }
+        #go { background: #052E16; color: #6EE7B7; border: round #10B981; }
+        #cancel { background: #350D15; color: #FCA5A5; border: round #EF4444; }
+        """
+        ENABLE_COMMAND_PALETTE = False
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="gate_card"):
+                yield Static("Automation", id="gate_title")
+                yield Static("Press Continue to start.", id="gate_msg")
+                yield Button("Continue", id="go")
+                yield Button("Cancel", id="cancel")
+
+        def on_button_pressed(self, event: Button.Pressed):
+            self.exit(event.button.id == "go")
+
+    return GateApp().run() is True
+
 # Clear terminal immediately when the script starts
+clear_terminal()
+
+# First screen: Continue starts everything, Cancel leaves just a cleared terminal
+if not start_gate():
+    clear_terminal()
+    sys.exit(0)
 clear_terminal()
 
 # ==========================================
@@ -22,16 +59,14 @@ clear_terminal()
 def has_storage_access():
     return os.access('/sdcard/', os.R_OK)
 
-def close_termux():
-    """Releases wakelock, removes notification, and exits Termux completely without prompt."""
+def release_termux():
+    """Release the wakelock and stop TermuxService (removes the notification, closes the app)."""
     try:
-        # 1. Release Termux wakelock
         subprocess.run(
             ["termux-wake-unlock"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        # 2. Stop TermuxService (removes status bar notification & closes app window)
         subprocess.run(
             [
                 "am", "startservice", "--user", "0",
@@ -43,7 +78,22 @@ def close_termux():
         )
     except Exception:
         pass
-    sys.exit(0)
+
+def close_termux():
+    """Releases wakelock, removes notification, and exits Termux completely without prompt."""
+    release_termux()
+    # os._exit skips every finally block / shutdown hook, so nothing can relaunch Termux
+    # or recreate files (e.g. the Telegram session) after this point.
+    sys.stdout.flush()
+    os._exit(0)
+
+async def exit_termux_now():
+    """
+    The one exit logic used by the Exit button and the QR-expired exit:
+    release the wakelock, stop TermuxService, end the process immediately (no relaunch).
+    """
+    await asyncio.to_thread(release_termux)
+    os._exit(0)
 
 def ensure_storage_permission():
     if has_storage_access():
@@ -145,15 +195,20 @@ CONFIG_PATH = "/sdcard/config.json"
 CONFIG_HELP = ("Install the Replica app first, open it, fill in your details and tap Save\n"
                "to create config.json, then run this script again.")
 
-def fail_startup(title, detail=""):
-    """Show a startup error and stop (the terminal stays open so the message can be read)."""
-    print(f"\nERROR: {title}")
+def fail_startup(title, detail="", seconds=7, prefix="ERROR: "):
+    """Show a startup error, count down, then run the exit logic (clear screen + close Termux)."""
+    print(f"\n{prefix}{title}")
     if detail:
         print(detail)
-    sys.exit(1)
+    print()
+    for remaining in range(seconds, 0, -1):
+        print(f"\rExiting ({remaining})   ", end="", flush=True)
+        time.sleep(1)
+    clear_terminal()
+    close_termux()
 
 if not os.path.exists(CONFIG_PATH):
-    fail_startup(f"{CONFIG_PATH} was not found.", CONFIG_HELP)
+    fail_startup("Please create your config first using Replica...", prefix="")
 
 try:
     with open(CONFIG_PATH, 'r') as f:
@@ -303,12 +358,13 @@ def run_adb_shell_cmd(command, show_output=False):
 
 def hide_keyboard():
     """
-    Hide the Android soft keyboard if visible without sending KEYCODE_BACK (keyevent 4),
-    so Termux is never minimized when the UI appears.
+    Close the soft keyboard with one BACK key press.
+    Only called right after a first-time login that needed the 2FA password (the only time
+    the keyboard is open); never call it while the keyboard is closed, or Termux minimizes.
     """
     try:
         target_args = ("-s", adb_serial) if adb_serial else ()
-        run_adb(*target_args, "shell", "cmd", "input_method", "hide-soft-input", timeout=5)
+        run_adb(*target_args, "shell", "input", "keyevent", "4", timeout=5)
     except Exception:
         pass
 
@@ -329,32 +385,54 @@ def adb_alive(serial):
     """True when the device really answers shell commands."""
     return "ok" in run_adb("-s", serial, "shell", "echo", "ok", timeout=10).split()
 
-def adb_find_ready(attempts=4, delay=1.5):
+def port_open(port=5555, host="127.0.0.1", timeout=1.0):
+    """True when something is listening on host:port (e.g. the background adbd on 5555)."""
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+
+def adb_poll_ready(base_wait=6, auth_wait=60, announce=False):
     """
-    Return the serial of a working device, or None.
-    Starts the adb server first and retries briefly, because the device list
-    is empty for a moment right after the server starts.
+    Wait for a working device and return its serial, or None.
+    - base_wait: seconds to wait for any device to show up in `adb devices`.
+    - auth_wait: if a device is listed but unauthorized/offline (the "Allow this computer"
+      popup), keep waiting up to this long so the user has time to tap Allow.
     """
+    start = time.time()
+    deadline = start + base_wait
+    announced = False
+    reconnected = False
+    while True:
+        devices = adb_devices()
+        for serial, state in devices:
+            if state == "device" and adb_alive(serial):
+                return serial
+        pending = [(sr, st) for sr, st in devices if st in ("unauthorized", "offline", "connecting", "authorizing")]
+        if pending:
+            deadline = max(deadline, start + auth_wait)
+            if announce and not announced:
+                print("Device found. Tap ALLOW on the 'Allow USB debugging' popup (tick 'Always allow')...")
+                announced = True
+            if not reconnected and any(st == "offline" for _, st in pending):
+                run_adb("reconnect", "offline", timeout=15)
+                reconnected = True
+        if time.time() >= deadline:
+            return None
+        time.sleep(1)
+
+def adb_find_ready(attempts=4, delay=1.5, auth_wait=45):
+    """Start the adb server and return the serial of a working device, or None."""
     adb_prepare()
     if shutil.which("adb") is None:
         return None
     run_adb("start-server", timeout=30)
-    for _ in range(attempts):
-        for serial, state in adb_devices():
-            if state == "device" and adb_alive(serial):
-                return serial
-        time.sleep(delay)
-    return None
+    return adb_poll_ready(base_wait=attempts * delay, auth_wait=auth_wait)
 
 def adb_wait_ready(timeout=30):
     """Wait until a device is authorized and answering. Returns its serial or None."""
-    start = time.time()
-    while time.time() - start < timeout:
-        for serial, state in adb_devices():
-            if state == "device" and adb_alive(serial):
-                return serial
-        time.sleep(1.5)
-    return None
+    return adb_poll_ready(base_wait=timeout, auth_wait=timeout)
 
 def to_endpoint(value):
     """Turn '37123' into 'localhost:37123'; accept 'host:port' as is; None if invalid."""
@@ -382,8 +460,9 @@ def adb_lock_tcpip_5555():
 
 def ensure_adb_startup():
     """
-    Check at script startup if a background ADB port (e.g. emulator-5554) is already open.
-    If not, run the interactive adb.py pairing & tcpip 5555 flow until connected.
+    At startup, detect an already open background ADB port (emulator-5554 / 5555).
+    Only when nothing is reachable (after giving the authorization popup time) ask
+    for the pairing details.
     """
     global adb_serial
     adb_prepare()
@@ -393,49 +472,52 @@ def ensure_adb_startup():
         return None
 
     print("Checking existing ADB connection...")
-    serial = adb_find_ready(attempts=3, delay=1.0)
+    run_adb("start-server", timeout=30)
+
+    # 1. A device may already be listed (emulator-5554). Wait for it, including the Allow popup.
+    serial = adb_poll_ready(base_wait=6, auth_wait=60, announce=True)
+
+    # 2. Nothing listed but port 5555 is open: connect to it directly
+    if not serial and not adb_devices() and port_open(5555):
+        print("Background ADB port 5555 is open. Connecting...")
+        run_adb("connect", "localhost:5555", timeout=15)
+        serial = adb_poll_ready(base_wait=8, auth_wait=60, announce=True)
+
     if serial:
         adb_serial = serial
         print(f"ADB already connected: {serial}")
         return serial
 
-    print("No background ADB port detected. Running first-time ADB setup...\n")
+    print("No usable background ADB port detected. Running first-time ADB setup...\n")
     while True:
-        # 1. Gather exact inputs in the requested order
         connect_ip_port = input("Enter device IP & PORT: ").strip()
         pair_ip_port = input("Enter pairing IP & PORT: ").strip()
         pair_code = input("Enter pairing CODE: ").strip()
 
         print("\nConnecting...\n")
 
-        # Normalize if user entered only a port number, otherwise keep as-is
         conn_target = to_endpoint(connect_ip_port) or connect_ip_port
         pair_target = to_endpoint(pair_ip_port) or pair_ip_port
 
-        # 2. Pair with the device
         if pair_target and pair_code:
             run_adb_shell_cmd(f"pair {pair_target} {pair_code}")
 
-        # 3. Initial connection (with silent retries)
         for _ in range(3):
             output = run_adb_shell_cmd(f"connect {conn_target}")
             if "connected" in output and "failed" not in output:
                 break
             time.sleep(2)
 
-        # 4. Restart ADB daemon to lock port 5555
+        # Lock port 5555 and restart the server so emulator-5554 persists
         run_adb_shell_cmd("tcpip 5555")
         time.sleep(3)
-
-        # 5. Clean up server to finalize persistent background connection
         run_adb_shell_cmd("kill-server")
         run_adb_shell_cmd("start-server")
-        time.sleep(2)  # Give the daemon a moment to automatically detect the local connection
+        time.sleep(2)
 
-        # 6. Verify success
         run_adb_shell_cmd("devices", show_output=True)
 
-        serial = adb_find_ready(attempts=5, delay=1.5)
+        serial = adb_poll_ready(base_wait=10, auth_wait=60, announce=True)
         if serial:
             adb_serial = serial
             print(f"\nADB successfully connected ({serial}). Moving to UI...\n")
@@ -1574,9 +1656,6 @@ class BotApp(App):
         ui = None
 
     async def boot(self):
-        # Hide the soft keyboard safely without sending KEYCODE_BACK
-        await asyncio.to_thread(hide_keyboard)
-
         log("Checking license...")
         await asyncio.to_thread(check_license)
         log(f"License: {LICENSE_MSG}")
@@ -1813,7 +1892,13 @@ class BotApp(App):
         """Exit button: stop everything, then close Termux completely (see close_termux)."""
         global EXIT_TERMUX
         EXIT_TERMUX = True
-        await self.action_quit()
+        await stop_automation("Exit")
+        try:
+            await client.disconnect()
+        except Exception:
+            pass
+        # Close Termux right now, with the dashboard still showing (no flash back to the terminal)
+        await exit_termux_now()
 
     async def delete_config_flow(self):
         """Ask for confirmation, then permanently delete /sdcard/config.json."""
@@ -2077,7 +2162,7 @@ async def ask_password_terminal():
             return False
 
 async def expired_and_exit():
-    """QR expired: clear the terminal, show the 2 minute countdown, then close Termux."""
+    """QR expired: show the 2 minute countdown, delete the incomplete session, clear the screen, close Termux."""
     remove_qr_png()
     bring_termux_to_front()
     clear_terminal()
@@ -2086,21 +2171,39 @@ async def expired_and_exit():
         print(f"\r  Try again in {remaining // 60}:{remaining % 60:02d}   ", end="", flush=True)
         await asyncio.sleep(1)
     print()
-    console.print("[#938F99]Closing Termux...[/]")
+
+    # Disconnect and close the session first so the file is released, then delete it
     try:
         await client.disconnect()
     except Exception:
         pass
-    close_termux()
+    try:
+        client.session.close()
+    except Exception:
+        pass
+
+    def delete_session_files():
+        for path in (f"{SESSION_PATH}.session", f"{SESSION_PATH}.session-journal"):
+            try:
+                if os.path.exists(path):
+                    os.remove(path)
+            except Exception:
+                pass
+
+    delete_session_files()
+    await asyncio.sleep(0.5)
+    delete_session_files()   # in case anything recreated it while shutting down
+
+    clear_terminal()
+    await exit_termux_now()
 
 async def terminal_login():
     """
     Guided Telegram login shown before the UI. Returns True when logged in,
     False when cancelled. Exits Termux if the QR code expires.
     """
-    # Clear previous startup logs and hide the soft keyboard when the login helping box appears
+    # Clear previous startup logs when the login helping box appears
     clear_terminal()
-    await asyncio.to_thread(hide_keyboard)
 
     console.print()
     console.print(Panel(
@@ -2167,7 +2270,12 @@ async def terminal_login():
     me = await client.get_me()
     name = f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown"
     console.print(f"\n[bold #B7F0C8]Logged in as {name}[/]")
-    await asyncio.sleep(2)
+    # The keyboard is only open when the 2FA password was typed: close it, then wait before the UI
+    if need_password:
+        await asyncio.to_thread(hide_keyboard)
+        await asyncio.sleep(3)
+    else:
+        await asyncio.sleep(2)
     return True
 
 async def login_before_ui():
@@ -2229,13 +2337,12 @@ async def main():
     if await connect_telegram_early():
         await login_before_ui()
 
-    # Hide the soft keyboard right before the main UI opens (without sending KEYCODE_BACK)
-    await asyncio.to_thread(hide_keyboard)
     await BotApp(None).run_async()
     try:
         await client.disconnect()
     except Exception:
         pass
+    clear_terminal()       # every exit path (Exit, Terminal, Ctrl+Q) clears the screen first
     if EXIT_TERMUX:
         close_termux()   # same exit logic as when storage permission is not granted
     print("Script fully stopped.")
