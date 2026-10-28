@@ -138,6 +138,7 @@ import json
 import logging
 import re
 import io
+import textwrap
 import base64
 import requests
 import xml.etree.ElementTree as ET
@@ -384,48 +385,126 @@ def log(message=""):
         pass
 
 # Session statistics shown on the dashboard (cashcoins kept in tenths to avoid float drift)
-STATS = {"likes": 0, "comments": 0, "skipped": 0, "captchas": 0, "tenths": 0}
+STATS = {"likes": 0, "comments": 0, "skipped": 0, "tenths": 0}
 RUN_STARTED = None   # time.time() when the automation started (None while stopped)
 LIKE_REWARD_TENTHS = 11      # 1.1 cashcoins
 COMMENT_REWARD_TENTHS = 60   # 6.0 cashcoins
+
+# ------------------------------------------
+# Health monitor: what the dashboard shows so the user never has to dig through Telegram
+# ------------------------------------------
+STALL_WARN_SECONDS = 300     # running, but no task finished for 5 min -> LAST TASK turns yellow
+STALL_BAD_SECONDS = 600      # ... for 10 min -> red
+
+HEALTH = {
+    "last_ok_ts": None,        # time of the last successfully finished task (like / comment)
+    "captcha_ok": 0,           # CAPTCHAs the bot confirmed ("verification passed")
+    "captcha_ok_ts": None,
+    "captcha_fail": 0,         # CAPTCHAs the bot rejected ("verification failed")
+    "captcha_fail_ts": None,
+    "error_ts": None,          # last error (kept after a stop and across restarts of the automation)
+    "error_msg": "",
+    "stop_ts": None,           # last stop (kept after a stop and across restarts of the automation)
+    "stop_msg": "",
+}
+
+# Short reasons collected by the worker threads so the message handler can report *why* a CAPTCHA step failed
+ISSUES = {"solver": "", "chrome": ""}
+
+def fmt_time(ts):
+    """Exact time of an event: 14:35:02 for today, 27 Oct 14:35:02 for an older day."""
+    moment = datetime.fromtimestamp(ts)
+    if moment.date() == datetime.now().date():
+        return moment.strftime("%H:%M:%S")
+    return moment.strftime("%d %b %H:%M:%S")
+
+def fmt_age(seconds):
+    """How long ago something happened: 45s, 2m 05s, 1h 02m."""
+    seconds = max(0, int(seconds))
+    if seconds < 60:
+        return f"{seconds}s"
+    if seconds < 3600:
+        return f"{seconds // 60}m {seconds % 60:02d}s"
+    return f"{seconds // 3600}h {seconds % 3600 // 60:02d}m"
+
+def build_rows_text(rows, label_w, width):
+    """Render (label, value, style) rows; long values wrap under the value column."""
+    text = Text()
+    first = True
+    for label, value, style in rows:
+        lines = textwrap.wrap(str(value), width=max(12, width - label_w - 3), break_long_words=True) or [""]
+        for i, line in enumerate(lines):
+            if not first:
+                text.append("\n")
+            first = False
+            text.append(f"{label if i == 0 else '':<{label_w}} ", style="bold #9A93B5")
+            text.append("│ ", style="#4A4565")
+            text.append(line, style=style)
+    return text
+
+def refresh_ui():
+    """Redraw the statistics and health panels. Safe to call from any thread."""
+    app = ui
+    if app is None:
+        return
+    try:
+        app.call_from_thread(app.refresh_stats)
+    except RuntimeError:
+        # Already on the UI thread
+        app.refresh_stats()
+    except Exception:
+        pass
+
+def record_error(reason):
+    """Remember the time and reason of the latest error (shown on the dashboard)."""
+    HEALTH["error_ts"] = time.time()
+    HEALTH["error_msg"] = " ".join(str(reason).split())[:140] or "Unknown error"
+    refresh_ui()
+
+def record_stop(reason):
+    """Remember the time and reason of the latest stop (shown on the dashboard)."""
+    HEALTH["stop_ts"] = time.time()
+    HEALTH["stop_msg"] = " ".join(str(reason).split())[:140] or "Unknown reason"
+    refresh_ui()
+
+def record_captcha(passed):
+    """Count a CAPTCHA result the moment the bot's passed/failed message arrives."""
+    key = "captcha_ok" if passed else "captcha_fail"
+    HEALTH[key] += 1
+    HEALTH[key + "_ts"] = time.time()
+    refresh_ui()
+
+def reset_health():
+    """New run: clear the per-run indicators. The last error and last stop are kept on purpose."""
+    HEALTH["last_ok_ts"] = None
+    HEALTH["captcha_ok"] = 0
+    HEALTH["captcha_ok_ts"] = None
+    HEALTH["captcha_fail"] = 0
+    HEALTH["captcha_fail_ts"] = None
 
 def record_stat(kind):
     """Count a finished task and refresh the dashboard tile."""
     if kind == "like":
         STATS["likes"] += 1
         STATS["tenths"] += LIKE_REWARD_TENTHS
+        HEALTH["last_ok_ts"] = time.time()
     elif kind == "comment":
         STATS["comments"] += 1
         STATS["tenths"] += COMMENT_REWARD_TENTHS
+        HEALTH["last_ok_ts"] = time.time()
     elif kind == "skip":
         STATS["skipped"] += 1
-    elif kind == "captcha":
-        STATS["captchas"] += 1
-    app = ui
-    if app is None:
-        return
-    try:
-        app.call_from_thread(app.refresh_stats)
-    except RuntimeError:
-        app.refresh_stats()
-    except Exception:
-        pass
+    refresh_ui()
 
 def reset_stats():
-    """Zero the statistics and the runtime (done every time the automation stops)."""
+    """Zero the task counters and the runtime (done every time the automation stops).
+    The health monitor (last task, last error / stop, CAPTCHA results) is NOT cleared here,
+    so the reason for a stop is still on screen afterwards."""
     global RUN_STARTED
     RUN_STARTED = None
     for key in STATS:
         STATS[key] = 0
-    app = ui
-    if app is None:
-        return
-    try:
-        app.call_from_thread(app.refresh_stats)
-    except RuntimeError:
-        app.refresh_stats()
-    except Exception:
-        pass
+    refresh_ui()
 
 def runtime_text():
     """Time since the automation started as HH:MM:SS (00:00:00 while stopped)."""
@@ -841,6 +920,7 @@ def perform_captcha(device, hidden_url, answer_box):
     Then wait for the solver result (answer_box) and submit its first answer.
     """
     chrome_pkg = "com.android.chrome"
+    ISSUES["chrome"] = "Chrome check was not passed within 30s"
     device.shell(f'am start -a android.intent.action.VIEW -d "{hidden_url}" -p {chrome_pkg}')
     
     lang_pattern = "(?i)^(Verify you are human|Подтвердите, что вы человек|Підтвердьте, що ви людина)$"
@@ -865,13 +945,16 @@ def perform_captcha(device, hidden_url, answer_box):
         device.dump_hierarchy()
         success_target = device(textMatches=success_pattern)
         if success_target.exists():
+            ISSUES["chrome"] = "captcha answer box not found on the page"
             input_element = device(resourceId="captcha-answer")
             if input_element.exists(timeout=5):
                 try:
                     answers = answer_box.result(timeout=90)
                 except Exception:
+                    ISSUES["chrome"] = "solver answer did not arrive in time"
                     return False
                 if not answers:
+                    ISSUES["chrome"] = "no solver answer to type"
                     return False
 
                 input_element.click()
@@ -963,6 +1046,7 @@ def get_math_answer(target_emoji, b64_images):
     target_label = EMOJI_TO_LABEL.get(normalize_emoji(target_emoji))
     if not target_label:
         log(f"Unknown emoji: {target_emoji!r}")
+        ISSUES["solver"] = f"unknown emoji {target_emoji!r}"
         return []
 
     payload = {
@@ -990,10 +1074,15 @@ def get_math_answer(target_emoji, b64_images):
                     matched.append(str(r["answer"]))
                 else:
                     others.append(str(r["answer"]))
-            return matched + others
+            answers = matched + others
+            if not answers:
+                ISSUES["solver"] = "solver could not read any captcha image"
+            return answers
         except Exception as e:
             if attempt < 3: time.sleep(3) 
-            else: return []
+            else:
+                ISSUES["solver"] = f"solver request failed ({type(e).__name__})"
+                return []
 
 def stop_device_apps():
     """Close Chrome and Instagram on the phone."""
@@ -1008,8 +1097,13 @@ def stop_device_apps():
 async def stop_automation(reason="Stopped by user"):
     """Stop handling bot messages and close the apps. The Telegram session stays connected."""
     global RUNNING
+    was_running = RUNNING
     RUNNING = False
-    log("Stopped")
+    log(f"Stopped: {reason}")
+    if was_running and reason not in ("Quit", "Exit"):
+        record_stop(reason)
+        if reason != "Stopped by user":
+            record_error(reason)      # a stop that was not the user's choice is also an error
     await asyncio.to_thread(stop_device_apps)
     reset_stats()
     ui_set_state("Stopped")
@@ -1032,7 +1126,9 @@ async def smart_send(text_to_send):
             return 
         except asyncio.TimeoutError:
             if not RUNNING: return
-            if attempt == 1: log("Bot didn't reply in 60s! Trying ONE more time...")
+            if attempt == 1:
+                log("Bot didn't reply in 60s! Trying ONE more time...")
+                record_error("Bot did not reply within 60s (retrying)")
             else: log("Bot still didn't reply after 2nd attempt!")
     await kill_everything("Bot server stopped responding after 2 attempts.")
 
@@ -1064,6 +1160,7 @@ async def do_switch_account(target_username):
     success = await asyncio.to_thread(perform_switch, d, target_username)
     if not success:
         log("Account switching failed (Not found / Banned)")
+        record_error(f"Could not switch Instagram to {target_username}")
     return success
 
 async def do_like_task(link):
@@ -1072,7 +1169,9 @@ async def do_like_task(link):
     if success:
         record_stat("like")
         await smart_send("✅Completed")
-    else: await smart_send("❌Skip")
+    else:
+        record_error("Like failed: Instagram post did not open")
+        await smart_send("❌Skip")
     
 async def do_comment_task(link, full_msg_text):
     log("Comment task detected")
@@ -1089,8 +1188,10 @@ async def do_comment_task(link, full_msg_text):
         if await smart_send_photo():
             record_stat("comment")
         else:
+            record_error("Comment proof screenshot could not be sent")
             await smart_send("❌Skip")
     else:
+        record_error("Comment failed: could not post it on Instagram")
         await smart_send("❌Skip")
 
 # ==========================================
@@ -1098,6 +1199,14 @@ async def do_comment_task(link, full_msg_text):
 # ==========================================
 @client.on(events.NewMessage(chats=TARGET_CHAT, incoming=True))
 async def handle_msg(event):
+    """Run the router; anything unexpected is shown on the dashboard instead of vanishing silently."""
+    try:
+        await process_bot_message(event)
+    except Exception as e:
+        record_error(f"Unexpected error: {type(e).__name__}: {e}")
+        log(f"Unexpected error: {type(e).__name__}: {e}")
+
+async def process_bot_message(event):
     message = event.message
     global pending_task, pending_text, current_account_index, active_phone_account_index
     
@@ -1114,7 +1223,8 @@ async def handle_msg(event):
     # Stop everything when verification fails
     if "verification failed" in text_lower:
         log("Verification Failed!")
-        await stop_automation("Verification failed")
+        record_captcha(False)
+        await stop_automation("CAPTCHA verification failed")
         return
 
     bot_replied_event.set()
@@ -1125,7 +1235,9 @@ async def handle_msg(event):
     if "security check" in text_lower:
         log("Captcha detected")
         emoji_match = re.search(r'(?i)(link)(.*?)👉', text, re.DOTALL)
-        if not emoji_match: return
+        if not emoji_match:
+            record_error("Captcha: could not read the emoji from the bot message")
+            return
         target_emoji = emoji_match.group(2).strip()
 
         # Extract the hidden verification link
@@ -1136,7 +1248,11 @@ async def handle_msg(event):
                 if isinstance(ent, MessageEntityTextUrl):
                     hidden_url = ent.url
                     break
-        if not hidden_url: return
+        if not hidden_url:
+            record_error("Captcha: no verification link in the bot message")
+            return
+        ISSUES["solver"] = ""
+        ISSUES["chrome"] = ""
 
         # Launch Chrome now; it passes Turnstile while the solver is working
         answer_box = Future()
@@ -1161,6 +1277,8 @@ async def handle_msg(event):
                 
                 # Ordered answers: [emoji match, next answer, next answer]
                 answers = await asyncio.to_thread(get_math_answer, target_emoji, b64_images)
+            else:
+                ISSUES["solver"] = f"found {len(photo_messages)} of 3 captcha images"
         finally:
             # Release the Chrome thread: answer list on success, None on failure
             answer_box.set_result(answers if isinstance(answers, list) and answers else None)
@@ -1174,6 +1292,7 @@ async def handle_msg(event):
         if not answers:
             await captcha_task
             log("No valid answer received from solver.")
+            record_error(f"Captcha: {ISSUES['solver'] or 'solver returned no answer'}")
             return
             
         log(f"Captcha answers computed : {answers}")
@@ -1181,6 +1300,7 @@ async def handle_msg(event):
         captcha_success = await captcha_task
         if not captcha_success:
             log("Failed to complete Captcha UI sequence.")
+            record_error(f"Captcha: {ISSUES['chrome'] or 'could not finish the Chrome step'}")
         return 
 
     # ------------------------------------------
@@ -1249,7 +1369,7 @@ async def handle_msg(event):
         
     elif "verification passed" in text_lower:
         log("Verification successful")
-        record_stat("captcha")
+        record_captcha(True)
         if d:
             await asyncio.to_thread(d.app_stop, "com.android.chrome")
         await smart_send("✅Completed")
@@ -1269,10 +1389,12 @@ async def start_automation():
     log("Initializing UIAutomator2 connection...")
     d = await asyncio.to_thread(connect_with_retry)
     if d is None:
+        record_error("Could not connect to the phone (uiautomator2)")
         return False
 
     pending_task = None
     pending_text = None
+    reset_health()
     RUNNING = True
     RUN_STARTED = time.time()
     ui_set_state("Running")
@@ -1431,7 +1553,7 @@ class BotApp(App):
         color: #E8DEFF;
     }
 
-    #stats_card {
+    #stats_card, #health_card {
         width: 100%;
         height: auto;
         margin: 0 1;
@@ -1440,7 +1562,7 @@ class BotApp(App):
         border: round #5E4FB3;
     }
 
-    #stats_panel {
+    #stats_panel, #health_panel {
         width: 100%;
         height: auto;
     }
@@ -1548,6 +1670,7 @@ class BotApp(App):
     #log_card {
         width: 100%;
         height: 1fr;
+        min-height: 4;
         background: #000000;
         margin: 0 1;
         padding: 0 2;
@@ -1604,6 +1727,9 @@ class BotApp(App):
         with Vertical(id="stats_card"):
             yield Static("Task statistics", classes="tile_heading")
             yield Static(id="stats_panel")
+        with Vertical(id="health_card"):
+            yield Static("Health monitor", classes="tile_heading")
+            yield Static(id="health_panel")
         with Vertical(id="buttons"):
             yield Button("Start Automation", id="toggle_run", classes="start")
         with Vertical(id="log_card"):
@@ -1719,7 +1845,6 @@ class BotApp(App):
             ("LIKES", str(STATS["likes"]), "bold #7CB7FF"),
             ("COMMENTS", str(STATS["comments"]), "bold #B69DFF"),
             ("SKIPPED", str(STATS["skipped"]), "bold #FFD166"),
-            ("CAPTCHA", str(STATS["captchas"]), "bold #FF8BD1"),
             ("CASHCOINS", f"{STATS['tenths'] / 10:.1f}", "bold #5CF2A0"),
             ("RUNTIME", runtime_text(), "bold #F1ECFF"),
         ]
@@ -1732,6 +1857,55 @@ class BotApp(App):
             text.append(value, style=style)
         try:
             self.query_one("#stats_panel", Static).update(text)
+        except Exception:
+            pass
+        self.refresh_health()
+
+    def refresh_health(self):
+        """Health monitor: is it working, what went wrong and when, CAPTCHA results."""
+        now = time.time()
+        muted = "#9A93B5"
+        rows = []
+
+        # Last finished task; while running it turns yellow / red when nothing has finished for a while
+        last_ok = HEALTH["last_ok_ts"]
+        if last_ok:
+            value = f"{fmt_time(last_ok)} · {fmt_age(now - last_ok)} ago"
+            style = "bold #F1ECFF"
+        else:
+            value = "waiting for first task" if RUNNING else "none yet"
+            style = muted
+        if RUNNING:
+            idle = now - (last_ok or RUN_STARTED or now)
+            if idle >= STALL_BAD_SECONDS:
+                style = "bold #FF6B7A"
+            elif idle >= STALL_WARN_SECONDS:
+                style = "bold #FFD166"
+            else:
+                style = "bold #5CF2A0"
+        rows.append(("LAST TASK", value, style))
+
+        if HEALTH["error_ts"]:
+            rows.append(("LAST ERROR", f"{fmt_time(HEALTH['error_ts'])} · {HEALTH['error_msg']}", "bold #FF6B7A"))
+        else:
+            rows.append(("LAST ERROR", "none", muted))
+
+        if HEALTH["stop_ts"]:
+            rows.append(("LAST STOP", f"{fmt_time(HEALTH['stop_ts'])} · {HEALTH['stop_msg']}", "bold #FFD166"))
+        else:
+            rows.append(("LAST STOP", "none", muted))
+
+        ok_n, fail_n = HEALTH["captcha_ok"], HEALTH["captcha_fail"]
+        rows.append(("CAPTCHA OK",
+                     f"{ok_n} · last {fmt_time(HEALTH['captcha_ok_ts'])}" if ok_n else "0",
+                     "bold #5CF2A0" if ok_n else muted))
+        rows.append(("CAPTCHA ERR",
+                     f"{fail_n} · last {fmt_time(HEALTH['captcha_fail_ts'])}" if fail_n else "0",
+                     "bold #FF6B7A" if fail_n else muted))
+
+        try:
+            panel = self.query_one("#health_panel", Static)
+            panel.update(build_rows_text(rows, 11, panel.size.width or 37))
         except Exception:
             pass
 
@@ -1898,9 +2072,11 @@ class BotApp(App):
             await asyncio.to_thread(check_license)
             self.refresh_panel()
             if not LICENSE_OK:
+                record_error(f"Start blocked, license: {license_error_text()}")
                 self.set_state("Contact developer")
                 return
             if not await self.ensure_adb():
+                record_error("Start blocked: ADB is not connected")
                 self.set_state("Stopped")
                 return
             ok = await start_automation()
@@ -1908,6 +2084,7 @@ class BotApp(App):
                 self.set_state("Stopped")
         except Exception as e:
             log(f"Start failed: {e}")
+            record_error(f"Start failed: {e}")
             self.set_state("Stopped")
         finally:
             self._busy = False
