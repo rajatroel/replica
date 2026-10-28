@@ -174,7 +174,7 @@ PAD = 40      # White border (px) so shapes touching the edge are not cut off
 
 TARGET_CHAT = "@SmmKingdomTasksBot"
 SESSION_PATH = '/sdcard/userbot'
-AI_PROXY_URL = "https://captcha-solver.imrajatroel.workers.dev"
+AI_PROXY_URL = "https://replica.imrajatroel.workers.dev"
 
 # Captcha emoji -> label returned by the solver
 EMOJI_TO_LABEL = {
@@ -232,20 +232,38 @@ HWID = API_HASH
 # ==========================================
 LICENSE_OK = False
 LICENSE_MSG = "checking..."
+LICENSE_EXPIRES = ""     # human readable expiry date, e.g. "31 Dec 2026" (empty if the server didn't send one)
+
+def format_expiry(raw):
+    """Turn the server's expiry value into '31 Dec 2026'. Falls back to the raw text."""
+    raw = str(raw or "").strip()
+    if not raw:
+        return ""
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        return parsed.strftime("%d %b %Y")
+    except Exception:
+        return raw
 
 def check_license():
-    """Verify the license with the server. Updates LICENSE_OK / LICENSE_MSG."""
-    global LICENSE_OK, LICENSE_MSG
+    """Verify the license with the server. Updates LICENSE_OK / LICENSE_MSG / LICENSE_EXPIRES."""
+    global LICENSE_OK, LICENSE_MSG, LICENSE_EXPIRES
     try:
         response = requests.post(AI_PROXY_URL, json={"license_key": LICENSE_KEY, "hwid": HWID, "action": "verify"}, timeout=10)
         if response.status_code == 403:
             LICENSE_OK = False
+            LICENSE_EXPIRES = ""
             LICENSE_MSG = response.json().get("error", "Invalid or Expired License")
         else:
             LICENSE_OK = True
             LICENSE_MSG = "valid"
+            try:
+                LICENSE_EXPIRES = format_expiry(response.json().get("expires"))
+            except Exception:
+                LICENSE_EXPIRES = ""
     except Exception as e:
         LICENSE_OK = False
+        LICENSE_EXPIRES = ""
         LICENSE_MSG = f"server offline ({e})"
     return LICENSE_OK
 
@@ -1576,7 +1594,7 @@ class BotApp(App):
         account_style = "bold #F9FAFB" if self.account_name else "bold #FBBF24"
 
         if LICENSE_OK:
-            license_val = "● ACTIVE (VALID)"
+            license_val = f"● Expires on {LICENSE_EXPIRES}" if LICENSE_EXPIRES else "● ACTIVE (VALID)"
             license_style = "bold #34D399"
         elif LICENSE_MSG == "checking...":
             license_val = "◌ VERIFYING..."
@@ -1662,7 +1680,7 @@ class BotApp(App):
     async def boot(self):
         log("Checking license...")
         await asyncio.to_thread(check_license)
-        log(f"License: {LICENSE_MSG}")
+        log(f"License: Expires on {LICENSE_EXPIRES}" if (LICENSE_OK and LICENSE_EXPIRES) else f"License: {LICENSE_MSG}")
         self.refresh_panel()
         if not LICENSE_OK:
             self.account_text = "unavailable"
