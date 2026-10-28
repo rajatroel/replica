@@ -1355,56 +1355,6 @@ class AdbScreen(ModalScreen):
         finally:
             button.disabled = False
 
-class PasswordScreen(ModalScreen):
-    """Asks for the Telegram 2FA (cloud) password inside the UI."""
-
-    CSS = """
-    PasswordScreen { align: center middle; background: #050508 92%; }
-    #pw_box { width: 94%; height: auto; border: round #7C3AED; background: #0D0C14; padding: 1 2; }
-    #pw_box Input { background: #161422; border: round #312E48; color: #F3F4F6; margin-top: 1; }
-    #pw_box Input:focus { border: round #8B5CF6; }
-    #pw_title { text-style: bold; color: #C4B5FD; margin-bottom: 1; text-align: center; width: 100%; }
-    #pw_buttons { height: auto; margin-top: 1; }
-    #pw_buttons Button { width: 1fr; height: 3; margin-right: 1; text-style: bold; }
-    #pw_ok { background: #064E3B; color: #6EE7B7; border: round #10B981; }
-    #pw_cancel { background: #1F2937; color: #E5E7EB; border: round #4B5563; }
-    """
-    BINDINGS = [("escape", "cancel", "Cancel")]
-
-    def __init__(self, message=None):
-        super().__init__()
-        self.message = message
-
-    def compose(self) -> ComposeResult:
-        with Vertical(id="pw_box"):
-            yield Static("🔐 TELEGRAM 2FA PASSWORD", id="pw_title")
-            if self.message:
-                yield Static(self.message)
-            yield Input(placeholder="Enter 2FA Password", password=True, id="pw")
-            with Horizontal(id="pw_buttons"):
-                yield Button("Confirm", id="pw_ok")
-                yield Button("Cancel", id="pw_cancel")
-
-    def on_mount(self):
-        self.query_one("#pw", Input).focus()
-
-    def action_cancel(self):
-        self.dismiss(None)
-
-    def on_input_submitted(self, event: Input.Submitted):
-        self.dismiss(event.value)
-
-    def on_button_pressed(self, event: Button.Pressed):
-        if event.button.id == "pw_ok":
-            self.dismiss(self.query_one("#pw", Input).value)
-        else:
-            self.dismiss(None)
-
-def license_error_text():
-    """Short, friendly text for a failed license check."""
-    known = {"invalid license key": "Invalid license key", "license expired": "License expired"}
-    return known.get((LICENSE_MSG or "").strip().lower(), LICENSE_MSG)
-
 class BotApp(App):
     """Modern Automation dashboard with internal tile headings and full-width state-aware controls."""
 
@@ -1566,7 +1516,6 @@ class BotApp(App):
     BINDINGS = [
         ("s", "start", "Start"),
         ("x", "stop", "Stop"),
-        ("l", "login", "Login"),
         ("ctrl+q", "quit", "Terminal"),
     ]
 
@@ -1574,6 +1523,7 @@ class BotApp(App):
         super().__init__()
         self.account_name = account_name
         self.logged_in = bool(account_name)
+        self.tg_state = "logged_in" if account_name else "logged_out"
         self._login_busy = False
         self.account_text = "checking..."
         self.tg_state = "checking"     # checking | logged_in | logged_out | offline
@@ -1593,7 +1543,6 @@ class BotApp(App):
             yield Static(id="stats_panel")
         with Vertical(id="buttons"):
             yield Button("Start Automation", id="toggle_run", classes="start")
-            yield Button("Login to Telegram", id="login", classes="login")
         with Vertical(id="log_card"):
             yield Static("System logs", classes="tile_heading")
             yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False, max_lines=2000)
@@ -1634,13 +1583,6 @@ class BotApp(App):
             self.query_one("#terminal", Button).disabled = lock_others
             self.query_one("#exit", Button).disabled = lock_others
 
-            login = self.query_one("#login", Button)
-            login.disabled = lock_others or self._login_busy or self._cooldown > 0
-            login.label = (
-                f"Login to Telegram ({self._cooldown // 60}:{self._cooldown % 60:02d})"
-                if self._cooldown > 0
-                else "Login to Telegram"
-            )
         except Exception:
             pass
 
@@ -1745,7 +1687,6 @@ class BotApp(App):
         self.refresh_panel()
         self.refresh_stats()
         self.set_interval(1, self.refresh_stats)   # keeps the runtime ticking
-        self.query_one("#login", Button).display = False   # shown only when not logged in
         self.run_worker(self.boot(), exclusive=False)
 
     def on_unmount(self):
@@ -1757,10 +1698,10 @@ class BotApp(App):
         self.refresh_panel()
 
         # Account and device are always checked (even with a bad license), at the same time
-        results = await asyncio.gather(self.check_login(), self.ensure_adb(), return_exceptions=True)
-        for result in results:
-            if isinstance(result, Exception):
-                log(f"Startup error: {result}")
+        try:
+            await self.ensure_adb()
+        except Exception as e:
+            log(f"Startup error: {e}")
         self.update_ready_state()
 
     def update_ready_state(self):
@@ -1770,15 +1711,7 @@ class BotApp(App):
         if not LICENSE_OK and LICENSE_MSG != "checking...":
             self.set_state("Contact developer")
             return
-        if self._cooldown > 0 and not self.logged_in:
-            self.set_state(f"Wait {self._cooldown // 60}:{self._cooldown % 60:02d} before trying again")
-        elif self.tg_state == "checking":
-            self.set_state("Checking Telegram...")
-        elif self.tg_state == "offline":
-            self.set_state("Telegram offline - press Login to retry")
-        elif not self.logged_in:
-            self.set_state("Not logged in - press Login")
-        elif not adb_serial:
+        if not adb_serial:
             self.set_state("ADB not connected")
         else:
             self.set_state("Ready to start")
@@ -1800,7 +1733,6 @@ class BotApp(App):
         self.logged_in = bool(name)
         self.account_text = text
         self.tg_state = "logged_in" if name else ("offline" if text == "connection failed" else "logged_out")
-        self.query_one("#login", Button).display = not self.logged_in
         self.refresh_panel()
 
     async def check_login(self, quiet=False):
@@ -1824,107 +1756,6 @@ class BotApp(App):
             log(f"Telegram connection failed: {e}")
             log("Press Login to retry")
         return False
-
-    def show_qr(self, url):
-        """Draw the login QR code in the log, shrinking its quiet zone to fit the screen."""
-        box = self.query_one("#log", RichLog)
-        available = box.size.width or 40
-        fits = False
-        for border in (1, 0):
-            qr_text = build_qr_text(url, border)
-            width = max(len(line) for line in qr_text.plain.splitlines())
-            if width <= available:
-                fits = True
-                break
-        if not fits:
-            log(f"Screen too narrow for the QR code ({width} > {available} columns). Zoom out and press Login again.")
-            return False
-        box.clear()
-        log("Scan this QR code with Telegram")
-        pad = " " * max(0, (available - width) // 2)
-        centered = Text(no_wrap=True)
-        for line in qr_text.plain.splitlines():
-            centered.append(pad)
-            centered.append(line.ljust(width), style="black on white")
-            centered.append("\n")
-        centered.rstrip()
-        box.write(centered, shrink=False)
-        return True
-
-    async def ask_password(self):
-        """Ask for the 2FA password until it is accepted. Returns False if cancelled."""
-        message = None
-        while True:
-            done = asyncio.get_running_loop().create_future()
-            self.push_screen(PasswordScreen(message), lambda result: done.done() or done.set_result(result))
-            password = await done
-            if not password:
-                return False
-            try:
-                await client.sign_in(password=password)
-                return True
-            except errors.PasswordHashInvalidError:
-                message = "Wrong password. Try again."
-
-    async def login_flow(self):
-        if self.logged_in or self._login_busy:
-            return
-        if self._cooldown > 0:
-            log(f"Wait {self._cooldown}s before trying again")
-            return
-        self._login_busy = True
-        self.update_buttons()
-        try:
-            if not LICENSE_OK:
-                return   # the status line already says "Contact developer"
-            self.set_state("Connecting to Telegram...")
-            if await self.check_login(quiet=True):
-                return   # session was fine after all
-            if not client.is_connected():
-                return   # still offline; the reason is already in the log
-            qr_login = await client.qr_login()
-            if not self.show_qr(qr_login.url):
-                return
-
-            # Wait for the scan while showing a countdown
-            timeout_duration = 30
-            wait_task = asyncio.create_task(qr_login.wait(timeout=timeout_duration))
-            start_time = time.time()
-            while not wait_task.done():
-                remaining = max(0, timeout_duration - int(time.time() - start_time))
-                self.set_state(f"Scan QR ({remaining}s)")
-                await asyncio.sleep(0.5)
-
-            try:
-                await wait_task
-            except errors.SessionPasswordNeededError:
-                self.query_one("#log", RichLog).clear()
-                if not await self.ask_password():
-                    log("Login cancelled")
-                    return
-            except asyncio.TimeoutError:
-                self.query_one("#log", RichLog).clear()
-                log("QR code expired. Wait 2 minutes before trying again.")
-                self._cooldown = 120
-                self.run_worker(self.cooldown_loop(), exclusive=False)
-                return
-
-            me = await client.get_me()
-            self.set_logged_in(f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown")
-            self.query_one("#log", RichLog).clear()
-        except Exception as e:
-            log(f"Login failed: {e}")
-        finally:
-            self._login_busy = False
-            self.update_ready_state()
-
-    async def cooldown_loop(self):
-        """Count down the retry delay after an expired QR code."""
-        while self._cooldown > 0:
-            await asyncio.sleep(1)
-            self._cooldown -= 1
-            self.update_ready_state()
-        self.update_ready_state()
 
     # ---- ADB ----
     async def open_adb_screen(self):
@@ -1963,9 +1794,6 @@ class BotApp(App):
     def action_stop(self):
         self.run_worker(self.stop_flow(), exclusive=False)
 
-    def action_login(self):
-        self.run_worker(self.login_flow(), exclusive=False)
-
     async def action_quit(self):
         await stop_automation("Quit")
         try:
@@ -1994,7 +1822,7 @@ class BotApp(App):
         self.update_buttons()
         try:
             if not self.logged_in:
-                log("Not logged in - press Login first")
+                log("Not logged in")
                 return
             self.set_state("Starting...")
             await asyncio.to_thread(check_license)
@@ -2028,8 +1856,6 @@ class BotApp(App):
                 self.action_stop()
             else:
                 self.action_start()
-        elif button_id == "login":
-            self.action_login()
         elif button_id == "terminal":
             await self.action_quit()
         elif button_id == "exit":
@@ -2271,7 +2097,7 @@ async def terminal_login():
     console.print("[#B7F0C8]QR code scanned.[/]\n")
 
     if need_password and not await ask_password_terminal():
-        console.print("[#FFD9A0]Login cancelled. You can still log in from the app with the Login button.[/]")
+        console.print("[#FFD9A0]Login cancelled.[/]")
         return False
 
     me = await client.get_me()
@@ -2283,24 +2109,25 @@ async def terminal_login():
         await asyncio.sleep(3)
     else:
         await asyncio.sleep(2)
-    return True
+    return name
 
 async def login_before_ui():
-    """After ADB and Telegram connect: show the account if logged in, otherwise run the guided login."""
+    """After Telegram connects: return the account name if logged in, otherwise run the guided login."""
     try:
         authorized = await asyncio.wait_for(client.is_user_authorized(), timeout=30)
     except Exception as e:
         print(f"Could not check the Telegram session: {e}")
-        return
+        return None
     if authorized:
+        name = "Telegram account"
         try:
             me = await client.get_me()
             name = f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown"
             console.print(f"[bold #B7F0C8]Logged in as {name}[/]")
         except Exception:
             pass
-        return
-    await terminal_login()
+        return name
+    return await terminal_login() or None
 
 async def connect_telegram_early(max_wait=60):
     """
@@ -2323,7 +2150,7 @@ async def connect_telegram_early(max_wait=60):
         waited += 5
         if waited >= max_wait:
             task.cancel()
-            print("Telegram is not responding - opening the app. Press Login to retry.")
+            print("Telegram is not responding.")
             return False
         print(f"Still connecting to Telegram... ({waited}s)")
 
@@ -2341,11 +2168,14 @@ async def main():
         fail_startup("Replica app problem.", problem)
 
     # 2. Connect to Telegram, log in if needed, then launch the UI
+    account_name = None
     if await connect_telegram_early():
-        await login_before_ui()
+        account_name = await login_before_ui()
+    if not account_name:
+        fail_startup("Telegram login was not completed. Run the script again.", prefix="")
 
     await load_device_name()
-    await BotApp(None).run_async()
+    await BotApp(account_name).run_async()
     try:
         await client.disconnect()
     except Exception:
