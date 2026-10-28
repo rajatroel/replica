@@ -3,6 +3,7 @@ import sys
 import time
 import shutil
 import socket
+import sqlite3
 import subprocess
 import tty
 import termios
@@ -52,7 +53,7 @@ def start_gate():
 clear_terminal()
 
 # First screen: Continue starts everything, Cancel leaves just a cleared terminal
-if not start_gate():
+if not os.environ.pop("REPLICA_SKIP_GATE", None) and not start_gate():
     clear_terminal()
     sys.exit(0)
 clear_terminal()
@@ -289,6 +290,7 @@ bot_replied_event = asyncio.Event()
 
 RUNNING = False          # True while the automation is active
 ui = None                # the running BotApp (None before the UI starts)
+QUIT_REASON = ""         # set when the user leaves the dashboard on purpose
 EXIT_TERMUX = False      # set by the Exit button: close Termux completely after the UI stops
 
 # Bot messages that must never trigger any action
@@ -318,7 +320,50 @@ ABSOLUTE_BLOCKS = [
 
 SOFT_BLOCKS = ["warnings"]
 
-client = TelegramClient(SESSION_PATH, API_ID, API_HASH)
+def delete_session_files():
+    """Delete userbot.session and its journal if they exist."""
+    for path in (f"{SESSION_PATH}.session", f"{SESSION_PATH}.session-journal"):
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+        except Exception:
+            pass
+
+def session_is_corrupt():
+    """True when the session file exists but is not a healthy Telethon session database."""
+    path = f"{SESSION_PATH}.session"
+    if not os.path.exists(path) or os.path.getsize(path) == 0:
+        return False
+    try:
+        conn = sqlite3.connect(path, timeout=5)
+        try:
+            row = conn.execute("PRAGMA integrity_check").fetchone()
+            if not row or row[0] != "ok":
+                return True
+            tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            return "sessions" not in tables
+        finally:
+            conn.close()
+    except Exception:
+        return True
+
+def is_db_error(error):
+    text = str(error).lower()
+    return isinstance(error, sqlite3.Error) or "database" in text or "malformed" in text
+
+if session_is_corrupt():
+    print("Session file is corrupted. Deleting it - you will need to log in again.")
+    delete_session_files()
+    time.sleep(2)
+
+try:
+    client = TelegramClient(SESSION_PATH, API_ID, API_HASH)
+except Exception as _e:
+    if not is_db_error(_e):
+        raise
+    print("Session file could not be opened. Deleting it - you will need to log in again.")
+    delete_session_files()
+    client = TelegramClient(SESSION_PATH, API_ID, API_HASH)
 d = None 
 
 # ==========================================
@@ -1530,6 +1575,7 @@ class BotApp(App):
         self.adb_text = ADB_NAME or adb_serial or "checking..."
         self.state_text = "Starting up..."
         self._busy = False
+        self._opened_at = time.time()
         self._cooldown = 0             # seconds left before Login can be pressed again
 
     def compose(self) -> ComposeResult:
@@ -1684,6 +1730,7 @@ class BotApp(App):
     def on_mount(self):
         global ui
         ui = self
+        self._opened_at = time.time()
         self.refresh_panel()
         self.refresh_stats()
         self.set_interval(1, self.refresh_stats)   # keeps the runtime ticking
@@ -1795,6 +1842,10 @@ class BotApp(App):
         self.run_worker(self.stop_flow(), exclusive=False)
 
     async def action_quit(self):
+        global QUIT_REASON
+        if time.time() - self._opened_at < 1.5:
+            return   # ignore stray taps/keys right at launch
+        QUIT_REASON = "terminal"
         await stop_automation("Quit")
         try:
             await client.disconnect()
@@ -1805,6 +1856,8 @@ class BotApp(App):
     async def action_exit(self):
         """Exit button: stop everything, then close Termux completely (see close_termux)."""
         global EXIT_TERMUX
+        if time.time() - self._opened_at < 1.5:
+            return   # ignore stray taps/keys right at launch
         EXIT_TERMUX = True
         await stop_automation("Exit")
         try:
@@ -2116,6 +2169,8 @@ async def login_before_ui():
     try:
         authorized = await asyncio.wait_for(client.is_user_authorized(), timeout=30)
     except Exception as e:
+        if is_db_error(e):
+            await restart_with_fresh_session()
         print(f"Could not check the Telegram session: {e}")
         return None
     if authorized:
@@ -2128,6 +2183,18 @@ async def login_before_ui():
             pass
         return name
     return await terminal_login() or None
+
+async def restart_with_fresh_session():
+    """The session turned out to be unusable at runtime: delete it and restart the script."""
+    print("\nSession file is corrupted. Deleting it and restarting for a fresh login...")
+    try:
+        await client.disconnect()
+    except Exception:
+        pass
+    delete_session_files()
+    await asyncio.sleep(2)
+    os.environ["REPLICA_SKIP_GATE"] = "1"
+    os.execv(sys.executable, [sys.executable] + sys.argv)
 
 async def connect_telegram_early(max_wait=60):
     """
@@ -2145,6 +2212,8 @@ async def connect_telegram_early(max_wait=60):
                 print("Telegram connected.")
                 return True
             except Exception as e:
+                if is_db_error(e):
+                    await restart_with_fresh_session()
                 print(f"Telegram connection failed: {e}")
                 return False
         waited += 5
@@ -2175,15 +2244,21 @@ async def main():
         fail_startup("Telegram login was not completed. Run the script again.", prefix="")
 
     await load_device_name()
-    await BotApp(account_name).run_async()
+    app = BotApp(account_name)
+    await app.run_async()
     try:
         await client.disconnect()
     except Exception:
         pass
-    clear_terminal()       # every exit path (Exit, Terminal, Ctrl+Q) clears the screen first
-    if EXIT_TERMUX:
-        close_termux()   # same exit logic as when storage permission is not granted
-    print("Script fully stopped.")
+    if QUIT_REASON or EXIT_TERMUX:
+        clear_terminal()       # intentional exit (Terminal / Ctrl+Q / Exit): clear the screen first
+        if EXIT_TERMUX:
+            close_termux()
+        print("Script fully stopped.")
+    else:
+        # The dashboard closed by itself: keep the screen so the error above stays readable
+        print(f"\nDashboard closed unexpectedly (return code: {getattr(app, 'return_code', None)}). "
+              "Scroll up for the error details.")
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
