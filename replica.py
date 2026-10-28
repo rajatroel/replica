@@ -9,6 +9,44 @@ import threading
 import tty
 import termios
 
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+
+console = Console()
+
+# ==========================================
+# COLORED TERMINAL LOGGING (NO LEADING SPACES)
+# ==========================================
+def log_color(message):
+    """Return a pleasing color hex based on the log message purpose."""
+    lowered = str(message).lower()
+    if any(w in lowered for w in (
+        "error", "fail", "timed out", "timeout", "invalid", "not found",
+        "not installed", "corrupt", "expired", "cancel", "blocked", "stopped"
+    )):
+        return "bold #FF6B7A"
+    if any(w in lowered for w in (
+        "connected", "paired", "granted", "ready", "success", "logged in",
+        "completed", "passed", "started", "valid", "scanned"
+    )):
+        return "bold #5CF2A0"
+    if any(w in lowered for w in (
+        "wait", "enter", "open", "allow", "retry", "requesting",
+        "switch", "skip", "popup", "notification"
+    )):
+        return "bold #FFD166"
+    if any(w in lowered for w in ("captcha", "computed", "security", "qr")):
+        return "bold #C9B8FF"
+    return "bold #5CC8FF"
+
+def term_log(message):
+    """Print a concise, flush-left colored line to the terminal without blank lines."""
+    for raw_line in str(message).splitlines():
+        clean = raw_line.strip()
+        if clean:
+            console.print(Text(clean, style=log_color(clean)))
+
 # ==========================================
 # TERMINAL & KEYBOARD UTILITIES
 # ==========================================
@@ -103,10 +141,10 @@ async def exit_termux_now():
 
 def ensure_storage_permission():
     if has_storage_access():
-        print("Storage permission granted")
+        term_log("Storage permission granted")
         return
 
-    print("Requesting storage permission...")
+    term_log("Requesting storage permission...")
 
     # Bypass the Termux (y/n) prompt by removing the existing symlink folder
     storage_dir = os.path.expanduser("~/storage")
@@ -119,12 +157,12 @@ def ensure_storage_permission():
     # Silently wait up to 7 seconds
     for _ in range(7):
         if has_storage_access():
-            print("Storage permission granted")
+            term_log("Storage permission granted")
             return
         time.sleep(1)
 
     # If the loop completes without permission being granted
-    print("Storage permission not granted exiting...")
+    term_log("Storage permission denied")
     close_termux()
 
 ensure_storage_permission()
@@ -152,13 +190,9 @@ from telethon.tl.functions.messages import DeleteHistoryRequest
 from telethon.tl.types import MessageEntityTextUrl
 
 import qrcode
-from rich.console import Console
-from rich.panel import Panel
-from rich.text import Text
 from textual.app import App, ComposeResult
-from textual.containers import Grid, Horizontal, Vertical
-from textual.screen import ModalScreen
-from textual.widgets import Button, Input, RichLog, Static
+from textual.containers import Horizontal, Vertical
+from textual.widgets import Button, RichLog, Static
 
 from PIL import Image, ImageOps
 import cv2
@@ -204,18 +238,17 @@ CONFIG_HELP = ("Install the Replica app first, open it, fill in your details and
 
 def fail_startup(title, detail="", seconds=7, prefix="ERROR: "):
     """Show a startup error, count down, then run the exit logic (clear screen + close Termux)."""
-    print(f"\n{prefix}{title}")
+    term_log(f"{prefix}{title}".strip())
     if detail:
-        print(detail)
-    print()
+        term_log(detail)
     for remaining in range(seconds, 0, -1):
-        print(f"\rExiting ({remaining})   ", end="", flush=True)
+        print(f"\r\033[1;38;2;255;209;102mExiting in {remaining}s\033[0m   ", end="", flush=True)
         time.sleep(1)
     clear_terminal()
     close_termux()
 
 if not os.path.exists(CONFIG_PATH):
-    fail_startup("Please create your config first using Replica...", prefix="")
+    fail_startup("Create config first using Replica app", prefix="")
 
 try:
     with open(CONFIG_PATH, 'r') as f:
@@ -226,7 +259,7 @@ try:
     LICENSE_KEY = config.get("license_key", "NONE")
     accounts = config["accounts"]
 except Exception as e:
-    fail_startup(f"config.json is invalid or incomplete ({e}).", CONFIG_HELP)
+    fail_startup(f"Invalid config.json ({e})", CONFIG_HELP)
 
 HWID = API_HASH
 
@@ -354,7 +387,7 @@ def is_db_error(error):
     return isinstance(error, sqlite3.Error) or "database" in text or "malformed" in text
 
 if session_is_corrupt():
-    print("Session file is corrupted. Deleting it - you will need to log in again.")
+    term_log("Corrupted session removed")
     delete_session_files()
     time.sleep(2)
 
@@ -363,7 +396,7 @@ try:
 except Exception as _e:
     if not is_db_error(_e):
         raise
-    print("Session file could not be opened. Deleting it - you will need to log in again.")
+    term_log("Resetting unreadable session")
     delete_session_files()
     client = TelegramClient(SESSION_PATH, API_ID, API_HASH)
 d = None 
@@ -372,10 +405,10 @@ d = None
 # UI BRIDGE
 # ==========================================
 def log(message=""):
-    """Write a line to the UI log. Safe to call from any thread."""
+    """Write a line to the UI log or colored terminal log. Safe to call from any thread."""
     app = ui
     if app is None:
-        print(message)
+        term_log(message)
         return
     try:
         app.call_from_thread(app.add_log, str(message))
@@ -510,7 +543,7 @@ class TelethonLogHandler(logging.Handler):
     """Forward Telethon warnings (e.g. failed connection attempts) to the log screen."""
     def emit(self, record):
         try:
-            log(f"[telegram] {record.getMessage()}")
+            log(f"Telegram: {record.getMessage()}")
         except Exception:
             pass
 
@@ -544,18 +577,11 @@ def run_adb(*args, timeout=20):
         result = subprocess.run(["adb", *args], capture_output=True, text=True, timeout=timeout)
         return (result.stdout + result.stderr).strip()
     except FileNotFoundError:
-        return "error: adb not found (run: pkg install android-tools)"
+        return "error: adb not found"
     except subprocess.TimeoutExpired:
         return "error: adb timed out"
     except Exception as e:
         return f"error: {e}"
-
-def run_adb_shell_cmd(command, show_output=False):
-    """Run an adb shell string command (used by the startup adb.py flow)."""
-    result = subprocess.run(f"adb {command}", shell=True, capture_output=True, text=True)
-    if show_output and result.stdout:
-        print(result.stdout.strip())
-    return (result.stdout + result.stderr).lower()
 
 ADB_NAME = ""
 
@@ -591,7 +617,7 @@ def hide_keyboard():
         pass
 
 def adb_devices():
-    """Return [(serial, state)] parsed from `adb devices`."""
+    """Return [(serial, state)] parsed from `adb devices`, prioritizing emulator-5554."""
     devices = []
     listing = False
     for line in run_adb("devices").splitlines():
@@ -601,6 +627,7 @@ def adb_devices():
         parts = line.split()
         if listing and len(parts) == 2:
             devices.append((parts[0], parts[1]))
+    devices.sort(key=lambda item: (0 if item[0].startswith("emulator") else 1))
     return devices
 
 def adb_alive(serial):
@@ -615,12 +642,26 @@ def port_open(port=5555, host="127.0.0.1", timeout=1.0):
     except OSError:
         return False
 
-def adb_poll_ready(base_wait=6, auth_wait=60, announce=False):
+def adb_restart_for_emulator():
+    """Restart the ADB server so local port 5555 is auto-registered as emulator-5554."""
+    run_adb("kill-server", timeout=20)
+    run_adb("start-server", timeout=30)
+    time.sleep(2)
+
+def adb_lock_emulator(addr=None):
+    """Switch adbd to TCP port 5555 and restart the ADB server so emulator-5554 appears immediately."""
+    if addr:
+        run_adb("-s", addr, "tcpip", "5555", timeout=20)
+    else:
+        run_adb("tcpip", "5555", timeout=20)
+    time.sleep(3)
+    if addr:
+        run_adb("disconnect", addr, timeout=10)
+    adb_restart_for_emulator()
+
+def adb_poll_ready(base_wait=8, auth_wait=60, announce=False, say=term_log):
     """
-    Wait for a working device and return its serial, or None.
-    - base_wait: seconds to wait for any device to show up in `adb devices`.
-    - auth_wait: if a device is listed but unauthorized/offline (the "Allow this computer"
-      popup), keep waiting up to this long so the user has time to tap Allow.
+    Wait for a working device and return its serial (preferring emulator-5554), or None.
     """
     start = time.time()
     deadline = start + base_wait
@@ -630,12 +671,18 @@ def adb_poll_ready(base_wait=6, auth_wait=60, announce=False):
         devices = adb_devices()
         for serial, state in devices:
             if state == "device" and adb_alive(serial):
+                if not serial.startswith("emulator"):
+                    # Convert non-emulator local connection to emulator-5554 immediately
+                    adb_lock_emulator(serial)
+                    for s2, st2 in adb_devices():
+                        if st2 == "device" and adb_alive(s2):
+                            return s2
                 return serial
         pending = [(sr, st) for sr, st in devices if st in ("unauthorized", "offline", "connecting", "authorizing")]
         if pending:
             deadline = max(deadline, start + auth_wait)
             if announce and not announced:
-                print("Device found. Tap ALLOW on the 'Allow USB debugging' popup (tick 'Always allow')...")
+                say("Allow USB debugging popup")
                 announced = True
             if not reconnected and any(st == "offline" for _, st in pending):
                 run_adb("reconnect", "offline", timeout=15)
@@ -645,16 +692,16 @@ def adb_poll_ready(base_wait=6, auth_wait=60, announce=False):
         time.sleep(1)
 
 def adb_find_ready(attempts=4, delay=1.5, auth_wait=45):
-    """Start the adb server and return the serial of a working device, or None."""
+    """Start the adb server and return the serial of a working device (emulator-5554), or None."""
     adb_prepare()
     if shutil.which("adb") is None:
         return None
     run_adb("start-server", timeout=30)
-    return adb_poll_ready(base_wait=attempts * delay, auth_wait=auth_wait)
-
-def adb_wait_ready(timeout=30):
-    """Wait until a device is authorized and answering. Returns its serial or None."""
-    return adb_poll_ready(base_wait=timeout, auth_wait=timeout)
+    serial = adb_poll_ready(base_wait=attempts * delay, auth_wait=auth_wait)
+    if not serial and port_open(5555):
+        adb_restart_for_emulator()
+        serial = adb_poll_ready(base_wait=8, auth_wait=auth_wait)
+    return serial
 
 def to_endpoint(value):
     """Turn '37123' into 'localhost:37123'; accept 'host:port' as is; None if invalid."""
@@ -669,22 +716,11 @@ def to_endpoint(value):
 def adb_pair(endpoint, code):
     return run_adb("pair", endpoint, code, timeout=30)
 
-def adb_connect(endpoint):
-    return run_adb("connect", endpoint, timeout=30)
-
-def adb_lock_tcpip_5555():
-    """Lock port 5555 and restart the ADB server so emulator-5554 persists in the background."""
-    run_adb("tcpip", "5555", timeout=20)
-    time.sleep(3)
-    run_adb("kill-server", timeout=20)
-    run_adb("start-server", timeout=30)
-    time.sleep(2)
-
 # ------------------------------------------
-# Automatic wireless debugging setup (no manual IP / port typing)
+# Automatic wireless debugging setup (notification method only)
 #   * ports are found automatically via mDNS (needs: pip install zeroconf)
 #   * the pairing code is typed into a Termux notification (needs: pkg install termux-api + Termux:API app)
-#   * everything runs on localhost, then ADB is locked to port 5555
+#   * ADB is locked to port 5555 and server restarted so emulator-5554 shows on first run too
 #   * the notification is always removed when the setup ends, whatever the outcome
 # ------------------------------------------
 ADB_NOTIF_ID = "replica_adb"
@@ -818,17 +854,17 @@ def adb_auto_pair(say):
     worker = threading.Thread(target=adb_discover, args=("pair", 120, stop, found), daemon=True)
     worker.start()
     try:
-        say("Open Wireless debugging > Pair device with pairing code")
+        say("Open Wireless debugging")
         notif_ask("ADB pairing", "Tap Enter and type the 6-digit pairing code", code_file)
-        say("Waiting for pairing code (use the notification)")
+        say("Enter pairing code in notification")
         if not wait_for_file(code_file, 120):
-            say("No pairing code entered")
+            say("Pairing timed out")
             return False
         notif_update("Pairing...")
 
         numbers = read_numbers(code_file)
         if not numbers:
-            say("Pairing code not understood")
+            say("Invalid pairing code")
             return False
         code = numbers[0]
         port = numbers[1] if len(numbers) > 1 else None
@@ -839,11 +875,12 @@ def adb_auto_pair(say):
                 time.sleep(1)
             port = str(found[-1]) if found else None
         if not port:
-            say("Pairing port not detected (reply with: code port)")
+            say("Pairing port not found")
             return False
 
         out = adb_pair(f"localhost:{port}", code)
         if "successfully paired" in out.lower():
+            say("Paired successfully")
             return True
         say("Pairing failed")
         return False
@@ -851,59 +888,56 @@ def adb_auto_pair(say):
         stop.set()
 
 def adb_ask_connect_port(say):
-    """Fallback when the connect port cannot be discovered: ask for it in the notification."""
+    """Ask for the connect port in the notification if mDNS did not report it."""
     port_file = os.path.join(ADB_WORK_DIR, "cport")
     notif_ask("Wireless debugging port", "Enter the port shown on the Wireless debugging screen", port_file)
-    say("Waiting for connect port (use the notification)")
+    say("Enter connect port in notification")
     if not wait_for_file(port_file, 90):
-        say("No port entered")
+        say("Port input timed out")
         return None
     notif_update("Connecting...")
     numbers = read_numbers(port_file)
     endpoint = to_endpoint(numbers[-1]) if numbers else None
     if endpoint and adb_try_connect(endpoint):
         return endpoint
-    say("Could not connect on that port")
+    say("Connection failed")
     return None
 
-def adb_auto_setup(say=print):
+def adb_auto_setup(say=term_log):
     """
     Fully automatic wireless debugging: find ports, pair with the notification code, connect,
-    lock port 5555. Returns the device serial, or None (caller can fall back to manual entry).
-    The notification is removed in every case.
+    lock port 5555, and restart the ADB server so emulator-5554 is active immediately.
     """
     if shutil.which("adb") is None or not notif_available():
         return None
     adb_prepare()
     try:
         os.makedirs(ADB_WORK_DIR, exist_ok=True)
-        notif_clear()   # drop a leftover notification from an interrupted earlier run
+        notif_clear()
         run_adb("start-server", timeout=30)
 
-        addr = None
-        if adb_try_connect("localhost:5555"):
-            addr = "localhost:5555"
-        else:
-            addr = adb_find_and_connect(4)
+        if port_open(5555):
+            adb_restart_for_emulator()
+            serial = adb_poll_ready(base_wait=8, auth_wait=60, announce=True, say=say)
+            if serial:
+                return serial
+
+        addr = adb_find_and_connect(4)
+        if not addr:
+            if not adb_auto_pair(say):
+                return None
+            say("Connecting wireless port...")
+            addr = adb_find_and_connect(30) or adb_ask_connect_port(say)
             if not addr:
-                if not adb_auto_pair(say):
-                    return None
-                addr = adb_find_and_connect(30) or adb_ask_connect_port(say)
-                if not addr:
-                    return None
+                return None
 
-        if addr != "localhost:5555":
-            run_adb("-s", addr, "tcpip", "5555", timeout=20)
-            time.sleep(3)
-            run_adb("disconnect", addr, timeout=10)
-            adb_try_connect("localhost:5555")
+        say("Locking port 5555...")
+        adb_lock_emulator(addr)
 
-        serial = adb_poll_ready(base_wait=10, auth_wait=60)
-        if serial:
-            say("ADB connected")
+        serial = adb_poll_ready(base_wait=12, auth_wait=60, announce=True, say=say)
         return serial
-    except Exception as e:
-        say(f"ADB auto setup error: {e}")
+    except Exception:
+        say("ADB setup error")
         return None
     finally:
         notif_clear()
@@ -911,85 +945,46 @@ def adb_auto_setup(say=print):
 
 def ensure_adb_startup():
     """
-    At startup, detect an already open background ADB port (emulator-5554 / 5555).
-    Only when nothing is reachable (after giving the authorization popup time) ask
-    for the pairing details.
+    At startup, detect an active emulator-5554 connection or run notification-based wireless setup.
+    Always locks port 5555 and restarts the ADB server so emulator-5554 shows on the very first run.
     """
     global adb_serial
     adb_prepare()
 
     if shutil.which("adb") is None:
-        print("ERROR: adb not found (run: pkg install android-tools)")
-        return None
+        fail_startup("ADB not installed (pkg install android-tools)", prefix="")
 
-    print("Checking existing ADB connection...")
+    term_log("Checking ADB...")
     run_adb("start-server", timeout=30)
 
-    # 1. A device may already be listed (emulator-5554). Wait for it, including the Allow popup.
-    serial = adb_poll_ready(base_wait=6, auth_wait=60, announce=True)
+    # 1. Check if emulator-5554 (or another device) is already listed
+    serial = adb_poll_ready(base_wait=6, auth_wait=60, announce=True, say=term_log)
 
-    # 2. Nothing listed but port 5555 is open: connect to it directly
+    # 2. Nothing listed, but port 5555 is open: restart server so it registers as emulator-5554
     if not serial and not adb_devices() and port_open(5555):
-        print("Background ADB port 5555 is open. Connecting...")
-        run_adb("connect", "localhost:5555", timeout=15)
-        serial = adb_poll_ready(base_wait=8, auth_wait=60, announce=True)
+        term_log("Starting emulator port...")
+        adb_restart_for_emulator()
+        serial = adb_poll_ready(base_wait=8, auth_wait=60, announce=True, say=term_log)
 
     if serial:
         adb_serial = serial
-        print(f"ADB already connected: {serial}")
+        term_log(f"ADB connected: {serial}")
         return serial
 
-    print("No usable background ADB port detected. Running first-time ADB setup...\n")
+    if not notif_available():
+        fail_startup("Install termux-api for ADB setup", prefix="")
 
-    # 3. Automatic setup: ports found by mDNS, pairing code typed in a notification
-    if notif_available():
-        for attempt in range(2):
-            serial = adb_auto_setup(print)
-            if serial:
-                adb_serial = serial
-                print(f"\nADB successfully connected ({serial}). Moving to UI...\n")
-                return serial
-            if attempt == 0:
-                print("Retrying automatic setup...\n")
-        print("Automatic setup failed. Falling back to manual entry.\n")
-    else:
-        print("Tip: install termux-api (pkg install termux-api + Termux:API app) for automatic ADB setup.\n")
-
-    while True:
-        connect_ip_port = input("Enter device IP & PORT: ").strip()
-        pair_ip_port = input("Enter pairing IP & PORT: ").strip()
-        pair_code = input("Enter pairing CODE: ").strip()
-
-        print("\nConnecting...\n")
-
-        conn_target = to_endpoint(connect_ip_port) or connect_ip_port
-        pair_target = to_endpoint(pair_ip_port) or pair_ip_port
-
-        if pair_target and pair_code:
-            run_adb_shell_cmd(f"pair {pair_target} {pair_code}")
-
-        for _ in range(3):
-            output = run_adb_shell_cmd(f"connect {conn_target}")
-            if "connected" in output and "failed" not in output:
-                break
-            time.sleep(2)
-
-        # Lock port 5555 and restart the server so emulator-5554 persists
-        run_adb_shell_cmd("tcpip 5555")
-        time.sleep(3)
-        run_adb_shell_cmd("kill-server")
-        run_adb_shell_cmd("start-server")
-        time.sleep(2)
-
-        run_adb_shell_cmd("devices", show_output=True)
-
-        serial = adb_poll_ready(base_wait=10, auth_wait=60, announce=True)
+    term_log("Starting ADB setup...")
+    for attempt in range(3):
+        if attempt > 0:
+            term_log("Retrying ADB setup...")
+        serial = adb_auto_setup(term_log)
         if serial:
             adb_serial = serial
-            print(f"\nADB successfully connected ({serial}). Moving to UI...\n")
+            term_log(f"ADB connected: {serial}")
             return serial
 
-        print("\nADB device not detected or not authorized yet. Please try again.\n")
+    fail_startup("ADB connection failed", prefix="")
 
 # ==========================================
 # DEVICE CONNECTION
@@ -998,21 +993,21 @@ def connect_with_retry(max_retries=5, delay=3):
     """Connect to uiautomator2, retrying on failure. Returns the device or None."""
     for attempt in range(1, max_retries + 1):
         try:
-            log(f"Connecting to uiautomator2... (Attempt {attempt}/{max_retries})")
+            log(f"Connecting UIAutomator ({attempt}/{max_retries})")
             device = u2.connect(adb_serial)
             device.info  
-            log("UIAutomator Connection successful!")
+            log("UIAutomator connected")
             return device
         except Exception as e:
             log(f"Connection failed: {e}")
             if attempt < max_retries:
                 time.sleep(delay)
-    log("Could not connect to the device.")
+    log("Device connection failed")
     return None
 
 def cleanup_apps(device, ig_pkg, chrome_pkg):
     """Close Instagram and Chrome."""
-    log("Cleaning up apps...")
+    log("Closing apps")
     device.app_stop(chrome_pkg)
     device.app_stop(ig_pkg)
 
@@ -1034,7 +1029,7 @@ def perform_switch(device, target):
         time.sleep(1.5)
         profile_btn.long_click(duration=1.0)
     else:
-        log("Unknown error")
+        log("Profile tab not found")
         device.app_stop(ig_pkg)
         return False
         
@@ -1058,7 +1053,7 @@ def perform_switch(device, target):
         device.swipe(screen_width * 0.5, screen_height * 0.8, screen_width * 0.5, screen_height * 0.4, duration=0.5)
         time.sleep(3.5) 
 
-    log(f"Account '{target}' NOT found.")
+    log(f"Account {target} not found")
     device.app_stop(ig_pkg)
     return False
 
@@ -1297,7 +1292,7 @@ def get_math_answer(target_emoji, b64_images):
         try:
             response = requests.post(AI_PROXY_URL, json=payload, timeout=30)
             if response.status_code == 403:
-                log(f"\n{response.json().get('error', 'License Error')}\n")
+                log(response.json().get('error', 'License Error'))
                 return "LICENSE_ERROR"
 
             results = response.json()["results"]
@@ -1358,7 +1353,7 @@ async def smart_send(text_to_send):
         record_stat("skip")
     for attempt in range(1, 3): 
         bot_replied_event.clear() 
-        log(f"Clicking : {text_to_send} (Attempt {attempt}/2)")
+        log(f"Clicking: {text_to_send} ({attempt}/2)")
         await client.send_message(TARGET_CHAT, text_to_send, parse_mode=None, link_preview=False)
         try:
             await asyncio.wait_for(bot_replied_event.wait(), timeout=60.0)
@@ -1366,9 +1361,9 @@ async def smart_send(text_to_send):
         except asyncio.TimeoutError:
             if not RUNNING: return
             if attempt == 1:
-                log("Bot didn't reply in 60s! Trying ONE more time...")
+                log("No reply in 60s, retrying...")
                 record_error("Bot did not reply within 60s (retrying)")
-            else: log("Bot still didn't reply after 2nd attempt!")
+            else: log("Bot timed out twice")
     await kill_everything("Bot server stopped responding after 2 attempts.")
 
 async def smart_send_photo():
@@ -1380,14 +1375,14 @@ async def smart_send_photo():
     
     for attempt in range(1, 3): 
         bot_replied_event.clear()
-        log(f"Uploading screenshot... (Attempt {attempt}/2)")
+        log(f"Uploading proof ({attempt}/2)")
         try:
             await client.send_file(TARGET_CHAT, photo_path)
             await asyncio.wait_for(bot_replied_event.wait(), timeout=60.0)
             return True
         except asyncio.TimeoutError:
             if attempt == 2: return False
-        except Exception as e:
+        except Exception:
             if attempt == 1: await asyncio.sleep(3.0)
             else: return False
 
@@ -1395,15 +1390,15 @@ async def smart_send_photo():
 # ASYNC TASK WRAPPERS
 # ==========================================
 async def do_switch_account(target_username):
-    log(f"Switching to: {target_username}")
+    log(f"Switching to {target_username}")
     success = await asyncio.to_thread(perform_switch, d, target_username)
     if not success:
-        log("Account switching failed (Not found / Banned)")
+        log("Account switch failed")
         record_error(f"Could not switch Instagram to {target_username}")
     return success
 
 async def do_like_task(link):
-    log(f"Like task detected")
+    log("Like task detected")
     success = await asyncio.to_thread(perform_like, d, link)
     if success:
         record_stat("like")
@@ -1421,7 +1416,7 @@ async def do_comment_task(link, full_msg_text):
         await smart_send("❌Skip")
         return
         
-    log("Performing action...")
+    log("Posting comment...")
     success = await asyncio.to_thread(perform_comment, d, link, comment_text)
     if success:
         if await smart_send_photo():
@@ -1443,7 +1438,7 @@ async def handle_msg(event):
         await process_bot_message(event)
     except Exception as e:
         record_error(f"Unexpected error: {type(e).__name__}: {e}")
-        log(f"Unexpected error: {type(e).__name__}: {e}")
+        log(f"Error: {type(e).__name__}")
 
 async def process_bot_message(event):
     message = event.message
@@ -1461,7 +1456,7 @@ async def process_bot_message(event):
 
     # Stop everything when verification fails
     if "verification failed" in text_lower:
-        log("Verification Failed!")
+        log("Verification failed")
         await stop_automation("CAPTCHA verification failed")
         return
 
@@ -1523,21 +1518,21 @@ async def process_bot_message(event):
 
         if answers == "LICENSE_ERROR":
             await captcha_task
-            log("License error from proxy.")
+            log("License error")
             await stop_automation("License error")
             return
 
         if not answers:
             await captcha_task
-            log("No valid answer received from solver.")
+            log("Solver returned no answer")
             record_error(f"Captcha: {ISSUES['solver'] or 'solver returned no answer'}")
             return
             
-        log(f"Captcha answers computed : {answers}")
+        log(f"Captcha computed: {answers}")
         
         captcha_success = await captcha_task
         if not captcha_success:
-            log("Failed to complete Captcha UI sequence.")
+            log("Captcha Chrome step failed")
             record_error(f"Captcha: {ISSUES['chrome'] or 'could not finish the Chrome step'}")
         return 
 
@@ -1606,7 +1601,7 @@ async def process_bot_message(event):
         await smart_send("Instagram")
         
     elif "verification passed" in text_lower:
-        log("Verification successful")
+        log("Verification passed")
         record_stat("captcha")
         if d:
             await asyncio.to_thread(d.app_stop, "com.android.chrome")
@@ -1624,7 +1619,7 @@ async def start_automation():
     """Connect to the phone, reset the bot chat and start the task flow."""
     global d, RUNNING, pending_task, pending_text, RUN_STARTED
 
-    log("Initializing UIAutomator2 connection...")
+    log("Connecting UIAutomator2...")
     d = await asyncio.to_thread(connect_with_retry)
     if d is None:
         record_error("Could not connect to the phone (uiautomator2)")
@@ -1635,7 +1630,7 @@ async def start_automation():
     RUNNING = True
     RUN_STARTED = time.time()
     ui_set_state("Running")
-    log("AUTOMATION STARTED SUCCESSFULLY")
+    log("Automation started")
 
     # Reset the chat and start the task flow (each step stops early if Stop is pressed)
     await asyncio.sleep(7)
@@ -1657,108 +1652,6 @@ async def start_automation():
 # ==========================================
 # MAIN UI (Textual - Redesigned Modern Dashboard)
 # ==========================================
-class AdbScreen(ModalScreen):
-    """Wireless debugging setup: pair with code, connect by port, and lock tcpip 5555."""
-
-    CSS = """
-    AdbScreen { align: center middle; background: #000000 92%; }
-    #adb_box { width: 94%; height: auto; border: round #9D7BFF; background: #000000; padding: 1 2; }
-    #adb_box Input { background: #000000; border: round #4F46A5; color: #F5EFFF; margin-top: 1; }
-    #adb_box Input:focus { border: round #B69DFF; }
-    #adb_title { text-style: bold; color: #C9B8FF; margin-bottom: 1; text-align: center; width: 100%; }
-    #adb_hint { color: #B8B0D0; }
-    #adb_buttons { height: auto; margin-top: 1; }
-    #adb_buttons Button { width: 1fr; height: 3; margin-right: 1; border: round #4A4565; text-style: bold; }
-    #adb_go { background: #064E3B; color: #5CF2A0; border: round #2BE37F; }
-    #adb_cancel { background: #1F2937; color: #F1ECFF; border: round #4A4565; }
-    #adb_status { margin-top: 1; color: #FFD166; }
-    """
-    BINDINGS = [("escape", "cancel", "Cancel")]
-
-    def compose(self) -> ComposeResult:
-        with Vertical(id="adb_box"):
-            yield Static("⚡ ADB WIRELESS SETUP", id="adb_title")
-            yield Static(
-                "Settings > Developer options > Wireless debugging.\n"
-                "Pairing port + code: 'Pair device with pairing code' (first time only).\n"
-                "Connect port: shown on the main Wireless debugging screen.",
-                id="adb_hint",
-            )
-            yield Input(placeholder="Device IP & PORT (or connect port)", id="conn_port")
-            yield Input(placeholder="Pairing IP & PORT (blank if already paired)", id="pair_port")
-            yield Input(placeholder="Pairing CODE", id="pair_code")
-            with Horizontal(id="adb_buttons"):
-                yield Button("Connect", id="adb_go")
-                yield Button("Cancel", id="adb_cancel")
-            yield Static("", id="adb_status")
-
-    def on_mount(self):
-        self.query_one("#conn_port", Input).focus()
-
-    def say(self, message):
-        self.query_one("#adb_status", Static).update(Text(message))
-
-    def action_cancel(self):
-        self.dismiss(None)
-
-    def on_button_pressed(self, event: Button.Pressed):
-        if event.button.id == "adb_cancel":
-            self.dismiss(None)
-        elif event.button.id == "adb_go":
-            self.run_worker(self.do_connect(), exclusive=True)
-
-    async def do_connect(self):
-        conn_port = self.query_one("#conn_port", Input).value.strip()
-        pair_port = self.query_one("#pair_port", Input).value.strip()
-        pair_code = self.query_one("#pair_code", Input).value.strip()
-        button = self.query_one("#adb_go", Button)
-
-        pair_endpoint = to_endpoint(pair_port) if pair_port else None
-        conn_endpoint = to_endpoint(conn_port)
-        if pair_port and not pair_endpoint:
-            self.say("Pairing IP & PORT is not valid.")
-            return
-        if pair_port and not pair_code:
-            self.say("Enter the pairing code.")
-            return
-        if not conn_endpoint:
-            self.say("Enter the Wireless debugging device IP & PORT.")
-            return
-
-        button.disabled = True
-        try:
-            adb_prepare()
-            if pair_endpoint:
-                self.say("Pairing...")
-                out = await asyncio.to_thread(adb_pair, pair_endpoint, pair_code)
-                log(f"adb pair: {out}")
-
-            self.say("Connecting...")
-            connected = False
-            for _ in range(3):
-                out = await asyncio.to_thread(adb_connect, conn_endpoint)
-                log(f"adb connect: {out}")
-                if "connected" in out.lower() and "failed" not in out.lower():
-                    connected = True
-                    break
-                await asyncio.sleep(2)
-
-            if not connected:
-                self.say(f"Connect failed:\n{out}")
-                return
-
-            self.say("Locking background port 5555 and restarting ADB server...")
-            await asyncio.to_thread(adb_lock_tcpip_5555)
-
-            self.say("Waiting for emulator/device authorization...")
-            serial = await asyncio.to_thread(adb_wait_ready, 30)
-            if serial:
-                self.dismiss(serial)
-            else:
-                self.say("Device not authorized yet. Allow the popup and press Connect again.")
-        finally:
-            button.disabled = False
-
 def license_error_text():
     """Short, friendly text for a failed license check."""
     known = {"invalid license key": "Invalid license key", "license expired": "License expired"}
@@ -2047,26 +1940,20 @@ class BotApp(App):
         self.update_buttons()
 
     def add_log(self, message):
-        """Show only the latest log line: each new message replaces the previous one."""
+        """Show only the latest log line: flush-left, color-coded by purpose."""
         try:
             box = self.query_one("#log", RichLog)
         except Exception:
             return
         stamp = datetime.now().strftime("%H:%M:%S")
         box.clear()
-        for line in (str(message).splitlines() or [""]):
-            lowered = line.lower()
-            if any(w in lowered for w in ("error", "failed", "not found", "stopped", "expired", "cancel")):
-                color = "#FF8A96"
-            elif any(w in lowered for w in ("success", "connected", "logged in", "started", "valid", "passed", "computed", "completed")):
-                color = "#7DF5B2"
-            elif any(w in lowered for w in ("captcha", "scan", "switching", "task detected", "clicking", "uploading")):
-                color = "#9CD3FF"
-            else:
-                color = "#DAD3EE"
+        for raw_line in str(message).splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
             entry = Text()
-            entry.append(f"{stamp}  ", style="#9A93B5")
-            entry.append(line, style=color)
+            entry.append(f"{stamp} ", style="#9A93B5")
+            entry.append(line, style=log_color(line))
             box.write(entry)
 
     def refresh_stats(self):
@@ -2188,7 +2075,7 @@ class BotApp(App):
             if done:
                 return task.result()
             waited += tick
-            log(f"{label}... ({waited}s)")
+            log(f"{label} ({waited}s)")
 
     # ---- Telegram login ----
     def set_logged_in(self, name, text="Not logged in"):
@@ -2205,9 +2092,9 @@ class BotApp(App):
         self.refresh_panel()
         try:
             if not client.is_connected():
-                log("Connecting to Telegram...")
-                await self.wait_with_progress(client.connect(), "Still connecting to Telegram")
-            authorized = await self.wait_with_progress(client.is_user_authorized(), "Checking Telegram session")
+                log("Connecting Telegram...")
+                await self.wait_with_progress(client.connect(), "Connecting Telegram")
+            authorized = await self.wait_with_progress(client.is_user_authorized(), "Checking session")
             if authorized:
                 me = await self.wait_with_progress(client.get_me(), "Reading account")
                 name = f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown"
@@ -2216,17 +2103,10 @@ class BotApp(App):
             self.set_logged_in(None)
         except Exception as e:
             self.set_logged_in(None, "connection failed")
-            log(f"Telegram connection failed: {e}")
-            log("Press Login to retry")
+            log(f"Telegram failed: {e}")
         return False
 
     # ---- ADB ----
-    async def open_adb_screen(self):
-        """Show the ADB setup screen and return the connected serial (or None)."""
-        done = asyncio.get_running_loop().create_future()
-        self.push_screen(AdbScreen(), lambda result: done.done() or done.set_result(result))
-        return await done
-
     async def ensure_adb(self):
         global adb_serial
         if adb_serial and await asyncio.to_thread(adb_alive, adb_serial):
@@ -2237,14 +2117,13 @@ class BotApp(App):
         serial = await asyncio.to_thread(adb_find_ready)
         if not serial:
             if shutil.which("adb") is None:
-                log("adb not found. Run: pkg install android-tools")
-            if notif_available():
-                log("ADB not connected - starting automatic setup")
+                log("ADB not installed")
+            elif notif_available():
+                log("Starting ADB setup...")
                 self.set_state("Waiting for ADB pairing")
                 serial = await asyncio.to_thread(adb_auto_setup, log)
-            if not serial:
-                log("ADB not connected - opening manual setup")
-                serial = await self.open_adb_screen()
+            else:
+                log("Termux:API not installed")
         if serial:
             adb_serial = serial
             self.set_adb(await asyncio.to_thread(get_device_name, serial))
@@ -2344,7 +2223,6 @@ class BotApp(App):
 QR_PNG_PATH = "/sdcard/login_qr.png"
 QR_TIMEOUT = 30          # Telegram QR tokens live about 30 seconds
 RETRY_WAIT = 120         # seconds to wait after an expired QR before Termux closes
-console = Console()
 
 def save_qr_png(url, path=QR_PNG_PATH):
     """Save the login QR code as a large, sharp PNG."""
@@ -2359,25 +2237,25 @@ def check_companion_app():
         return None
     listing = run_adb("-s", adb_serial, "shell", "pm", "list", "packages", COMPANION_PKG)
     if f"package:{COMPANION_PKG}" not in listing.split():
-        return ("The Replica app is not installed.\n"
+        return ("Replica app is not installed.\n"
                 "Install it first, open it once, grant storage access, create your config, then run this script again.")
     resolved = run_adb("-s", adb_serial, "shell", "pm", "resolve-activity", "--brief",
                        "-a", "android.intent.action.VIEW", "-d", f"file://{QR_PNG_PATH}",
                        "-t", "image/png", "-p", COMPANION_PKG)
     if "no activity found" in resolved.lower():
-        return ("Your Replica app is too old to show the login QR code.\n"
+        return ("Replica app is outdated.\n"
                 "Install the latest version of Replica, then run this script again.")
     return None
 
 def open_qr_image(path=QR_PNG_PATH):
     """Open the PNG in the Replica app. Returns None on success, otherwise an error text."""
     if not adb_serial:
-        return "ADB is not connected, so the Replica app cannot be opened."
+        return "ADB is not connected."
     out = run_adb("-s", adb_serial, "shell", "am", "start", "-a", "android.intent.action.VIEW",
                   "-d", f"file://{path}", "-t", "image/png", "-p", COMPANION_PKG, timeout=15)
     lowered = out.lower()
     if "error" in lowered or "exception" in lowered or "unable to resolve" in lowered:
-        return f"Could not open the Replica app: {out}"
+        return f"Could not open Replica app: {out}"
     return None
 
 def remove_qr_png(path=QR_PNG_PATH):
@@ -2406,7 +2284,6 @@ def render_full_width_continue_button():
     console.print(Text(pad_line, style="bold #EADDFF on #4F378B"))
     console.print(Text(label_line, style="bold #EADDFF on #4F378B"))
     console.print(Text(pad_line, style="bold #EADDFF on #4F378B"))
-    console.print()
 
 def wait_for_continue_button():
     """
@@ -2454,7 +2331,7 @@ def wait_for_continue_button():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 async def ask_password_terminal():
-    """Ask for the Telegram 2FA password using standard visible input like ADB setup."""
+    """Ask for the Telegram 2FA password using standard visible input."""
     while True:
         try:
             password = (await asyncio.to_thread(input, "Enter 2FA password: ")).strip()
@@ -2466,9 +2343,9 @@ async def ask_password_terminal():
             await client.sign_in(password=password)
             return True
         except errors.PasswordHashInvalidError:
-            print("\nWrong 2FA password. Please try again.\n")
+            term_log("Wrong 2FA password")
         except errors.FloodWaitError as e:
-            print(f"\nToo many attempts. Telegram asks you to wait {e.seconds}s.\n")
+            term_log(f"Flood wait: {e.seconds}s")
             return False
 
 async def expired_and_exit():
@@ -2476,9 +2353,9 @@ async def expired_and_exit():
     remove_qr_png()
     bring_termux_to_front()
     clear_terminal()
-    console.print("\n[bold #F2B8B5]QR code expired.[/] [#E6E1E5]Wait 2 minutes before trying again.[/]")
+    term_log("QR code expired. Wait 2 minutes.")
     for remaining in range(RETRY_WAIT, 0, -1):
-        print(f"\r  Try again in {remaining // 60}:{remaining % 60:02d}   ", end="", flush=True)
+        print(f"\r\033[1;38;2;255;209;102mTry again in {remaining // 60}:{remaining % 60:02d}\033[0m   ", end="", flush=True)
         await asyncio.sleep(1)
     print()
 
@@ -2492,14 +2369,6 @@ async def expired_and_exit():
     except Exception:
         pass
 
-    def delete_session_files():
-        for path in (f"{SESSION_PATH}.session", f"{SESSION_PATH}.session-journal"):
-            try:
-                if os.path.exists(path):
-                    os.remove(path)
-            except Exception:
-                pass
-
     delete_session_files()
     await asyncio.sleep(0.5)
     delete_session_files()   # in case anything recreated it while shutting down
@@ -2512,10 +2381,8 @@ async def terminal_login():
     Guided Telegram login shown before the UI. Returns True when logged in,
     False when cancelled. Exits Termux if the QR code expires.
     """
-    # Clear previous startup logs when the login helping box appears
     clear_terminal()
 
-    console.print()
     console.print(Panel(
         "[bold #E6E1E5]You are not logged in to Telegram yet.[/]\n"
         "[#CAC4D0]You will log in by scanning a QR code with another phone.[/]\n\n"
@@ -2534,26 +2401,25 @@ async def terminal_login():
     except (EOFError, KeyboardInterrupt):
         return False
 
-    console.print("[#938F99]Creating QR code...[/]")
+    term_log("Creating QR code...")
     qr_login = await client.qr_login()
     problem = None
     try:
         await asyncio.to_thread(save_qr_png, qr_login.url)
         problem = await asyncio.to_thread(open_qr_image)
     except Exception as e:
-        problem = f"Could not create the QR image: {e}"
+        problem = f"QR image error: {e}"
     if problem:
         remove_qr_png()
-        console.print(f"\n[bold #F2B8B5]ERROR:[/] [#E6E1E5]{problem}[/]")
-        console.print("[#CAC4D0]Make sure the Replica app is installed and has storage access, then run the script again.[/]")
+        term_log(f"Error: {problem}")
         sys.exit(1)
-    console.print("[#B7F0C8]QR code opened in the Replica app. Scan it with your other phone now.[/]")
+    term_log("QR opened. Scan now.")
 
     wait_task = asyncio.create_task(qr_login.wait(timeout=QR_TIMEOUT))
     start = time.time()
     while not wait_task.done():
         remaining = max(0, QR_TIMEOUT - int(time.time() - start))
-        print(f"\r  Waiting for scan... {remaining:>2}s  ", end="", flush=True)
+        print(f"\r\033[1;38;2;255;209;102mWaiting for scan: {remaining:>2}s\033[0m  ", end="", flush=True)
         await asyncio.sleep(0.5)
     print()
 
@@ -2569,17 +2435,16 @@ async def terminal_login():
         remove_qr_png()
         bring_termux_to_front()
 
-    # Clear the terminal as soon as the QR code is scanned successfully
     clear_terminal()
-    console.print("[#B7F0C8]QR code scanned.[/]\n")
+    term_log("QR code scanned")
 
     if need_password and not await ask_password_terminal():
-        console.print("[#FFD9A0]Login cancelled.[/]")
+        term_log("Login cancelled")
         return False
 
     me = await client.get_me()
     name = f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown"
-    console.print(f"\n[bold #B7F0C8]Logged in as {name}[/]")
+    term_log(f"Logged in: {name}")
     # The keyboard is only open when the 2FA password was typed: close it, then wait before the UI
     if need_password:
         await asyncio.to_thread(hide_keyboard)
@@ -2595,14 +2460,14 @@ async def login_before_ui():
     except Exception as e:
         if is_db_error(e):
             await restart_with_fresh_session()
-        print(f"Could not check the Telegram session: {e}")
+        term_log(f"Session check failed: {e}")
         return None
     if authorized:
         name = "Telegram account"
         try:
             me = await client.get_me()
             name = f"{me.first_name or ''} {me.last_name or ''}".strip() or me.username or "Unknown"
-            console.print(f"[bold #B7F0C8]Logged in as {name}[/]")
+            term_log(f"Logged in: {name}")
         except Exception:
             pass
         return name
@@ -2610,7 +2475,7 @@ async def login_before_ui():
 
 async def restart_with_fresh_session():
     """The session turned out to be unusable at runtime: delete it and restart the script."""
-    print("\nSession file is corrupted. Deleting it and restarting for a fresh login...")
+    term_log("Session corrupted, restarting...")
     try:
         await client.disconnect()
     except Exception:
@@ -2622,10 +2487,9 @@ async def restart_with_fresh_session():
 
 async def connect_telegram_early(max_wait=60):
     """
-    Connect to Telegram before the UI opens, like the original login flow did,
-    printing progress so a slow network is visible. The UI opens either way.
+    Connect to Telegram before the UI opens, printing concise colored progress.
     """
-    print("Connecting to Telegram...")
+    term_log("Connecting Telegram...")
     task = asyncio.ensure_future(client.connect())
     waited = 0
     while True:
@@ -2633,39 +2497,39 @@ async def connect_telegram_early(max_wait=60):
         if done:
             try:
                 task.result()
-                print("Telegram connected.")
+                term_log("Telegram connected")
                 return True
             except Exception as e:
                 if is_db_error(e):
                     await restart_with_fresh_session()
-                print(f"Telegram connection failed: {e}")
+                term_log(f"Telegram connection failed: {e}")
                 return False
         waited += 5
         if waited >= max_wait:
             task.cancel()
-            print("Telegram is not responding.")
+            term_log("Telegram timed out")
             return False
-        print(f"Still connecting to Telegram... ({waited}s)")
+        term_log(f"Waiting for Telegram ({waited}s)")
 
 async def main():
     # Show Telethon connection warnings in the terminal now and in the log screen later
     handler = TelethonLogHandler(level=logging.WARNING)
     logging.getLogger("telethon").addHandler(handler)
 
-    # 1. Check for an active background ADB device (e.g. emulator-5554); if none, run adb.py logic
+    # 1. Check for an active background ADB device (emulator-5554); if none, run notification setup
     await asyncio.to_thread(ensure_adb_startup)
 
     # 1b. The Replica app must be installed (it shows the login QR code)
     problem = await asyncio.to_thread(check_companion_app)
     if problem:
-        fail_startup("Replica app problem.", problem)
+        fail_startup("Replica app error", problem)
 
     # 2. Connect to Telegram, log in if needed, then launch the UI
     account_name = None
     if await connect_telegram_early():
         account_name = await login_before_ui()
     if not account_name:
-        fail_startup("Telegram login was not completed. Run the script again.", prefix="")
+        fail_startup("Telegram login incomplete", prefix="")
 
     await load_device_name()
     app = BotApp(account_name)
@@ -2678,11 +2542,9 @@ async def main():
         clear_terminal()       # intentional exit (Terminal / Ctrl+Q / Exit): clear the screen first
         if EXIT_TERMUX:
             close_termux()
-        print("Script fully stopped.")
+        term_log("Script stopped")
     else:
-        # The dashboard closed by itself: keep the screen so the error above stays readable
-        print(f"\nDashboard closed unexpectedly (return code: {getattr(app, 'return_code', None)}). "
-              "Scroll up for the error details.")
+        term_log(f"Dashboard closed (code: {getattr(app, 'return_code', None)})")
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
