@@ -5,6 +5,7 @@ import shutil
 import socket
 import sqlite3
 import subprocess
+import threading
 import tty
 import termios
 
@@ -679,6 +680,235 @@ def adb_lock_tcpip_5555():
     run_adb("start-server", timeout=30)
     time.sleep(2)
 
+# ------------------------------------------
+# Automatic wireless debugging setup (no manual IP / port typing)
+#   * ports are found automatically via mDNS (needs: pip install zeroconf)
+#   * the pairing code is typed into a Termux notification (needs: pkg install termux-api + Termux:API app)
+#   * everything runs on localhost, then ADB is locked to port 5555
+#   * the notification is always removed when the setup ends, whatever the outcome
+# ------------------------------------------
+ADB_NOTIF_ID = "replica_adb"
+ADB_WORK_DIR = os.path.join(os.path.expanduser("~"), ".replica_adb")
+
+def notif_available():
+    """True when the Termux:API notification command is installed."""
+    return shutil.which("termux-notification") is not None
+
+def _quiet(cmd, timeout=10):
+    try:
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=timeout)
+    except Exception:
+        pass
+
+def notif_ask(title, content, outfile):
+    """Post a notification with a reply box. The typed reply is written to outfile."""
+    try:
+        os.remove(outfile)
+    except OSError:
+        pass
+    _quiet(["termux-notification", "--id", ADB_NOTIF_ID, "--priority", "max",
+            "--title", title, "--content", content,
+            "--button1", "Enter", "--button1-action", f'echo "$REPLY" > "{outfile}"'])
+
+def notif_update(content):
+    """Replace the reply notification in place (clears Android's 'sending' state)."""
+    _quiet(["termux-notification", "--id", ADB_NOTIF_ID, "--title", "ADB pairing",
+            "--content", content, "--priority", "low", "--alert-once"])
+
+def notif_clear():
+    """Remove the notification for good. Repeated because some ROMs re-show a replied notification."""
+    if not notif_available():
+        return
+    for i in range(3):
+        _quiet(["termux-notification-remove", ADB_NOTIF_ID])
+        if i < 2:
+            time.sleep(0.8)
+
+def wait_for_file(path, seconds):
+    """Wait until path exists and is not empty."""
+    for _ in range(int(seconds)):
+        try:
+            if os.path.getsize(path) > 0:
+                return True
+        except OSError:
+            pass
+        time.sleep(1)
+    return False
+
+def read_numbers(path):
+    """All digit groups typed into a notification reply."""
+    try:
+        with open(path, "r") as f:
+            return re.findall(r"\d+", f.read())
+    except OSError:
+        return []
+
+def adb_discover(kind, timeout, stop=None, sink=None):
+    """
+    Find wireless debugging ports through mDNS ('pair' or 'connect').
+    Found ports are appended to `sink` while searching; the list is also returned.
+    Returns an empty list when zeroconf is not installed.
+    """
+    ports = sink if sink is not None else []
+    try:
+        from zeroconf import Zeroconf, ServiceBrowser, ServiceInfo
+    except Exception:
+        return ports
+
+    stype = "_adb-tls-pairing._tcp.local." if kind == "pair" else "_adb-tls-connect._tcp.local."
+    names = []
+
+    class Listener:
+        def add_service(self, zc, t, n):
+            if n not in names:
+                names.append(n)
+        def update_service(self, zc, t, n):
+            if n not in names:
+                names.append(n)
+        def remove_service(self, zc, t, n):
+            pass
+
+    zc = None
+    try:
+        zc = Zeroconf()
+        ServiceBrowser(zc, stype, Listener())
+        end = time.time() + timeout
+        first = None
+        resolved = set()
+        while time.time() < end and not (stop is not None and stop.is_set()):
+            for name in list(names):
+                if name in resolved:
+                    continue
+                info = ServiceInfo(stype, name)
+                if info.request(zc, 3000) and info.port:
+                    resolved.add(name)
+                    if info.port not in ports:
+                        ports.append(info.port)
+            if ports and first is None:
+                first = time.time()
+            if first and time.time() - first > 1.5:
+                break
+            time.sleep(0.2)
+    except Exception:
+        pass
+    finally:
+        try:
+            if zc is not None:
+                zc.close()
+        except Exception:
+            pass
+    return ports
+
+def adb_try_connect(endpoint):
+    return "connected to" in run_adb("connect", endpoint, timeout=15).lower()
+
+def adb_find_and_connect(timeout):
+    """Connect to the first discovered wireless debugging port. Returns 'localhost:port' or None."""
+    for port in adb_discover("connect", timeout):
+        endpoint = f"localhost:{port}"
+        if adb_try_connect(endpoint):
+            return endpoint
+    return None
+
+def adb_auto_pair(say):
+    """Pair using a code typed in the notification; the pairing port is found automatically."""
+    code_file = os.path.join(ADB_WORK_DIR, "code")
+    found = []
+    stop = threading.Event()
+    worker = threading.Thread(target=adb_discover, args=("pair", 120, stop, found), daemon=True)
+    worker.start()
+    try:
+        say("Open Wireless debugging > Pair device with pairing code")
+        notif_ask("ADB pairing", "Tap Enter and type the 6-digit pairing code", code_file)
+        say("Waiting for pairing code (use the notification)")
+        if not wait_for_file(code_file, 120):
+            say("No pairing code entered")
+            return False
+        notif_update("Pairing...")
+
+        numbers = read_numbers(code_file)
+        if not numbers:
+            say("Pairing code not understood")
+            return False
+        code = numbers[0]
+        port = numbers[1] if len(numbers) > 1 else None
+        if not port:
+            for _ in range(15):
+                if found:
+                    break
+                time.sleep(1)
+            port = str(found[-1]) if found else None
+        if not port:
+            say("Pairing port not detected (reply with: code port)")
+            return False
+
+        out = adb_pair(f"localhost:{port}", code)
+        if "successfully paired" in out.lower():
+            return True
+        say("Pairing failed")
+        return False
+    finally:
+        stop.set()
+
+def adb_ask_connect_port(say):
+    """Fallback when the connect port cannot be discovered: ask for it in the notification."""
+    port_file = os.path.join(ADB_WORK_DIR, "cport")
+    notif_ask("Wireless debugging port", "Enter the port shown on the Wireless debugging screen", port_file)
+    say("Waiting for connect port (use the notification)")
+    if not wait_for_file(port_file, 90):
+        say("No port entered")
+        return None
+    notif_update("Connecting...")
+    numbers = read_numbers(port_file)
+    endpoint = to_endpoint(numbers[-1]) if numbers else None
+    if endpoint and adb_try_connect(endpoint):
+        return endpoint
+    say("Could not connect on that port")
+    return None
+
+def adb_auto_setup(say=print):
+    """
+    Fully automatic wireless debugging: find ports, pair with the notification code, connect,
+    lock port 5555. Returns the device serial, or None (caller can fall back to manual entry).
+    The notification is removed in every case.
+    """
+    if shutil.which("adb") is None or not notif_available():
+        return None
+    adb_prepare()
+    try:
+        os.makedirs(ADB_WORK_DIR, exist_ok=True)
+        notif_clear()   # drop a leftover notification from an interrupted earlier run
+        run_adb("start-server", timeout=30)
+
+        addr = None
+        if adb_try_connect("localhost:5555"):
+            addr = "localhost:5555"
+        else:
+            addr = adb_find_and_connect(4)
+            if not addr:
+                if not adb_auto_pair(say):
+                    return None
+                addr = adb_find_and_connect(30) or adb_ask_connect_port(say)
+                if not addr:
+                    return None
+
+        if addr != "localhost:5555":
+            run_adb("-s", addr, "tcpip", "5555", timeout=20)
+            time.sleep(3)
+            run_adb("disconnect", addr, timeout=10)
+            adb_try_connect("localhost:5555")
+
+        serial = adb_poll_ready(base_wait=10, auth_wait=60)
+        if serial:
+            say("ADB connected")
+        return serial
+    except Exception as e:
+        say(f"ADB auto setup error: {e}")
+        return None
+    finally:
+        notif_clear()
+        shutil.rmtree(ADB_WORK_DIR, ignore_errors=True)
+
 def ensure_adb_startup():
     """
     At startup, detect an already open background ADB port (emulator-5554 / 5555).
@@ -710,6 +940,21 @@ def ensure_adb_startup():
         return serial
 
     print("No usable background ADB port detected. Running first-time ADB setup...\n")
+
+    # 3. Automatic setup: ports found by mDNS, pairing code typed in a notification
+    if notif_available():
+        for attempt in range(2):
+            serial = adb_auto_setup(print)
+            if serial:
+                adb_serial = serial
+                print(f"\nADB successfully connected ({serial}). Moving to UI...\n")
+                return serial
+            if attempt == 0:
+                print("Retrying automatic setup...\n")
+        print("Automatic setup failed. Falling back to manual entry.\n")
+    else:
+        print("Tip: install termux-api (pkg install termux-api + Termux:API app) for automatic ADB setup.\n")
+
     while True:
         connect_ip_port = input("Enter device IP & PORT: ").strip()
         pair_ip_port = input("Enter pairing IP & PORT: ").strip()
@@ -1993,8 +2238,13 @@ class BotApp(App):
         if not serial:
             if shutil.which("adb") is None:
                 log("adb not found. Run: pkg install android-tools")
-            log("ADB not connected - opening setup")
-            serial = await self.open_adb_screen()
+            if notif_available():
+                log("ADB not connected - starting automatic setup")
+                self.set_state("Waiting for ADB pairing")
+                serial = await asyncio.to_thread(adb_auto_setup, log)
+            if not serial:
+                log("ADB not connected - opening manual setup")
+                serial = await self.open_adb_screen()
         if serial:
             adb_serial = serial
             self.set_adb(await asyncio.to_thread(get_device_name, serial))
