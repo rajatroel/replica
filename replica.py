@@ -23,12 +23,12 @@ def start_gate():
 
     class GateApp(App):
         CSS = """
-        Screen { background: #06060A; color: #F3F4F6; align: center top; }
-        #gate_card { width: 94%; height: auto; margin-top: 1; border: round #4C1D95; background: #0E0D16; padding: 1 2; }
-        #gate_msg { width: 100%; text-align: center; color: #DDD6FE; text-style: bold; }
+        Screen { background: #000000; color: #F5EFFF; align: center top; }
+        #gate_card { width: 94%; height: auto; margin-top: 1; border: round #9D7BFF; background: #000000; padding: 1 2; }
+        #gate_msg { width: 100%; text-align: center; color: #E8DEFF; text-style: bold; }
         #gate_card Button { width: 100%; min-width: 0; height: 3; text-style: bold; margin-top: 1; }
-        #go { background: #052E16; color: #6EE7B7; border: round #10B981; }
-        #cancel { background: #350D15; color: #FCA5A5; border: round #EF4444; }
+        #go { background: #03170B; color: #5CF2A0; border: round #2BE37F; }
+        #cancel { background: #2A0710; color: #FF8A96; border: round #FF4D61; }
         """
         ENABLE_COMMAND_PALETTE = False
 
@@ -1302,17 +1302,17 @@ class AdbScreen(ModalScreen):
     """Wireless debugging setup: pair with code, connect by port, and lock tcpip 5555."""
 
     CSS = """
-    AdbScreen { align: center middle; background: #050508 92%; }
-    #adb_box { width: 94%; height: auto; border: round #7C3AED; background: #0D0C14; padding: 1 2; }
-    #adb_box Input { background: #161422; border: round #312E48; color: #F3F4F6; margin-top: 1; }
-    #adb_box Input:focus { border: round #8B5CF6; }
-    #adb_title { text-style: bold; color: #C4B5FD; margin-bottom: 1; text-align: center; width: 100%; }
-    #adb_hint { color: #9CA3AF; }
+    AdbScreen { align: center middle; background: #000000 92%; }
+    #adb_box { width: 94%; height: auto; border: round #9D7BFF; background: #000000; padding: 1 2; }
+    #adb_box Input { background: #000000; border: round #4F46A5; color: #F5EFFF; margin-top: 1; }
+    #adb_box Input:focus { border: round #B69DFF; }
+    #adb_title { text-style: bold; color: #C9B8FF; margin-bottom: 1; text-align: center; width: 100%; }
+    #adb_hint { color: #B8B0D0; }
     #adb_buttons { height: auto; margin-top: 1; }
-    #adb_buttons Button { width: 1fr; height: 3; margin-right: 1; border: round #374151; text-style: bold; }
-    #adb_go { background: #064E3B; color: #6EE7B7; border: round #10B981; }
-    #adb_cancel { background: #1F2937; color: #E5E7EB; border: round #4B5563; }
-    #adb_status { margin-top: 1; color: #FCD34D; }
+    #adb_buttons Button { width: 1fr; height: 3; margin-right: 1; border: round #4A4565; text-style: bold; }
+    #adb_go { background: #064E3B; color: #5CF2A0; border: round #2BE37F; }
+    #adb_cancel { background: #1F2937; color: #F1ECFF; border: round #4A4565; }
+    #adb_status { margin-top: 1; color: #FFD166; }
     """
     BINDINGS = [("escape", "cancel", "Cancel")]
 
@@ -1410,8 +1410,8 @@ class BotApp(App):
 
     CSS = """
     Screen {
-        background: #06060A;
-        color: #F3F4F6;
+        background: #000000;
+        color: #F5EFFF;
     }
 
     #header_card {
@@ -1419,8 +1419,8 @@ class BotApp(App):
         height: auto;
         margin: 0 1;
         padding: 0 2;
-        background: #0E0D16;
-        border: round #4C1D95;
+        background: #000000;
+        border: round #9D7BFF;
     }
 
     #title {
@@ -1428,7 +1428,7 @@ class BotApp(App):
         height: auto;
         text-align: center;
         text-style: bold;
-        color: #DDD6FE;
+        color: #E8DEFF;
     }
 
     #stats_card {
@@ -1436,8 +1436,8 @@ class BotApp(App):
         height: auto;
         margin: 0 1;
         padding: 0 2;
-        background: #0B0B12;
-        border: round #2E2B40;
+        background: #000000;
+        border: round #5E4FB3;
     }
 
     #stats_panel {
@@ -1450,14 +1450,14 @@ class BotApp(App):
         height: auto;
         margin: 0 1;
         padding: 0 2;
-        background: #0B0B12;
-        border: round #2E2B40;
+        background: #000000;
+        border: round #5E4FB3;
     }
 
     .tile_heading {
         width: 100%;
         height: auto;
-        color: #A78BFA;
+        color: #B69DFF;
         text-style: bold;
         margin-bottom: 1;
     }
@@ -1478,27 +1478,27 @@ class BotApp(App):
         min-width: 0;
         height: 3;
         text-style: bold;
-        background: #14131D;
-        color: #E5E7EB;
-        border: round #2E2B40;
+        background: #000000;
+        color: #F1ECFF;
+        border: round #5E4FB3;
     }
 
     #buttons Button.start {
-        background: #052E16;
-        color: #6EE7B7;
-        border: round #10B981;
+        background: #03170B;
+        color: #5CF2A0;
+        border: round #2BE37F;
     }
 
     #buttons Button.stop {
-        background: #3B1D06;
-        color: #FCD34D;
-        border: round #F59E0B;
+        background: #1F1202;
+        color: #FFD166;
+        border: round #FFB020;
     }
 
     #buttons Button.login {
-        background: #2E1065;
-        color: #DDD6FE;
-        border: round #8B5CF6;
+        background: #120A2E;
+        color: #E8DEFF;
+        border: round #B69DFF;
     }
 
     #buttons Button:focus {
@@ -1506,9 +1506,9 @@ class BotApp(App):
     }
 
     #buttons Button:disabled {
-        background: #0D0D14;
-        color: #4B5563;
-        border: round #1F1E2B;
+        background: #000000;
+        color: #4A4565;
+        border: round #1F1B2E;
     }
 
     #bottom_buttons {
@@ -1522,44 +1522,56 @@ class BotApp(App):
         min-width: 0;
         height: 3;
         text-style: bold;
-        background: #14131D;
-        color: #E5E7EB;
-        border: round #2E2B40;
+        background: #000000;
+        color: #F1ECFF;
+        border: round #5E4FB3;
     }
 
     #bottom_buttons Button.terminal {
-        background: #0F1E3A;
-        color: #93C5FD;
-        border: round #3B82F6;
+        background: #06142B;
+        color: #8CC8FF;
+        border: round #3D9BFF;
     }
 
     #bottom_buttons Button.exit {
-        background: #350D15;
-        color: #FCA5A5;
-        border: round #EF4444;
+        background: #2A0710;
+        color: #FF8A96;
+        border: round #FF4D61;
     }
 
     #bottom_buttons Button:disabled {
-        background: #0D0D14;
-        color: #4B5563;
-        border: round #1F1E2B;
+        background: #000000;
+        color: #4A4565;
+        border: round #1F1B2E;
     }
 
     #log_card {
         width: 100%;
         height: 1fr;
-        background: #08080D;
+        background: #000000;
         margin: 0 1;
         padding: 0 2;
-        border: round #2E2B40;
+        border: round #5E4FB3;
+    }
+
+    RichLog {
+        background: #000000;
+        background-tint: #000000 0%;
     }
 
     #log {
         width: 100%;
         height: 1fr;
-        background: #08080D;
+        background: #000000;
+        background-tint: #000000 0%;
+        color: #DAD3EE;
         padding: 0;
         scrollbar-size: 0 0;
+    }
+
+    #log:focus {
+        background: #000000;
+        background-tint: #000000 0%;
     }
     """
     ENABLE_COMMAND_PALETTE = False
@@ -1605,14 +1617,14 @@ class BotApp(App):
     def state_style(self):
         lowered = self.state_text.lower()
         if RUNNING:
-            return "bold #34D399"
+            return "bold #5CF2A0"
         if any(word in lowered for word in ("error", "failed", "offline", "contact developer")):
-            return "bold #F87171"
+            return "bold #FF6B7A"
         if any(word in lowered for word in ("not logged", "not connected", "scan", "starting", "checking", "logging", "wait")):
-            return "bold #FBBF24"
+            return "bold #FFD166"
         if lowered.startswith("ready"):
-            return "bold #60A5FA"
-        return "bold #E5E7EB"
+            return "bold #7CB7FF"
+        return "bold #F1ECFF"
 
     def update_buttons(self):
         """Replace Start/Stop button according to state and grey out all other buttons while running."""
@@ -1640,27 +1652,27 @@ class BotApp(App):
     def refresh_panel(self):
         if self.account_name:
             account_val = f"● {self.account_name}"
-            account_style = "bold #F9FAFB"
+            account_style = "bold #FFFFFF"
         else:
             account_val = f"◌ {self.account_text}"
-            account_style = "bold #FBBF24"
+            account_style = "bold #FFD166"
 
         if LICENSE_OK:
             license_val = f"● Expires on {LICENSE_EXPIRES}" if LICENSE_EXPIRES else "● ACTIVE (VALID)"
-            license_style = "bold #34D399"
+            license_style = "bold #5CF2A0"
         elif LICENSE_MSG == "checking...":
             license_val = "◌ VERIFYING..."
-            license_style = "bold #FBBF24"
+            license_style = "bold #FFD166"
         else:
             license_val = f"● {license_error_text()}"
-            license_style = "bold #F87171"
+            license_style = "bold #FF6B7A"
 
         if adb_serial:
             adb_val = f"● {self.adb_text}"
-            adb_style = "bold #38BDF8"
+            adb_style = "bold #5CC8FF"
         else:
             adb_val = f"◌ {self.adb_text}"
-            adb_style = "bold #FBBF24"
+            adb_style = "bold #FFD166"
 
         rows = [
             ("ACCOUNT", account_val, account_style),
@@ -1672,8 +1684,8 @@ class BotApp(App):
         for index, (label, value, style) in enumerate(rows):
             if index:
                 text.append("\n")
-            text.append(f"{label:<8} ", style="bold #6B7280")
-            text.append("│ ", style="#374151")
+            text.append(f"{label:<8} ", style="bold #9A93B5")
+            text.append("│ ", style="#4A4565")
             text.append(str(value), style=style)
         panel = self.query_one("#panel", Static)
         panel.update(text)
@@ -1690,33 +1702,33 @@ class BotApp(App):
         for line in (str(message).splitlines() or [""]):
             lowered = line.lower()
             if any(w in lowered for w in ("error", "failed", "not found", "stopped", "expired", "cancel")):
-                color = "#FCA5A5"
+                color = "#FF8A96"
             elif any(w in lowered for w in ("success", "connected", "logged in", "started", "valid", "passed", "computed", "completed")):
-                color = "#A7F3D0"
+                color = "#7DF5B2"
             elif any(w in lowered for w in ("captcha", "scan", "switching", "task detected", "clicking", "uploading")):
-                color = "#BFDBFE"
+                color = "#9CD3FF"
             else:
-                color = "#D1D5DB"
+                color = "#DAD3EE"
             entry = Text()
-            entry.append(f"{stamp}  ", style="#6B7280")
+            entry.append(f"{stamp}  ", style="#9A93B5")
             entry.append(line, style=color)
             box.write(entry)
 
     def refresh_stats(self):
         rows = [
-            ("LIKES", str(STATS["likes"]), "bold #60A5FA"),
-            ("COMMENTS", str(STATS["comments"]), "bold #A78BFA"),
-            ("SKIPPED", str(STATS["skipped"]), "bold #FBBF24"),
-            ("CAPTCHA", str(STATS["captchas"]), "bold #F472B6"),
-            ("CASHCOINS", f"{STATS['tenths'] / 10:.1f}", "bold #34D399"),
-            ("RUNTIME", runtime_text(), "bold #E5E7EB"),
+            ("LIKES", str(STATS["likes"]), "bold #7CB7FF"),
+            ("COMMENTS", str(STATS["comments"]), "bold #B69DFF"),
+            ("SKIPPED", str(STATS["skipped"]), "bold #FFD166"),
+            ("CAPTCHA", str(STATS["captchas"]), "bold #FF8BD1"),
+            ("CASHCOINS", f"{STATS['tenths'] / 10:.1f}", "bold #5CF2A0"),
+            ("RUNTIME", runtime_text(), "bold #F1ECFF"),
         ]
         text = Text()
         for index, (label, value, style) in enumerate(rows):
             if index:
                 text.append("\n")
-            text.append(f"{label:<10} ", style="bold #6B7280")
-            text.append("│ ", style="#374151")
+            text.append(f"{label:<10} ", style="bold #9A93B5")
+            text.append("│ ", style="#4A4565")
             text.append(value, style=style)
         try:
             self.query_one("#stats_panel", Static).update(text)
