@@ -1714,7 +1714,7 @@ class BotApp(App):
             yield Static("Task statistics", classes="tile_heading")
             yield Static(id="stats_panel")
         with Vertical(id="health_card"):
-            yield Static("Health monitor", classes="tile_heading")
+            yield Static("System monitor", classes="tile_heading")
             yield Static(id="health_panel")
         with Vertical(id="buttons"):
             yield Button("Start Automation", id="toggle_run", classes="start")
@@ -1834,7 +1834,7 @@ class BotApp(App):
             ("RUNTIME", runtime_text(), "bold #F1ECFF"),
         ]
         # Nothing yet (0, 0.0, 00:00:00) is shown as a quiet "none"
-        rows = [(label, "none", "#9A93B5") if value in ("0", "0.0", "00:00:00") else (label, value, style)
+        rows = [(label, "None", "#9A93B5") if value in ("0", "0.0", "00:00:00") else (label, value, style)
                 for label, value, style in rows]
         text = Text()
         for index, (label, value, style) in enumerate(rows):
@@ -1861,7 +1861,7 @@ class BotApp(App):
             value = f"{fmt_time(last_ok)} · {fmt_age(now - last_ok)} ago"
             style = "bold #F1ECFF"
         else:
-            value = "waiting for first task" if RUNNING else "none"
+            value = "waiting for first task" if RUNNING else "None"
             style = muted
         if RUNNING:
             idle = now - (last_ok or RUN_STARTED or now)
@@ -1876,12 +1876,12 @@ class BotApp(App):
         if HEALTH["error_ts"]:
             rows.append(("LAST ERROR", f"{fmt_time(HEALTH['error_ts'])} · {HEALTH['error_msg']}", "bold #FF6B7A"))
         else:
-            rows.append(("LAST ERROR", "none", muted))
+            rows.append(("LAST ERROR", "None", muted))
 
         if HEALTH["stop_ts"]:
             rows.append(("LAST STOP", f"{fmt_time(HEALTH['stop_ts'])} · {HEALTH['stop_msg']}", "bold #FFD166"))
         else:
-            rows.append(("LAST STOP", "none", muted))
+            rows.append(("LAST STOP", "None", muted))
 
         try:
             panel = self.query_one("#health_panel", Static)
