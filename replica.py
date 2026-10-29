@@ -47,16 +47,16 @@ def log_color(message):
 #   * every log line is appended to logs.txt and is never removed automatically
 #   * stopping / restarting the automation or the script keeps the file; new lines go after the old ones
 #   * the file is emptied ONLY when the Clear logs button is pressed
-#   * the screen shows just the 7 most recent lines (the file keeps everything)
+#   * the screen shows just the latest line (the file keeps everything)
 # ==========================================
 LOG_FILE = os.path.join(os.path.expanduser("~"), "logs.txt")
-LOG_SCREEN_LINES = 7
+LOG_SCREEN_LINES = 1
 LOG_ENTRIES = deque(maxlen=LOG_SCREEN_LINES)   # (datetime, text) - only what the screen needs
 _LOG_LOCK = threading.Lock()
 _LOG_STATE = {"file_date": None, "checked": False}
 
 def _date_header(moment):
-    return f"── {moment:%a, %d %b %Y} ──"
+    return f"{moment:%A, %d %B %Y}"
 
 def _file_write(lines, mode="a"):
     try:
@@ -75,8 +75,10 @@ def _last_file_date():
             fh.seek(max(0, size - 8192))
             tail = fh.read().decode("utf-8", "ignore").splitlines()
         for line in reversed(tail):
-            if line.startswith("── "):
-                return datetime.strptime(line.strip("─ ").strip(), "%a, %d %b %Y").date()
+            try:
+                return datetime.strptime(line.strip(), "%A, %d %B %Y").date()
+            except ValueError:
+                continue
     except Exception:
         pass
     return None
@@ -94,6 +96,7 @@ def record_log(text):
             if os.path.exists(LOG_FILE) and os.path.getsize(LOG_FILE) > 0:
                 lines.append("")
             lines.append(_date_header(now))
+            lines.append("")
             _LOG_STATE["file_date"] = now.date()
         lines.append(f"{now:%H:%M:%S}  {text}")
         _file_write(lines, "a")
@@ -1814,8 +1817,7 @@ class BotApp(App):
     }
 
     #log_card {
-        height: 1fr;
-        min-height: 4;
+        height: auto;
     }
 
     #panel {
@@ -1831,29 +1833,23 @@ class BotApp(App):
 
     #log {
         width: 100%;
-        height: 1fr;
+        height: auto;
+        min-height: 1;
         color: #DAD3EE;
         padding: 0;
-        scrollbar-size-vertical: 1;
-        scrollbar-color: #5E4FB3;
-        scrollbar-background: #000000;
-    }
-
-    #log:focus {
         background: #000000;
-        background-tint: #000000 0%;
     }
 
     #log_actions {
         width: 100%;
         height: auto;
-        margin: 1 1 0 1;
+        margin: 1 1 1 1;
     }
 
     #actions {
         width: 100%;
         height: auto;
-        margin: 1 1 1 1;
+        margin: 1 1 0 1;
     }
 
     Button {
@@ -1934,14 +1930,14 @@ class BotApp(App):
         yield Static("Automation dashboard", id="title")
         with Vertical(id="info_card"):
             yield Static(id="panel")
-        with Vertical(id="log_card"):
-            yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False)
-        with Horizontal(id="log_actions"):
-            yield Button("Clear logs", id="clear_logs")
-            yield Button("Share logs", id="share_logs")
         with Vertical(id="actions"):
             yield Button("Start Automation", id="toggle_run", classes="start")
             yield Button("Exit", id="exit", classes="exit")
+        with Vertical(id="log_card"):
+            yield Static(id="log")
+        with Horizontal(id="log_actions"):
+            yield Button("Clear logs", id="clear_logs")
+            yield Button("Share logs", id="share_logs")
 
     # ---- panel / log helpers ----
     def state_style(self):
@@ -2019,19 +2015,18 @@ class BotApp(App):
 
     # ---- log view ----
     def reload_logs(self):
-        """Redraw the screen with only the most recent lines (older ones stay in logs.txt)."""
+        """Show only the latest log line (everything else stays in logs.txt)."""
         try:
-            box = self.query_one("#log", RichLog)
+            box = self.query_one("#log", Static)
         except Exception:
             return
         with _LOG_LOCK:
-            items = list(LOG_ENTRIES)[-self.UI_LOG_LINES:]
-        box.clear()
+            items = list(LOG_ENTRIES)[-1:]
+        entry = Text()
         for moment, text in items:
-            entry = Text()
             entry.append(f"{moment:%H:%M:%S}  ", style="#7E7A96")
             entry.append(text, style=log_color(text))
-            box.write(entry)
+        box.update(entry)
 
     def add_log(self, moment, text):
         self.reload_logs()
