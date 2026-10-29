@@ -1,1378 +1,1575 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-mode="dark">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Replica – SMM Kingdom Tasks Automation</title>
-<meta name="description" content="Replica automates Instagram tasks for the SMM Kingdom Tasks Bot on your Android device.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Replica – Instagram Automation</title>
+<meta name="description" content="Automate Instagram tasks on Android with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 @property --h {
   syntax: '<number>';
   inherits: true;
-  initial-value: 155;
+  initial-value: 152;
 }
+
 :root {
-  --h: 155;
-  transition: --h 0.8s cubic-bezier(0.2, 0, 0, 1);
+  --h: 152; /* Dynamic Hue */
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --emph: cubic-bezier(0.2, 0, 0, 1);
-  --p: oklch(0.5 0.15 var(--h));
-  --onp: oklch(0.99 0.01 var(--h));
-  --pc: oklch(0.91 0.07 var(--h));
-  --onpc: oklch(0.26 0.08 var(--h));
-  --tc: oklch(0.9 0.07 calc(var(--h) + 110));
-  --ontc: oklch(0.28 0.07 calc(var(--h) + 110));
-  --bg: oklch(0.985 0.007 var(--h));
-  --s1: oklch(0.965 0.014 var(--h));
-  --s2: oklch(0.945 0.02 var(--h));
-  --s3: oklch(0.92 0.026 var(--h));
-  --tx: oklch(0.22 0.02 var(--h));
-  --mut: oklch(0.46 0.03 var(--h));
-  --ol: oklch(0.88 0.025 var(--h));
+  --standard: cubic-bezier(0.2, 0, 0, 1);
+  --bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* MD3 Light Palette */
+  --md-sys-color-primary: oklch(0.48 0.16 var(--h));
+  --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
+  --md-sys-color-primary-container: oklch(0.88 0.09 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.22 0.08 var(--h));
+  
+  --md-sys-color-secondary: oklch(0.52 0.08 calc(var(--h) + 20));
+  --md-sys-color-secondary-container: oklch(0.9 0.05 calc(var(--h) + 20));
+  --md-sys-color-on-secondary-container: oklch(0.26 0.06 calc(var(--h) + 20));
+  
+  --md-sys-color-tertiary: oklch(0.5 0.12 calc(var(--h) + 65));
+  --md-sys-color-tertiary-container: oklch(0.89 0.08 calc(var(--h) + 65));
+  --md-sys-color-on-tertiary-container: oklch(0.25 0.07 calc(var(--h) + 65));
+
+  --md-sys-color-surface: oklch(0.985 0.006 var(--h));
+  --md-sys-color-surface-dim: oklch(0.94 0.01 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.96 0.01 var(--h));
+  --md-sys-color-surface-container: oklch(0.935 0.016 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.91 0.022 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.88 0.028 var(--h));
+  
+  --md-sys-color-on-surface: oklch(0.18 0.02 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.42 0.03 var(--h));
+  --md-sys-color-outline: oklch(0.8 0.02 var(--h));
+  --md-sys-color-outline-variant: oklch(0.87 0.015 var(--h));
+
+  --shape-corner-extra-large: 32px;
+  --shape-corner-large: 24px;
+  --shape-corner-medium: 16px;
+  --shape-corner-small: 10px;
+  --shape-corner-full: 9999px;
+  
+  --elevation-1: 0 2px 8px -2px oklch(0 0 0 / 0.06), 0 1px 4px -1px oklch(0 0 0 / 0.04);
+  --elevation-2: 0 8px 24px -6px oklch(0 0 0 / 0.1), 0 2px 6px -1px oklch(0 0 0 / 0.05);
+  --elevation-3: 0 16px 36px -8px oklch(0 0 0 / 0.16), 0 4px 12px -2px oklch(0 0 0 / 0.08);
 }
+
 :root[data-mode="dark"] {
-  --p: oklch(0.8 0.13 var(--h));
-  --onp: oklch(0.25 0.08 var(--h));
-  --pc: oklch(0.38 0.09 var(--h));
-  --onpc: oklch(0.92 0.05 var(--h));
-  --tc: oklch(0.4 0.08 calc(var(--h) + 110));
-  --ontc: oklch(0.93 0.06 calc(var(--h) + 110));
-  --bg: oklch(0.17 0.015 var(--h));
-  --s1: oklch(0.22 0.02 var(--h));
-  --s2: oklch(0.27 0.025 var(--h));
-  --s3: oklch(0.32 0.03 var(--h));
-  --tx: oklch(0.93 0.015 var(--h));
-  --mut: oklch(0.75 0.03 var(--h));
-  --ol: oklch(0.35 0.03 var(--h));
+  /* MD3 Expressive Dark Tonal Palette */
+  --md-sys-color-primary: oklch(0.82 0.14 var(--h));
+  --md-sys-color-on-primary: oklch(0.22 0.08 var(--h));
+  --md-sys-color-primary-container: oklch(0.36 0.1 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.92 0.05 var(--h));
+
+  --md-sys-color-secondary: oklch(0.78 0.07 calc(var(--h) + 20));
+  --md-sys-color-secondary-container: oklch(0.32 0.06 calc(var(--h) + 20));
+  --md-sys-color-on-secondary-container: oklch(0.9 0.04 calc(var(--h) + 20));
+
+  --md-sys-color-tertiary: oklch(0.82 0.11 calc(var(--h) + 65));
+  --md-sys-color-tertiary-container: oklch(0.34 0.08 calc(var(--h) + 65));
+  --md-sys-color-on-tertiary-container: oklch(0.92 0.04 calc(var(--h) + 65));
+
+  --md-sys-color-surface: oklch(0.14 0.015 var(--h));
+  --md-sys-color-surface-dim: oklch(0.12 0.012 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.18 0.018 var(--h));
+  --md-sys-color-surface-container: oklch(0.22 0.022 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.26 0.026 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.3 0.03 var(--h));
+
+  --md-sys-color-on-surface: oklch(0.94 0.012 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.75 0.025 var(--h));
+  --md-sys-color-outline: oklch(0.42 0.025 var(--h));
+  --md-sys-color-outline-variant: oklch(0.28 0.02 var(--h));
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; scroll-padding-top: 140px; color-scheme: light dark; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; color-scheme: light dark; }
 body {
-  font-family: 'Roboto Flex', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--tx);
-  line-height: 1.55;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.5;
   font-size: 16px;
-  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition: background-color 0.4s var(--standard), color 0.4s var(--standard);
 }
-a { color: var(--p); font-weight: 550; text-decoration: none; }
-a:hover { text-decoration: underline; }
-button { font-family: inherit; }
-.w { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 20px; }
-:focus-visible { outline: 3px solid var(--p); outline-offset: 3px; }
 
-/* ripple effect */
-.rip { position: relative; overflow: hidden; isolation: isolate; }
-.rp {
+/* Typography styles */
+h1 { font-size: clamp(2.4rem, 7vw, 4.4rem); line-height: 1.06; letter-spacing: -0.04em; font-weight: 800; }
+h2 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.15; letter-spacing: -0.03em; font-weight: 700; }
+h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+p { color: var(--md-sys-color-on-surface-variant); }
+a { color: inherit; text-decoration: none; }
+
+.app-wrapper {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 18px 80px;
+}
+
+/* Material 3 Expressive Ripple */
+.m3-ripple {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.m3-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.m3-ripple:hover::after { opacity: 0.08; }
+.m3-ripple:active::after { opacity: 0.16; }
+.ripple-wave {
   position: absolute;
   border-radius: 50%;
   background: currentColor;
-  opacity: 0.2;
+  opacity: 0.25;
   transform: scale(0);
-  animation: rp 0.65s var(--emph) forwards;
+  animation: ripple-grow 0.6s var(--standard) forwards;
   pointer-events: none;
 }
-@keyframes rp { to { transform: scale(1); opacity: 0; } }
+@keyframes ripple-grow { to { transform: scale(2.8); opacity: 0; } }
 
-/* header bar */
-header { position: sticky; top: 12px; z-index: 50; padding: 0 10px; }
-.bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-  padding: 8px 12px 8px 18px;
-  border-radius: 32px;
-  background: color-mix(in oklch, var(--s2) 84%, transparent);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid color-mix(in oklch, var(--ol) 65%, transparent);
-  box-shadow: 0 8px 24px -6px oklch(0 0 0 / 0.08);
+/* MD3 Compact App Bar (Refined & Clean) */
+.m3-app-bar-container {
+  position: sticky;
+  top: 14px;
+  z-index: 80;
+  padding: 0 10px;
+  margin-bottom: 24px;
 }
-.logo {
-  flex: 1;
+.m3-app-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 20px;
+  justify-content: space-between;
+  height: 64px;
+  padding: 6px 14px 6px 18px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container) 85%, transparent);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--shape-corner-full);
+  box-shadow: var(--elevation-1);
+  transition: all 0.3s var(--standard);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  font-size: 1.25rem;
   letter-spacing: -0.02em;
-  color: var(--tx);
-  text-decoration: none;
+  color: var(--md-sys-color-on-surface);
 }
-.logo svg { animation: spin 24s linear infinite; }
-.ctl { display: flex; align-items: center; gap: 8px; position: relative; }
-
-nav {
-  flex: 0 0 100%;
-  order: 3;
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  display: grid;
+  place-items: center;
+  transition: transform 0.4s var(--spring);
+}
+.brand:hover .brand-icon {
+  transform: rotate(14deg) scale(1.08);
+}
+.app-bar-actions {
   display: flex;
-  gap: 2px;
-  overflow-x: auto;
+  align-items: center;
+  gap: 8px;
   position: relative;
-  padding: 4px;
-  scrollbar-width: none;
 }
-nav::-webkit-scrollbar { display: none; }
-nav a {
-  position: relative;
-  z-index: 1;
-  white-space: nowrap;
-  color: var(--mut);
-  font-size: 14px;
-  font-weight: 550;
-  padding: 8px 16px;
-  border-radius: 99px;
-  transition: color 0.25s ease;
-}
-nav a:hover { color: var(--tx); text-decoration: none; }
-nav a.on { color: var(--onpc); }
 
-.ind {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 0;
-  width: 0;
-  border-radius: 99px;
-  pointer-events: none;
-  transition: transform 0.45s var(--spring), width 0.45s var(--spring), opacity 0.2s ease;
-}
-nav .ind { background: var(--pc); }
-
-.seg {
+/* MD3 Segmented Language Switcher */
+.m3-segmented {
   display: flex;
-  position: relative;
-  background: var(--s3);
-  border-radius: 99px;
+  background: var(--md-sys-color-surface-container-highest);
   padding: 3px;
-}
-.seg button {
+  border-radius: var(--shape-corner-full);
   position: relative;
-  z-index: 1;
+}
+.m3-segmented-btn {
   border: 0;
-  background: none;
-  color: var(--mut);
-  font-size: 12px;
-  font-weight: 650;
-  padding: 7px 11px;
-  border-radius: 99px;
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--shape-corner-full);
   cursor: pointer;
+  z-index: 2;
   transition: color 0.25s ease;
 }
-.seg button.on { color: var(--onp); }
-.seg .ind { background: var(--p); top: 3px; bottom: 3px; }
+.m3-segmented-btn.active {
+  color: var(--md-sys-color-on-primary);
+}
+.m3-segmented-thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  background: var(--md-sys-color-primary);
+  border-radius: var(--shape-corner-full);
+  transition: transform 0.4s var(--spring), width 0.35s var(--spring);
+  z-index: 1;
+}
 
-.ib {
-  width: 40px;
-  height: 40px;
+/* Icon button */
+.m3-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--shape-corner-full);
   border: 0;
-  border-radius: 50%;
-  background: var(--s3);
-  color: var(--tx);
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: border-radius 0.35s var(--spring), transform 0.25s var(--spring), background 0.25s;
+  transition: transform 0.25s var(--bounce), background-color 0.25s ease;
 }
-.ib svg { width: 20px; height: 20px; }
-.ib:hover { border-radius: 14px; }
-.ib:active { transform: scale(0.92); }
-.ib[aria-expanded="true"] { background: var(--pc); color: var(--onpc); border-radius: 14px; }
+.m3-icon-btn svg { width: 20px; height: 20px; }
+.m3-icon-btn:active { transform: scale(0.9); }
+.m3-icon-btn.active { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
 
-.menu {
+/* Palette Theme Dropdown (Expressive M3 Dialog) */
+.theme-menu {
   position: absolute;
-  top: 52px;
+  top: 56px;
   right: 0;
-  width: 250px;
-  background: var(--s1);
-  border: 1px solid var(--ol);
-  border-radius: 26px;
-  padding: 18px;
-  box-shadow: 0 20px 48px -12px oklch(0 0 0 / 0.28);
-  transform-origin: top right;
-  transform: scale(0.85) translateY(-8px);
+  width: 260px;
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--shape-corner-large);
+  padding: 16px;
+  box-shadow: var(--elevation-3);
   opacity: 0;
+  transform: translateY(-8px) scale(0.95);
   visibility: hidden;
-  transition: transform 0.35s var(--spring), opacity 0.2s ease, visibility 0s 0.35s;
-  z-index: 60;
+  transition: opacity 0.2s ease, transform 0.3s var(--spring), visibility 0s 0.2s;
+  z-index: 90;
 }
-.menu.open {
-  transform: none;
+.theme-menu.open {
   opacity: 1;
+  transform: translateY(0) scale(1);
   visibility: visible;
-  transition: transform 0.35s var(--spring), opacity 0.2s ease, visibility 0s;
+  transition: opacity 0.2s ease, transform 0.3s var(--spring), visibility 0s;
 }
-.menu small {
-  display: block;
-  color: var(--mut);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+.menu-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 10px;
 }
-.pal { display: flex; gap: 8px; margin: 10px 0 16px; padding: 2px; }
-.pal button {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+.palette-dots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.palette-dot {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--shape-corner-full);
   border: 0;
   cursor: pointer;
-  transition: border-radius 0.3s var(--spring), transform 0.3s var(--spring);
+  transition: transform 0.3s var(--spring), border-radius 0.3s var(--spring);
 }
-.pal button:hover { transform: scale(1.1); }
-.pal button[aria-pressed="true"] {
+.palette-dot:hover { transform: scale(1.12); }
+.palette-dot.active {
   border-radius: 12px;
-  transform: scale(1.12);
-  outline: 3px solid var(--tx);
+  transform: scale(1.15);
+  outline: 3px solid var(--md-sys-color-on-surface);
   outline-offset: 2px;
 }
-.sr { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; }
-.sw2 {
+.theme-mode-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.m3-switch {
   width: 52px;
   height: 32px;
-  border-radius: 99px;
-  border: 2px solid var(--mut);
-  background: var(--s3);
+  border-radius: var(--shape-corner-full);
+  background: var(--md-sys-color-surface-container-highest);
+  border: 2px solid var(--md-sys-color-outline);
   position: relative;
   cursor: pointer;
-  transition: background 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-.sw2 i {
+.m3-switch-handle {
   position: absolute;
   top: 50%;
-  left: 5px;
+  left: 4px;
   width: 18px;
   height: 18px;
   margin-top: -9px;
   border-radius: 50%;
-  background: var(--mut);
-  transition: transform 0.4s var(--spring), width 0.3s var(--spring), height 0.3s var(--spring), margin 0.3s var(--spring), background 0.3s;
+  background: var(--md-sys-color-outline);
+  transition: transform 0.35s var(--spring), width 0.25s, height 0.25s, background-color 0.25s, margin-top 0.25s;
 }
-.sw2[aria-checked="true"] { background: var(--p); border-color: var(--p); }
-.sw2[aria-checked="true"] i {
+.m3-switch[aria-checked="true"] {
+  background: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+}
+.m3-switch[aria-checked="true"] .m3-switch-handle {
+  transform: translateX(20px);
+  background: var(--md-sys-color-on-primary);
   width: 22px;
   height: 22px;
   margin-top: -11px;
-  background: var(--onp);
-  transform: translateX(18px);
 }
 
-/* hero */
-.hero { display: grid; gap: 32px; align-items: center; padding: 48px 0 16px; }
-h1 { font-size: clamp(40px, 9vw, 84px); line-height: 1.04; letter-spacing: -0.045em; font-weight: 800; max-width: 13ch; }
-.wd { display: inline-block; animation: rise 0.8s var(--spring) both; }
-.wd.hl { color: var(--p); }
-@keyframes rise { from { opacity: 0; transform: translateY(0.5em) scale(0.92); } }
-.hero p { font-size: clamp(16px, 2.2vw, 19px); color: var(--mut); max-width: 44ch; margin: 20px 0 28px; }
-.btns { display: flex; flex-wrap: wrap; gap: 12px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-.chip { padding: 8px 14px; border-radius: 12px; background: var(--s2); font-size: 13.5px; font-weight: 550; color: var(--mut); }
-.tile {
+/* Hero Section */
+.hero-section {
+  display: grid;
+  gap: 36px;
+  align-items: center;
+  padding: 32px 0 44px;
+}
+.hero-content {
+  display: flex;
+  flex-direction: column;
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  padding: 6px 14px;
+  border-radius: var(--shape-corner-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  width: fit-content;
+  margin-bottom: 20px;
+}
+.hero-title .accent {
+  color: var(--md-sys-color-primary);
+  display: inline-block;
   position: relative;
-  width: min(100%, 340px);
+}
+.hero-desc {
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  max-width: 44ch;
+  margin: 18px 0 28px;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 26px;
+}
+.m3-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface-variant);
+  border-radius: var(--shape-corner-medium);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Interactive Expressive Morphing Blob */
+.hero-art {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.blob-card {
+  position: relative;
+  width: min(100%, 320px);
   aspect-ratio: 1;
-  margin: 0 auto;
+  background: transparent;
   border: 0;
-  background: none;
   cursor: pointer;
   display: grid;
   place-items: center;
-  -webkit-tap-highlight-color: transparent;
 }
-.tile svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.tile .g {
+.blob-card svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 14px 28px color-mix(in oklch, var(--md-sys-color-primary) 30%, transparent));
+}
+.blob-glyph {
   position: relative;
-  font-size: clamp(88px, 22vw, 140px);
+  font-size: clamp(5.5rem, 16vw, 7.5rem);
   font-weight: 800;
-  color: var(--p);
-  letter-spacing: -0.06em;
+  color: var(--md-sys-color-on-primary-container);
   line-height: 1;
-  pointer-events: none;
   user-select: none;
-}
-.tile.pop { animation: pop 0.6s var(--spring); }
-@keyframes pop { 0% { transform: scale(0.85) rotate(-6deg); } 100% { transform: scale(1) rotate(0deg); } }
-@media (min-width: 840px) {
-  .hero { grid-template-columns: 1.25fr 0.75fr; padding: 72px 0 24px; }
+  pointer-events: none;
 }
 
-/* buttons */
-.btn {
+@media (min-width: 820px) {
+  .hero-section {
+    grid-template-columns: 1.2fr 0.8fr;
+    padding: 56px 0 60px;
+  }
+}
+
+/* Material 3 Expressive Buttons */
+.m3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 26px;
+  border-radius: var(--shape-corner-full);
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.3s var(--bounce), border-radius 0.3s var(--spring), box-shadow 0.25s ease;
+  user-select: none;
+  text-decoration: none;
+}
+.m3-btn:active { transform: scale(0.96); }
+.m3-btn.primary {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  box-shadow: var(--elevation-1);
+}
+.m3-btn.primary:hover {
+  border-radius: 18px;
+  box-shadow: var(--elevation-2);
+}
+.m3-btn.tonal {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.m3-btn.tonal:hover {
+  border-radius: 18px;
+}
+.m3-btn.large {
+  height: 60px;
+  padding: 0 32px;
+  font-size: 1.05rem;
+}
+
+/* Section Header */
+.section-header {
+  margin: 48px 0 24px;
+}
+.section-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-sys-color-primary);
+  margin-bottom: 6px;
+}
+.section-desc {
+  margin-top: 6px;
+  font-size: 1.05rem;
+}
+
+/* Step 1: Disable Play Protect Expressive Card */
+.protect-card {
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--shape-corner-extra-large);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  overflow: hidden;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.protect-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+.protect-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.protect-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition: transform 0.35s var(--spring);
+}
+.protect-header:hover .protect-icon {
+  transform: rotate(-10deg) scale(1.08);
+}
+.protect-header h3 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+.protect-toggle-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--shape-corner-full);
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border: 0;
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition: transform 0.4s var(--spring), background-color 0.3s;
+}
+.protect-card.open .protect-toggle-btn {
+  transform: rotate(180deg);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+.protect-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s var(--standard);
+}
+.protect-card.open .protect-body {
+  grid-template-rows: 1fr;
+}
+.protect-content {
+  overflow: hidden;
+  min-height: 0;
+}
+.steps-list {
+  padding: 0 24px 28px 94px;
+  display: grid;
+  gap: 12px;
+}
+.step-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  font-size: 0.98rem;
+}
+.step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  flex: none;
+  margin-top: 1px;
+}
+@media (max-width: 600px) {
+  .protect-header { padding: 18px; }
+  .steps-list { padding: 0 18px 22px 18px; }
+  .protect-left { gap: 14px; }
+  .protect-icon { width: 44px; height: 44px; border-radius: 14px; }
+}
+
+/* Step 2: The Three Download Tiles (MD3 Expressive Grid) */
+.downloads-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+@media (min-width: 760px) {
+  .downloads-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.download-card {
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--shape-corner-large);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.35s var(--spring), border-radius 0.35s var(--spring), background-color 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.download-card:hover {
+  transform: translateY(-4px);
+  border-radius: 32px 16px 32px 16px;
+  background: var(--md-sys-color-surface-container-high);
+}
+.card-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 10px;
+  border-radius: var(--shape-corner-full);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.card-badge.primary-badge {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+.card-badge.neutral-badge {
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.card-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+  transition: transform 0.4s var(--spring);
+}
+.download-card:hover .card-icon-box {
+  transform: scale(1.1) rotate(6deg);
+}
+.card-icon-box.c1 { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+.card-icon-box.c2 { background: var(--md-sys-color-secondary); color: var(--md-sys-color-secondary-container); }
+.card-icon-box.c3 { background: var(--md-sys-color-tertiary); color: var(--md-sys-color-tertiary-container); }
+
+.card-title {
+  font-size: 1.3rem;
+  margin-bottom: 6px;
+}
+.card-desc {
+  font-size: 0.92rem;
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+.download-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--shape-corner-full);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 48px;
-  padding: 0 24px;
-  border: 0;
-  border-radius: 99px;
-  font: 600 15px 'Roboto Flex', sans-serif;
-  letter-spacing: 0.01em;
-  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: border-radius 0.35s var(--spring), transform 0.25s var(--spring), background 0.25s;
+  border: 0;
+  transition: transform 0.25s var(--spring), border-radius 0.25s;
 }
-.btn::after {
-  content: '';
+.download-btn.filled {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+.download-btn.tonal {
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.download-btn:active { transform: scale(0.97); }
+
+/* Step 3: Setup Tutorial Video Card */
+.video-showcase-card {
+  position: relative;
+  border-radius: var(--shape-corner-extra-large);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--md-sys-color-surface-container-high), var(--md-sys-color-primary-container));
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--elevation-2);
+}
+.video-aspect-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.play-token-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--shape-corner-full);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  display: grid;
+  place-items: center;
+  border: 0;
+  box-shadow: var(--elevation-3);
+  transition: transform 0.4s var(--bounce), border-radius 0.35s var(--spring);
+}
+.video-aspect-container:hover .play-token-btn {
+  transform: scale(1.14);
+  border-radius: 24px;
+}
+.play-token-btn svg { width: 34px; height: 34px; margin-left: 4px; }
+.video-pill {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: color-mix(in oklch, var(--md-sys-color-surface) 80%, transparent);
+  backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  border-radius: var(--shape-corner-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+.video-aspect-container iframe {
   position: absolute;
   inset: 0;
-  background: currentColor;
-  opacity: 0;
-  transition: opacity 0.2s;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Step 4: License Pricing (Directly Below Video) */
+.pricing-section-container {
+  margin-top: 32px;
+}
+.pricing-hero-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-radius: var(--shape-corner-extra-large);
+  padding: clamp(28px, 5vw, 44px);
+  display: grid;
+  gap: 28px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--elevation-2);
+}
+.pricing-accent-bg {
+  position: absolute;
+  right: -80px;
+  top: -80px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in oklch, var(--md-sys-color-primary) 35%, transparent) 0%, transparent 70%);
   pointer-events: none;
 }
-.btn:hover { border-radius: 16px; text-decoration: none; }
-.btn:hover::after { opacity: 0.08; }
-.btn:active { border-radius: 12px; transform: scale(0.96); }
-.btn.f { background: var(--p); color: var(--onp); }
-.btn.t { background: var(--pc); color: var(--onpc); }
-.btn.xl { height: 56px; padding: 0 30px; font-size: 16.5px; }
-.btn svg { width: 19px; height: 19px; flex: none; transition: transform 0.4s var(--spring); }
-.ac.open .btn svg { transform: rotate(180deg); }
-
-/* sections */
-section { padding-top: 80px; }
-.sh { margin-bottom: 24px; }
-h2 { font-size: clamp(28px, 5vw, 44px); line-height: 1.1; letter-spacing: -0.035em; font-weight: 700; }
-.lead { color: var(--mut); margin-top: 8px; max-width: 52ch; font-size: 16.5px; }
-.rv { opacity: 0; }
-.rv.in { opacity: 1; animation: up 0.75s var(--spring) var(--d, 0s) backwards; }
-@keyframes up { from { opacity: 0; transform: translateY(30px) scale(0.97); } }
-
-/* steps */
-.steps { display: grid; gap: 14px; }
-.step {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 18px;
-  background: var(--s1);
-  border-radius: 32px;
-  padding: 22px 24px;
-  transition: border-radius 0.45s var(--spring), background 0.3s;
-}
-.step:hover { border-radius: 32px 14px 32px 14px; background: var(--s2); }
-.num {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--pc);
-  color: var(--onpc);
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: 22px;
-  transition: border-radius 0.45s var(--spring), transform 0.45s var(--spring);
-}
-.step:hover .num { border-radius: 16px; transform: rotate(-8deg) scale(1.05); }
-.step h3 { font-size: 20px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.25; }
-.step p { color: var(--mut); margin-top: 4px; max-width: 56ch; }
-.sa { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-.step .bd { padding: 14px 4px 2px; }
-
-.vid {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 100%;
-  aspect-ratio: 16/9;
-  margin-top: 18px;
-  border: 0;
-  border-radius: 26px;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--pc), var(--tc));
-  color: var(--onpc);
-  cursor: pointer;
-  transition: border-radius 0.45s var(--spring);
-}
-.vid:hover { border-radius: 26px 12px 26px 12px; }
-.play {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--p);
-  color: var(--onp);
-  display: grid;
-  place-items: center;
-  transition: border-radius 0.4s var(--spring), transform 0.4s var(--spring);
-}
-.play svg { width: 32px; height: 32px; }
-.vid:hover .play { border-radius: 22px; transform: scale(1.08); }
-.vid:active .play { transform: scale(0.95); }
-.vid .vs {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  padding: 6px 14px;
-  border-radius: 10px;
-  background: var(--bg);
-  color: var(--tx);
-  font-size: 13px;
-  font-weight: 600;
-}
-.vid iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-@media (max-width: 520px) {
-  .step { padding: 18px; gap: 14px; }
-  .num { width: 42px; height: 42px; font-size: 18px; }
-}
-
-/* accordions */
-.xw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--emph); }
-.ac.open > .xw, .ac.open .xw { grid-template-rows: 1fr; }
-.xi { overflow: hidden; min-height: 0; }
-.bd {
-  color: var(--mut);
-  font-size: 15px;
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity 0.25s ease, transform 0.35s var(--spring);
-}
-.ac.open > .xw > .xi > .bd, .ac.open > .bd { opacity: 1; transform: none; transition-delay: 0.05s; }
-.bd ol, .bd ul { padding-left: 20px; }
-.bd li { margin: 6px 0; }
-.bd b { color: var(--tx); font-weight: 600; }
-.bd p { margin-top: 10px; }
-
-.chev {
-  flex: none;
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--pc);
-  transition: transform 0.45s var(--spring), border-radius 0.35s var(--spring);
-}
-.chev::before, .chev::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 12px;
-  height: 2.2px;
-  margin: -1.1px 0 0 -6px;
-  border-radius: 2px;
-  background: var(--onpc);
-}
-.chev::after { transform: rotate(90deg); }
-.ac.open > .ach .chev, .ac.open > .ith .chev { transform: rotate(135deg); border-radius: 10px; }
-
-.ach {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: none;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  padding: 10px 8px 10px 6px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-.ach:not(.st):hover { background: color-mix(in oklch, var(--mut) 8%, transparent); }
-.ach.st { cursor: default; }
-
-/* checklist */
-.panel { background: var(--s1); border-radius: 36px; padding: 22px 14px 14px; }
-.prog { padding: 0 12px 14px; }
-.prog b { font-size: 16px; font-weight: 650; }
-.wavy { display: block; width: 100%; height: 16px; margin-top: 10px; overflow: visible; }
-.wavy * { vector-effect: non-scaling-stroke; }
-.wave { animation: wv 1.2s linear infinite; }
-@keyframes wv { to { transform: translateX(20px); } }
-#clr { transition: width 0.75s var(--spring); }
-
-.it { border-radius: 24px; transition: background 0.3s, border-radius 0.4s var(--spring); margin-bottom: 4px; }
-.it.open { background: var(--s2); }
-.ith { display: flex; align-items: center; gap: 8px; padding: 6px 8px; }
-.tt b { display: block; font-weight: 600; font-size: 16px; transition: opacity 0.3s; }
-.tt small { display: block; color: var(--mut); font-size: 13.5px; font-weight: 400; }
-.it.done .tt b { opacity: 0.6; text-decoration: line-through; }
-.it .bd { padding: 0 20px 18px 58px; }
-
-.chk {
-  position: relative;
-  flex: none;
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--mut);
-  border-radius: 9px;
-  background: transparent;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: border-radius 0.4s var(--spring), background 0.25s, border-color 0.25s, transform 0.3s var(--spring);
-}
-.chk:hover { transform: scale(1.1); }
-.chk svg { width: 18px; height: 18px; fill: none; stroke: var(--onp); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.chk path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.35s var(--emph) 0.05s; }
-.chk[aria-checked="true"] { background: var(--p); border-color: var(--p); border-radius: 50%; }
-.chk[aria-checked="true"] path { stroke-dashoffset: 0; }
-@media (max-width: 520px) {
-  .it .bd { padding-left: 20px; }
-}
-
-/* tabs */
-.tabs { display: inline-flex; position: relative; background: var(--s2); border-radius: 99px; padding: 4px; margin-bottom: 12px; }
-.tabs button {
-  position: relative;
-  z-index: 1;
-  border: 0;
-  background: none;
-  color: var(--mut);
-  font-size: 14.5px;
-  font-weight: 650;
-  padding: 10px 20px;
-  border-radius: 99px;
-  cursor: pointer;
-  transition: color 0.25s;
-}
-.tabs button.on { color: var(--onp); }
-.tabs .ind { background: var(--p); }
-.tp { background: var(--s1); border-radius: 32px; padding: 26px; min-height: 160px; }
-.tp.swp { animation: swap 0.5s var(--spring); }
-@keyframes swap { from { opacity: 0; transform: translateX(20px) scale(0.98); } }
-.tp p { font-size: clamp(16.5px, 2.2vw, 19px); line-height: 1.5; max-width: 44ch; }
-.tp b { color: var(--p); font-weight: 650; }
-.mock { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.mk {
-  padding: 11px 18px;
-  border-radius: 99px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  font-size: 13px;
-  background: var(--pc);
-  color: var(--onpc);
-  transition: transform 0.35s var(--spring), border-radius 0.35s var(--spring);
-  user-select: none;
-}
-.mk.f { background: var(--p); color: var(--onp); }
-.mk.t { background: var(--tc); color: var(--ontc); }
-.mk:hover { transform: scale(1.05); border-radius: 14px; }
-
-/* pricing */
-.price {
-  position: relative;
-  overflow: hidden;
-  background: var(--p);
-  color: var(--onp);
-  border-radius: 40px 40px 14px 40px;
-  padding: 36px 30px;
+.pricing-top-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
 }
-.dec { position: absolute; right: -70px; top: -90px; opacity: 0.14; pointer-events: none; animation: spin 40s linear infinite; }
-.price > div:not(.dec), .price > a { position: relative; z-index: 2; }
-.amt { font-size: clamp(64px, 16vw, 110px); font-weight: 800; line-height: 0.95; letter-spacing: -0.06em; }
-.price small { display: block; font-size: 15.5px; opacity: 0.88; margin-top: 6px; }
-.price .btn { background: var(--bg); color: var(--tx); }
-.multi {
-  margin-top: 12px;
-  background: var(--tc);
-  color: var(--ontc);
-  border-radius: 14px 40px 40px 40px;
+.pricing-amount-group {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.price-currency {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--md-sys-color-primary);
+}
+.price-value {
+  font-size: clamp(4.5rem, 12vw, 6.8rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--md-sys-color-on-surface);
+}
+.price-period {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.pricing-features-list {
+  display: grid;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+.feature-item svg {
+  color: var(--md-sys-color-primary);
+  flex: none;
+}
+
+/* Multi-device discount card */
+.multi-device-card {
+  margin-top: 16px;
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--shape-corner-large);
+  border: 1px solid var(--md-sys-color-outline-variant);
   padding: 24px 28px;
   display: flex;
   flex-wrap: wrap;
-  gap: 16px 20px;
   align-items: center;
   justify-content: space-between;
+  gap: 18px;
 }
-.multi h3 { font-size: 18.5px; font-weight: 650; letter-spacing: -0.01em; }
-.multi p { opacity: 0.88; font-size: 15px; max-width: 44ch; margin-top: 2px; }
-.multi .btn { background: var(--ontc); color: var(--tc); }
-
-/* faq */
-.fq .ac { background: var(--s1); border-radius: 24px; margin-bottom: 8px; transition: background 0.3s, border-radius 0.4s var(--spring); }
-.fq .ac.open { background: var(--s2); }
-.fq .ach { width: 100%; padding: 16px 18px 16px 22px; font-weight: 600; font-size: 16px; }
-.fq .bd { padding: 0 22px 18px; }
-
-footer { margin-top: 80px; padding: 28px 0 56px; border-top: 1px solid var(--ol); color: var(--mut); font-size: 14px; }
-
-/* fab & toast */
-.fab {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 40;
-  width: 52px;
-  height: 52px;
-  border: 0;
-  border-radius: 26px;
-  background: var(--pc);
-  color: var(--onpc);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  box-shadow: 0 10px 28px -6px oklch(0 0 0 / 0.3);
-  transform: scale(0) rotate(-90deg);
-  transition: transform 0.45s var(--spring), border-radius 0.35s var(--spring);
+.multi-device-left h3 {
+  font-size: 1.18rem;
+  margin-bottom: 2px;
 }
-.fab svg { width: 22px; height: 22px; }
-.fab.show { transform: none; }
-.fab.show:hover { border-radius: 16px; }
-.fab.show:active { transform: scale(0.92); }
+.multi-device-left p {
+  font-size: 0.95rem;
+}
 
-.snk {
+/* Footer & Snackbar */
+footer {
+  margin-top: 70px;
+  padding: 36px 0 20px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+footer a {
+  color: var(--md-sys-color-primary);
+  font-weight: 700;
+}
+.disclaimer {
+  font-size: 0.8rem;
+  margin-top: 10px;
+  opacity: 0.75;
+}
+
+.m3-snackbar {
   position: fixed;
   left: 50%;
   bottom: 24px;
-  z-index: 60;
-  transform: translate(-50%, 160%);
-  background: var(--tx);
-  color: var(--bg);
-  padding: 13px 22px;
-  border-radius: 16px;
-  font-size: 14.5px;
-  font-weight: 550;
-  box-shadow: 0 12px 30px -8px oklch(0 0 0 / 0.4);
+  z-index: 100;
+  transform: translate(-50%, 180%);
+  background: var(--md-sys-color-on-surface);
+  color: var(--md-sys-color-surface);
+  padding: 14px 24px;
+  border-radius: var(--shape-corner-full);
+  font-size: 0.94rem;
+  font-weight: 600;
+  box-shadow: var(--elevation-3);
   max-width: calc(100% - 32px);
-  transition: transform 0.45s var(--spring);
+  transition: transform 0.4s var(--spring);
   pointer-events: none;
 }
-.snk.show { transform: translate(-50%, 0); }
+.m3-snackbar.show { transform: translate(-50%, 0); }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-
-@media (min-width: 780px) {
-  nav { flex: none; order: 0; overflow: visible; }
-  .logo, .ctl { flex: 1; }
-  .ctl { justify-content: flex-end; }
+/* Animation Utils */
+.reveal-entry {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s var(--standard), transform 0.6s var(--spring);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  .rv { opacity: 1 !important; }
-  html { scroll-behavior: auto; }
+.reveal-entry.in-view {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>
 </head>
 <body>
-<header>
- <div class="w">
-  <div class="bar">
-   <a class="logo" href="#top"><span id="lg"></span>Replica</a>
-   <div class="ctl">
-    <div class="seg" id="lang" role="group" aria-label="Language"><span class="ind"></span><button data-l="en">EN</button><button data-l="uk">УКР</button><button data-l="ru">РУС</button></div>
-    <button class="ib" id="tn" aria-haspopup="true" aria-expanded="false" title="Theme Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
-    <div class="menu" id="menu"><small data-i="mC">Color</small><div class="pal" id="pal"></div><div class="sr"><span data-i="mD">Dark mode</span><button class="sw2" id="dm" role="switch" aria-checked="false"><i></i></button></div></div>
-   </div>
-   <nav id="nav" aria-label="Sections"></nav>
+
+<!-- M3 Small/Center App Bar (Clean, Uncluttered, Single-line) -->
+<header class="m3-app-bar-container">
+  <div class="m3-app-bar">
+    <a href="#" class="brand" aria-label="Replica Home">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <span>Replica</span>
+    </a>
+
+    <div class="app-bar-actions">
+      <!-- Language Selector -->
+      <div class="m3-segmented" id="langSeg" role="radiogroup" aria-label="Language Selector">
+        <span class="m3-segmented-thumb" id="segThumb"></span>
+        <button class="m3-segmented-btn active" data-lang="en" role="radio" aria-checked="true">EN</button>
+        <button class="m3-segmented-btn" data-lang="uk" role="radio" aria-checked="false">УКР</button>
+        <button class="m3-segmented-btn" data-lang="ru" role="radio" aria-checked="false">РУС</button>
+      </div>
+
+      <!-- Theme & Hue Toggle -->
+      <button class="m3-icon-btn m3-ripple" id="themeBtn" aria-label="Customize Theme" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+        </svg>
+      </button>
+
+      <!-- Theme Dropdown Menu -->
+      <div class="theme-menu" id="themeMenu">
+        <div class="menu-label" data-i="themeAccent">Palette Color</div>
+        <div class="palette-dots" id="paletteDots"></div>
+        <div class="theme-mode-row">
+          <span data-i="darkMode">Dark Theme</span>
+          <button class="m3-switch" id="modeSwitch" role="switch" aria-checked="true">
+            <span class="m3-switch-handle"></span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
- </div>
 </header>
 
-<main class="w" id="top">
- <div class="hero">
-  <div>
-   <h1 data-i="h1"></h1>
-   <p data-i="hp"></p>
-   <div class="btns">
-    <a class="btn f xl rip" href="#start" data-i="b1"></a>
-    <a class="btn t xl rip" data-tg target="_blank" rel="noopener noreferrer" data-i="b2"></a>
-   </div>
-   <div class="chips" id="chips"></div>
-  </div>
-  <button class="tile" id="tile" aria-label="Change color palette">
-   <svg id="hsv" viewBox="-105 -105 210 210" aria-hidden="true"><path id="blob" fill="var(--pc)"/></svg>
-   <span class="g" id="glyph">R</span>
-  </button>
- </div>
+<main class="app-wrapper">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content reveal-entry">
+      <div class="hero-tag">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z"/></svg>
+        <span data-i="tag">SMM Kingdom Tasks Automation</span>
+      </div>
+      <h1 class="hero-title" data-i="h1">
+        Instagram tasks, <br><span class="accent">on autopilot.</span>
+      </h1>
+      <p class="hero-desc" data-i="hp">
+        Replica accepts and processes automated actions directly on your Android phone, saving hours of manual work.
+      </p>
+      <div class="hero-actions">
+        <a href="#downloads" class="m3-btn primary large m3-ripple" data-i="btnStart">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Get Started
+        </a>
+        <a href="#pricing" class="m3-btn tonal large m3-ripple" data-i="btnLicense">
+          Get a License
+        </a>
+      </div>
+      <div class="chips-row">
+        <span class="m3-chip" data-i="chip1">$10 per month</span>
+        <span class="m3-chip" data-i="chip2">Single device</span>
+        <span class="m3-chip">Android 9+</span>
+      </div>
+    </div>
 
- <section id="start">
-  <div class="sh rv"><h2 data-i="stT"></h2><p class="lead" data-i="stL"></p></div>
-  <div class="steps" id="steps"></div>
- </section>
+    <!-- Expressive Morphing Tile -->
+    <div class="hero-art reveal-entry">
+      <button class="blob-card" id="blobBtn" aria-label="Cycle Accent Theme">
+        <svg id="blobSvg" viewBox="-105 -105 210 210">
+          <path id="blobPath" fill="var(--md-sys-color-primary-container)"/>
+        </svg>
+        <span class="blob-glyph" id="blobGlyph">R</span>
+      </button>
+    </div>
+  </section>
 
- <section id="prepare">
-  <div class="sh rv"><h2 data-i="reT"></h2><p class="lead" data-i="reL"></p></div>
-  <div class="panel rv">
-   <div class="prog">
-    <b id="plabel"></b>
-    <svg class="wavy" viewBox="0 0 400 16" preserveAspectRatio="none" aria-hidden="true">
-     <defs><clipPath id="cl"><rect id="clr" x="0" y="-4" height="24" width="0"/></clipPath></defs>
-     <line x1="2" y1="8" x2="398" y2="8" stroke="var(--s3)" stroke-width="4" stroke-linecap="round"/>
-     <g clip-path="url(#cl)"><path class="wave" id="wvp" fill="none" stroke="var(--p)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
-    </svg>
-   </div>
-   <div id="items"></div>
-  </div>
- </section>
+  <!-- Step 1: Disable Play Protect -->
+  <section id="protect" class="reveal-entry">
+    <div class="section-header">
+      <span class="section-tag">Step 01</span>
+      <h2 data-i="st1Title">Disable Play Protect</h2>
+      <p class="section-desc" data-i="st1Desc">Android can prevent sideloading background automation apps. Turn off scanning first.</p>
+    </div>
 
- <section id="use">
-  <div class="sh rv"><h2 data-i="usT"></h2><p class="lead" data-i="usL"></p></div>
-  <div class="rv"><div class="tabs" id="tabs" role="tablist"></div><div class="tp" id="tp" role="tabpanel"></div></div>
- </section>
+    <div class="protect-card" id="protectCard">
+      <div class="protect-header" id="protectHeader">
+        <div class="protect-left">
+          <div class="protect-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div>
+            <h3 data-i="st1CardTitle">Google Play Protect Guide</h3>
+            <p data-i="st1CardSub">Tap to open step-by-step instructions</p>
+          </div>
+        </div>
+        <button class="protect-toggle-btn" aria-label="Toggle instructions">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+      </div>
 
- <section id="pricing">
-  <div class="sh rv"><h2 data-i="prT"></h2><p class="lead" data-i="prL"></p></div>
-  <div class="price rv">
-   <div class="dec" id="pd" aria-hidden="true"></div>
-   <div><div class="amt" id="amt">$10</div><small data-i="prP"></small></div>
-   <a class="btn rip" data-tg target="_blank" rel="noopener noreferrer" data-i="prB"></a>
-  </div>
-  <div class="multi rv">
-   <div><h3 data-i="muT"></h3><p data-i="muD"></p></div>
-   <a class="btn rip" data-tg target="_blank" rel="noopener noreferrer" data-i="muB"></a>
-  </div>
- </section>
+      <div class="protect-body">
+        <div class="protect-content">
+          <div class="steps-list" id="protectSteps">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
- <section id="faq">
-  <div class="sh rv"><h2 data-i="faT"></h2><p class="lead" data-i="faL"></p></div>
-  <div class="fq" id="fl" data-single></div>
- </section>
+  <!-- Step 2: Download Replica, Termux, Termux API -->
+  <section id="downloads" class="reveal-entry">
+    <div class="section-header">
+      <span class="section-tag">Step 02</span>
+      <h2 data-i="st2Title">Download the Trilogy</h2>
+      <p class="section-desc" data-i="st2Desc">Install all three companion packages to enable headless execution and UI touch automation.</p>
+    </div>
+
+    <div class="downloads-grid">
+      <!-- Tile 1: Replica -->
+      <article class="download-card">
+        <span class="card-badge primary-badge">Main App</span>
+        <div>
+          <div class="card-icon-box c1">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="3"/>
+              <path d="M12 18h.01"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Replica APK</h3>
+          <p class="card-desc" data-i="replicaDesc">The core automation client that interfaces with the SMM Kingdom tasks engine.</p>
+        </div>
+        <a class="download-btn filled m3-ripple" id="dlReplica" href="#" download>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <span data-i="dlBtn">Download Replica</span>
+        </a>
+      </article>
+
+      <!-- Tile 2: Termux -->
+      <article class="download-card">
+        <span class="card-badge neutral-badge">Runtime</span>
+        <div>
+          <div class="card-icon-box c2">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4 17 10 11 4 5"/>
+              <line x1="12" y1="19" x2="20" y2="19"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Termux APK</h3>
+          <p class="card-desc" data-i="termuxDesc">Android terminal environment required to execute internal Python background scripts.</p>
+        </div>
+        <a class="download-btn tonal m3-ripple" id="dlTermux" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <span data-i="dlTermuxBtn">Download Termux</span>
+        </a>
+      </article>
+
+      <!-- Tile 3: Termux API -->
+      <article class="download-card">
+        <span class="card-badge neutral-badge">Bridge</span>
+        <div>
+          <div class="card-icon-box c3">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Termux:API APK</h3>
+          <p class="card-desc" data-i="apiDesc">System bridging addon enabling clipboard, touch, and hardware dispatch communication.</p>
+        </div>
+        <a class="download-btn tonal m3-ripple" id="dlTermuxApi" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <span data-i="dlApiBtn">Download Termux API</span>
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <!-- Step 3: Setup Tutorial Video -->
+  <section id="tutorial" class="reveal-entry">
+    <div class="section-header">
+      <span class="section-tag">Step 03</span>
+      <h2 data-i="st3Title">Setup Tutorial Video</h2>
+      <p class="section-desc" data-i="st3Desc">Watch the complete walkthrough from initial Telegram API linkage to hands-free execution.</p>
+    </div>
+
+    <div class="video-showcase-card">
+      <div class="video-aspect-container" id="videoTrigger" aria-label="Watch Tutorial Video">
+        <button class="play-token-btn m3-ripple" id="playBtn" aria-label="Play Tutorial">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+        <span class="video-pill" id="videoPill" data-i="videoLabel">Tutorial Video Walkthrough</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 4: License Pricing (Just Below Tutorial) -->
+  <section id="pricing" class="pricing-section-container reveal-entry">
+    <div class="section-header">
+      <span class="section-tag">Pricing</span>
+      <h2 data-i="prTitle">Get Your License</h2>
+      <p class="section-desc" data-i="prDesc">Instant activation key tied directly to your Android device hardware.</p>
+    </div>
+
+    <div class="pricing-hero-card">
+      <div class="pricing-accent-bg"></div>
+      <div class="pricing-top-row">
+        <div>
+          <div class="pricing-amount-group">
+            <span class="price-currency">$</span>
+            <span class="price-value" id="priceNum">10</span>
+            <span class="price-period" data-i="prPeriod">/ month</span>
+          </div>
+          <p style="margin-top: 6px; font-weight: 600;" data-i="prSub">Single device personal license</p>
+        </div>
+
+        <a class="m3-btn primary large m3-ripple" data-tg target="_blank" rel="noopener noreferrer" data-i="btnBuy">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Get License Key
+        </a>
+      </div>
+
+      <div class="pricing-features-list">
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span data-i="f1">Unlimited Instagram tasks automation</span>
+        </div>
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span data-i="f2">Direct link with SMM Kingdom Tasks Bot</span>
+        </div>
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span data-i="f3">Telegram support and automatic script updates</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Device Inquiry Banner -->
+    <div class="multi-device-card">
+      <div class="multi-device-left">
+        <h3 data-i="multiTitle">Need Multiple Device Licenses?</h3>
+        <p data-i="multiDesc">Bulk discounts available for phone farm setups or multi-account handlers.</p>
+      </div>
+      <a class="m3-btn tonal m3-ripple" data-tg target="_blank" rel="noopener noreferrer" data-i="btnContact">
+        Contact Developer
+      </a>
+    </div>
+  </section>
 </main>
 
 <footer>
- <div class="w">
-  <span data-i="ft"></span><br>
-  <span data-i="dis"></span>
- </div>
+  <div class="app-wrapper" style="padding-bottom: 0;">
+    <p><span data-i="ftHelp">Need assistance? Contact</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftOnTg">on Telegram</span>.</p>
+    <p class="disclaimer" data-i="disclaimer">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p>
+  </div>
 </footer>
 
-<button class="fab" id="fab" aria-label="Back to top">
- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m0 0l-6 6m6-6l6 6"/></svg>
-</button>
-<div class="snk" id="snk" role="status" aria-live="polite"></div>
+<!-- MD3 Snackbar -->
+<div class="m3-snackbar" id="snackbar" role="status" aria-live="polite"></div>
 
 <script>
 /* ---- Configuration ---- */
-const LINKS = {
- apk: '#', // Set to direct APK download URL
- video: '', // Set YouTube Video ID, e.g. 'dQw4w9WgXcQ'
- tg: 'https://t.me/iamrajatroel'
+const CONFIG = {
+  links: {
+    replicaApk: '#', // Provide direct APK link
+    termuxApk: 'https://github.com/termux/termux-app/releases',
+    termuxApiApk: 'https://github.com/termux/termux-api/releases',
+    video: '',       // YouTube Video ID, e.g. 'dQw4w9WgXcQ' (leave empty until published)
+    telegram: 'https://t.me/iamrajatroel'
+  },
+  hues: [152, 215, 275, 25, 85]
 };
 
-const D = {
-en: {
-  nav: ["Start", "Prepare", "Use", "Pricing", "FAQ"],
-  h1: "Instagram tasks, on autopilot.",
-  hp: "Replica takes tasks from the SMM Kingdom Tasks Bot, completes them on your phone and reports back.",
-  b1: "Get started",
-  b2: "Get a license",
-  chips: ["$10 per month", "One device per license", "Android"],
-  stT: "Three steps. That's it.",
-  stL: "Install once, then let the video guide you.",
-  how: "Show how",
-  steps: [
-    { t: "Turn off Google Play Protect", d: "Android can block apps installed from outside the Play Store. Switch scanning off first.", g: "<ol><li>Open the <b>Play Store</b> and tap your profile picture.</li><li>Tap <b>Play Protect</b>, then the <b>settings</b> gear.</li><li>Turn off <b>Scan apps with Play Protect</b>.</li><li>Confirm if Android asks.</li></ol>" },
-    { t: "Download and install Replica", d: "Download the app, open the file and tap Install. If Android asks, allow installs from your browser or file manager.", b: "Download Replica" },
-    { t: "Follow the tutorial video", d: "Once Replica is installed, the video walks you through the rest, step by step.", b: "Watch video" }
-  ],
-  soonD: "Download link coming soon",
-  soonV: "Tutorial video coming soon",
-  reT: "Have these ready",
-  reL: "Tap a row for a quick guide. Tick it off when done.",
-  ready: "{n} of {t} ready",
-  allDone: "All set. You're ready to go.",
-  items: [
-    { t: "Bot language is English", d: "The SMM Kingdom Tasks Bot must reply in English.", g: "<ol><li>Open the <b>SMM Kingdom Tasks Bot</b> in Telegram.</li><li>Send <b>/start</b> if you have not already.</li><li>Open the <b>Settings</b> or <b>Language</b> menu.</li><li>Choose <b>English</b> and check that replies are in English.</li></ol>" },
-    { t: "Telegram API ID and Hash", d: "From Telegram's developer portal.", g: "<ol><li>Open <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">my.telegram.org</a>.</li><li>Enter the phone number of the account to automate, with country code.</li><li>Enter the code Telegram sends to your app.</li><li>Tap <b>API development tools</b>.</li><li>Enter any app title and short name, then tap <b>Create application</b>.</li><li>Copy your <b>api_id</b> and <b>api_hash</b>.</li></ol><p>Keep them private. Never share them.</p>" },
-    { t: "License key", d: "Required to run Replica.", g: "<ol><li>Message <a href=\"https://t.me/iamrajatroel\" target=\"_blank\" rel=\"noopener noreferrer\">@iamrajatroel</a> on Telegram.</li><li>Pay $10 for one month on one device.</li><li>Receive your key from the admin.</li><li>Enter it in the Replica app during setup.</li></ol>" },
-    { t: "Instagram is ready", d: "Official app, all VIP accounts logged in.", g: "<ul><li>Install the official Instagram app on the phone that runs Replica.</li><li>Log in to every VIP account registered with the bot.</li><li>Make sure each account opens normally.</li></ul>" },
-    { t: "A second phone", d: "Only for the first Telegram login.", g: "<ol><li>On the second phone, log in to the same Telegram account in the official app.</li><li>When Replica shows the QR code, open <b>Settings, Devices, Link Desktop Device</b> and scan it.</li><li>If you use two-step verification, enter your password.</li></ol><p>Needed only once. Later runs reuse the saved session.</p>" },
-    { t: "Wi-Fi", d: "Needed for the first-time setup only." }
-  ],
-  usT: "Using Replica",
-  usL: "Three buttons is all it takes.",
-  tabs: [
-    { n: "Start", d: "Open Replica and wait for the license, ADB and Telegram checks to pass. Then tap <b>START AUTOMATION</b>." },
-    { n: "Stop", d: "Tap <b>STOP AUTOMATION</b> to pause. Tap <b>EXIT</b> to close Replica." },
-    { n: "Logs", d: "Activity is saved in <b>logs.txt</b>. Tap <b>SHARE</b> to send it or <b>CLEAR</b> to empty it." }
-  ],
-  prT: "Simple pricing",
-  prL: "One license, one device.",
-  prP: "per month, per device",
-  prB: "Get a license",
-  muT: "Need more than one device?",
-  muD: "Contact the developer for a discount on multiple-device licenses.",
-  muB: "Contact developer",
-  faT: "Questions",
-  faL: "Quick answers to common questions.",
-  f: [
-    ["What does Replica do?", "It completes the Instagram tasks from the SMM Kingdom Tasks Bot so you do not have to do them manually."],
-    ["Do I need Wi-Fi all the time?", "No. Wi-Fi is needed only for the first-time setup."],
-    ["Why do I need a second phone?", "Telegram's first login uses a QR code scanned from a device already logged in to the account."],
-    ["Can one license cover several devices?", "No. A license is $10 per month per device. For several devices, contact the developer about a discount."],
-    ["Android blocked the install.", "Make sure Google Play Protect scanning is off, and allow installs from your browser or file manager when Android asks."],
-    ["The bot is not responding correctly.", "Check that the bot language is English and every VIP Instagram account is logged in."],
-    ["My license is invalid or expired.", "Check the key in the Replica app. If it has expired, contact the admin to renew."],
-    ["It says to create the config first.", "Open the Replica app, enter your API ID, API Hash, license key and accounts, tap Save, then start Replica again."],
-    ["The login QR code expired.", "Wait about two minutes, then scan the new code quickly."]
-  ],
-  ft: "Need help? Message <a href=\"https://t.me/iamrajatroel\" target=\"_blank\" rel=\"noopener noreferrer\">@iamrajatroel</a> on Telegram.",
-  dis: "Replica is an independent tool and is not affiliated with Telegram, Instagram or SMM Kingdom.",
-  mC: "Color", mD: "Dark mode", mA: "Appearance"
-},
-
-uk: {
-  nav: ["Старт", "Підготовка", "Робота", "Ціна", "Питання"],
-  h1: "Завдання Instagram на автопілоті.",
-  hp: "Replica бере завдання з бота SMM Kingdom Tasks, виконує їх на вашому телефоні та надсилає результат.",
-  b1: "Почати",
-  b2: "Отримати ліцензію",
-  chips: ["$10 на місяць", "Один пристрій на ліцензію", "Android"],
-  stT: "Три кроки. І все.",
-  stL: "Встановіть один раз, далі відео все покаже.",
-  how: "Показати як",
-  steps: [
-    { t: "Вимкніть Google Play Захист", d: "Android може блокувати застосунки, встановлені не з Play Маркету. Спочатку вимкніть сканування.", g: "<ol><li>Відкрийте <b>Play Маркет</b> і торкніться фото профілю.</li><li>Торкніться <b>Play Захист</b>, потім значка <b>налаштувань</b>.</li><li>Вимкніть <b>Сканувати додатки за допомогою Play Захисту</b>.</li><li>Підтвердьте, якщо Android запитає.</li></ol>" },
-    { t: "Завантажте та встановіть Replica", d: "Завантажте застосунок, відкрийте файл і натисніть «Встановити». Якщо Android запитає, дозвольте встановлення з браузера або файлового менеджера.", b: "Завантажити Replica" },
-    { t: "Дивіться відеоурок", d: "Після встановлення Replica відео крок за кроком покаже решту.", b: "Дивитися відео" }
-  ],
-  soonD: "Посилання для завантаження незабаром",
-  soonV: "Відеоурок незабаром",
-  reT: "Підготуйте заздалегідь",
-  reL: "Торкніться рядка, щоб побачити коротку інструкцію. Відмічайте виконане.",
-  ready: "Готово {n} з {t}",
-  allDone: "Усе готово. Можна починати.",
-  items: [
-    { t: "Мова бота — англійська", d: "Бот SMM Kingdom Tasks має відповідати англійською.", g: "<ol><li>Відкрийте <b>SMM Kingdom Tasks Bot</b> у Telegram.</li><li>Надішліть <b>/start</b>, якщо ще не робили цього.</li><li>Відкрийте меню <b>Налаштування</b> або <b>Мова</b>.</li><li>Виберіть <b>English</b> і перевірте, що відповіді англійською.</li></ol>" },
-    { t: "Telegram API ID та Hash", d: "З порталу розробників Telegram.", g: "<ol><li>Відкрийте <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">my.telegram.org</a>.</li><li>Введіть номер телефону акаунта, який хочете автоматизувати, з кодом країни.</li><li>Введіть код, який Telegram надішле у застосунок.</li><li>Натисніть <b>API development tools</b>.</li><li>Введіть будь-яку назву та коротку назву, натисніть <b>Create application</b>.</li><li>Скопіюйте <b>api_id</b> та <b>api_hash</b>.</li></ol><p>Зберігайте їх у таємниці. Нікому не передавайте.</p>" },
-    { t: "Ліцензійний ключ", d: "Потрібен для роботи Replica.", g: "<ol><li>Напишіть <a href=\"https://t.me/iamrajatroel\" target=\"_blank\" rel=\"noopener noreferrer\">@iamrajatroel</a> у Telegram.</li><li>Оплатіть $10 за один місяць на один пристрій.</li><li>Отримайте ключ від адміністратора.</li><li>Введіть його в застосунку Replica під час налаштування.</li></ol>" },
-    { t: "Instagram готовий", d: "Офіційний застосунок, усі VIP-акаунти авторизовані.", g: "<ul><li>Встановіть офіційний застосунок Instagram на телефон, де працюватиме Replica.</li><li>Увійдіть у всі VIP-акаунти, зареєстровані в боті.</li><li>Переконайтеся, що кожен акаунт працює нормально.</li></ul>" },
-    { t: "Другий телефон", d: "Лише для першого входу в Telegram.", g: "<ol><li>На другому телефоні увійдіть в той самий акаунт Telegram в офіційному застосунку.</li><li>Коли Replica покаже QR-код, відкрийте <b>Налаштування, Пристрої, Підключити пристрій</b> і скануйте його.</li><li>Якщо у вас двоетапна перевірка, введіть пароль.</li></ol><p>Потрібно лише раз. Далі використовується збережена сесія.</p>" },
-    { t: "Wi-Fi", d: "Потрібен лише для першого налаштування." }
-  ],
-  usT: "Як користуватися Replica",
-  usL: "Усього три кнопки.",
-  tabs: [
-    { n: "Запуск", d: "Відкрийте Replica та дочекайтеся перевірок ліцензії, ADB і Telegram. Потім натисніть <b>START AUTOMATION</b>." },
-    { n: "Зупинка", d: "Натисніть <b>STOP AUTOMATION</b>, щоб призупинити. <b>EXIT</b> закриває Replica." },
-    { n: "Журнал", d: "Дії зберігаються в <b>logs.txt</b>. <b>SHARE</b> надсилає файл, <b>CLEAR</b> очищає його." }
-  ],
-  prT: "Проста ціна",
-  prL: "Одна ліцензія — один пристрій.",
-  prP: "на місяць, за пристрій",
-  prB: "Отримати ліцензію",
-  muT: "Потрібно більше одного пристрою?",
-  muD: "Зверніться до розробника, щоб отримати знижку на ліцензії для кількох пристроїв.",
-  muB: "Написати розробнику",
-  faT: "Питання",
-  faL: "Короткі відповіді на поширені питання.",
-  f: [
-    ["Що робить Replica?", "Вона виконує завдання Instagram від бота SMM Kingdom Tasks, щоб вам не потрібно було робити це вручну."],
-    ["Чи потрібен Wi-Fi постійно?", "Ні. Wi-Fi потрібен лише для першого налаштування."],
-    ["Навіщо потрібен другий телефон?", "Перший вхід у Telegram виконується скануванням QR-коду з пристрою, на якому акаунт уже авторизований."],
-    ["Одна ліцензія на кілька пристроїв?", "Ні. Ліцензія коштує $10 на місяць за один пристрій. Для кількох пристроїв зверніться до розробника щодо знижки."],
-    ["Android заблокував встановлення.", "Переконайтеся, що сканування Google Play Захисту вимкнено, і дозвольте встановлення з браузера або файлового менеджера, коли Android запитає."],
-    ["Бот відповідає неправильно.", "Перевірте, що мова бота англійська і всі VIP-акаунти Instagram авторизовані."],
-    ["Ліцензія недійсна або прострочена.", "Перевірте ключ у застосунку Replica. Якщо термін минув, зверніться до адміністратора для продовження."],
-    ["Пише, що спочатку потрібно створити конфігурацію.", "Відкрийте застосунок Replica, введіть API ID, API Hash, ліцензійний ключ і акаунти, натисніть Save та запустіть Replica знову."],
-    ["QR-код для входу застарів.", "Зачекайте близько двох хвилин і швидко скануйте новий код."]
-  ],
-  ft: "Потрібна допомога? Напишіть <a href=\"https://t.me/iamrajatroel\" target=\"_blank\" rel=\"noopener noreferrer\">@iamrajatroel</a> у Telegram.",
-  dis: "Replica є незалежним інструментом і не пов'язана з Telegram, Instagram чи SMM Kingdom.",
-  mC: "Колір", mD: "Темна тема", mA: "Вигляд"
-},
-
-ru: {
-  nav: ["Старт", "Подготовка", "Работа", "Цена", "Вопросы"],
-  h1: "Задания Instagram на автопилоте.",
-  hp: "Replica берёт задания из бота SMM Kingdom Tasks, выполняет их на вашем телефоне и отправляет результат.",
-  b1: "Начать",
-  b2: "Получить лицензию",
-  chips: ["$10 в месяц", "Одно устройство на лицензию", "Android"],
-  stT: "Три шага. И всё.",
-  stL: "Установите один раз, дальше видео всё покажет.",
-  how: "Показать как",
-  steps: [
-    { t: "Отключите Google Play Защиту", d: "Android может блокировать приложения, установленные не из Play Маркета. Сначала отключите сканирование.", g: "<ol><li>Откройте <b>Play Маркет</b> и нажмите на фото профиля.</li><li>Нажмите <b>Play Защита</b>, затем значок <b>настроек</b>.</li><li>Отключите <b>Сканировать приложения с помощью Play Защиты</b>.</li><li>Подтвердите, если Android спросит.</li></ol>" },
-    { t: "Скачайте и установите Replica", d: "Скачайте приложение, откройте файл и нажмите «Установить». Если Android спросит, разрешите установку из браузера или файлового менеджера.", b: "Скачать Replica" },
-    { t: "Смотрите видеоурок", d: "После установки Replica видео шаг за шагом покажет остальное.", b: "Смотреть видео" }
-  ],
-  soonD: "Ссылка для скачивания скоро появится",
-  soonV: "Видеоурок скоро появится",
-  reT: "Подготовьте заранее",
-  reL: "Нажмите на строку, чтобы увидеть краткую инструкцию. Отмечайте выполненное.",
-  ready: "Готово {n} из {t}",
-  allDone: "Всё готово. Можно начинать.",
-  items: [
-    { t: "Язык бота — английский", d: "Бот SMM Kingdom Tasks должен отвечать на английском.", g: "<ol><li>Откройте <b>SMM Kingdom Tasks Bot</b> в Telegram.</li><li>Отправьте <b>/start</b>, если ещё не делали этого.</li><li>Откройте меню <b>Настройки</b> или <b>Язык</b>.</li><li>Выберите <b>English</b> и проверьте, что ответы на английском.</li></ol>" },
-    { t: "Telegram API ID и Hash", d: "С портала разработчиков Telegram.", g: "<ol><li>Откройте <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">my.telegram.org</a>.</li><li>Введите номер телефона аккаунта, который хотите автоматизировать, с кодом страны.</li><li>Введите код, который Telegram пришлёт в приложение.</li><li>Нажмите <b>API development tools</b>.</li><li>Введите любое название и короткое название, нажмите <b>Create application</b>.</li><li>Скопируйте <b>api_id</b> и <b>api_hash</b>.</li></ol><p>Храните их в тайне. Никому не передавайте.</p>" },
-    { t: "Лицензионный ключ", d: "Необходим для работы Replica.", g: "<ol><li>Напишите <a href=\"https://t.me/iamrajatroel\" target=\"_blank\" rel=\"noopener noreferrer\">@iamrajatroel</a> в Telegram.</li><li>Оплатите $10 за один месяц на одно устройство.</li><li>Получите ключ от администратора.</li><li>Введите его в приложении Replica при настройке.</li></ol>" },
-    { t: "Instagram готов", d: "Официальное приложение, все VIP-аккаунты авторизованы.", g: "<ul><li>Установите официальное приложение Instagram на телефон, где будет работать Replica.</li><li>Войдите во все VIP-аккаунты, зарегистрированные в боте.</li><li>Убедитесь, что каждый аккаунт работает нормально.</li></ul>" },
-    { t: "Второй телефон", d: "Только для первого входа в Telegram.", g: "<ol><li>На втором телефоне войдите в тот же аккаунт Telegram в официальном приложении.</li><li>Когда Replica покажет QR-код, откройте <b>Настройки, Устройства, Подключить устройство</b> и отсканируйте его.</li><li>Если включена двухэтапная проверка, введите пароль.</li></ol><p>Нужно только один раз. Дальше используется сохранённая сессия.</p>" },
-    { t: "Wi-Fi", d: "Нужен только для первой настройки." }
-  ],
-  usT: "Как пользоваться Replica",
-  usL: "Всего три кнопки.",
-  tabs: [
-    { n: "Запуск", d: "Откройте Replica и дождитесь проверок лицензии, ADB и Telegram. Затем нажмите <b>START AUTOMATION</b>." },
-    { n: "Остановка", d: "Нажмите <b>STOP AUTOMATION</b>, чтобы приостановить. <b>EXIT</b> закрывает Replica." },
-    { n: "Журнал", d: "Действия сохраняются в <b>logs.txt</b>. <b>SHARE</b> отправляет файл, <b>CLEAR</b> очищает его." }
-  ],
-  prT: "Простая цена",
-  prL: "Одна лицензия — одно устройство.",
-  prP: "в месяц, за устройство",
-  prB: "Получить лицензию",
-  muT: "Нужно больше одного устройства?",
-  muD: "Свяжитесь с разработчиком, чтобы получить скидку на лицензии для нескольких устройств.",
-  muB: "Написать разработчику",
-  faT: "Вопросы",
-  faL: "Короткие ответы на популярные вопросы.",
-  f: [
-    ["Что делает Replica?", "Она выполняет задания Instagram от бота SMM Kingdom Tasks, чтобы вам не нужно было делать это вручную."],
-    ["Нужен ли Wi-Fi постоянно?", "Нет. Wi-Fi нужен только для первой настройки."],
-    ["Зачем нужен второй телефон?", "Первый вход в Telegram выполняется сканированием QR-кода с устройства, на котором аккаунт уже авторизован."],
-    ["Одна лицензия на несколько устройств?", "Нет. Лицензия стоит $10 в месяц за одно устройство. Для нескольких устройств свяжитесь с разработчиком насчёт скидки."],
-    ["Android заблокировал установку.", "Убедитесь, что сканирование Google Play Защиты отключено, и разрешите установку из браузера или файлового менеджера, когда Android спросит."],
-    ["Бот отвечает неправильно.", "Проверьте, что язык бота английский и все VIP-аккаунты Instagram авторизованы."],
-    ["Лицензия недействительна или истекла.", "Проверьте ключ в приложении Replica. Если срок истёк, обратитесь к администратору для продления."],
-    ["Пишет, что сначала нужно создать конфигурацию.", "Откройте приложение Replica, введите API ID, API Hash, лицензионный ключ и аккаунты, нажмите Save и запустите Replica снова."],
-    ["QR-код для входа устарел.", "Подождите около двух минут и быстро отсканируйте новый код."]
-  ],
-  ft: "Нужна помощь? Напишите <a href=\"https://t.me/iamrajatroel\" target=\"_blank\" rel=\"noopener noreferrer\">@iamrajatroel</a> в Telegram.",
-  dis: "Replica — независимый инструмент и не связана с Telegram, Instagram или SMM Kingdom.",
-  mC: "Цвет", mD: "Тёмная тема", mA: "Внешний вид"
-}
+/* ---- Multilingual Content ---- */
+const I18N = {
+  en: {
+    tag: "SMM Kingdom Tasks Automation",
+    h1: "Instagram tasks, <br><span class=\"accent\">on autopilot.</span>",
+    hp: "Replica accepts and processes automated actions directly on your Android phone, saving hours of manual work.",
+    btnStart: "Get Started",
+    btnLicense: "Get a License",
+    chip1: "$10 per month",
+    chip2: "Single device",
+    themeAccent: "Palette Accent",
+    darkMode: "Dark Theme",
+    st1Title: "Disable Play Protect",
+    st1Desc: "Android can prevent sideloading background automation apps. Turn off scanning first.",
+    st1CardTitle: "Google Play Protect Guide",
+    st1CardSub: "Tap to view step-by-step instructions",
+    st1Steps: [
+      "Open the <b>Google Play Store</b> and tap your profile avatar.",
+      "Select <b>Play Protect</b>, then tap the top-right <b>Settings gear</b>.",
+      "Toggle off <b>Scan apps with Play Protect</b>.",
+      "Confirm when prompted by Android."
+    ],
+    st2Title: "Download the Trilogy",
+    st2Desc: "Install all three companion packages to enable headless execution and UI touch automation.",
+    replicaDesc: "The core automation client that interfaces with the SMM Kingdom tasks engine.",
+    termuxDesc: "Android terminal environment required to execute internal Python background scripts.",
+    apiDesc: "System bridging addon enabling clipboard, touch, and hardware dispatch communication.",
+    dlBtn: "Download Replica",
+    dlTermuxBtn: "Download Termux",
+    dlApiBtn: "Download Termux API",
+    st3Title: "Setup Tutorial Video",
+    st3Desc: "Watch the complete walkthrough from initial Telegram API linkage to hands-free execution.",
+    videoLabel: "Tutorial Video Walkthrough",
+    videoSoon: "Tutorial video coming soon",
+    dlSoon: "Replica APK download link coming soon",
+    prTitle: "Get Your License",
+    prDesc: "Instant activation key tied directly to your Android device hardware.",
+    prPeriod: "/ month",
+    prSub: "Single device personal license",
+    btnBuy: "Get License Key",
+    f1: "Unlimited Instagram tasks automation",
+    f2: "Direct link with SMM Kingdom Tasks Bot",
+    f3: "Telegram support and automatic script updates",
+    multiTitle: "Need Multiple Device Licenses?",
+    multiDesc: "Bulk discounts available for phone farm setups or multi-account handlers.",
+    btnContact: "Contact Developer",
+    ftHelp: "Need assistance? Contact",
+    ftOnTg: "on Telegram",
+    disclaimer: "Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom."
+  },
+  uk: {
+    tag: "Автоматизація завдань SMM Kingdom",
+    h1: "Завдання Instagram, <br><span class=\"accent\">на автопілоті.</span>",
+    hp: "Replica приймає та виконує завдання бота SMM Kingdom безпосередньо на вашому телефоні Android.",
+    btnStart: "Розпочати",
+    btnLicense: "Отримати ліцензію",
+    chip1: "$10 на місяць",
+    chip2: "Один пристрій",
+    themeAccent: "Колір теми",
+    darkMode: "Темна тема",
+    st1Title: "Вимкніть Play Захист",
+    st1Desc: "Android може блокувати додатки автоматизації. Спочатку вимкніть сканування.",
+    st1CardTitle: "Інструкція Play Захисту",
+    st1CardSub: "Торкніться, щоб відкрити кроки",
+    st1Steps: [
+      "Відкрийте <b>Google Play Маркет</b> та натисніть на аватар профілю.",
+      "Оберіть <b>Play Захист</b>, потім натисніть <b>значок налаштувань</b> вгорі.",
+      "Вимкніть <b>Сканувати додатки за допомогою Play Захисту</b>.",
+      "Підтвердьте вимкнення при запиті Android."
+    ],
+    st2Title: "Завантажте три додатки",
+    st2Desc: "Встановіть усі три пакети для забезпечення повної фонової роботи та емуляції дій.",
+    replicaDesc: "Основний додаток автоматизації, що взаємодіє з ботом SMM Kingdom.",
+    termuxDesc: "Термінал Android для запуску внутрішніх скриптів та сервісів.",
+    apiDesc: "Системний міст для доступу до буфера, кліків та керування.",
+    dlBtn: "Завантажити Replica",
+    dlTermuxBtn: "Завантажити Termux",
+    dlApiBtn: "Завантажити Termux API",
+    st3Title: "Відеоінструкція",
+    st3Desc: "Подивіться повне відео з налаштування від API Telegram до повного запуску.",
+    videoLabel: "Відеоурок з налаштування",
+    videoSoon: "Відеоурок незабаром з'явиться",
+    dlSoon: "Посилання на Replica APK незабаром",
+    prTitle: "Отримайте ліцензію",
+    prDesc: "Миттєвий ключ активації, прив'язаний до вашого Android пристрою.",
+    prPeriod: "/ місяць",
+    prSub: "Ліцензія для одного пристрою",
+    btnBuy: "Отримати ключ",
+    f1: "Безлімітна автоматизація завдань Instagram",
+    f2: "Пряма інтеграція з SMM Kingdom Tasks Bot",
+    f3: "Підтримка в Telegram та оновлення",
+    multiTitle: "Потрібно кілька пристроїв?",
+    multiDesc: "Знижки для ферм пристроїв або кількох акаунтів.",
+    btnContact: "Написати розробнику",
+    ftHelp: "Потрібна допомога? Напишіть",
+    ftOnTg: "в Telegram",
+    disclaimer: "Replica є незалежним інструментом і не пов'язана з Telegram, Instagram або SMM Kingdom."
+  },
+  ru: {
+    tag: "Автоматизация заданий SMM Kingdom",
+    h1: "Задания Instagram, <br><span class=\"accent\">на автопилоте.</span>",
+    hp: "Replica принимает и выполняет задачи бота SMM Kingdom прямо на вашем Android смартфоне.",
+    btnStart: "Начать работу",
+    btnLicense: "Получить ключ",
+    chip1: "$10 в месяц",
+    chip2: "Одно устройство",
+    themeAccent: "Цвет темы",
+    darkMode: "Тёмная тема",
+    st1Title: "Отключите Play Защиту",
+    st1Desc: "Android блокирует сторонние приложения автоматизации. Отключите сканирование.",
+    st1CardTitle: "Инструкция Play Защиты",
+    st1CardSub: "Нажмите, чтобы открыть пошагово",
+    st1Steps: [
+      "Откройте <b>Google Play Маркет</b> и нажмите на фото профиля.",
+      "Выберите <b>Play Защита</b>, затем нажмите <b>значок настроек</b> вверху.",
+      "Отключите пункт <b>Сканировать приложения с помощью Play Защиты</b>.",
+      "Подтвердите отключение, если система запросит."
+    ],
+    st2Title: "Скачайте три приложения",
+    st2Desc: "Установите все три пакета для обеспечения фоновой работы и симуляции действий.",
+    replicaDesc: "Основной клиент автоматизации, работающий с движком заданий SMM Kingdom.",
+    termuxDesc: "Среда терминала Android для выполнения внутренних фоновых скриптов.",
+    apiDesc: "Системный мост для взаимодействия с буфером, кликами и устройством.",
+    dlBtn: "Скачать Replica",
+    dlTermuxBtn: "Скачать Termux",
+    dlApiBtn: "Скачать Termux API",
+    st3Title: "Видеоинструкция",
+    st3Desc: "Пошаговый видеоролик: от привязки Telegram API до полного запуска процесса.",
+    videoLabel: "Обучающий видеоролик",
+    videoSoon: "Видео скоро появится",
+    dlSoon: "Ссылка на APK скоро появится",
+    prTitle: "Получить лицензию",
+    prDesc: "Мгновенная активация ключа, привязанного к вашему устройству.",
+    prPeriod: "/ месяц",
+    prSub: "Лицензия на один смартфон",
+    btnBuy: "Купить лицензию",
+    f1: "Безлимитное выполнение заданий Instagram",
+    f2: "Прямая работа с SMM Kingdom Tasks Bot",
+    f3: "Поддержка в Telegram и обновления",
+    multiTitle: "Нужно несколько лицензий?",
+    multiDesc: "Скидки для ферм телефонов и нескольких аккаунтов.",
+    btnContact: "Написать автору",
+    ftHelp: "Нужна помощь? Напишите",
+    ftOnTg: "в Telegram",
+    disclaimer: "Replica — независимый инструмент и не связан с Telegram, Instagram или SMM Kingdom."
+  }
 };
 
-const MK = [
-  [["START AUTOMATION", "f"]],
-  [["STOP AUTOMATION", "t"], ["EXIT", ""]],
-  [["SHARE", ""], ["CLEAR", ""]]
-];
-const IDS = ["start", "prepare", "use", "pricing", "faq"];
-const HUES = [155, 255, 300, 10, 70];
-const ICO = {
-  dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-5-5m5 5l5-5M5 20h14"/></svg>',
-  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 001.5.86l10.5-6.5a1 1 0 000-1.72L9.5 4.64A1 1 0 008 5.5z"/></svg>',
-  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
-};
+/* ---- State Management ---- */
+const $ = selector => document.querySelector(selector);
+const $$ = selector => document.querySelectorAll(selector);
 
-const $ = q => document.querySelector(q);
-const $$ = q => document.querySelectorAll(q);
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let currentLang = localStorage.getItem('rep_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
+if (!I18N[currentLang]) currentLang = 'en';
 
-function lg(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
-function ls(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
+let currentHue = +(localStorage.getItem('rep_hue') || 152);
+let currentMode = localStorage.getItem('rep_mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-function shape(n, a, s, c) {
-  let p = '', R = 100, N = 160;
-  for (let i = 0; i <= N; i++) {
-    let t = i / N * Math.PI * 2, r = R * (1 - a + a * Math.cos(n * t));
-    p += (i ? 'L' : 'M') + (r * Math.cos(t)).toFixed(1) + ' ' + (r * Math.sin(t)).toFixed(1);
-  }
-  return `<svg viewBox="-105 -105 210 210" width="${s}" height="${s}" aria-hidden="true"><path d="${p}Z" fill="${c}"/></svg>`;
+/* ---- Toast / Snackbar ---- */
+let snackTimer;
+function showToast(message) {
+  const sb = $('#snackbar');
+  sb.textContent = message;
+  sb.classList.add('show');
+  clearTimeout(snackTimer);
+  snackTimer = setTimeout(() => sb.classList.remove('show'), 3400);
 }
 
-let L = lg('rl') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
-if (!D[L]) L = 'en';
-
-let ck;
-try { ck = JSON.parse(lg('rck') || '[]'); } catch(e) { ck = []; }
-let tb = 0, cur = -1, hue = +(lg('rh') || 155);
-
-/* initial static elements */
-$('#lg').innerHTML = shape(8, 0.14, 28, 'var(--p)');
-$('#pd').innerHTML = shape(10, 0.08, 300, 'currentColor');
-$('#pal').innerHTML = HUES.map(h => `<button data-h="${h}" aria-label="Color hue ${h}" aria-pressed="false" style="background:oklch(.62 .16 ${h})"></button>`).join('');
-$$('[data-tg]').forEach(a => a.href = LINKS.tg);
-
-(() => {
-  let d = '';
-  for (let x = -20; x <= 420; x += 2) {
-    d += (d ? 'L' : 'M') + x + ' ' + (8 + 4 * Math.sin(x / 20 * Math.PI * 2)).toFixed(2);
-  }
-  $('#wvp').setAttribute('d', d);
-})();
-
-/* toast notification */
-let st;
-function snk(m) {
-  const s = $('#snk');
-  s.textContent = m;
-  s.classList.add('show');
-  clearTimeout(st);
-  st = setTimeout(() => s.classList.remove('show'), 3200);
-}
-
-/* sliding indicators */
-function mi(c) {
-  if (!c) return;
-  const i = c.querySelector('.ind');
-  const a = c.querySelector('.on');
-  if (!i) return;
-  if (!a) { i.style.opacity = '0'; return; }
-  const first = !c.classList.contains('rdy');
-  if (first) i.style.transition = 'none';
-  i.style.opacity = '1';
-  i.style.width = a.offsetWidth + 'px';
-  i.style.transform = `translateX(${a.offsetLeft}px)`;
-  if (first) {
-    void i.offsetWidth;
-    i.style.transition = '';
-    c.classList.add('rdy');
-  }
-}
-function miAll() { ['#nav', '#lang', '#tabs'].forEach(q => mi($(q))); }
-
-/* render main interface */
-function render() {
-  const d = D[L];
-  document.documentElement.lang = L;
-  $$('[data-i]').forEach(e => {
-    const k = e.dataset.i;
-    if (k === 'h1') {
-      const w = d.h1.split(' ');
-      e.innerHTML = w.map((x, i) => `<span class="wd${i === w.length - 1 ? ' hl' : ''}" style="animation-delay:${100 + i * 80}ms">${x}</span>`).join(' ');
-    } else if (d[k]) {
-      e.innerHTML = d[k];
-    }
-  });
-
-  $('#tn').setAttribute('aria-label', d.mA);
-  $('#chips').innerHTML = d.chips.map(c => `<span class="chip">${c}</span>`).join('');
-  $('#nav').innerHTML = '<span class="ind"></span>' + d.nav.map((n, i) => `<a href="#${IDS[i]}">${n}</a>`).join('');
-  $$('#lang button').forEach(b => b.classList.toggle('on', b.dataset.l === L));
-
-  $('#steps').innerHTML = d.steps.map((s, i) => {
-    let act = '';
-    if (i === 0) {
-      act = `<div class="ac"><div class="sa"><button class="btn t rip" data-acc aria-expanded="false">${d.how}${ICO.down}</button></div><div class="xw"><div class="xi"><div class="bd">${s.g}</div></div></div></div>`;
-    } else if (i === 1) {
-      act = `<div class="sa"><a class="btn f rip" id="dl" href="${LINKS.apk}" download>${ICO.dl}${s.b}</a></div>`;
-    } else if (i === 2) {
-      act = `<div class="sa"><button class="btn f rip" data-vid>${ICO.play}${s.b}</button></div><button class="vid rip" id="vid" data-vid aria-label="${s.b}"><span class="play">${ICO.play}</span>${LINKS.video ? '' : `<span class="vs">${d.soonV}</span>`}</button>`;
-    }
-    return `<article class="step rv"><div class="num">${i + 1}</div><div><h3>${s.t}</h3><p>${s.d}</p>${act}</div></article>`;
-  }).join('');
-
-  $('#items').innerHTML = d.items.map((it, i) => {
-    const c = !!ck[i];
-    const tt = `<span class="tt"><b>${it.t}</b><small>${it.d}</small></span>`;
-    const head = it.g
-      ? `<button class="ach rip" data-acc aria-expanded="false">${tt}<i class="chev"></i></button>`
-      : `<div class="ach st">${tt}</div>`;
-    return `<div class="it ac rv${c ? ' done' : ''}" data-k="${i}"><div class="ith"><button class="chk" role="checkbox" aria-checked="${c}" aria-label="${it.t}"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" pathLength="1"/></svg></button>${head}</div>${it.g ? `<div class="xw"><div class="xi"><div class="bd">${it.g}</div></div></div>` : ''}</div>`;
-  }).join('');
-
-  $('#fl').innerHTML = d.f.map(f => `<div class="ac rv"><button class="ach rip" data-acc aria-expanded="false"><span>${f[0]}</span><i class="chev"></i></button><div class="xw"><div class="xi"><div class="bd">${f[1]}</div></div></div></div>`).join('');
-
-  $('#tabs').innerHTML = '<span class="ind"></span>' + d.tabs.map((t, i) => `<button role="tab" data-tab="${i}"${i === tb ? ' class="on"' : ''}>${t.n}</button>`).join('');
-
-  panel(false);
-  prog(false);
-  navOn();
-  miAll();
-  reveal();
-}
-
-function panel(anim) {
-  const t = D[L].tabs[tb];
-  const p = $('#tp');
-  p.innerHTML = `<p>${t.d}</p><div class="mock" aria-hidden="true">${MK[tb].map(m => `<span class="mk ${m[1]}">${m[0]}</span>`).join('')}</div>`;
-  if (anim) {
-    p.classList.remove('swp');
-    void p.offsetWidth;
-    p.classList.add('swp');
-  }
-}
-
-function prog(announce) {
-  const d = D[L];
-  let n = 0;
-  d.items.forEach((_, i) => { if (ck[i]) n++; });
-  const t = d.items.length;
-  $('#plabel').textContent = n === t ? d.allDone : d.ready.replace('{n}', n).replace('{t}', t);
-  $('#clr').style.width = ((n / t) * 400) + 'px';
-  if (announce && n === t) snk(d.allDone);
-}
-
-function navOn() {
-  const nv = $('#nav');
-  const as = nv.querySelectorAll('a');
-  as.forEach((a, i) => a.classList.toggle('on', i === cur));
-  mi(nv);
-  if (cur >= 0 && as[cur] && nv.scrollWidth > nv.clientWidth) {
-    nv.scrollTo({ left: as[cur].offsetLeft - nv.clientWidth / 2 + as[cur].offsetWidth / 2, behavior: 'smooth' });
-  }
-}
-
-/* intersection observers */
-const rio = new IntersectionObserver(es => {
-  es.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('in');
-      rio.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.08 });
-
-function reveal() {
-  $$('.rv:not(.in)').forEach(e => {
-    const i = Array.prototype.indexOf.call(e.parentNode.children, e);
-    e.style.setProperty('--d', Math.min(i, 6) * 60 + 'ms');
-    rio.observe(e);
-  });
-}
-
-const sp = new IntersectionObserver(es => {
-  es.forEach(e => {
-    if (e.isIntersecting) {
-      cur = IDS.indexOf(e.target.id);
-      navOn();
-    }
-  });
-}, { rootMargin: '-30% 0px -60% 0px' });
-IDS.forEach(id => { const el = $('#' + id); if (el) sp.observe(el); });
-
-const hs = new IntersectionObserver(es => {
-  if (es[0].isIntersecting && cur !== -1) {
-    cur = -1;
-    navOn();
-  }
-}, { rootMargin: '0px 0px -60% 0px' });
-hs.observe($('.hero'));
-
-/* color & mode */
-function setH(h) {
-  hue = +h;
-  document.documentElement.style.setProperty('--h', h);
-  ls('rh', h);
-  $$('#pal button').forEach(b => b.setAttribute('aria-pressed', b.dataset.h == h));
-}
-
-function setM(m) {
-  document.documentElement.dataset.mode = m;
-  ls('rm', m);
-  $('#dm').setAttribute('aria-checked', m === 'dark');
-}
-
-function vt(fn, x, y) {
-  if (!document.startViewTransition || reduce) { fn(); return; }
-  const t = document.startViewTransition(fn);
-  t.ready.then(() => {
-    const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    document.documentElement.animate(
-      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-      { duration: 650, easing: 'cubic-bezier(.2,0,0,1)', pseudoElement: '::view-transition-new(root)' }
-    );
-  }).catch(() => {});
-}
-
-/* ripples */
+/* ---- Material 3 Ripple Engine ---- */
 document.addEventListener('pointerdown', e => {
-  const r = e.target.closest('.rip');
-  if (!r) return;
-  const b = r.getBoundingClientRect();
-  const s = Math.max(b.width, b.height) * 2;
-  const sp = document.createElement('span');
-  sp.className = 'rp';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - b.left - s / 2}px;top:${e.clientY - b.top - s / 2}px`;
-  r.appendChild(sp);
-  setTimeout(() => sp.remove(), 700);
+  const el = e.target.closest('.m3-ripple');
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const radius = Math.max(rect.width, rect.height);
+  const wave = document.createElement('span');
+  wave.className = 'ripple-wave';
+  wave.style.width = wave.style.height = `${radius * 2}px`;
+  wave.style.left = `${e.clientX - rect.left - radius}px`;
+  wave.style.top = `${e.clientY - rect.top - radius}px`;
+  el.appendChild(wave);
+  setTimeout(() => wave.remove(), 650);
 });
 
-function playVideo() {
-  const d = D[L];
-  if (!LINKS.video) {
-    snk(d.soonV);
-    return;
-  }
-  const v = $('#vid');
-  if (v) {
-    v.outerHTML = `<div class="vid" id="vid"><iframe src="https://www.youtube.com/embed/${LINKS.video}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>`;
-    $('#vid').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
+/* ---- Segmented Lang Bar Alignment ---- */
+function updateLangBar() {
+  const container = $('#langSeg');
+  const thumb = $('#segThumb');
+  const activeBtn = container.querySelector(`[data-lang="${currentLang}"]`);
+  if (!activeBtn) return;
+
+  container.querySelectorAll('.m3-segmented-btn').forEach(btn => {
+    const isActive = btn === activeBtn;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-checked', String(isActive));
+  });
+
+  thumb.style.width = `${activeBtn.offsetWidth}px`;
+  thumb.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
 }
 
-/* global click handler */
-document.addEventListener('click', e => {
-  const t = e.target;
-  const d = D[L];
+/* ---- Theme & Mode Functions ---- */
+function setHue(hue) {
+  currentHue = +hue;
+  document.documentElement.style.setProperty('--h', currentHue);
+  localStorage.setItem('rep_hue', currentHue);
+  $$('#paletteDots .palette-dot').forEach(dot => {
+    dot.classList.toggle('active', +dot.dataset.hue === currentHue);
+  });
+}
 
-  const a = t.closest('[data-acc]');
-  if (a) {
-    const box = a.closest('.ac');
-    if (box) {
-      const open = !box.classList.contains('open');
-      const sg = box.closest('[data-single]');
-      if (sg && open) {
-        sg.querySelectorAll('.ac.open').forEach(x => {
-          x.classList.remove('open');
-          const b = x.querySelector('[data-acc]');
-          if (b) b.setAttribute('aria-expanded', 'false');
-        });
-      }
-      box.classList.toggle('open', open);
-      a.setAttribute('aria-expanded', String(open));
+function setMode(mode) {
+  currentMode = mode;
+  document.documentElement.setAttribute('data-mode', mode);
+  localStorage.setItem('rep_mode', mode);
+  $('#modeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
+}
+
+/* ---- Render Content ---- */
+function renderContent() {
+  const t = I18N[currentLang];
+  document.documentElement.lang = currentLang;
+
+  $$('[data-i]').forEach(el => {
+    const key = el.dataset.i;
+    if (t[key]) el.innerHTML = t[key];
+  });
+
+  // Render Play Protect Steps
+  $('#protectSteps').innerHTML = t.st1Steps.map((step, i) => `
+    <div class="step-item">
+      <div class="step-num">${i + 1}</div>
+      <div>${step}</div>
+    </div>
+  `).join('');
+
+  updateLangBar();
+}
+
+/* ---- Setup Actions & Event Handlers ---- */
+function init() {
+  // Telegram Links
+  $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
+  $('#dlTermux').href = CONFIG.links.termuxApk;
+  $('#dlTermuxApi').href = CONFIG.links.termuxApiApk;
+
+  // Build Palette Dots
+  $('#paletteDots').innerHTML = CONFIG.hues.map(h => `
+    <button class="palette-dot ${h === currentHue ? 'active' : ''}" data-hue="${h}" style="background: oklch(0.65 0.16 ${h})" aria-label="Color hue ${h}"></button>
+  `).join('');
+
+  // Segmented Language Click
+  $('#langSeg').addEventListener('click', e => {
+    const btn = e.target.closest('[data-lang]');
+    if (btn && btn.dataset.lang !== currentLang) {
+      currentLang = btn.dataset.lang;
+      localStorage.setItem('rep_lang', currentLang);
+      renderContent();
     }
-    return;
-  }
+  });
 
-  const c = t.closest('.chk');
-  if (c) {
-    const it = c.closest('.it');
-    const k = +it.dataset.k;
-    ck[k] = !ck[k];
-    ls('rck', JSON.stringify(ck));
-    it.classList.toggle('done', !!ck[k]);
-    c.setAttribute('aria-checked', String(!!ck[k]));
-    prog(true);
-    return;
-  }
+  // Palette Click
+  $('#paletteDots').addEventListener('click', e => {
+    const dot = e.target.closest('.palette-dot');
+    if (dot) setHue(dot.dataset.hue);
+  });
 
-  const tab = t.closest('[data-tab]');
-  if (tab) {
-    tb = +tab.dataset.tab;
-    $$('#tabs button').forEach(b => b.classList.toggle('on', b === tab));
-    mi($('#tabs'));
-    panel(true);
-    return;
-  }
+  // Theme Menu Toggle
+  const themeBtn = $('#themeBtn');
+  const themeMenu = $('#themeMenu');
+  themeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = themeMenu.classList.toggle('open');
+    themeBtn.classList.toggle('active', isOpen);
+    themeBtn.setAttribute('aria-expanded', String(isOpen));
+  });
 
-  if (t.closest('[data-vid]')) {
-    playVideo();
-    return;
-  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#themeMenu') && !e.target.closest('#themeBtn')) {
+      themeMenu.classList.remove('open');
+      themeBtn.classList.remove('active');
+      themeBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
 
-  const dl = t.closest('#dl');
-  if (dl && (LINKS.apk === '#' || !LINKS.apk)) {
-    e.preventDefault();
-    snk(d.soonD);
-    return;
-  }
+  // Dark/Light Switch
+  $('#modeSwitch').addEventListener('click', () => {
+    setMode(currentMode === 'dark' ? 'light' : 'dark');
+  });
 
-  if (!t.closest('#menu') && !t.closest('#tn')) {
-    $('#menu').classList.remove('open');
-    $('#tn').setAttribute('aria-expanded', 'false');
-  }
-});
+  // Play Protect Accordion Toggle
+  const protectCard = $('#protectCard');
+  $('#protectHeader').addEventListener('click', () => {
+    protectCard.classList.toggle('open');
+  });
 
-/* header controls */
-$('#lang').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (b && b.dataset.l) {
-    L = b.dataset.l;
-    ls('rl', L);
-    render();
-  }
-});
+  // Replica Download Guard
+  $('#dlReplica').addEventListener('click', e => {
+    if (CONFIG.links.replicaApk === '#' || !CONFIG.links.replicaApk) {
+      e.preventDefault();
+      showToast(I18N[currentLang].dlSoon);
+    }
+  });
 
-$('#tn').addEventListener('click', function() {
-  const o = $('#menu').classList.toggle('open');
-  this.setAttribute('aria-expanded', String(o));
-});
+  // Video Play Action
+  $('#videoTrigger').addEventListener('click', () => {
+    if (!CONFIG.links.video) {
+      showToast(I18N[currentLang].videoSoon);
+      return;
+    }
+    const container = $('#videoTrigger');
+    container.innerHTML = `<iframe src="https://www.youtube.com/embed/${CONFIG.links.video}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+  });
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    $('#menu').classList.remove('open');
-    $('#tn').setAttribute('aria-expanded', 'false');
-  }
-});
+  // Initial State Application
+  setHue(currentHue);
+  setMode(currentMode);
+  renderContent();
+  window.addEventListener('resize', updateLangBar);
 
-$('#pal').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (b && b.dataset.h) setH(b.dataset.h);
-});
-
-$('#dm').addEventListener('click', function(e) {
-  const r = this.getBoundingClientRect();
-  const x = e.clientX || r.left + r.width / 2;
-  const y = e.clientY || r.top + r.height / 2;
-  const m = document.documentElement.dataset.mode === 'dark' ? 'light' : 'dark';
-  vt(() => setM(m), x, y);
-});
-
-$('#fab').addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
-addEventListener('scroll', () => $('#fab').classList.toggle('show', scrollY > 600), { passive: true });
-addEventListener('resize', miAll);
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(miAll);
+  // Blob Animation & Interaction
+  initHeroBlob();
+  initIntersectionReveal();
 }
 
-/* animated hero tile */
-(() => {
-  const path = $('#blob'), svg = $('#hsv'), gl = $('#glyph'), tile = $('#tile');
-  const S = [[8, 0.07], [6, 0.17], [12, 0.05], [5, 0.14], [10, 0.07], [7, 0.12]];
+/* ---- Expressive Morphing SVG Tile ---- */
+function initHeroBlob() {
+  const path = $('#blobPath');
+  const blobBtn = $('#blobBtn');
+  const shapes = [[8, 0.08], [6, 0.16], [10, 0.07], [5, 0.14], [12, 0.05]];
   const N = 120;
 
-  function d(time) {
-    const pos = time / 3.4;
-    const i = Math.floor(pos);
-    const f = pos - i;
+  function generatePath(time) {
+    const cycle = time / 3.2;
+    const idx = Math.floor(cycle);
+    const f = cycle - idx;
     let k = Math.max(0, Math.min(1, (f - 0.5) / 0.5));
     k = k * k * (3 - 2 * k);
 
-    const A = S[i % S.length];
-    const B = S[(i + 1) % S.length];
-    let s = '';
+    const A = shapes[idx % shapes.length];
+    const B = shapes[(idx + 1) % shapes.length];
+    let d = '';
 
     for (let j = 0; j <= N; j++) {
-      const a = (j / N) * Math.PI * 2;
-      const r = 100 * ((1 - A[1] + A[1] * Math.cos(A[0] * a)) * (1 - k) + (1 - B[1] + B[1] * Math.cos(B[0] * a)) * k);
-      s += (j ? 'L' : 'M') + (r * Math.cos(a)).toFixed(1) + ' ' + (r * Math.sin(a)).toFixed(1);
+      const rad = (j / N) * Math.PI * 2;
+      const r = 96 * ((1 - A[1] + A[1] * Math.cos(A[0] * rad)) * (1 - k) + (1 - B[1] + B[1] * Math.cos(B[0] * rad)) * k);
+      d += (j ? 'L' : 'M') + (r * Math.cos(rad)).toFixed(1) + ' ' + (r * Math.sin(rad)).toFixed(1);
     }
-    return s + 'Z';
+    return d + 'Z';
   }
 
-  path.setAttribute('d', d(0));
-  tile.addEventListener('click', () => {
-    setH(HUES[(HUES.indexOf(hue) + 1) % HUES.length]);
-    tile.classList.remove('pop');
-    void tile.offsetWidth;
-    tile.classList.add('pop');
+  path.setAttribute('d', generatePath(0));
+
+  blobBtn.addEventListener('click', () => {
+    const nextIdx = (CONFIG.hues.indexOf(currentHue) + 1) % CONFIG.hues.length;
+    setHue(CONFIG.hues[nextIdx]);
   });
 
-  if (reduce) return;
-
-  let tx = 0, ty = 0, cx = 0, cy = 0;
-  addEventListener('pointermove', e => {
-    tx = (e.clientX / innerWidth - 0.5) * 20;
-    ty = (e.clientY / innerHeight - 0.5) * 20;
-  }, { passive: true });
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const t0 = performance.now();
-  (function loop(n) {
-    const t = (n - t0) / 1000;
-    path.setAttribute('d', d(t));
-    path.setAttribute('transform', `rotate(${(t * 8).toFixed(2)})`);
-    cx += (tx - cx) * 0.08;
-    cy += (ty - cy) * 0.08;
-    svg.style.transform = `translate(${cx.toFixed(2)}px,${cy.toFixed(2)}px)`;
-    gl.style.transform = `translate(${(cx * 1.6).toFixed(2)}px,${(cy * 1.6).toFixed(2)}px)`;
-    requestAnimationFrame(loop);
-  })(t0);
-})();
+  function animate(now) {
+    const t = (now - t0) / 1000;
+    path.setAttribute('d', generatePath(t));
+    path.setAttribute('transform', `rotate(${(t * 9).toFixed(2)})`);
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+}
 
-/* price counter */
-(() => {
-  const amt = $('#amt');
-  new IntersectionObserver((es, o) => {
-    if (!es[0].isIntersecting) return;
-    o.disconnect();
-    if (reduce) return;
-    const t0 = performance.now();
-    (function f(n) {
-      let k = Math.min(1, (n - t0) / 1000);
-      k = 1 - Math.pow(1 - k, 3);
-      amt.textContent = '$' + Math.round(10 * k);
-      if (k < 1) requestAnimationFrame(f);
-    })(t0);
-  }, { threshold: 0.4 }).observe(amt);
-})();
+/* ---- Scroll Reveal ---- */
+function initIntersectionReveal() {
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
 
-/* initialization */
-setM(lg('rm') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-setH(hue);
-render();
+  $$('.reveal-entry').forEach(el => observer.observe(el));
+}
+
+// Boot
+window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
