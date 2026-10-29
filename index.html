@@ -7,7 +7,7 @@
 <meta name="description" content="Automate Instagram tasks on Android 11+ with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @property --h {
   syntax: '<number>';
@@ -17,14 +17,18 @@
 
 :root {
   --h: 154;
-  
-  /* Material 3 Expressive Dynamic Spring Curves */
+
+  /* Material 3 Expressive motion tokens (spring approximations) */
+  --spring-fast-spatial: cubic-bezier(0.42, 1.67, 0.21, 0.90);
+  --spring-default-spatial: cubic-bezier(0.38, 1.21, 0.22, 1.00);
+  --spring-fast-effects: cubic-bezier(0.31, 0.94, 0.34, 1.00);
+  --spring-default-effects: cubic-bezier(0.34, 0.80, 0.34, 1.00);
   --ease-expressive-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-expressive-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
-  --ease-expressive-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-expressive-spring: var(--spring-default-spatial);
   --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
 
-  /* Light MD3E Palette */
+  /* Light MD3E palette */
   --md-sys-color-primary: oklch(0.44 0.18 var(--h));
   --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
   --md-sys-color-primary-container: oklch(0.92 0.08 var(--h));
@@ -51,19 +55,17 @@
   --md-sys-color-outline: oklch(0.72 0.025 var(--h));
   --md-sys-color-outline-variant: oklch(0.86 0.015 var(--h));
 
-  /* MD3E Shape Hierarchy */
-  --shape-corner-none: 0px;
+  /* MD3E shape scale */
   --shape-corner-extra-small: 8px;
   --shape-corner-small: 12px;
   --shape-corner-medium: 18px;
   --shape-corner-large: 26px;
   --shape-corner-extra-large: 34px;
-  --shape-corner-full: 9999px;
 
-  /* MD3 Elevation Shadows (Without Colored Neon Glow) */
   --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --press-shadow: 0 3px 10px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
 :root[data-mode="dark"] {
@@ -96,10 +98,11 @@
   --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.45), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.5), 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+  --press-shadow: 0 3px 12px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 /* =========================================================
-   GLOBAL RESET & COMPLETE TAP HIGHLIGHT SUPPRESSION
+   RESET
    ========================================================= */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -109,11 +112,6 @@
   -webkit-touch-callout: none;
   outline: none;
 }
-
-*:focus {
-  outline: none;
-}
-
 *:focus-visible {
   outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 3px;
@@ -138,20 +136,23 @@ body {
   -webkit-user-select: none;
 }
 
+/* Icons */
+.ic {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  display: block;
+}
+
 /* =========================================================
-   MD3E STATE LAYERS & SURFACE TINT (NO GLOW)
+   STATE LAYERS + RIPPLE
    ========================================================= */
 .m3e-state {
   position: relative;
   overflow: hidden;
   isolation: isolate;
   cursor: pointer;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  filter: none !important;
 }
-
-/* Subtle state layer: hover only on real pointers, pressed on touch */
 .m3e-state::before {
   content: '';
   position: absolute;
@@ -162,37 +163,27 @@ body {
   border-radius: inherit;
   transition: opacity 0.2s var(--ease-expressive-standard);
 }
-
 @media (hover: hover) and (pointer: fine) {
-  .m3e-state:hover::before { opacity: 0.06; }
+  .m3e-state:hover::before { opacity: 0.08; }
 }
-.m3e-state:active::before { opacity: 0.08; }
+.m3e-state:is(:active, .is-pressed)::before { opacity: 0.12; }
 
 .m3e-rip {
   position: absolute;
   border-radius: 50%;
   background: currentColor;
-  opacity: 0.1;
+  opacity: 0.14;
   transform: scale(0);
-  animation: m3e-ripple-spread 0.5s var(--ease-expressive-emphasized) forwards;
+  animation: m3e-ripple-spread 0.55s var(--ease-expressive-emphasized) forwards;
   pointer-events: none;
 }
-
 @keyframes m3e-ripple-spread {
   to { transform: scale(4); opacity: 0; }
 }
 
 /* =========================================================
-   CURLY CIRCLE (SCALLOPED SQUIRCLE) GENERATOR
+   LOADER
    ========================================================= */
-.curly-badge-shape {
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  position: relative;
-}
-
-/* SVG Wavy Curly Circle Loader */
 #m3eLoader {
   position: fixed;
   inset: 0;
@@ -203,38 +194,36 @@ body {
   justify-content: center;
   transition: opacity 0.5s var(--ease-expressive-standard), visibility 0.5s;
 }
-
 #m3eLoader.vanish {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
-
 .curly-loader-container {
   width: 136px;
   height: 136px;
   position: relative;
   display: grid;
   place-items: center;
+  transition: scale 0.5s var(--ease-expressive-emphasized), opacity 0.4s var(--ease-expressive-standard);
 }
-
+#m3eLoader.vanish .curly-loader-container { scale: 1.25; opacity: 0; }
 .curly-svg-loader {
   width: 100%;
   height: 100%;
   animation: m3eCurlySpin 6s linear infinite;
   transform-origin: center;
 }
-
 .curly-loader-icon {
   position: absolute;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   color: #ffdad6;
   display: grid;
   place-items: center;
   pointer-events: none;
 }
-
+.curly-loader-icon .ic { width: 52px; height: 52px; }
 @keyframes m3eCurlySpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -251,33 +240,31 @@ body {
 }
 
 /* =========================================================
-   BLURRED TOP HEADER & MD3E CAPACITIVE PILL
+   TRANSLUCENT NAV + BLUR SCRIM
    ========================================================= */
 .top-blur-scrim {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 110px;
+  height: calc(112px + env(safe-area-inset-top, 0px));
   z-index: 100;
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
   background: linear-gradient(
     to bottom,
-    color-mix(in oklch, var(--md-sys-color-surface) 88%, transparent) 0%,
-    color-mix(in oklch, var(--md-sys-color-surface) 50%, transparent) 65%,
+    color-mix(in oklch, var(--md-sys-color-surface) 62%, transparent) 0%,
+    color-mix(in oklch, var(--md-sys-color-surface) 28%, transparent) 65%,
     transparent 100%
   );
   pointer-events: none;
-  border-bottom: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 30%, transparent);
-  transition: all 0.35s var(--ease-expressive-standard);
-  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
 }
 
 header.m3e-app-bar {
   position: fixed;
-  top: 16px;
+  top: calc(16px + env(safe-area-inset-top, 0px));
   left: 0;
   right: 0;
   z-index: 110;
@@ -286,22 +273,34 @@ header.m3e-app-bar {
   padding: 0 16px;
 }
 
+.nav-anchor {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+}
+
 .m3e-capsule-nav {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  max-width: 580px;
   height: 60px;
   padding: 6px 10px 6px 14px;
-  background: color-mix(in oklch, var(--md-sys-color-surface-container) 82%, transparent);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 60%, transparent);
-  border-radius: var(--shape-corner-full);
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 52%, transparent);
+  backdrop-filter: blur(26px) saturate(190%);
+  -webkit-backdrop-filter: blur(26px) saturate(190%);
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 55%, transparent);
+  border-radius: 30px;
+  box-shadow: var(--elevation-1);
+  margin-inline: 0;
+  transition: background-color 0.35s var(--ease-expressive-standard),
+              box-shadow 0.35s var(--ease-expressive-standard),
+              margin 0.5s var(--ease-expressive-emphasized);
+}
+.m3e-capsule-nav.scrolled {
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 64%, transparent);
   box-shadow: var(--elevation-2);
-  transition: transform 0.3s var(--ease-expressive-standard);
+  margin-inline: 6px;
 }
 
 .brand-deck {
@@ -311,8 +310,6 @@ header.m3e-app-bar {
   text-decoration: none;
   color: var(--md-sys-color-on-surface);
 }
-
-/* Rotating Scalloped Curly Icon in Top Navigation */
 .nav-curly-badge {
   position: relative;
   width: 40px;
@@ -321,7 +318,6 @@ header.m3e-app-bar {
   place-items: center;
   flex: none;
 }
-
 .nav-curly-rotator {
   position: absolute;
   inset: 0;
@@ -330,15 +326,13 @@ header.m3e-app-bar {
   animation: m3eCurlySpin 8s linear infinite;
   transform-origin: center;
 }
-
 .nav-curly-bot {
   position: relative;
-  width: 19px;
-  height: 19px;
+  width: 22px;
+  height: 22px;
   color: var(--md-sys-color-on-primary-container);
   z-index: 2;
 }
-
 .brand-label {
   font-weight: 800;
   font-size: 1.25rem;
@@ -351,72 +345,96 @@ header.m3e-app-bar {
   gap: 6px;
 }
 
+/* Icon buttons: round at rest, squircle when toggled (MD3E) */
 .m3e-action-btn {
   width: 44px;
   height: 44px;
-  border-radius: var(--shape-corner-full);
+  border-radius: 22px;
   border: 0;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
   display: grid;
   place-items: center;
+  transition: border-radius 0.4s var(--spring-fast-spatial),
+              scale 0.4s var(--spring-fast-spatial),
+              background-color 0.2s, color 0.2s;
 }
-
 .m3e-action-btn.active-btn {
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
+  border-radius: 14px;
 }
+.m3e-action-btn:is(:active, .is-pressed) { border-radius: 14px; scale: 0.92; }
+.m3e-action-btn .ic { width: 22px; height: 22px; }
 
-.m3e-action-btn svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* Nav layers animate out when the language tray opens */
+/* Nav layers slide away when the language tray opens */
 .brand-deck, .actions-cluster {
-  transition: opacity 0.22s var(--ease-expressive-standard),
-              translate 0.4s var(--ease-expressive-emphasized),
-              scale 0.4s var(--ease-expressive-emphasized),
+  transition: opacity 0.25s var(--spring-default-effects),
+              translate 0.5s var(--spring-default-spatial),
+              scale 0.5s var(--spring-default-spatial),
               visibility 0s;
 }
 .m3e-capsule-nav.lang-open .brand-deck,
 .m3e-capsule-nav.lang-open .actions-cluster {
   opacity: 0;
-  scale: 0.92;
+  scale: 0.94;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.18s var(--ease-expressive-standard),
-              translate 0.3s var(--ease-expressive-standard),
-              scale 0.3s var(--ease-expressive-standard),
-              visibility 0s 0.2s;
+              translate 0.35s var(--ease-expressive-standard),
+              scale 0.35s var(--ease-expressive-standard),
+              visibility 0s 0.35s;
 }
-.m3e-capsule-nav.lang-open .brand-deck { translate: -10px 0; }
-.m3e-capsule-nav.lang-open .actions-cluster { translate: 10px 0; }
+.m3e-capsule-nav.lang-open .brand-deck { translate: -28px 0; }
+.m3e-capsule-nav.lang-open .actions-cluster { translate: 28px 0; }
 
 /* =========================================================
-   LANGUAGE SELECTOR (3 LANGUAGES, NO BACK BUTTON, ANIMATED)
+   LANGUAGE SEGMENTED SELECTOR (sliding indicator)
    ========================================================= */
 .lang-morph-tray {
   position: absolute;
-  inset: 6px 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  inset: 6px 8px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   visibility: hidden;
   pointer-events: none;
-  transition: visibility 0s 0.25s;
+  opacity: 0;
+  translate: 40px 0;
+  scale: 0.96;
+  transition: opacity 0.2s var(--ease-expressive-standard),
+              translate 0.3s var(--ease-expressive-standard),
+              scale 0.3s var(--ease-expressive-standard),
+              visibility 0s 0.3s;
 }
-
 .m3e-capsule-nav.lang-open .lang-morph-tray {
   visibility: visible;
   pointer-events: auto;
-  transition: visibility 0s;
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  transition: opacity 0.3s var(--spring-default-effects) 0.06s,
+              translate 0.55s var(--spring-default-spatial),
+              scale 0.55s var(--spring-default-spatial),
+              visibility 0s;
+}
+
+.lang-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(100% / 3);
+  border-radius: 24px;
+  background: var(--md-sys-color-primary);
+  translate: calc(var(--idx, 0) * 100%) 0;
+  transition: translate 0.55s var(--spring-default-spatial);
 }
 
 .lang-chip-btn {
-  flex: 1;
-  height: 100%;
+  position: relative;
+  z-index: 1;
   min-width: 0;
+  height: 100%;
   border: 0;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
@@ -424,70 +442,50 @@ header.m3e-app-bar {
   font-size: 0.88rem;
   font-weight: 700;
   padding: 0 6px;
-  border-radius: var(--shape-corner-full);
-  text-align: center;
+  border-radius: 24px;
   white-space: nowrap;
-  /* entrance animation (individual transform props so press-morph still works) */
-  opacity: 0;
-  translate: 0 10px;
-  scale: 0.88;
-  transition: opacity 0.18s var(--ease-expressive-standard),
-              translate 0.25s var(--ease-expressive-standard),
-              scale 0.25s var(--ease-expressive-standard),
-              background-color 0.25s var(--ease-smooth),
-              color 0.25s var(--ease-smooth),
-              border-radius 0.3s var(--ease-expressive-spring);
+  transition: border-radius 0.4s var(--spring-fast-spatial),
+              color 0.3s var(--ease-smooth);
 }
+.lang-chip-btn.active { color: var(--md-sys-color-on-primary); }
+.lang-chip-btn:is(:active, .is-pressed) { border-radius: 14px; }
 
-.m3e-capsule-nav.lang-open .lang-chip-btn {
-  opacity: 1;
-  translate: 0 0;
-  scale: 1;
-  transition: opacity 0.3s var(--ease-expressive-standard) calc(var(--i) * 55ms + 90ms),
-              translate 0.5s var(--ease-expressive-spring) calc(var(--i) * 55ms + 90ms),
-              scale 0.5s var(--ease-expressive-spring) calc(var(--i) * 55ms + 90ms),
-              background-color 0.25s var(--ease-smooth),
-              color 0.25s var(--ease-smooth),
-              border-radius 0.3s var(--ease-expressive-spring);
-}
-
-.lang-chip-btn.active {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-}
-
-/* Monet Palette Dropdown Menu */
+/* =========================================================
+   PALETTE SHEET (sibling of capsule so its blur is real)
+   ========================================================= */
 .monet-sheet {
   position: absolute;
   top: calc(100% + 12px);
   right: 0;
   width: 290px;
-  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 94%, transparent);
+  max-width: 100%;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 72%, transparent);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 70%, transparent);
   border-radius: var(--shape-corner-large);
   padding: 18px;
   box-shadow: var(--elevation-3);
   opacity: 0;
   transform: translateY(-12px) scale(0.94);
+  transform-origin: top right;
   visibility: hidden;
-  transition: opacity 0.22s var(--ease-expressive-standard), transform 0.3s var(--ease-expressive-spring), visibility 0s 0.22s;
-  z-index: 130;
+  transition: opacity 0.2s var(--ease-expressive-standard),
+              transform 0.3s var(--ease-expressive-standard),
+              visibility 0s 0.3s;
 }
-
 .monet-sheet.show {
   opacity: 1;
   transform: translateY(0) scale(1);
   visibility: visible;
-  transition: opacity 0.22s var(--ease-expressive-standard), transform 0.3s var(--ease-expressive-spring), visibility 0s;
+  transition: opacity 0.25s var(--spring-default-effects),
+              transform 0.5s var(--spring-default-spatial),
+              visibility 0s;
 }
 
 .sheet-title {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.82rem;
+  font-weight: 700;
   color: var(--md-sys-color-on-surface-variant);
   margin-bottom: 14px;
 }
@@ -498,22 +496,22 @@ header.m3e-app-bar {
   gap: 10px;
   margin-bottom: 16px;
 }
-
 .monet-swatch {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: var(--shape-corner-small);
+  border-radius: 14px;
   border: 0;
   cursor: pointer;
-  transition: transform 0.28s var(--ease-expressive-spring);
+  transition: transform 0.4s var(--spring-fast-spatial),
+              border-radius 0.45s var(--spring-fast-spatial),
+              outline-offset 0.3s var(--spring-fast-spatial);
 }
-
 @media (hover: hover) and (pointer: fine) {
   .monet-swatch:hover { transform: scale(1.08); }
 }
-.monet-swatch:active { transform: scale(0.92); }
-
+.monet-swatch:is(:active, .is-pressed) { transform: scale(0.9); }
 .monet-swatch.active {
+  border-radius: 50%;
   outline: 3px solid var(--md-sys-color-primary);
   outline-offset: 3px;
 }
@@ -527,102 +525,110 @@ header.m3e-app-bar {
   font-weight: 700;
   font-size: 0.92rem;
 }
+.dark-mode-row > span { display: inline-flex; align-items: center; gap: 10px; }
+.dark-mode-row .ic { color: var(--md-sys-color-on-surface-variant); }
 
-/* Material 3 Expressive Pill Switch */
+/* MD3E switch: icon in thumb, thumb grows when pressed */
 .m3e-switch {
   width: 52px;
   height: 32px;
-  border-radius: var(--shape-corner-full);
+  border-radius: 16px;
   background: var(--md-sys-color-surface-container-highest);
   border: 2px solid var(--md-sys-color-outline);
   position: relative;
   cursor: pointer;
+  flex: none;
   transition: background-color 0.3s var(--ease-expressive-standard), border-color 0.3s;
 }
-
 .m3e-switch-thumb {
   position: absolute;
   top: 50%;
-  left: 4px;
-  width: 20px;
-  height: 20px;
-  margin-top: -10px;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  translate: 0 -50%;
   border-radius: 50%;
   background: var(--md-sys-color-outline);
-  transition: transform 0.35s var(--ease-expressive-spring), background-color 0.2s;
+  display: grid;
+  place-items: center;
+  transition: left 0.4s var(--spring-fast-spatial), width 0.35s var(--spring-fast-spatial),
+              height 0.35s var(--spring-fast-spatial), background-color 0.2s;
 }
-
-.m3e-switch[aria-checked="true"] {
-  background: var(--md-sys-color-primary);
-  border-color: var(--md-sys-color-primary);
-}
-
-.m3e-switch[aria-checked="true"] .m3e-switch-thumb {
-  transform: translateX(20px);
-  background: var(--md-sys-color-on-primary);
-}
+.m3e-switch-thumb .ic { width: 16px; height: 16px; color: var(--md-sys-color-primary); opacity: 0; scale: 0.4; transition: opacity 0.2s, scale 0.35s var(--spring-fast-spatial); }
+.m3e-switch[aria-checked="true"] { background: var(--md-sys-color-primary); border-color: var(--md-sys-color-primary); }
+.m3e-switch[aria-checked="true"] .m3e-switch-thumb { left: 20px; width: 24px; height: 24px; background: var(--md-sys-color-on-primary); }
+.m3e-switch[aria-checked="true"] .m3e-switch-thumb .ic { opacity: 1; scale: 1; }
+.m3e-switch:is(:active, .is-pressed) .m3e-switch-thumb { left: 2px; width: 28px; height: 28px; }
+.m3e-switch[aria-checked="true"]:is(:active, .is-pressed) .m3e-switch-thumb { left: 18px; width: 28px; height: 28px; }
 
 /* =========================================================
-   HERO EXPRESSIVE
+   HERO
    ========================================================= */
 .hero-box {
-  padding-top: 128px;
+  padding-top: calc(128px + env(safe-area-inset-top, 0px));
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-
 .hero-heading {
   font-size: clamp(2.8rem, 7.5vw, 4.4rem);
   line-height: 1.05;
   letter-spacing: -0.04em;
   font-weight: 800;
 }
-
-.hero-highlight {
-  color: var(--md-sys-color-primary);
-}
-
+.hero-highlight { color: var(--md-sys-color-primary); }
 .hero-text {
   font-size: clamp(1.05rem, 2.3vw, 1.25rem);
   color: var(--md-sys-color-on-surface-variant);
   max-width: 50ch;
   line-height: 1.55;
 }
-
 .hero-button-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
   margin-top: 6px;
 }
 
-.m3e-btn {
+/* ---------- Buttons: pill at rest, squarer + lifted + icon tilt on press ---------- */
+.m3e-btn, .tile-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  height: 52px;
-  padding: 0 28px;
-  border-radius: var(--shape-corner-full);
   font-family: inherit;
-  font-size: 0.96rem;
   font-weight: 700;
   border: 0;
   text-decoration: none;
-  box-shadow: none !important;
-  transition: transform 0.2s var(--ease-expressive-spring), background-color 0.2s ease;
+  box-shadow: none;
+  transition: border-radius 0.38s var(--spring-fast-spatial),
+              box-shadow 0.3s var(--spring-fast-effects),
+              background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-
-
-.m3e-btn.filled {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
+.m3e-btn {
+  height: 56px;
+  padding: 0 28px;
+  border-radius: 28px;
+  font-size: 1rem;
 }
+.m3e-btn.filled { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+.m3e-btn.tonal { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.m3e-btn .ic { width: 22px; height: 22px; }
 
-.m3e-btn.tonal {
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
+.m3e-btn:is(:active, .is-pressed),
+.tile-action-btn:is(:active, .is-pressed) {
+  border-radius: 18px;
+  box-shadow: var(--press-shadow);
+}
+.tile-action-btn:is(:active, .is-pressed) { border-radius: 16px; }
+
+.m3e-btn .ic, .tile-action-btn .ic {
+  transition: rotate 0.45s var(--spring-fast-spatial), translate 0.45s var(--spring-fast-spatial);
+}
+.m3e-btn:is(:active, .is-pressed) .ic,
+.tile-action-btn:is(:active, .is-pressed) .ic {
+  rotate: -10deg;
+  translate: 0 1px;
 }
 
 .chips-row {
@@ -631,31 +637,25 @@ header.m3e-app-bar {
   gap: 10px;
   margin-top: 10px;
 }
-
 .m3e-chip {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 18px;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px 0 12px;
   background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface);
-  border-radius: var(--shape-corner-full);
+  border-radius: 20px;
   font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
   border: 1px solid var(--md-sys-color-outline-variant);
-  transition: transform 0.25s var(--ease-expressive-spring), background-color 0.2s ease, border-color 0.2s ease;
-  box-shadow: none !important;
+  transition: border-radius 0.4s var(--spring-fast-spatial), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
-
-.m3e-chip svg {
-  color: var(--md-sys-color-primary);
-  width: 18px;
-  height: 18px;
-}
-
+.m3e-chip .ic { color: var(--md-sys-color-primary); width: 20px; height: 20px; }
+.m3e-chip.m3e-state:is(:active, .is-pressed) { border-radius: 12px; }
 @media (hover: hover) and (pointer: fine) {
-  .m3e-chip:hover {
+  .m3e-chip.m3e-state:hover {
     background: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
     border-color: var(--md-sys-color-primary);
@@ -663,29 +663,23 @@ header.m3e-app-bar {
 }
 
 /* =========================================================
-   STEP HEADINGS
+   SECTION HEADINGS
    ========================================================= */
-.step-section-header {
-  margin: 64px 0 22px;
-}
-
+.step-section-header { margin: 64px 0 22px; }
 .step-label {
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--md-sys-color-primary);
   margin-bottom: 6px;
 }
-
 .step-headline {
   font-size: clamp(1.75rem, 4.5vw, 2.3rem);
   letter-spacing: -0.03em;
   line-height: 1.15;
   font-weight: 800;
 }
-
 .step-summary {
   color: var(--md-sys-color-on-surface-variant);
   margin-top: 6px;
@@ -694,39 +688,31 @@ header.m3e-app-bar {
 }
 
 /* =========================================================
-   TILES & SHAPES
+   TILES & ICON FRAMES
    ========================================================= */
 .sym-shape-frame {
-  width: 54px;
-  height: 54px;
-  border-radius: var(--shape-corner-medium);
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
   display: grid;
   place-items: center;
-  position: relative;
   flex: none;
-  transition: background-color 0.3s;
+  transition: border-radius 0.5s var(--spring-default-spatial), background-color 0.3s;
 }
+.sym-shape-frame.alt { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.sym-shape-frame.tertiary { background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
+.sym-shape-frame .ic { width: 28px; height: 28px; }
 
-.sym-shape-frame.alt {
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
+@media (hover: hover) and (pointer: fine) {
+  .trilogy-tile:hover .sym-shape-frame,
+  .tutorial-card:hover .sym-shape-frame { border-radius: 28px; }
 }
+.trilogy-tile:active .sym-shape-frame,
+.tutorial-card:active .sym-shape-frame { border-radius: 28px; }
 
-.sym-shape-frame.tertiary {
-  background: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
-}
-
-.sym-svg-icon {
-  width: 28px;
-  height: 28px;
-}
-
-/* =========================================================
-   STEP 01: EXPANDABLE PLAY PROTECT (SMOOTH, NO GREY OVERLAY)
-   ========================================================= */
+/* STEP 01: expandable */
 .m3e-expandable {
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-large);
@@ -734,11 +720,9 @@ header.m3e-app-bar {
   overflow: hidden;
   transition: border-color 0.3s var(--ease-expressive-standard);
 }
-
 .m3e-expandable.open {
   border-color: color-mix(in oklch, var(--md-sys-color-primary) 55%, var(--md-sys-color-outline-variant));
 }
-
 .expandable-trigger {
   width: 100%;
   display: flex;
@@ -752,67 +736,50 @@ header.m3e-app-bar {
   font: inherit;
   text-align: left;
   cursor: pointer;
-  user-select: none;
 }
-
-.expandable-left {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
+.expandable-left { display: flex; align-items: center; gap: 18px; }
+.expandable-left h3 { font-size: 1.18rem; font-weight: 800; }
+.expandable-left p { font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant); }
 
 .expand-chevron {
   width: 42px;
   height: 42px;
-  border-radius: var(--shape-corner-full);
+  border-radius: 21px;
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
   display: grid;
   place-items: center;
   flex: none;
   transition: transform 0.5s var(--ease-expressive-emphasized),
+              scale 0.4s var(--spring-fast-spatial),
+              border-radius 0.4s var(--spring-fast-spatial),
               background-color 0.3s var(--ease-expressive-standard),
               color 0.3s var(--ease-expressive-standard);
 }
-
-.expandable-trigger:active .expand-chevron { scale: 0.9; }
-
+.expandable-trigger:is(:active, .is-pressed) .expand-chevron { scale: 0.88; border-radius: 13px; }
 .m3e-expandable.open .expand-chevron {
   transform: rotate(180deg);
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
 }
 
-/* Height animates via grid rows: no jumps, transparent background throughout */
 .expandable-panel {
   display: grid;
   grid-template-rows: 0fr;
   visibility: hidden;
-  background: transparent;
-  transition: grid-template-rows 0.5s var(--ease-expressive-emphasized),
-              visibility 0s 0.5s;
+  transition: grid-template-rows 0.5s var(--ease-expressive-emphasized), visibility 0s 0.5s;
 }
-
 .m3e-expandable.open .expandable-panel {
   grid-template-rows: 1fr;
   visibility: visible;
-  transition: grid-template-rows 0.5s var(--ease-expressive-emphasized),
-              visibility 0s;
+  transition: grid-template-rows 0.5s var(--ease-expressive-emphasized), visibility 0s;
 }
-
-.expandable-content {
-  min-height: 0;
-  overflow: hidden;
-  background: transparent;
-}
-
+.expandable-content { min-height: 0; overflow: hidden; }
 .walkthrough-steps {
-  padding: 4px 24px 26px 94px;
+  padding: 4px 24px 26px 98px;
   display: grid;
   gap: 14px;
-  background: transparent;
 }
-
 .step-point {
   display: flex;
   gap: 14px;
@@ -821,21 +788,15 @@ header.m3e-app-bar {
   color: var(--md-sys-color-on-surface-variant);
   opacity: 0;
   translate: 0 -8px;
-  transition: opacity 0.2s var(--ease-expressive-standard),
-              translate 0.3s var(--ease-expressive-standard);
+  transition: opacity 0.2s var(--ease-expressive-standard), translate 0.3s var(--ease-expressive-standard);
 }
-
 .m3e-expandable.open .step-point {
   opacity: 1;
   translate: 0 0;
   transition: opacity 0.35s var(--ease-expressive-standard) calc(var(--i) * 60ms + 120ms),
               translate 0.55s var(--ease-expressive-emphasized) calc(var(--i) * 60ms + 120ms);
 }
-
-.step-point b {
-  color: var(--md-sys-color-on-surface);
-}
-
+.step-point b { color: var(--md-sys-color-on-surface); }
 .point-number {
   width: 26px;
   height: 26px;
@@ -848,27 +809,13 @@ header.m3e-app-bar {
   place-items: center;
   flex: none;
 }
-
 @media (max-width: 640px) {
-  .walkthrough-steps {
-    padding: 4px 20px 22px 20px;
-  }
+  .walkthrough-steps { padding: 4px 20px 22px 20px; }
 }
 
-/* =========================================================
-   STEP 02: DOWNLOAD TILES
-   ========================================================= */
-.trilogy-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-}
-
-@media (min-width: 768px) {
-  .trilogy-layout {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
+/* STEP 02: downloads */
+.trilogy-layout { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 768px) { .trilogy-layout { grid-template-columns: repeat(3, 1fr); } }
 
 .trilogy-tile {
   background: var(--md-sys-color-surface-container);
@@ -879,34 +826,25 @@ header.m3e-app-bar {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  transition: border-color 0.25s var(--ease-expressive-standard);
+  transition: border-color 0.25s var(--ease-expressive-standard), scale 0.4s var(--spring-fast-spatial);
 }
-
 @media (hover: hover) and (pointer: fine) {
   .trilogy-tile:hover { border-color: var(--md-sys-color-primary); }
 }
+.trilogy-tile:active { scale: 0.985; }
 
 .tile-badge {
   position: absolute;
   top: 20px;
   right: 20px;
   padding: 5px 12px;
-  border-radius: var(--shape-corner-full);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  border-radius: 14px;
+  font-size: 0.74rem;
+  font-weight: 700;
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface-variant);
 }
-
-.tile-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  margin: 18px 0 6px;
-}
-
+.tile-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; margin: 18px 0 6px; }
 .tile-desc {
   font-size: 0.9rem;
   color: var(--md-sys-color-on-surface-variant);
@@ -914,25 +852,15 @@ header.m3e-app-bar {
   margin-bottom: 24px;
   min-height: 54px;
 }
-
 .tile-action-btn {
   width: 100%;
-  height: 48px;
-  border-radius: var(--shape-corner-full);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 0.92rem;
-  text-decoration: none;
+  height: 52px;
+  border-radius: 26px;
+  font-size: 0.94rem;
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-primary);
   border: 1px solid var(--md-sys-color-outline-variant);
-  box-shadow: none !important;
-  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s var(--ease-expressive-spring);
 }
-
 @media (hover: hover) and (pointer: fine) {
   .tile-action-btn:hover {
     background: var(--md-sys-color-primary);
@@ -940,10 +868,9 @@ header.m3e-app-bar {
     border-color: transparent;
   }
 }
+.tile-action-btn .ic { width: 22px; height: 22px; }
 
-/* =========================================================
-   STEP 03: TUTORIAL TILE
-   ========================================================= */
+/* STEP 03 */
 .tutorial-card {
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-large);
@@ -952,30 +879,19 @@ header.m3e-app-bar {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  transition: border-color 0.25s var(--ease-expressive-standard);
+  transition: border-color 0.25s var(--ease-expressive-standard), scale 0.4s var(--spring-fast-spatial);
 }
-
 @media (min-width: 640px) {
-  .tutorial-card {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .tutorial-card { flex-direction: row; align-items: center; justify-content: space-between; }
 }
-
 @media (hover: hover) and (pointer: fine) {
   .tutorial-card:hover { border-color: var(--md-sys-color-outline); }
 }
+.tutorial-left { display: flex; align-items: center; gap: 20px; }
+.tutorial-left h3 { font-size: 1.2rem; font-weight: 800; }
+.tutorial-left p { font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant); }
 
-.tutorial-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-/* =========================================================
-   STEP 04: PRICING CARD
-   ========================================================= */
+/* STEP 04 */
 .pricing-expressive-card {
   position: relative;
   overflow: hidden;
@@ -985,9 +901,7 @@ header.m3e-app-bar {
   display: grid;
   gap: 28px;
   border: 1px solid var(--md-sys-color-outline-variant);
-  box-shadow: var(--elevation-2);
 }
-
 .pricing-row {
   display: flex;
   flex-wrap: wrap;
@@ -995,61 +909,25 @@ header.m3e-app-bar {
   justify-content: space-between;
   gap: 20px;
 }
+.pricing-sum { display: flex; align-items: baseline; gap: 6px; }
+.currency-sym { font-size: 2.4rem; font-weight: 800; color: var(--md-sys-color-primary); }
+.cost-num { font-size: clamp(4rem, 11vw, 5.8rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.04em; }
+.cadence-str { font-size: 1.15rem; font-weight: 700; color: var(--md-sys-color-on-surface-variant); }
+.price-note { margin-top: 6px; font-weight: 700; color: var(--md-sys-color-primary); }
 
-.pricing-sum {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.currency-sym {
-  font-size: 2.4rem;
-  font-weight: 800;
-  color: var(--md-sys-color-primary);
-}
-
-.cost-num {
-  font-size: clamp(4rem, 11vw, 5.8rem);
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-}
-
-.cadence-str {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.perks-grid {
-  display: grid;
-  gap: 14px;
-}
-
-.perk-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: 1.02rem;
-  font-weight: 600;
-}
-
+.perks-grid { display: grid; gap: 14px; }
+.perk-row { display: flex; align-items: center; gap: 14px; font-size: 1.02rem; font-weight: 600; }
 .perk-check {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
   display: grid;
   place-items: center;
   flex: none;
 }
-
-.perk-check svg {
-  width: 16px;
-  height: 16px;
-  stroke-width: 3;
-}
+.perk-check .ic { width: 18px; height: 18px; }
 
 .bulk-inquiry-box {
   margin-top: 18px;
@@ -1063,104 +941,50 @@ header.m3e-app-bar {
   justify-content: space-between;
   gap: 18px;
 }
+.bulk-inquiry-box h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 2px; }
+.bulk-inquiry-box p { color: var(--md-sys-color-on-surface-variant); font-size: 0.94rem; }
 
-.bulk-inquiry-box h3 {
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin-bottom: 2px;
-}
-
-.bulk-inquiry-box p {
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: 0.94rem;
-}
-
-/* =========================================================
-   FOOTER & SNACKBAR
-   ========================================================= */
+/* FOOTER & SNACKBAR */
 footer {
   margin-top: 60px;
   padding: 32px 0;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   text-align: center;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--md-sys-color-on-surface-variant);
 }
-
-footer a {
-  color: var(--md-sys-color-primary);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline;
-}
-
-.fine-print {
-  font-size: 0.82rem;
-  margin-top: 8px;
-  opacity: 0.8;
-}
+footer a { color: var(--md-sys-color-primary); font-weight: 700; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
 
 .m3e-snackbar {
   position: fixed;
   left: 50%;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   z-index: 300;
-  transform: translate(-50%, 190%);
+  transform: translate(-50%, 220%);
   background: var(--md-sys-color-on-surface);
   color: var(--md-sys-color-surface);
-  padding: 14px 26px;
-  border-radius: var(--shape-corner-full);
+  padding: 14px 24px;
+  border-radius: 16px;
   font-size: 0.92rem;
   font-weight: 700;
   box-shadow: var(--elevation-3);
-  transition: transform 0.4s var(--ease-expressive-spring);
+  transition: transform 0.5s var(--spring-default-spatial);
   pointer-events: none;
+  max-width: calc(100% - 32px);
+  text-align: center;
 }
-
-.m3e-snackbar.active {
-  transform: translate(-50%, 0);
-}
-
-/* =========================================================
-   MD3E PRESS EFFECT: shape morph + subtle ripple (no glow)
-   ========================================================= */
-.m3e-btn, .tile-action-btn, .m3e-chip, .m3e-action-btn, .lang-chip-btn {
-  transition-property: border-radius, transform, background-color, color, border-color, opacity, translate, scale;
-}
-.m3e-btn, .tile-action-btn {
-  transition-duration: 0.45s, 0.45s, 0.2s, 0.2s, 0.2s;
-  transition-timing-function: var(--ease-expressive-spring), var(--ease-expressive-spring), ease, ease, ease;
-}
-.m3e-chip {
-  transition-duration: 0.45s, 0.45s, 0.2s, 0.2s, 0.2s;
-  transition-timing-function: var(--ease-expressive-spring), var(--ease-expressive-spring), ease, ease, ease;
-}
-.m3e-action-btn {
-  transition-duration: 0.4s, 0.4s, 0.2s, 0.2s;
-  transition-timing-function: var(--ease-expressive-spring), var(--ease-expressive-spring), ease, ease;
-}
-.m3e-btn:active, .tile-action-btn:active { border-radius: 16px; transform: scale(0.97); }
-.m3e-chip.m3e-state:active { border-radius: 12px; transform: scale(0.96); }
-.m3e-action-btn:active { border-radius: 14px; transform: scale(0.94); }
-.lang-chip-btn:active { border-radius: 14px; scale: 0.95; }
-
-@media (prefers-reduced-motion: reduce) {
-  .curly-svg-loader, .nav-curly-rotator { animation-duration: 30s; }
-  * { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
-}
+.m3e-snackbar.active { transform: translate(-50%, 0); }
 
 /* =========================================================
-   MD3E MOTION: reveal choreography, spring physics, shape morphs
+   MOTION
    ========================================================= */
 :root { transition: --h 0.6s var(--ease-expressive-standard); }
 
 .reveal:not(.in) { opacity: 0; }
 .reveal.in {
   animation: m3e-fade 0.5s var(--ease-expressive-standard) var(--d, 0ms) both,
-             m3e-rise 0.9s var(--ease-expressive-spring) var(--d, 0ms) both;
+             m3e-rise 0.9s var(--spring-default-spatial) var(--d, 0ms) both;
 }
 @keyframes m3e-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes m3e-rise {
@@ -1168,52 +992,14 @@ footer a:hover {
   to   { translate: 0 0; scale: 1; }
 }
 
-/* Loader exit: curly circle swells and dissolves */
-.curly-loader-container {
-  transition: scale 0.5s var(--ease-expressive-emphasized), opacity 0.4s var(--ease-expressive-standard);
-}
-#m3eLoader.vanish .curly-loader-container { scale: 1.25; opacity: 0; }
-
-/* Capsule reacts to scroll */
-.m3e-capsule-nav {
-  transition: background-color 0.35s var(--ease-expressive-standard),
-              box-shadow 0.35s var(--ease-expressive-standard),
-              max-width 0.5s var(--ease-expressive-emphasized);
-}
-.m3e-capsule-nav.scrolled {
-  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 92%, transparent);
-  box-shadow: var(--elevation-3);
-  max-width: 560px;
-}
-
-/* Swatches: selected one morphs from squircle to circle */
-.monet-swatch {
-  transition: transform 0.35s var(--ease-expressive-spring), border-radius 0.4s var(--ease-expressive-spring), outline-offset 0.3s var(--ease-expressive-spring);
-}
-.monet-swatch.active { border-radius: 50%; }
-
-/* Switch: thumb stretches while pressed */
-.m3e-switch-thumb {
-  transition: transform 0.4s var(--ease-expressive-spring), width 0.3s var(--ease-expressive-spring),
-              height 0.3s var(--ease-expressive-spring), margin-top 0.3s var(--ease-expressive-spring),
-              background-color 0.2s;
-}
-.m3e-switch:active .m3e-switch-thumb { width: 28px; }
-.m3e-switch[aria-checked="true"]:active .m3e-switch-thumb { transform: translateX(12px); }
-
-/* Tiles and cards: gentle press response */
-.trilogy-tile, .tutorial-card, .bulk-inquiry-box, .pricing-expressive-card {
-  transition: border-color 0.3s var(--ease-expressive-standard), scale 0.4s var(--ease-expressive-spring);
-}
-.trilogy-tile:active, .tutorial-card:active { scale: 0.985; }
-
-/* Smooth theme / language cross-fade via View Transitions */
 ::view-transition-old(root), ::view-transition-new(root) {
   animation-duration: 0.35s;
   animation-timing-function: var(--ease-expressive-standard);
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .curly-svg-loader, .nav-curly-rotator { animation-duration: 30s; }
+  * { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
   .reveal:not(.in) { opacity: 1; }
   .reveal.in { animation: none; }
 }
@@ -1221,139 +1007,161 @@ footer a:hover {
 </head>
 <body>
 
-<!-- SVG Definition for Scalloped Curly Squircle Shape -->
-<svg width="0" height="0" style="position: absolute;">
+<!-- Shared SVG symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <path id="scallopShape" d="M99.20 50.00 L98.98 51.28 L98.33 52.53 L97.32 53.72 L96.04 54.84 L94.62 55.87 L93.16 56.84 L91.82 57.75 L90.69 58.65 L89.87 59.57 L89.41 60.56 L89.32 61.65 L89.57 62.86 L90.09 64.20 L90.80 65.66 L91.57 67.22 L92.30 68.83 L92.84 70.44 L93.12 71.97 L93.06 73.38 L92.61 74.60 L91.77 75.60 L90.59 76.36 L89.12 76.89 L87.46 77.21 L85.70 77.39 L83.96 77.50 L82.34 77.62 L80.92 77.84 L79.74 78.23 L78.85 78.85 L78.23 79.74 L77.84 80.92 L77.62 82.34 L77.50 83.96 L77.39 85.70 L77.21 87.46 L76.89 89.12 L76.36 90.59 L75.60 91.77 L74.60 92.61 L73.38 93.06 L71.97 93.12 L70.44 92.84 L68.83 92.30 L67.22 91.57 L65.66 90.80 L64.20 90.09 L62.86 89.57 L61.65 89.32 L60.56 89.41 L59.57 89.87 L58.65 90.69 L57.75 91.82 L56.84 93.16 L55.87 94.62 L54.84 96.04 L53.72 97.32 L52.53 98.33 L51.28 98.98 L50.00 99.20 L48.72 98.98 L47.47 98.33 L46.28 97.32 L45.16 96.04 L44.13 94.62 L43.16 93.16 L42.25 91.82 L41.35 90.69 L40.43 89.87 L39.44 89.41 L38.35 89.32 L37.14 89.57 L35.80 90.09 L34.34 90.80 L32.78 91.57 L31.17 92.30 L29.56 92.84 L28.03 93.12 L26.62 93.06 L25.40 92.61 L24.40 91.77 L23.64 90.59 L23.11 89.12 L22.79 87.46 L22.61 85.70 L22.50 83.96 L22.38 82.34 L22.16 80.92 L21.77 79.74 L21.15 78.85 L20.26 78.23 L19.08 77.84 L17.66 77.62 L16.04 77.50 L14.30 77.39 L12.54 77.21 L10.88 76.89 L9.41 76.36 L8.23 75.60 L7.39 74.60 L6.94 73.38 L6.88 71.97 L7.16 70.44 L7.70 68.83 L8.43 67.22 L9.20 65.66 L9.91 64.20 L10.43 62.86 L10.68 61.65 L10.59 60.56 L10.13 59.57 L9.31 58.65 L8.18 57.75 L6.84 56.84 L5.38 55.87 L3.96 54.84 L2.68 53.72 L1.67 52.53 L1.02 51.28 L0.80 50.00 L1.02 48.72 L1.67 47.47 L2.68 46.28 L3.96 45.16 L5.38 44.13 L6.84 43.16 L8.18 42.25 L9.31 41.35 L10.13 40.43 L10.59 39.44 L10.68 38.35 L10.43 37.14 L9.91 35.80 L9.20 34.34 L8.43 32.78 L7.70 31.17 L7.16 29.56 L6.88 28.03 L6.94 26.62 L7.39 25.40 L8.23 24.40 L9.41 23.64 L10.88 23.11 L12.54 22.79 L14.30 22.61 L16.04 22.50 L17.66 22.38 L19.08 22.16 L20.26 21.77 L21.15 21.15 L21.77 20.26 L22.16 19.08 L22.38 17.66 L22.50 16.04 L22.61 14.30 L22.79 12.54 L23.11 10.88 L23.64 9.41 L24.40 8.23 L25.40 7.39 L26.62 6.94 L28.03 6.88 L29.56 7.16 L31.17 7.70 L32.78 8.43 L34.34 9.20 L35.80 9.91 L37.14 10.43 L38.35 10.68 L39.44 10.59 L40.43 10.13 L41.35 9.31 L42.25 8.18 L43.16 6.84 L44.13 5.38 L45.16 3.96 L46.28 2.68 L47.47 1.67 L48.72 1.02 L50.00 0.80 L51.28 1.02 L52.53 1.67 L53.72 2.68 L54.84 3.96 L55.87 5.38 L56.84 6.84 L57.75 8.18 L58.65 9.31 L59.57 10.13 L60.56 10.59 L61.65 10.68 L62.86 10.43 L64.20 9.91 L65.66 9.20 L67.22 8.43 L68.83 7.70 L70.44 7.16 L71.97 6.88 L73.38 6.94 L74.60 7.39 L75.60 8.23 L76.36 9.41 L76.89 10.88 L77.21 12.54 L77.39 14.30 L77.50 16.04 L77.62 17.66 L77.84 19.08 L78.23 20.26 L78.85 21.15 L79.74 21.77 L80.92 22.16 L82.34 22.38 L83.96 22.50 L85.70 22.61 L87.46 22.79 L89.12 23.11 L90.59 23.64 L91.77 24.40 L92.61 25.40 L93.06 26.62 L93.12 28.03 L92.84 29.56 L92.30 31.17 L91.57 32.78 L90.80 34.34 L90.09 35.80 L89.57 37.14 L89.32 38.35 L89.41 39.44 L89.87 40.43 L90.69 41.35 L91.82 42.25 L93.16 43.16 L94.62 44.13 L96.04 45.16 L97.32 46.28 L98.33 47.47 L98.98 48.72 Z"/>
+    <path id="scallopShape" d="__SCALLOP__"/>
+
+    <!-- Android (custom bot icon) -->
+    <symbol id="icAndroid" viewBox="0 0 24 24">
+      <path fill="currentColor" fill-rule="evenodd" d="M5 10.5V7.4A4.4 4.4 0 0 1 9.4 3h5.2A4.4 4.4 0 0 1 19 7.4v3.1ZM8 7.6a1 1 0 1 0 2 0 1 1 0 1 0-2 0ZM14 7.6a1 1 0 1 0 2 0 1 1 0 1 0-2 0ZM5 11.6h14v4.2a7 7 0 0 1-14 0Z"/>
+      <path fill="none" stroke="currentColor" stroke-width="1.4" d="M5.5 1.8 8.4 4.7M18.5 1.8 15.6 4.7"/>
+    </symbol>
+
+    <symbol id="icDownload" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v10M7.5 10.5 12 15l4.5-4.5M5 15.5v2A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-2"/>
+    </symbol>
+    <symbol id="icArrowDown" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M6 13l6 6 6-6"/>
+    </symbol>
+    <symbol id="icArrowRight" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/>
+    </symbol>
+    <symbol id="icChevron" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/>
+    </symbol>
+    <symbol id="icCheck" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/>
+    </symbol>
+    <symbol id="icTune" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">
+        <path d="M4 7h8M18 7h2M4 17h2M12 17h8"/>
+        <circle cx="15" cy="7" r="2.6"/>
+        <circle cx="9" cy="17" r="2.6"/>
+      </g>
+    </symbol>
+    <symbol id="icPlayCircle" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="2.1"/>
+      <path fill="currentColor" d="M10 8.4v7.2a.6.6 0 0 0 .92.5l5.6-3.6a.6.6 0 0 0 0-1l-5.6-3.6a.6.6 0 0 0-.92.5Z"/>
+    </symbol>
+    <symbol id="icPlay" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M8 5.8v12.4a.8.8 0 0 0 1.24.67l9.2-6.2a.8.8 0 0 0 0-1.34l-9.2-6.2A.8.8 0 0 0 8 5.8Z"/>
+    </symbol>
+    <symbol id="icTerminal" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="16" rx="4"/>
+        <path d="m7.5 9.5 3 2.5-3 2.5M13 15h3.5"/>
+      </g>
+    </symbol>
+    <symbol id="icExtension" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v3.8h1.5a2.7 2.7 0 0 1 0 5.4H2V20a2 2 0 0 0 2 2h3.8v-1.5a2.7 2.7 0 0 1 5.4 0V22H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5Z"/>
+    </symbol>
+    <symbol id="icShield" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.8 4.5 5.7v5.6c0 4.6 3.1 8.4 7.5 9.7 4.4-1.3 7.5-5.1 7.5-9.7V5.7L12 2.8Z"/>
+        <path d="m8.8 12 2.3 2.3 4.2-4.4"/>
+      </g>
+    </symbol>
+    <symbol id="icTranslate" viewBox="0 0 24 24">
+      <path fill="currentColor" d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04ZM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12Zm-2.62 7 1.62-4.33L19.12 17h-3.24Z"/>
+    </symbol>
+    <symbol id="icPalette" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round" d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8Z"/>
+      <g fill="currentColor"><circle cx="6.9" cy="11.6" r="1.3"/><circle cx="9.6" cy="7.6" r="1.3"/><circle cx="14.4" cy="7.6" r="1.3"/><circle cx="17.1" cy="11.6" r="1.3"/></g>
+    </symbol>
+    <symbol id="icMoon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8C12.92 3.04 12.46 3 12 3Z"/>
+    </symbol>
+    <symbol id="icSend" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6a.7.7 0 0 0-1 .64L2.4 9.5c0 .35.25.65.6.7L14 12 3 13.8a.72.72 0 0 0-.6.7l-.01 5.26a.7.7 0 0 0 1 .64Z"/>
+    </symbol>
   </defs>
 </svg>
 
-<!-- 1. MD3E Brown Scalloped Curly Loader Screen (Android Icon Inside, No Text) -->
+<!-- Loader -->
 <div id="m3eLoader" role="status" aria-live="polite">
   <div class="curly-loader-container">
-    <svg class="curly-svg-loader" viewBox="0 0 100 100">
-      <use href="#scallopShape" fill="#59433b"/>
-    </svg>
-    <div class="curly-loader-icon">
-      <!-- Android Icon Inside -->
-      <svg viewBox="0 0 24 24" width="46" height="46" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
-    </div>
+    <svg class="curly-svg-loader" viewBox="0 0 100 100"><use href="#scallopShape" fill="#59433b"/></svg>
+    <div class="curly-loader-icon"><svg class="ic"><use href="#icAndroid"/></svg></div>
   </div>
 </div>
 
-<!-- Dynamic Frosted Glass Scrim (Top Blur) -->
 <div class="top-blur-scrim" aria-hidden="true"></div>
 
-<!-- MD3E Top Header Bar -->
 <header class="m3e-app-bar">
-  <div class="m3e-capsule-nav" id="capsuleNav">
-    
-    <!-- Brand Title with Scalloped Rotating Curly Circle & Android Icon -->
-    <a href="#hero" class="brand-deck" id="navBrand">
-      <div class="nav-curly-badge">
-        <svg class="nav-curly-rotator" viewBox="0 0 100 100">
-          <use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/>
-        </svg>
-        <svg class="nav-curly-bot" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+  <div class="nav-anchor">
+    <div class="m3e-capsule-nav" id="capsuleNav">
+
+      <a href="#hero" class="brand-deck" id="navBrand">
+        <div class="nav-curly-badge">
+          <svg class="nav-curly-rotator" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/></svg>
+          <svg class="nav-curly-bot"><use href="#icAndroid"/></svg>
+        </div>
+        <span class="brand-label">Replica</span>
+      </a>
+
+      <div class="actions-cluster" id="navActions">
+        <button class="m3e-action-btn m3e-state" id="btnLangToggle" aria-label="Language" aria-expanded="false">
+          <svg class="ic"><use href="#icTranslate"/></svg>
+        </button>
+        <button class="m3e-action-btn m3e-state" id="btnThemeToggle" aria-label="Theme colors" aria-haspopup="true" aria-expanded="false">
+          <svg class="ic"><use href="#icPalette"/></svg>
+        </button>
       </div>
-      <span class="brand-label">Replica</span>
-    </a>
 
-    <!-- Action Buttons -->
-    <div class="actions-cluster" id="navActions">
-      <!-- Language Button -->
-      <button class="m3e-action-btn m3e-state" id="btnLangToggle" aria-label="Language Selector" title="Choose Language">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="2" y1="12" x2="22" y2="12"/>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
-      </button>
-
-      <!-- Monet Theme Palette Button -->
-      <button class="m3e-action-btn m3e-state" id="btnThemeToggle" aria-label="Dynamic Theme Palette" title="Theme Palette" aria-haspopup="true" aria-expanded="false">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-          <circle cx="12" cy="12" r="4"/>
-        </svg>
-      </button>
+      <!-- Sliding language selector -->
+      <div class="lang-morph-tray" id="langTray" role="radiogroup" aria-label="Language" aria-hidden="true">
+        <span class="lang-indicator" aria-hidden="true"></span>
+        <button class="lang-chip-btn m3e-state" role="radio" data-lang="en">English</button>
+        <button class="lang-chip-btn m3e-state" role="radio" data-lang="uk">Українська</button>
+        <button class="lang-chip-btn m3e-state" role="radio" data-lang="ru">Русский</button>
+      </div>
     </div>
 
-    <!-- 3. Inline Smooth Language Tray (Only 3 languages, no back button, smooth animated transition) -->
-    <div class="lang-morph-tray" id="langTray" aria-hidden="true">
-      <button class="lang-chip-btn m3e-state" data-lang="en" style="--i:0">English</button>
-      <button class="lang-chip-btn m3e-state" data-lang="uk" style="--i:1">Українська</button>
-      <button class="lang-chip-btn m3e-state" data-lang="ru" style="--i:2">Русский</button>
-    </div>
-
-    <!-- MD3E Dynamic Monet Hue Picker -->
     <div class="monet-sheet" id="monetSheet">
-      <div class="sheet-title" data-i="monetPaletteTitle">Dynamic Monet Hues</div>
+      <div class="sheet-title" data-i="monetPaletteTitle">Monet Color Hues</div>
       <div class="swatch-grid" id="swatchGrid"></div>
-      
       <div class="dark-mode-row">
-        <span data-i="darkThemeLabel">Dark Theme</span>
+        <span><svg class="ic"><use href="#icMoon"/></svg><span data-i="darkThemeLabel">Dark Theme</span></span>
         <button class="m3e-switch" id="modeSwitch" role="switch" aria-checked="true" aria-label="Toggle dark mode">
-          <span class="m3e-switch-thumb"></span>
+          <span class="m3e-switch-thumb"><svg class="ic"><use href="#icCheck"/></svg></span>
         </button>
       </div>
     </div>
-
   </div>
 </header>
 
 <main class="wrapper">
-  <!-- HERO SECTION -->
   <section class="hero-box" id="hero">
-
-    <h1 class="hero-heading" data-i="heroTitle">
-      Instagram tasks, <br><span class="hero-highlight">on autopilot.</span>
-    </h1>
-
-    <p class="hero-text" data-i="heroSubtitle">
-      Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.
-    </p>
+    <h1 class="hero-heading" data-i="heroTitle">Instagram tasks, <br><span class="hero-highlight">on autopilot.</span></h1>
+    <p class="hero-text" data-i="heroSubtitle">Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.</p>
 
     <div class="hero-button-group">
-      <a href="#protect" class="m3e-btn filled m3e-state" data-i="btnHeroGetStarted">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-        Get Started
+      <a href="#protect" class="m3e-btn filled m3e-state">
+        <svg class="ic"><use href="#icArrowDown"/></svg><span data-i="btnHeroGetStarted">Get Started</span>
       </a>
-      <a href="#pricing" class="m3e-btn tonal m3e-state" data-i="btnHeroLicense">
-        Get a License
+      <a href="#pricing" class="m3e-btn tonal m3e-state">
+        <span data-i="btnHeroLicense">Get a License</span>
       </a>
     </div>
 
     <div class="chips-row">
-      <a href="#protect" class="m3e-chip m3e-state" title="Jump to Setup">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-        <span data-i="chipSetupText">Setup</span>
+      <a href="#protect" class="m3e-chip m3e-state">
+        <svg class="ic"><use href="#icTune"/></svg><span data-i="chipSetupText">Setup</span>
       </a>
-
-      <a href="#tutorial" class="m3e-chip m3e-state" title="Jump to Tutorial Video">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
-        <span data-i="chipTutorialText">Tutorial Video</span>
+      <a href="#tutorial" class="m3e-chip m3e-state">
+        <svg class="ic"><use href="#icPlayCircle"/></svg><span data-i="chipTutorialText">Tutorial Video</span>
       </a>
-
       <div class="m3e-chip" style="cursor: default;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="4"/>
-          <line x1="12" y1="18" x2="12.01" y2="18"/>
-        </svg>
-        <span>Android 11+</span>
+        <svg class="ic"><use href="#icAndroid"/></svg><span>Android 11+</span>
       </div>
     </div>
   </section>
 
-  <!-- STEP 01: PLAY PROTECT EXPANDABLE TILE (SEAMLESS SMOOTH EXPANSION, NO GREY DISCOLORATION) -->
+  <!-- STEP 01 -->
   <section id="protect">
     <div class="step-section-header">
-      <span class="step-label">Step 01</span>
+      <span class="step-label" data-i="lbl1">Step 01</span>
       <h2 class="step-headline" data-i="st1Head">Disable Play Protect</h2>
       <p class="step-summary" data-i="st1Sub">Android can prevent sideloading background automation apps. Turn off scanning first.</p>
     </div>
@@ -1361,23 +1169,13 @@ footer a:hover {
     <div class="m3e-expandable" id="protectExpandable">
       <button class="expandable-trigger" id="protectToggleBtn" aria-expanded="false" aria-controls="protectPanel">
         <div class="expandable-left">
-          <div class="sym-shape-frame">
-            <svg class="sym-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <path d="m9 12 2 2 4-4"/>
-            </svg>
-          </div>
+          <div class="sym-shape-frame"><svg class="ic"><use href="#icShield"/></svg></div>
           <div>
-            <h3 style="font-size: 1.18rem; font-weight: 800;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
-            <p style="font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant);" data-i="st1CardPrompt">Tap to see quick instructions</p>
+            <h3 data-i="st1CardTitle">Play Protect Walkthrough</h3>
+            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
           </div>
         </div>
-        
-        <div class="expand-chevron">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </div>
+        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
       </button>
 
       <div class="expandable-panel" id="protectPanel">
@@ -1388,107 +1186,79 @@ footer a:hover {
     </div>
   </section>
 
-  <!-- STEP 02: 3 DOWNLOAD TILES -->
+  <!-- STEP 02 -->
   <section id="downloads">
     <div class="step-section-header">
-      <span class="step-label">Step 02</span>
+      <span class="step-label" data-i="lbl2">Step 02</span>
       <h2 class="step-headline" data-i="st2Head">Download the Trilogy</h2>
       <p class="step-summary" data-i="st2Sub">Install these three apps to establish automation, background terminal sessions, and system hooks.</p>
     </div>
 
     <div class="trilogy-layout">
-      <!-- Tile 1: Replica -->
       <article class="trilogy-tile">
-        <span class="tile-badge">Automation</span>
+        <span class="tile-badge" data-i="badgeAuto">Automation</span>
         <div>
-          <div class="sym-shape-frame">
-            <svg class="sym-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M12 2v3m0 14v3M2 12h3m14 0h3m-3.05-6.95-2.12 2.12M7.17 16.83l-2.12 2.12m13.9 0-2.12-2.12M7.17 7.17 5.05 5.05"/>
-            </svg>
-          </div>
-          <h3 class="tile-title">Download Replica</h3>
+          <div class="sym-shape-frame"><svg class="ic"><use href="#icAndroid"/></svg></div>
+          <h3 class="tile-title" data-i="btnDlReplica">Download Replica</h3>
           <p class="tile-desc" data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
         </div>
         <a class="tile-action-btn m3e-state" id="dlReplicaAnchor" href="#" download>
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="btnDlReplica">Download Replica</span>
+          <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlReplica">Download Replica</span>
         </a>
       </article>
 
-      <!-- Tile 2: Termux -->
       <article class="trilogy-tile">
-        <span class="tile-badge">Environment</span>
+        <span class="tile-badge" data-i="badgeEnv">Environment</span>
         <div>
-          <div class="sym-shape-frame alt">
-            <svg class="sym-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="4" width="16" height="16" rx="4"/>
-              <polyline points="8 10 11 12 8 14"/>
-              <line x1="13" y1="14" x2="16" y2="14"/>
-            </svg>
-          </div>
-          <h3 class="tile-title">Download Termux</h3>
+          <div class="sym-shape-frame alt"><svg class="ic"><use href="#icTerminal"/></svg></div>
+          <h3 class="tile-title" data-i="btnDlTermux">Download Termux</h3>
           <p class="tile-desc" data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
         </div>
         <a class="tile-action-btn m3e-state" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="btnDlTermux">Download Termux</span>
+          <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermux">Download Termux</span>
         </a>
       </article>
 
-      <!-- Tile 3: Termux API -->
       <article class="trilogy-tile">
-        <span class="tile-badge">System Bridge</span>
+        <span class="tile-badge" data-i="badgeBridge">System Bridge</span>
         <div>
-          <div class="sym-shape-frame tertiary">
-            <svg class="sym-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 12l10 10 10-10L12 2z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          </div>
-          <h3 class="tile-title">Download Termux API</h3>
+          <div class="sym-shape-frame tertiary"><svg class="ic"><use href="#icExtension"/></svg></div>
+          <h3 class="tile-title" data-i="btnDlTermuxApi">Download Termux API</h3>
           <p class="tile-desc" data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
         </div>
         <a class="tile-action-btn m3e-state" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="btnDlTermuxApi">Download Termux API</span>
+          <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermuxApi">Download Termux API</span>
         </a>
       </article>
     </div>
   </section>
 
-  <!-- STEP 03: SETUP TUTORIAL TILE -->
+  <!-- STEP 03 -->
   <section id="tutorial">
     <div class="step-section-header">
-      <span class="step-label">Step 03</span>
+      <span class="step-label" data-i="lbl3">Step 03</span>
       <h2 class="step-headline" data-i="st3Head">Setup Tutorial Video</h2>
       <p class="step-summary" data-i="st3Sub">Watch the step-by-step walkthrough to get everything set up in minutes.</p>
     </div>
 
     <div class="tutorial-card">
       <div class="tutorial-left">
-        <div class="sym-shape-frame alt">
-          <svg class="sym-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9"/>
-            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/>
-          </svg>
-        </div>
+        <div class="sym-shape-frame alt"><svg class="ic"><use href="#icPlayCircle"/></svg></div>
         <div>
-          <h3 style="font-size: 1.2rem; font-weight: 800;" data-i="videoTileTitle">Video Walkthrough</h3>
-          <p style="font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant);" data-i="videoTileSub">Available directly inside our official Telegram channel</p>
+          <h3 data-i="videoTileTitle">Video Walkthrough</h3>
+          <p data-i="videoTileSub">Available directly inside our official Telegram channel</p>
         </div>
       </div>
-      <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer" data-i="btnWatchVideo">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="8 5 19 12 8 19 8 5"/></svg>
-        Watch Video
+      <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="ic"><use href="#icPlay"/></svg><span data-i="btnWatchVideo">Watch Video</span>
       </a>
     </div>
   </section>
 
-  <!-- STEP 04: PRICING CARD -->
+  <!-- PRICING -->
   <section id="pricing">
     <div class="step-section-header">
-      <span class="step-label">License</span>
+      <span class="step-label" data-i="lblLicense">License</span>
       <h2 class="step-headline" data-i="priceHead">License Pricing</h2>
       <p class="step-summary" data-i="priceSub">Simple, affordable monthly license per device with continuous feature updates.</p>
     </div>
@@ -1501,39 +1271,27 @@ footer a:hover {
             <span class="cost-num" id="costAmount">10</span>
             <span class="cadence-str" data-i="priceCadence">/ month</span>
           </div>
-          <p style="margin-top: 6px; font-weight: 700; color: var(--md-sys-color-primary);" data-i="priceDesc">Single device per license</p>
+          <p class="price-note" data-i="priceDesc">Single device per license</p>
         </div>
-
-        <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer" data-i="btnGetLicense">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          Get a License
+        <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer">
+          <span data-i="btnGetLicense">Get a License</span><svg class="ic"><use href="#icArrowRight"/></svg>
         </a>
       </div>
 
       <div class="perks-grid">
-        <div class="perk-row">
-          <span class="perk-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span>
-        </div>
-        <div class="perk-row">
-          <span class="perk-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span data-i="feature2">Runs smoothly on Android 11+</span>
-        </div>
-        <div class="perk-row">
-          <span class="perk-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span data-i="feature3">Direct support & script updates</span>
-        </div>
+        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></div>
+        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></div>
+        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature3">Direct support &amp; script updates</span></div>
       </div>
     </div>
 
-    <!-- Multi-Device Inquiry Banner -->
     <div class="bulk-inquiry-box">
       <div>
         <h3 data-i="bulkTitle">Need More Than One Device?</h3>
         <p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p>
       </div>
-      <a class="m3e-btn tonal m3e-state" data-tg target="_blank" rel="noopener noreferrer" data-i="btnBulk">
-        Contact Developer
+      <a class="m3e-btn tonal m3e-state" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
       </a>
     </div>
   </section>
@@ -1542,16 +1300,14 @@ footer a:hover {
 <footer>
   <div class="wrapper" style="padding-bottom: 0;">
     <p><span data-i="ftHelp">Need help? Message</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftTg">on Telegram</span>.</p>
-    <p class="fine-print" data-i="ftLegal">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p>
   </div>
 </footer>
 
-<!-- Toast Snackbar feedback -->
 <div class="m3e-snackbar" id="toastNotice" role="status" aria-live="polite"></div>
 
 <script>
 /* =========================================================
-   CONFIG & PALETTE SYSTEM
+   CONFIG
    ========================================================= */
 const CONFIG = {
   links: {
@@ -1561,35 +1317,26 @@ const CONFIG = {
     telegram: 'https://t.me/iamrajatroel'
   },
   monetHues: [
-    { hue: 154, name: 'Emerald' },
-    { hue: 185, name: 'Cyan' },
-    { hue: 220, name: 'Cobalt' },
-    { hue: 250, name: 'Indigo' },
-    { hue: 280, name: 'Amethyst' },
-    { hue: 310, name: 'Magenta' },
-    { hue: 345, name: 'Rose' },
-    { hue: 18,  name: 'Coral' },
-    { hue: 45,  name: 'Amber' },
-    { hue: 78,  name: 'Lime' },
-    { hue: 120, name: 'Green' },
-    { hue: 205, name: 'Slate' }
+    { hue: 154, name: 'Emerald' }, { hue: 185, name: 'Cyan' }, { hue: 220, name: 'Cobalt' }, { hue: 250, name: 'Indigo' },
+    { hue: 280, name: 'Amethyst' }, { hue: 310, name: 'Magenta' }, { hue: 345, name: 'Rose' }, { hue: 18, name: 'Coral' },
+    { hue: 45, name: 'Amber' }, { hue: 78, name: 'Lime' }, { hue: 120, name: 'Green' }, { hue: 205, name: 'Slate' }
   ]
 };
 
 /* =========================================================
-   MULTILINGUAL TRANSLATION ENGINE
+   TRANSLATIONS
    ========================================================= */
 const I18N = {
   en: {
     monetPaletteTitle: "Monet Color Hues",
     darkThemeLabel: "Dark Theme",
-    heroBadge: "SMM Kingdom Tasks Automation",
     heroTitle: "Instagram tasks, <br><span class=\"hero-highlight\">on autopilot.</span>",
     heroSubtitle: "Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.",
     btnHeroGetStarted: "Get Started",
     btnHeroLicense: "Get a License",
     chipSetupText: "Setup",
     chipTutorialText: "Tutorial Video",
+    lbl1: "Step 01", lbl2: "Step 02", lbl3: "Step 03", lblLicense: "License",
     st1Head: "Disable Play Protect",
     st1Sub: "Android can prevent sideloading background automation apps. Turn off scanning first.",
     st1CardTitle: "Play Protect Walkthrough",
@@ -1602,6 +1349,7 @@ const I18N = {
     ],
     st2Head: "Download the Trilogy",
     st2Sub: "Install these three apps to establish automation, background terminal sessions, and system hooks.",
+    badgeAuto: "Automation", badgeEnv: "Environment", badgeBridge: "System Bridge",
     descReplica: "Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.",
     descTermux: "High-performance terminal environment that runs local Python workers and scripts.",
     descTermuxApi: "Hardware and intent bridge enabling screen touch actions and clipboard integration.",
@@ -1626,19 +1374,18 @@ const I18N = {
     bulkSub: "Contact the developer for a discount on multiple-device licenses.",
     btnBulk: "Contact Developer",
     ftHelp: "Need help? Message",
-    ftTg: "on Telegram",
-    ftLegal: "Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom."
+    ftTg: "on Telegram"
   },
   uk: {
     monetPaletteTitle: "Палітра кольорів",
     darkThemeLabel: "Темна тема",
-    heroBadge: "Автоматизація завдань SMM Kingdom",
     heroTitle: "Завдання Instagram, <br><span class=\"hero-highlight\">на автопілоті.</span>",
     heroSubtitle: "Replica автоматично бере завдання з бота SMM Kingdom, виконує їх на телефоні та надсилає звіт.",
     btnHeroGetStarted: "Почати",
     btnHeroLicense: "Отримати ліцензію",
     chipSetupText: "Налаштування",
     chipTutorialText: "Відеоінструкція",
+    lbl1: "Крок 01", lbl2: "Крок 02", lbl3: "Крок 03", lblLicense: "Ліцензія",
     st1Head: "Вимкніть Play Захист",
     st1Sub: "Android може блокувати додатки не з маркету. Спочатку вимкніть сканування.",
     st1CardTitle: "Інструкція Play Захисту",
@@ -1651,6 +1398,7 @@ const I18N = {
     ],
     st2Head: "Завантажте три додатки",
     st2Sub: "Встановіть три основні компоненти для середовища, взаємодії з ботом та емуляції кліків.",
+    badgeAuto: "Автоматизація", badgeEnv: "Середовище", badgeBridge: "Системний міст",
     descReplica: "Основний клієнт, що отримує та виконує завдання бота SMM Kingdom.",
     descTermux: "Швидке термінальне середовище для запуску скриптів та процесів.",
     descTermuxApi: "Системний плагін для зв'язку зі службами клікера, буфера та подій.",
@@ -1675,19 +1423,18 @@ const I18N = {
     bulkSub: "Напишіть розробнику, щоб отримати знижку на ліцензії для кількох пристроїв.",
     btnBulk: "Написати автору",
     ftHelp: "Потрібна допомога? Напишіть",
-    ftTg: "у Telegram",
-    ftLegal: "Replica є незалежним інструментом і не пов'язана з Telegram, Instagram чи SMM Kingdom."
+    ftTg: "у Telegram"
   },
   ru: {
     monetPaletteTitle: "Палитра цветов",
     darkThemeLabel: "Тёмная тема",
-    heroBadge: "Автоматизация заданий SMM Kingdom",
     heroTitle: "Задания Instagram, <br><span class=\"hero-highlight\">на автопилоте.</span>",
     heroSubtitle: "Replica берёт задания из бота SMM Kingdom Tasks, выполняет их на вашем телефоне и отправляет результат.",
     btnHeroGetStarted: "Начать",
     btnHeroLicense: "Получить лицензию",
     chipSetupText: "Настройка",
     chipTutorialText: "Видеоурок",
+    lbl1: "Шаг 01", lbl2: "Шаг 02", lbl3: "Шаг 03", lblLicense: "Лицензия",
     st1Head: "Отключите Play Защиту",
     st1Sub: "Android может блокировать внешние скрипты. Сначала отключите сканирование.",
     st1CardTitle: "Инструкция Play Защиты",
@@ -1700,6 +1447,7 @@ const I18N = {
     ],
     st2Head: "Скачайте три приложения",
     st2Sub: "Установите эти три пакета для запуска терминала, рабочего скрипта и кликов.",
+    badgeAuto: "Автоматизация", badgeEnv: "Среда", badgeBridge: "Системный мост",
     descReplica: "Основное приложение, обрабатывающее задачи SMM Kingdom Tasks Bot.",
     descTermux: "Эмулятор терминала для выполнения автоматических сценариев и Python.",
     descTermuxApi: "Системный мост для взаимодействия с кликами, буфером и экраном.",
@@ -1724,34 +1472,86 @@ const I18N = {
     bulkSub: "Свяжитесь с автором для скидки на лицензии для нескольких устройств.",
     btnBulk: "Написать автору",
     ftHelp: "Нужна помощь? Напишите",
-    ftTg: "в Telegram",
-    ftLegal: "Replica — независимый инструмент и не связан с Telegram, Instagram или SMM Kingdom."
+    ftTg: "в Telegram"
   }
 };
 
 /* =========================================================
-   APP CONTROLLER LOGIC
+   HELPERS
    ========================================================= */
 const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const store = {
+  get: k => { try { return localStorage.getItem(k); } catch (_) { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch (_) {} }
+};
 
-let lang = localStorage.getItem('replica_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
+const LANGS = ['en', 'uk', 'ru'];
+let lang = store.get('replica_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
 if (!I18N[lang]) lang = 'en';
+let hue = +(store.get('replica_hue') || 154);
+let mode = store.get('replica_mode') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-let hue = +(localStorage.getItem('replica_hue') || 154);
-let mode = localStorage.getItem('replica_mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-let toastTimeout;
-function showToast(text) {
-  const toast = $('#toastNotice');
-  toast.textContent = text;
-  toast.classList.add('active');
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => toast.classList.remove('active'), 3200);
+/* =========================================================
+   HAPTICS (Android: Vibration API · iOS 17.4+: switch-input trick)
+   ========================================================= */
+const canVibrate = typeof navigator.vibrate === 'function';
+const HAPTIC = {
+  tap:    [8],
+  tick:   [5],
+  select: [12],
+  toggle: [10, 28, 14],
+  open:   [8, 24, 14],
+  close:  [6],
+  warn:   [16, 40, 16]
+};
+let iosSwitch = null, lastIosHaptic = 0;
+function haptic(kind = 'tap') {
+  try {
+    if (canVibrate) {
+      navigator.vibrate(HAPTIC[kind] || HAPTIC.tap);
+      return;
+    }
+    const now = performance.now();
+    if (now - lastIosHaptic < 40) return;
+    lastIosHaptic = now;
+    if (!iosSwitch) {
+      iosSwitch = document.createElement('label');
+      iosSwitch.setAttribute('aria-hidden', 'true');
+      iosSwitch.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.setAttribute('switch', '');
+      iosSwitch.appendChild(input);
+      document.body.appendChild(iosSwitch);
+    }
+    iosSwitch.click();
+  } catch (_) {}
 }
 
-/* Material 3 Expressive Liquid Ripple */
+/* =========================================================
+   PRESS EFFECT (shape morph held for a minimum time) + RIPPLE
+   ========================================================= */
+const PRESS_SEL = '.m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .lang-chip-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
+const MIN_PRESS_MS = 180;
+
 document.addEventListener('pointerdown', e => {
+  const el = e.target.closest(PRESS_SEL);
+  if (el) {
+    el.classList.add('is-pressed');
+    const t0 = performance.now();
+    const release = () => {
+      window.removeEventListener('pointerup', release, true);
+      window.removeEventListener('pointercancel', release, true);
+      setTimeout(() => el.classList.remove('is-pressed'), Math.max(0, MIN_PRESS_MS - (performance.now() - t0)));
+    };
+    window.addEventListener('pointerup', release, true);
+    window.addEventListener('pointercancel', release, true);
+    if (canVibrate) haptic('tap');
+  }
+
   const host = e.target.closest('.m3e-state');
   if (!host) return;
   const rect = host.getBoundingClientRect();
@@ -1762,50 +1562,94 @@ document.addEventListener('pointerdown', e => {
   ripple.style.left = `${e.clientX - rect.left - radius}px`;
   ripple.style.top = `${e.clientY - rect.top - radius}px`;
   host.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 580);
+  setTimeout(() => ripple.remove(), 600);
 });
 
+// iOS: haptics need a click gesture; specific handlers fire first and de-dupe this
+document.addEventListener('click', e => {
+  if (!canVibrate && e.target.closest(PRESS_SEL)) haptic('tap');
+});
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+let toastTimeout;
+function showToast(text) {
+  const toast = $('#toastNotice');
+  toast.textContent = text;
+  toast.classList.add('active');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('active'), 3200);
+}
+
+/* =========================================================
+   THEME
+   ========================================================= */
 function applyHue(newHue) {
   hue = +newHue;
   document.documentElement.style.setProperty('--h', hue);
-  localStorage.setItem('replica_hue', hue);
-  $$('#swatchGrid .monet-swatch').forEach(sw => {
-    sw.classList.toggle('active', +sw.dataset.hue === hue);
-  });
+  store.set('replica_hue', hue);
+  $$('#swatchGrid .monet-swatch').forEach(sw => sw.classList.toggle('active', +sw.dataset.hue === hue));
 }
 
 function withTransition(fn) {
-  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.startViewTransition(fn);
-  } else fn();
+  if (document.startViewTransition && !reduceMotion) document.startViewTransition(fn);
+  else fn();
 }
 
 function applyMode(newMode) {
   mode = newMode;
   document.documentElement.setAttribute('data-mode', mode);
-  localStorage.setItem('replica_mode', mode);
+  store.set('replica_mode', mode);
   $('#modeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
+}
+
+/* =========================================================
+   LANGUAGE: apply text, sliding indicator, sliding page swap
+   ========================================================= */
+function markActiveLang() {
+  $('#langTray').style.setProperty('--idx', LANGS.indexOf(lang));
+  $$('#langTray [data-lang]').forEach(btn => {
+    const on = btn.dataset.lang === lang;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-checked', String(on));
+  });
 }
 
 function applyI18n() {
   const dict = I18N[lang];
   document.documentElement.lang = lang;
-
   $$('[data-i]').forEach(el => {
     const k = el.dataset.i;
-    if (dict[k]) el.innerHTML = dict[k];
+    if (dict[k] !== undefined) el.innerHTML = dict[k];
   });
-
   $('#protectStepRows').innerHTML = dict.st1Steps.map((txt, i) => `
     <div class="step-point" style="--i:${i}">
       <div class="point-number">${i + 1}</div>
       <div>${txt}</div>
     </div>
   `).join('');
+}
 
-  $$('#langTray [data-lang]').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-  });
+/* Page content slides out in the direction of travel, text swaps, new content slides in */
+async function slideSwap(dir) {
+  const blocks = [...$$('main > section'), $('footer')];
+  if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
+
+  const dist = 34 * dir;
+  const outs = blocks.map((el, i) => el.animate(
+    [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: `translateX(${-dist}px)` }],
+    { duration: 200, delay: i * 26, easing: 'cubic-bezier(0.3, 0, 0.8, 0.15)', fill: 'forwards' }
+  ));
+  await Promise.all(outs.map(a => a.finished.catch(() => {})));
+
+  applyI18n();
+
+  blocks.forEach((el, i) => el.animate(
+    [{ opacity: 0, transform: `translateX(${dist}px)` }, { opacity: 1, transform: 'translateX(0)' }],
+    { duration: 560, delay: i * 42, easing: 'cubic-bezier(0.38, 1.21, 0.22, 1)', fill: 'backwards' }
+  ));
+  outs.forEach(a => a.cancel());
 }
 
 function setLangTrayVisible(show) {
@@ -1816,9 +1660,15 @@ function setLangTrayVisible(show) {
   $('#btnLangToggle').setAttribute('aria-expanded', String(show));
 }
 
+function closeThemeSheet() {
+  const btn = $('#btnThemeToggle');
+  $('#monetSheet').classList.remove('show');
+  btn.classList.remove('active-btn');
+  btn.setAttribute('aria-expanded', 'false');
+}
 
 /* =========================================================
-   REVEAL CHOREOGRAPHY + SCROLL-AWARE NAV
+   SCROLL-AWARE NAV + REVEAL CHOREOGRAPHY
    ========================================================= */
 function setupMotion() {
   const nav = $('#capsuleNav');
@@ -1834,7 +1684,7 @@ function setupMotion() {
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (reduceMotion) return;
 
   const groups = [
     ['#capsuleNav', 0, '-26px'],
@@ -1869,101 +1719,119 @@ function setupMotion() {
     }
   });
 
-  // start once the loader begins leaving
   setTimeout(() => targets.forEach(el => io.observe(el)), 1000);
 }
 
+/* =========================================================
+   INIT
+   ========================================================= */
+let langBusy = false;
+
 function init() {
-  // Bind telegram anchors
   $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
   $('#dlTermuxAnchor').href = CONFIG.links.termuxApk;
   $('#dlTermuxApiAnchor').href = CONFIG.links.termuxApiApk;
 
-  // Render Monet swatches
   $('#swatchGrid').innerHTML = CONFIG.monetHues.map(item => `
-    <button class="monet-swatch ${item.hue === hue ? 'active' : ''}" 
-            data-hue="${item.hue}" 
-            title="${item.name}" 
-            style="background: oklch(0.68 0.16 ${item.hue})"
-            aria-label="${item.name}"></button>
+    <button class="monet-swatch ${item.hue === hue ? 'active' : ''}" data-hue="${item.hue}"
+            title="${item.name}" aria-label="${item.name}"
+            style="background: oklch(0.68 0.16 ${item.hue})"></button>
   `).join('');
 
-  // Language selectors
+  /* Language button opens the sliding selector */
   $('#btnLangToggle').addEventListener('click', e => {
     e.stopPropagation();
-    $('#monetSheet').classList.remove('show');
-    $('#btnThemeToggle').classList.remove('active-btn');
+    haptic('open');
+    closeThemeSheet();
     setLangTrayVisible(true);
   });
 
-  // Clicking a language switches language and closes tray smoothly
-  $('#langTray').addEventListener('click', e => {
+  /* Picking a language: indicator slides, page slides, tray closes */
+  $('#langTray').addEventListener('click', async e => {
     const btn = e.target.closest('[data-lang]');
-    if (!btn) return;
-    lang = btn.dataset.lang;
-    localStorage.setItem('replica_lang', lang);
-    withTransition(applyI18n);
-    setTimeout(() => setLangTrayVisible(false), 320);
-  });
+    if (!btn || langBusy) return;
+    const next = btn.dataset.lang;
 
-  // Close language tray if tapping outside capsule nav
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#capsuleNav')) {
+    if (next === lang) {
+      haptic('tick');
+      await sleep(160);
       setLangTrayVisible(false);
+      return;
     }
+
+    langBusy = true;
+    haptic('select');
+    const dir = LANGS.indexOf(next) > LANGS.indexOf(lang) ? 1 : -1;
+    lang = next;
+    store.set('replica_lang', lang);
+    markActiveLang();                 // indicator slides immediately
+
+    await sleep(120);
+    await slideSwap(dir);
+    await sleep(300);
+    setLangTrayVisible(false);
+    haptic('close');
+    langBusy = false;
   });
 
-  // Palette events
+  /* Outside tap closes both tray and sheet */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#capsuleNav') && !langBusy) setLangTrayVisible(false);
+    if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) closeThemeSheet();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { setLangTrayVisible(false); closeThemeSheet(); }
+  });
+
+  /* Palette */
   $('#swatchGrid').addEventListener('click', e => {
     const swatch = e.target.closest('.monet-swatch');
-    if (swatch) applyHue(swatch.dataset.hue);
+    if (!swatch) return;
+    haptic('select');
+    applyHue(swatch.dataset.hue);
   });
 
   const themeBtn = $('#btnThemeToggle');
-  const themeSheet = $('#monetSheet');
-
   themeBtn.addEventListener('click', e => {
     e.stopPropagation();
+    haptic('open');
     setLangTrayVisible(false);
-    const isOpen = themeSheet.classList.toggle('show');
+    const isOpen = $('#monetSheet').classList.toggle('show');
     themeBtn.classList.toggle('active-btn', isOpen);
     themeBtn.setAttribute('aria-expanded', String(isOpen));
   });
 
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) {
-      themeSheet.classList.remove('show');
-      themeBtn.classList.remove('active-btn');
-      themeBtn.setAttribute('aria-expanded', 'false');
-    }
-  });
-
   $('#modeSwitch').addEventListener('click', () => {
+    haptic('toggle');
     withTransition(() => applyMode(mode === 'dark' ? 'light' : 'dark'));
   });
 
-  // Smooth Expandable Play Protect Interaction
+  /* Play Protect expandable */
   const protectWrap = $('#protectExpandable');
   const protectBtn = $('#protectToggleBtn');
   protectBtn.addEventListener('click', () => {
     const isOpen = protectWrap.classList.toggle('open');
     protectBtn.setAttribute('aria-expanded', String(isOpen));
+    haptic(isOpen ? 'open' : 'close');
   });
 
-  // Replica APK placeholder notice
+  /* Replica APK placeholder */
   $('#dlReplicaAnchor').addEventListener('click', e => {
     if (CONFIG.links.replicaApk === '#' || !CONFIG.links.replicaApk) {
       e.preventDefault();
+      haptic('warn');
       showToast(I18N[lang].apkComingSoon);
+    } else {
+      $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
     }
   });
 
   applyHue(hue);
   applyMode(mode);
   applyI18n();
+  markActiveLang();
   setupMotion();
 
-  // Dismiss loader with high-refresh smooth timing
   setTimeout(() => {
     const loader = $('#m3eLoader');
     if (loader) {
