@@ -4,7 +4,6 @@ import time
 import shutil
 import socket
 import sqlite3
-import shlex
 import subprocess
 import threading
 import tty
@@ -121,44 +120,53 @@ def clear_logs():
         _LOG_STATE.update(started=True, file_date=None, dirty=False, rewritten=time.time())
         _file_write([], "w")
 
-SHARE_MAX_CHARS = 25000     # the share sheet gets the newest part of the logs when they are longer
+SHARE_DIR = "/sdcard/Download"   # the shared copy lives here so other apps can open it
 
 def share_logs():
-    """Open the Android share sheet with the latest log text. Returns (ok, message)."""
+    """Share the log .txt file through the Android share sheet, started over adb. Returns (ok, message)."""
     prune_logs(force=True)
     try:
-        with open(LOG_FILE, "r", encoding="utf-8") as fh:
-            content = fh.read()
+        if not os.path.exists(LOG_FILE) or os.path.getsize(LOG_FILE) == 0:
+            return False, "No logs to share"
     except OSError:
-        content = ""
-    if not content.strip():
         return False, "No logs to share"
+    if not adb_serial:
+        return False, "Share failed: ADB is not connected"
 
-    trimmed = len(content) > SHARE_MAX_CHARS
-    if trimmed:
-        content = content[-SHARE_MAX_CHARS:]
-        cut = content.find("\n")
-        if cut != -1:
-            content = content[cut + 1:]
+    # A fresh file name each time, so apps never read a stale size; older shared copies are removed
+    name = f"replica_logs_{datetime.now():%Y%m%d_%H%M%S}.txt"
+    path = f"{SHARE_DIR}/{name}"
+    try:
+        os.makedirs(SHARE_DIR, exist_ok=True)
+        for old in os.listdir(SHARE_DIR):
+            if old.startswith("replica_logs_") and old.endswith(".txt"):
+                try:
+                    os.remove(os.path.join(SHARE_DIR, old))
+                except OSError:
+                    pass
+        shutil.copyfile(LOG_FILE, path)
+    except Exception as e:
+        return False, f"Share failed: could not copy the file ({type(e).__name__})"
 
-    # 1) Through adb: starts the share sheet from the shell, which Android always allows
-    if adb_serial:
-        cmd = ("am start -a android.intent.action.SEND -t text/plain "
-               f"--es android.intent.extra.SUBJECT {shlex.quote('Replica logs')} "
-               f"--es android.intent.extra.TEXT {shlex.quote(content)}")
-        out = run_adb("-s", adb_serial, "shell", cmd, timeout=20).lower()
-        if "error" not in out and "exception" not in out:
-            return True, "Share sheet opened" + (" (newest part of the logs)" if trimmed else "")
+    # Register the file with Android, then share its content:// address (file:// is the fallback)
+    uri = f"file://{path}"
+    run_adb("-s", adb_serial, "shell",
+            f"am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file://{path}", timeout=10)
+    query = f"content query --uri content://media/external/file --projection _id --where \"_display_name='{name}'\""
+    for _ in range(6):
+        ids = re.findall(r"_id=(\d+)", run_adb("-s", adb_serial, "shell", query, timeout=10))
+        if ids:
+            uri = f"content://media/external/file/{ids[-1]}"
+            break
+        time.sleep(0.5)
 
-    # 2) Fallback: Termux:API (can hang on some phones, so only a short wait)
-    if shutil.which("termux-share"):
-        try:
-            subprocess.run(["termux-share", "-a", "send", "-c", "text/plain", "-t", "Replica logs", LOG_FILE],
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=8)
-            return True, "Share sheet opened"
-        except Exception:
-            pass
-    return False, "Share failed, the logs are in ~/replica_logs.txt"
+    out = run_adb("-s", adb_serial, "shell",
+                  "am start --grant-read-uri-permission -a android.intent.action.SEND -t text/plain "
+                  f"--eu android.intent.extra.STREAM {uri} --es android.intent.extra.SUBJECT 'Replica logs'",
+                  timeout=20).lower()
+    if "error" in out or "exception" in out:
+        return False, "Share failed: Android refused to open the share sheet"
+    return True, "Share sheet opened"
 
 def term_log(message):
     """Print a concise, flush-left colored line to the terminal and keep it in the log file."""
