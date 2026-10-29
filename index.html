@@ -7,7 +7,7 @@
 <meta name="description" content="Automate Instagram tasks on Android with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @property --h {
   syntax: '<number>';
@@ -16,103 +16,103 @@
 }
 
 :root {
-  --h: 152; /* Dynamic Hue */
+  --h: 152;
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --standard: cubic-bezier(0.2, 0, 0, 1);
+  --smooth: cubic-bezier(0.2, 0, 0, 1);
   --bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  /* MD3 Light Palette */
+  /* Light Monet Material 3 Palette */
   --md-sys-color-primary: oklch(0.48 0.16 var(--h));
   --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
-  --md-sys-color-primary-container: oklch(0.88 0.09 var(--h));
+  --md-sys-color-primary-container: oklch(0.9 0.08 var(--h));
   --md-sys-color-on-primary-container: oklch(0.22 0.08 var(--h));
-  
-  --md-sys-color-secondary: oklch(0.52 0.08 calc(var(--h) + 20));
-  --md-sys-color-secondary-container: oklch(0.9 0.05 calc(var(--h) + 20));
-  --md-sys-color-on-secondary-container: oklch(0.26 0.06 calc(var(--h) + 20));
-  
-  --md-sys-color-tertiary: oklch(0.5 0.12 calc(var(--h) + 65));
-  --md-sys-color-tertiary-container: oklch(0.89 0.08 calc(var(--h) + 65));
-  --md-sys-color-on-tertiary-container: oklch(0.25 0.07 calc(var(--h) + 65));
+
+  --md-sys-color-secondary: oklch(0.52 0.08 calc(var(--h) + 24));
+  --md-sys-color-secondary-container: oklch(0.91 0.05 calc(var(--h) + 24));
+  --md-sys-color-on-secondary-container: oklch(0.25 0.06 calc(var(--h) + 24));
+
+  --md-sys-color-tertiary: oklch(0.5 0.12 calc(var(--h) + 60));
+  --md-sys-color-tertiary-container: oklch(0.89 0.08 calc(var(--h) + 60));
+  --md-sys-color-on-tertiary-container: oklch(0.24 0.07 calc(var(--h) + 60));
 
   --md-sys-color-surface: oklch(0.985 0.006 var(--h));
-  --md-sys-color-surface-dim: oklch(0.94 0.01 var(--h));
+  --md-sys-color-surface-dim: oklch(0.93 0.012 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(1 0 var(--h));
   --md-sys-color-surface-container-low: oklch(0.96 0.01 var(--h));
   --md-sys-color-surface-container: oklch(0.935 0.016 var(--h));
   --md-sys-color-surface-container-high: oklch(0.91 0.022 var(--h));
   --md-sys-color-surface-container-highest: oklch(0.88 0.028 var(--h));
-  
+
   --md-sys-color-on-surface: oklch(0.18 0.02 var(--h));
   --md-sys-color-on-surface-variant: oklch(0.42 0.03 var(--h));
   --md-sys-color-outline: oklch(0.8 0.02 var(--h));
-  --md-sys-color-outline-variant: oklch(0.87 0.015 var(--h));
+  --md-sys-color-outline-variant: oklch(0.88 0.015 var(--h));
 
   --shape-corner-extra-large: 32px;
   --shape-corner-large: 24px;
   --shape-corner-medium: 16px;
   --shape-corner-small: 10px;
   --shape-corner-full: 9999px;
-  
-  --elevation-1: 0 2px 8px -2px oklch(0 0 0 / 0.06), 0 1px 4px -1px oklch(0 0 0 / 0.04);
-  --elevation-2: 0 8px 24px -6px oklch(0 0 0 / 0.1), 0 2px 6px -1px oklch(0 0 0 / 0.05);
-  --elevation-3: 0 16px 36px -8px oklch(0 0 0 / 0.16), 0 4px 12px -2px oklch(0 0 0 / 0.08);
+
+  --elevation-1: 0 4px 16px -4px oklch(0 0 0 / 0.06), 0 1px 4px -1px oklch(0 0 0 / 0.04);
+  --elevation-2: 0 10px 28px -6px oklch(0 0 0 / 0.1), 0 3px 8px -2px oklch(0 0 0 / 0.05);
+  --elevation-3: 0 18px 42px -8px oklch(0 0 0 / 0.15), 0 6px 14px -3px oklch(0 0 0 / 0.08);
 }
 
 :root[data-mode="dark"] {
-  /* MD3 Expressive Dark Tonal Palette */
+  /* Dark Monet Material 3 Palette */
   --md-sys-color-primary: oklch(0.82 0.14 var(--h));
   --md-sys-color-on-primary: oklch(0.22 0.08 var(--h));
   --md-sys-color-primary-container: oklch(0.36 0.1 var(--h));
   --md-sys-color-on-primary-container: oklch(0.92 0.05 var(--h));
 
-  --md-sys-color-secondary: oklch(0.78 0.07 calc(var(--h) + 20));
-  --md-sys-color-secondary-container: oklch(0.32 0.06 calc(var(--h) + 20));
-  --md-sys-color-on-secondary-container: oklch(0.9 0.04 calc(var(--h) + 20));
+  --md-sys-color-secondary: oklch(0.78 0.07 calc(var(--h) + 24));
+  --md-sys-color-secondary-container: oklch(0.32 0.06 calc(var(--h) + 24));
+  --md-sys-color-on-secondary-container: oklch(0.9 0.04 calc(var(--h) + 24));
 
-  --md-sys-color-tertiary: oklch(0.82 0.11 calc(var(--h) + 65));
-  --md-sys-color-tertiary-container: oklch(0.34 0.08 calc(var(--h) + 65));
-  --md-sys-color-on-tertiary-container: oklch(0.92 0.04 calc(var(--h) + 65));
+  --md-sys-color-tertiary: oklch(0.82 0.11 calc(var(--h) + 60));
+  --md-sys-color-tertiary-container: oklch(0.34 0.08 calc(var(--h) + 60));
+  --md-sys-color-on-tertiary-container: oklch(0.92 0.04 calc(var(--h) + 60));
 
-  --md-sys-color-surface: oklch(0.14 0.015 var(--h));
-  --md-sys-color-surface-dim: oklch(0.12 0.012 var(--h));
-  --md-sys-color-surface-container-low: oklch(0.18 0.018 var(--h));
-  --md-sys-color-surface-container: oklch(0.22 0.022 var(--h));
-  --md-sys-color-surface-container-high: oklch(0.26 0.026 var(--h));
-  --md-sys-color-surface-container-highest: oklch(0.3 0.03 var(--h));
+  --md-sys-color-surface: oklch(0.13 0.015 var(--h));
+  --md-sys-color-surface-dim: oklch(0.1 0.01 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(0.08 0.008 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.17 0.018 var(--h));
+  --md-sys-color-surface-container: oklch(0.21 0.022 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.25 0.026 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.29 0.03 var(--h));
 
   --md-sys-color-on-surface: oklch(0.94 0.012 var(--h));
-  --md-sys-color-on-surface-variant: oklch(0.75 0.025 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.74 0.025 var(--h));
   --md-sys-color-outline: oklch(0.42 0.025 var(--h));
-  --md-sys-color-outline-variant: oklch(0.28 0.02 var(--h));
+  --md-sys-color-outline-variant: oklch(0.27 0.02 var(--h));
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { scroll-behavior: smooth; color-scheme: light dark; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+  color-scheme: light dark;
+}
+
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--md-sys-color-surface);
   color: var(--md-sys-color-on-surface);
-  line-height: 1.5;
+  line-height: 1.55;
   font-size: 16px;
+  letter-spacing: -0.011em;
   overflow-x: hidden;
-  transition: background-color 0.4s var(--standard), color 0.4s var(--standard);
+  transition: background-color 0.45s var(--smooth), color 0.45s var(--smooth);
 }
 
-/* Typography styles */
-h1 { font-size: clamp(2.4rem, 7vw, 4.4rem); line-height: 1.06; letter-spacing: -0.04em; font-weight: 800; }
-h2 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.15; letter-spacing: -0.03em; font-weight: 700; }
-h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
-p { color: var(--md-sys-color-on-surface-variant); }
-a { color: inherit; text-decoration: none; }
-
-.app-wrapper {
-  width: 100%;
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 0 18px 80px;
-}
-
-/* Material 3 Expressive Ripple */
+/* Material 3 Dynamic Ripple Effect */
 .m3-ripple {
   position: relative;
   overflow: hidden;
@@ -124,109 +124,103 @@ a { color: inherit; text-decoration: none; }
   inset: 0;
   background-color: currentColor;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
   pointer-events: none;
 }
-.m3-ripple:hover::after { opacity: 0.08; }
-.m3-ripple:active::after { opacity: 0.16; }
+.m3-ripple:hover::after { opacity: 0.09; }
+.m3-ripple:active::after { opacity: 0.18; }
 .ripple-wave {
   position: absolute;
   border-radius: 50%;
   background: currentColor;
   opacity: 0.25;
   transform: scale(0);
-  animation: ripple-grow 0.6s var(--standard) forwards;
+  animation: ripple-grow 0.65s var(--smooth) forwards;
   pointer-events: none;
 }
-@keyframes ripple-grow { to { transform: scale(2.8); opacity: 0; } }
+@keyframes ripple-grow { to { transform: scale(3.2); opacity: 0; } }
 
-/* MD3 Compact App Bar (Refined & Clean) */
-.m3-app-bar-container {
+/* App Wrapper */
+.app-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* =========================================================
+   TOP HEADER NAVIGATION (EXPRESSIVE RE-ENGINEERED)
+   ========================================================= */
+.nav-header-wrapper {
   position: sticky;
   top: 14px;
-  z-index: 80;
-  padding: 0 10px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 0 12px;
   margin-bottom: 24px;
 }
-.m3-app-bar {
+
+.m3-navbar-pill {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 64px;
-  padding: 6px 14px 6px 18px;
-  background: color-mix(in oklch, var(--md-sys-color-surface-container) 85%, transparent);
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  gap: 4px;
+  padding: 5px 6px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container) 86%, transparent);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--shape-corner-full);
-  box-shadow: var(--elevation-1);
-  transition: all 0.3s var(--standard);
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: -0.02em;
-  color: var(--md-sys-color-on-surface);
-}
-.brand-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  display: grid;
-  place-items: center;
-  transition: transform 0.4s var(--spring);
-}
-.brand:hover .brand-icon {
-  transform: rotate(14deg) scale(1.08);
-}
-.app-bar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
+  box-shadow: var(--elevation-2);
+  transition: all 0.4s var(--spring);
+  min-height: 52px;
 }
 
-/* MD3 Segmented Language Switcher */
-.m3-segmented {
+/* Nav Sub-Decks (Standard View vs Language View) */
+.nav-deck {
   display: flex;
-  background: var(--md-sys-color-surface-container-highest);
-  padding: 3px;
-  border-radius: var(--shape-corner-full);
-  position: relative;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.3s var(--smooth), transform 0.4s var(--spring);
 }
-.m3-segmented-btn {
+.nav-deck.hidden {
+  display: none;
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.m3-nav-item {
   border: 0;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
   font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 6px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 8px 16px;
   border-radius: var(--shape-corner-full);
   cursor: pointer;
-  z-index: 2;
-  transition: color 0.25s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s var(--spring);
+  user-select: none;
 }
-.m3-segmented-btn.active {
-  color: var(--md-sys-color-on-primary);
+.m3-nav-item:hover {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  transform: translateY(-1px);
 }
-.m3-segmented-thumb {
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  left: 0;
-  background: var(--md-sys-color-primary);
-  border-radius: var(--shape-corner-full);
-  transition: transform 0.4s var(--spring), width 0.35s var(--spring);
-  z-index: 1;
+.m3-nav-item:active {
+  transform: scale(0.95);
+}
+.m3-nav-item.active {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
-/* Icon button */
+/* Icon Button */
 .m3-icon-btn {
   width: 42px;
   height: 42px;
@@ -237,72 +231,87 @@ a { color: inherit; text-decoration: none; }
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: transform 0.25s var(--bounce), background-color 0.25s ease;
+  transition: all 0.3s var(--spring);
 }
 .m3-icon-btn svg { width: 20px; height: 20px; }
-.m3-icon-btn:active { transform: scale(0.9); }
-.m3-icon-btn.active { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+.m3-icon-btn:hover {
+  background: var(--md-sys-color-surface-container-highest);
+  transform: rotate(18deg) scale(1.06);
+}
+.m3-icon-btn:active { transform: scale(0.92); }
+.m3-icon-btn.open {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
 
-/* Palette Theme Dropdown (Expressive M3 Dialog) */
-.theme-menu {
+/* Monet Theme Menu Popup */
+.theme-dropdown {
   position: absolute;
-  top: 56px;
+  top: calc(100% + 10px);
   right: 0;
-  width: 260px;
+  width: 280px;
   background: var(--md-sys-color-surface-container);
   border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--shape-corner-large);
-  padding: 16px;
+  border-radius: var(--shape-corner-extra-large);
+  padding: 18px;
   box-shadow: var(--elevation-3);
   opacity: 0;
-  transform: translateY(-8px) scale(0.95);
+  transform: translateY(-10px) scale(0.92);
   visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.3s var(--spring), visibility 0s 0.2s;
-  z-index: 90;
+  transition: opacity 0.25s var(--smooth), transform 0.35s var(--spring), visibility 0s 0.25s;
+  z-index: 120;
 }
-.theme-menu.open {
+.theme-dropdown.show {
   opacity: 1;
   transform: translateY(0) scale(1);
   visibility: visible;
-  transition: opacity 0.2s ease, transform 0.3s var(--spring), visibility 0s;
+  transition: opacity 0.25s var(--smooth), transform 0.35s var(--spring), visibility 0s;
 }
-.menu-label {
-  font-size: 0.78rem;
+.dropdown-title {
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--md-sys-color-on-surface-variant);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
-.palette-dots {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+.monet-palettes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
 }
-.palette-dot {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--shape-corner-full);
+.monet-dot {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
   border: 0;
   cursor: pointer;
+  position: relative;
   transition: transform 0.3s var(--spring), border-radius 0.3s var(--spring);
+  box-shadow: var(--elevation-1);
 }
-.palette-dot:hover { transform: scale(1.12); }
-.palette-dot.active {
+.monet-dot:hover {
+  transform: scale(1.12);
   border-radius: 12px;
-  transform: scale(1.15);
+}
+.monet-dot.active {
+  transform: scale(1.08);
+  border-radius: 10px;
   outline: 3px solid var(--md-sys-color-on-surface);
   outline-offset: 2px;
 }
-.theme-mode-row {
+.dark-mode-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 10px;
+  padding-top: 14px;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
+
+/* Material 3 Switch */
 .m3-switch {
   width: 52px;
   height: 32px;
@@ -311,9 +320,9 @@ a { color: inherit; text-decoration: none; }
   border: 2px solid var(--md-sys-color-outline);
   position: relative;
   cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: all 0.3s var(--spring);
 }
-.m3-switch-handle {
+.m3-switch-thumb {
   position: absolute;
   top: 50%;
   left: 4px;
@@ -328,7 +337,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--md-sys-color-primary);
   border-color: var(--md-sys-color-primary);
 }
-.m3-switch[aria-checked="true"] .m3-switch-handle {
+.m3-switch[aria-checked="true"] .m3-switch-thumb {
   transform: translateX(20px);
   background: var(--md-sys-color-on-primary);
   width: 22px;
@@ -336,105 +345,86 @@ a { color: inherit; text-decoration: none; }
   margin-top: -11px;
 }
 
-/* Hero Section */
-.hero-section {
-  display: grid;
-  gap: 36px;
-  align-items: center;
-  padding: 32px 0 44px;
-}
-.hero-content {
+/* =========================================================
+   HERO SECTION (Clean, Minimal, Modern)
+   ========================================================= */
+.hero-box {
+  padding: 34px 0 28px;
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
-.hero-tag {
+.hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
   padding: 6px 14px;
   border-radius: var(--shape-corner-full);
-  font-size: 0.85rem;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-size: 0.82rem;
   font-weight: 700;
   width: fit-content;
-  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+  animation: floatIn 0.8s var(--spring) backwards;
 }
-.hero-title .accent {
+h1.hero-headline {
+  font-size: clamp(2.6rem, 7.5vw, 4.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+  max-width: 14ch;
+  animation: floatIn 0.8s var(--spring) 0.1s backwards;
+}
+.hero-accent {
   color: var(--md-sys-color-primary);
   display: inline-block;
   position: relative;
 }
-.hero-desc {
+.hero-description {
   font-size: clamp(1.05rem, 2.5vw, 1.25rem);
-  max-width: 44ch;
-  margin: 18px 0 28px;
+  color: var(--md-sys-color-on-surface-variant);
+  max-width: 48ch;
+  line-height: 1.5;
+  animation: floatIn 0.8s var(--spring) 0.2s backwards;
 }
-.hero-actions {
+.hero-buttons-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
+  margin-top: 10px;
+  animation: floatIn 0.8s var(--spring) 0.3s backwards;
 }
-.chips-row {
+.chips-group {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 26px;
+  margin-top: 14px;
+  animation: floatIn 0.8s var(--spring) 0.4s backwards;
 }
 .m3-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   padding: 8px 16px;
   background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface-variant);
   border-radius: var(--shape-corner-medium);
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
   border: 1px solid var(--md-sys-color-outline-variant);
+  transition: all 0.3s var(--spring);
+}
+.m3-chip:hover {
+  background: var(--md-sys-color-surface-container-high);
+  transform: translateY(-2px);
 }
 
-/* Interactive Expressive Morphing Blob */
-.hero-art {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.blob-card {
-  position: relative;
-  width: min(100%, 320px);
-  aspect-ratio: 1;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-}
-.blob-card svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 14px 28px color-mix(in oklch, var(--md-sys-color-primary) 30%, transparent));
-}
-.blob-glyph {
-  position: relative;
-  font-size: clamp(5.5rem, 16vw, 7.5rem);
-  font-weight: 800;
-  color: var(--md-sys-color-on-primary-container);
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@media (min-width: 820px) {
-  .hero-section {
-    grid-template-columns: 1.2fr 0.8fr;
-    padding: 56px 0 60px;
-  }
-}
-
-/* Material 3 Expressive Buttons */
+/* =========================================================
+   BUTTONS (True MD3 Expressive)
+   ========================================================= */
 .m3-btn {
   display: inline-flex;
   align-items: center;
@@ -444,13 +434,13 @@ a { color: inherit; text-decoration: none; }
   padding: 0 26px;
   border-radius: var(--shape-corner-full);
   font-family: inherit;
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   font-weight: 700;
   border: 0;
   cursor: pointer;
-  transition: transform 0.3s var(--bounce), border-radius 0.3s var(--spring), box-shadow 0.25s ease;
-  user-select: none;
   text-decoration: none;
+  transition: transform 0.3s var(--spring), border-radius 0.35s var(--spring), box-shadow 0.25s ease;
+  user-select: none;
 }
 .m3-btn:active { transform: scale(0.96); }
 .m3-btn.primary {
@@ -461,6 +451,7 @@ a { color: inherit; text-decoration: none; }
 .m3-btn.primary:hover {
   border-radius: 18px;
   box-shadow: var(--elevation-2);
+  transform: translateY(-2px);
 }
 .m3-btn.tonal {
   background: var(--md-sys-color-secondary-container);
@@ -468,54 +459,75 @@ a { color: inherit; text-decoration: none; }
 }
 .m3-btn.tonal:hover {
   border-radius: 18px;
+  transform: translateY(-2px);
 }
 .m3-btn.large {
-  height: 60px;
+  height: 58px;
   padding: 0 32px;
   font-size: 1.05rem;
 }
 
-/* Section Header */
-.section-header {
-  margin: 48px 0 24px;
+/* =========================================================
+   SECTION HEADERS
+   ========================================================= */
+.section-head {
+  margin: 54px 0 20px;
 }
-.section-tag {
+.step-counter-tag {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--md-sys-color-primary);
   margin-bottom: 6px;
 }
-.section-desc {
+h2.section-title {
+  font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  font-weight: 800;
+}
+p.section-subtitle {
+  color: var(--md-sys-color-on-surface-variant);
   margin-top: 6px;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
+  max-width: 54ch;
 }
 
-/* Step 1: Disable Play Protect Expressive Card */
+/* =========================================================
+   STEP 1: DISABLE PLAY PROTECT
+   ========================================================= */
 .protect-card {
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-extra-large);
   border: 1px solid var(--md-sys-color-outline-variant);
   overflow: hidden;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: all 0.35s var(--spring);
 }
-.protect-header {
+.protect-card:hover {
+  border-color: var(--md-sys-color-outline);
+}
+.protect-header-btn {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 24px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
-  user-select: none;
 }
-.protect-left {
+.protect-left-meta {
   display: flex;
   align-items: center;
   gap: 18px;
 }
-.protect-icon {
+.protect-symbol {
   width: 52px;
   height: 52px;
   border-radius: 18px;
@@ -524,56 +536,55 @@ a { color: inherit; text-decoration: none; }
   display: grid;
   place-items: center;
   flex: none;
-  transition: transform 0.35s var(--spring);
+  transition: transform 0.4s var(--spring);
 }
-.protect-header:hover .protect-icon {
+.protect-header-btn:hover .protect-symbol {
   transform: rotate(-10deg) scale(1.08);
 }
-.protect-header h3 {
-  font-size: 1.25rem;
-  margin-bottom: 4px;
-}
-.protect-toggle-btn {
+.protect-symbol svg { width: 26px; height: 26px; }
+.protect-chevron {
   width: 44px;
   height: 44px;
   border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
-  border: 0;
   display: grid;
   place-items: center;
   flex: none;
-  transition: transform 0.4s var(--spring), background-color 0.3s;
+  transition: all 0.4s var(--spring);
 }
-.protect-card.open .protect-toggle-btn {
+.protect-card.open .protect-chevron {
   transform: rotate(180deg);
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
 }
-.protect-body {
+.protect-drawer {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.45s var(--standard);
+  transition: grid-template-rows 0.45s var(--smooth);
 }
-.protect-card.open .protect-body {
+.protect-card.open .protect-drawer {
   grid-template-rows: 1fr;
 }
-.protect-content {
+.protect-drawer-inner {
   overflow: hidden;
-  min-height: 0;
 }
-.steps-list {
+.step-timeline-list {
   padding: 0 24px 28px 94px;
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
-.step-item {
+.step-row-item {
   display: flex;
   gap: 14px;
   align-items: flex-start;
   font-size: 0.98rem;
+  color: var(--md-sys-color-on-surface-variant);
 }
-.step-num {
+.step-row-item b {
+  color: var(--md-sys-color-on-surface);
+}
+.step-bullet {
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -587,45 +598,46 @@ a { color: inherit; text-decoration: none; }
   margin-top: 1px;
 }
 @media (max-width: 600px) {
-  .protect-header { padding: 18px; }
-  .steps-list { padding: 0 18px 22px 18px; }
-  .protect-left { gap: 14px; }
-  .protect-icon { width: 44px; height: 44px; border-radius: 14px; }
+  .protect-header-btn { padding: 18px; }
+  .step-timeline-list { padding: 0 18px 22px 18px; }
+  .protect-left-meta { gap: 14px; }
+  .protect-symbol { width: 44px; height: 44px; border-radius: 14px; }
 }
 
-/* Step 2: The Three Download Tiles (MD3 Expressive Grid) */
+/* =========================================================
+   STEP 2: DOWNLOAD TILES (THE TRILOGY)
+   ========================================================= */
 .downloads-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  margin-top: 16px;
 }
-@media (min-width: 760px) {
+@media (min-width: 768px) {
   .downloads-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-.download-card {
+.download-card-tile {
   background: var(--md-sys-color-surface-container);
-  border-radius: var(--shape-corner-large);
+  border-radius: var(--shape-corner-extra-large);
   border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 24px;
+  padding: 26px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.35s var(--spring), border-radius 0.35s var(--spring), background-color 0.3s;
   position: relative;
   overflow: hidden;
+  transition: transform 0.35s var(--spring), border-radius 0.35s var(--spring), background-color 0.3s;
 }
-.download-card:hover {
-  transform: translateY(-4px);
-  border-radius: 32px 16px 32px 16px;
+.download-card-tile:hover {
+  transform: translateY(-5px);
+  border-radius: 34px 16px 34px 16px;
   background: var(--md-sys-color-surface-container-high);
 }
-.card-badge {
+.tile-badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 18px;
+  right: 18px;
   padding: 4px 10px;
   border-radius: var(--shape-corner-full);
   font-size: 0.72rem;
@@ -633,40 +645,51 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.card-badge.primary-badge {
+.tile-badge.primary-tag {
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
 }
-.card-badge.neutral-badge {
+.tile-badge.neutral-tag {
   background: var(--md-sys-color-surface-container-highest);
   color: var(--md-sys-color-on-surface-variant);
 }
-.card-icon-box {
-  width: 56px;
-  height: 56px;
+.tile-icon-box {
+  width: 58px;
+  height: 58px;
   border-radius: 20px;
   display: grid;
   place-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   transition: transform 0.4s var(--spring);
 }
-.download-card:hover .card-icon-box {
-  transform: scale(1.1) rotate(6deg);
+.download-card-tile:hover .tile-icon-box {
+  transform: scale(1.12) rotate(8deg);
 }
-.card-icon-box.c1 { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-.card-icon-box.c2 { background: var(--md-sys-color-secondary); color: var(--md-sys-color-secondary-container); }
-.card-icon-box.c3 { background: var(--md-sys-color-tertiary); color: var(--md-sys-color-tertiary-container); }
-
-.card-title {
+.tile-icon-box.c-primary {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+.tile-icon-box.c-secondary {
+  background: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-secondary-container);
+}
+.tile-icon-box.c-tertiary {
+  background: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-tertiary-container);
+}
+.tile-title {
   font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin-bottom: 6px;
 }
-.card-desc {
+.tile-desc {
   font-size: 0.92rem;
-  line-height: 1.45;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.5;
   margin-bottom: 24px;
 }
-.download-btn {
+.tile-action-btn {
   width: 100%;
   height: 48px;
   border-radius: var(--shape-corner-full);
@@ -675,23 +698,31 @@ a { color: inherit; text-decoration: none; }
   justify-content: center;
   gap: 8px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   cursor: pointer;
   border: 0;
-  transition: transform 0.25s var(--spring), border-radius 0.25s;
+  text-decoration: none;
+  transition: all 0.25s var(--spring);
 }
-.download-btn.filled {
+.tile-action-btn.filled {
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
 }
-.download-btn.tonal {
+.tile-action-btn.tonal {
   background: var(--md-sys-color-surface-container-highest);
   color: var(--md-sys-color-on-surface);
 }
-.download-btn:active { transform: scale(0.97); }
+.tile-action-btn:hover {
+  transform: translateY(-2px);
+}
+.tile-action-btn:active {
+  transform: scale(0.97);
+}
 
-/* Step 3: Setup Tutorial Video Card */
-.video-showcase-card {
+/* =========================================================
+   STEP 3: SETUP TUTORIAL VIDEO
+   ========================================================= */
+.video-feature-card {
   position: relative;
   border-radius: var(--shape-corner-extra-large);
   overflow: hidden;
@@ -699,7 +730,7 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: var(--elevation-2);
 }
-.video-aspect-container {
+.video-aspect-box {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -707,9 +738,9 @@ a { color: inherit; text-decoration: none; }
   place-items: center;
   cursor: pointer;
 }
-.play-token-btn {
-  width: 80px;
-  height: 80px;
+.video-play-token {
+  width: 84px;
+  height: 84px;
   border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
@@ -719,25 +750,25 @@ a { color: inherit; text-decoration: none; }
   box-shadow: var(--elevation-3);
   transition: transform 0.4s var(--bounce), border-radius 0.35s var(--spring);
 }
-.video-aspect-container:hover .play-token-btn {
-  transform: scale(1.14);
-  border-radius: 24px;
+.video-aspect-box:hover .video-play-token {
+  transform: scale(1.15);
+  border-radius: 26px;
 }
-.play-token-btn svg { width: 34px; height: 34px; margin-left: 4px; }
-.video-pill {
+.video-play-token svg { width: 36px; height: 36px; margin-left: 4px; }
+.video-caption-chip {
   position: absolute;
   bottom: 20px;
   left: 20px;
-  background: color-mix(in oklch, var(--md-sys-color-surface) 80%, transparent);
-  backdrop-filter: blur(12px);
+  background: color-mix(in oklch, var(--md-sys-color-surface) 84%, transparent);
+  backdrop-filter: blur(14px);
   padding: 8px 16px;
   border-radius: var(--shape-corner-full);
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: var(--md-sys-color-on-surface);
   border: 1px solid var(--md-sys-color-outline-variant);
 }
-.video-aspect-container iframe {
+.video-aspect-box iframe {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -745,33 +776,35 @@ a { color: inherit; text-decoration: none; }
   border: 0;
 }
 
-/* Step 4: License Pricing (Directly Below Video) */
-.pricing-section-container {
-  margin-top: 32px;
+/* =========================================================
+   STEP 4: LICENSE PRICING (DIRECTLY UNDER VIDEO)
+   ========================================================= */
+.pricing-section-wrap {
+  margin-top: 36px;
 }
-.pricing-hero-card {
+.pricing-card-expressive {
   position: relative;
   overflow: hidden;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
   border-radius: var(--shape-corner-extra-large);
-  padding: clamp(28px, 5vw, 44px);
+  padding: clamp(28px, 6vw, 48px);
   display: grid;
   gap: 28px;
   border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: var(--elevation-2);
 }
-.pricing-accent-bg {
+.pricing-bg-orb {
   position: absolute;
-  right: -80px;
-  top: -80px;
-  width: 320px;
-  height: 320px;
+  right: -90px;
+  top: -90px;
+  width: 340px;
+  height: 340px;
   border-radius: 50%;
   background: radial-gradient(circle, color-mix(in oklch, var(--md-sys-color-primary) 35%, transparent) 0%, transparent 70%);
   pointer-events: none;
 }
-.pricing-top-row {
+.pricing-headline-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -780,35 +813,35 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   z-index: 2;
 }
-.pricing-amount-group {
+.pricing-value-group {
   display: flex;
   align-items: baseline;
   gap: 6px;
 }
-.price-currency {
+.price-symbol {
   font-size: 2.2rem;
   font-weight: 700;
   color: var(--md-sys-color-primary);
 }
-.price-value {
-  font-size: clamp(4.5rem, 12vw, 6.8rem);
+.price-figure {
+  font-size: clamp(4.4rem, 12vw, 6.4rem);
   font-weight: 900;
   line-height: 0.9;
   letter-spacing: -0.05em;
   color: var(--md-sys-color-on-surface);
 }
-.price-period {
-  font-size: 1.1rem;
+.price-cadence {
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--md-sys-color-on-surface-variant);
 }
-.pricing-features-list {
+.perks-list {
   display: grid;
   gap: 12px;
   position: relative;
   z-index: 2;
 }
-.feature-item {
+.perk-row {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -816,13 +849,13 @@ a { color: inherit; text-decoration: none; }
   font-weight: 600;
   color: var(--md-sys-color-on-surface);
 }
-.feature-item svg {
+.perk-row svg {
   color: var(--md-sys-color-primary);
   flex: none;
 }
 
-/* Multi-device discount card */
-.multi-device-card {
+/* Multi-device Discount Strip */
+.multi-device-strip {
   margin-top: 16px;
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-large);
@@ -834,18 +867,22 @@ a { color: inherit; text-decoration: none; }
   justify-content: space-between;
   gap: 18px;
 }
-.multi-device-left h3 {
+.multi-left h3 {
   font-size: 1.18rem;
+  font-weight: 700;
   margin-bottom: 2px;
 }
-.multi-device-left p {
+.multi-left p {
+  color: var(--md-sys-color-on-surface-variant);
   font-size: 0.95rem;
 }
 
-/* Footer & Snackbar */
+/* =========================================================
+   FOOTER & SNACKBAR
+   ========================================================= */
 footer {
-  margin-top: 70px;
-  padding: 36px 0 20px;
+  margin-top: 60px;
+  padding: 34px 0 24px;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   text-align: center;
   font-size: 0.92rem;
@@ -855,9 +892,9 @@ footer a {
   color: var(--md-sys-color-primary);
   font-weight: 700;
 }
-.disclaimer {
-  font-size: 0.8rem;
-  margin-top: 10px;
+.disclaimer-text {
+  font-size: 0.82rem;
+  margin-top: 8px;
   opacity: 0.75;
 }
 
@@ -865,7 +902,7 @@ footer a {
   position: fixed;
   left: 50%;
   bottom: 24px;
-  z-index: 100;
+  z-index: 200;
   transform: translate(-50%, 180%);
   background: var(--md-sys-color-on-surface);
   color: var(--md-sys-color-surface);
@@ -878,15 +915,15 @@ footer a {
   transition: transform 0.4s var(--spring);
   pointer-events: none;
 }
-.m3-snackbar.show { transform: translate(-50%, 0); }
+.m3-snackbar.active { transform: translate(-50%, 0); }
 
-/* Animation Utils */
-.reveal-entry {
+/* Scroll Reveal */
+.reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.6s var(--standard), transform 0.6s var(--spring);
+  transition: opacity 0.65s var(--smooth), transform 0.65s var(--spring);
 }
-.reveal-entry.in-view {
+.reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -894,268 +931,285 @@ footer a {
 </head>
 <body>
 
-<!-- M3 Small/Center App Bar (Clean, Uncluttered, Single-line) -->
-<header class="m3-app-bar-container">
-  <div class="m3-app-bar">
-    <a href="#" class="brand" aria-label="Replica Home">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/>
-          <path d="M12 6v6l4 2"/>
+<!-- =========================================================
+     TOP HEADER (Refined Minimalist Navigation)
+     ========================================================= -->
+<header class="nav-header-wrapper">
+  <nav class="m3-navbar-pill" id="navBar" aria-label="Main Navigation">
+    
+    <!-- Standard Deck: [Setup, License, Language, Theme] -->
+    <div class="nav-deck" id="standardDeck">
+      <a href="#protect" class="m3-nav-item m3-ripple" id="navSetup" data-i="navSetup">Setup</a>
+      <a href="#pricing" class="m3-nav-item m3-ripple" id="navLicense" data-i="navLicense">License</a>
+      
+      <!-- Language Trigger Button -->
+      <button class="m3-nav-item m3-ripple" id="btnLangTrigger" aria-label="Choose Language">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
         </svg>
-      </div>
-      <span>Replica</span>
-    </a>
+        <span data-i="navLanguage">Language</span>
+      </button>
 
-    <div class="app-bar-actions">
-      <!-- Language Selector -->
-      <div class="m3-segmented" id="langSeg" role="radiogroup" aria-label="Language Selector">
-        <span class="m3-segmented-thumb" id="segThumb"></span>
-        <button class="m3-segmented-btn active" data-lang="en" role="radio" aria-checked="true">EN</button>
-        <button class="m3-segmented-btn" data-lang="uk" role="radio" aria-checked="false">УКР</button>
-        <button class="m3-segmented-btn" data-lang="ru" role="radio" aria-checked="false">РУС</button>
-      </div>
-
-      <!-- Theme & Hue Toggle -->
-      <button class="m3-icon-btn m3-ripple" id="themeBtn" aria-label="Customize Theme" aria-haspopup="true" aria-expanded="false">
+      <!-- Monet Theme Icon Button -->
+      <button class="m3-icon-btn m3-ripple" id="btnThemeTrigger" aria-label="Customize Theme Palette" aria-haspopup="true" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"/>
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
         </svg>
       </button>
+    </div>
 
-      <!-- Theme Dropdown Menu -->
-      <div class="theme-menu" id="themeMenu">
-        <div class="menu-label" data-i="themeAccent">Palette Color</div>
-        <div class="palette-dots" id="paletteDots"></div>
-        <div class="theme-mode-row">
-          <span data-i="darkMode">Dark Theme</span>
-          <button class="m3-switch" id="modeSwitch" role="switch" aria-checked="true">
-            <span class="m3-switch-handle"></span>
-          </button>
-        </div>
+    <!-- Language Deck (Shown when clicking Language) -->
+    <!-- Contains: [Back Button, English, Ukrainian, Russian] -->
+    <div class="nav-deck hidden" id="languageDeck">
+      <button class="m3-icon-btn m3-ripple" id="btnLangBack" aria-label="Go back to menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <button class="m3-nav-item m3-ripple" data-lang-choice="en">English</button>
+      <button class="m3-nav-item m3-ripple" data-lang-choice="uk">Українська</button>
+      <button class="m3-nav-item m3-ripple" data-lang-choice="ru">Русский</button>
+    </div>
+
+    <!-- Monet Palette & Dark Mode Dropdown -->
+    <div class="theme-dropdown" id="themeDropdown">
+      <div class="dropdown-title" data-i="monetAccentTitle">Material You Palette</div>
+      <div class="monet-palettes" id="monetPalettes"></div>
+      <div class="dark-mode-row">
+        <span data-i="darkModeTitle">Dark Theme</span>
+        <button class="m3-switch" id="darkModeSwitch" role="switch" aria-checked="true">
+          <span class="m3-switch-thumb"></span>
+        </button>
       </div>
     </div>
-  </div>
+
+  </nav>
 </header>
 
 <main class="app-wrapper">
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-content reveal-entry">
-      <div class="hero-tag">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z"/></svg>
-        <span data-i="tag">SMM Kingdom Tasks Automation</span>
-      </div>
-      <h1 class="hero-title" data-i="h1">
-        Instagram tasks, <br><span class="accent">on autopilot.</span>
-      </h1>
-      <p class="hero-desc" data-i="hp">
-        Replica accepts and processes automated actions directly on your Android phone, saving hours of manual work.
-      </p>
-      <div class="hero-actions">
-        <a href="#downloads" class="m3-btn primary large m3-ripple" data-i="btnStart">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-          Get Started
-        </a>
-        <a href="#pricing" class="m3-btn tonal large m3-ripple" data-i="btnLicense">
-          Get a License
-        </a>
-      </div>
-      <div class="chips-row">
-        <span class="m3-chip" data-i="chip1">$10 per month</span>
-        <span class="m3-chip" data-i="chip2">Single device</span>
-        <span class="m3-chip">Android 9+</span>
-      </div>
+  <!-- =========================================================
+       HERO SECTION
+       ========================================================= -->
+  <section class="hero-box">
+    <div class="hero-badge">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z"/></svg>
+      <span data-i="heroBadge">SMM Kingdom Tasks Automation</span>
     </div>
 
-    <!-- Expressive Morphing Tile -->
-    <div class="hero-art reveal-entry">
-      <button class="blob-card" id="blobBtn" aria-label="Cycle Accent Theme">
-        <svg id="blobSvg" viewBox="-105 -105 210 210">
-          <path id="blobPath" fill="var(--md-sys-color-primary-container)"/>
-        </svg>
-        <span class="blob-glyph" id="blobGlyph">R</span>
-      </button>
+    <h1 class="hero-headline" data-i="heroHeadline">
+      Instagram tasks, <br><span class="hero-accent">on autopilot.</span>
+    </h1>
+
+    <p class="hero-description" data-i="heroDescription">
+      Replica automatically handles tasks dispatched from SMM Kingdom Tasks Bot right on your Android phone, saving hours of manual tapping.
+    </p>
+
+    <div class="hero-buttons-row">
+      <a href="#protect" class="m3-btn primary large m3-ripple" data-i="btnStart">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        Get Started
+      </a>
+      <a href="#pricing" class="m3-btn tonal large m3-ripple" data-i="btnLicense">
+        Get a License
+      </a>
+    </div>
+
+    <div class="chips-group">
+      <span class="m3-chip" data-i="chip1">$10 per month</span>
+      <span class="m3-chip" data-i="chip2">Single device</span>
+      <span class="m3-chip">Android 9+</span>
     </div>
   </section>
 
-  <!-- Step 1: Disable Play Protect -->
-  <section id="protect" class="reveal-entry">
-    <div class="section-header">
-      <span class="section-tag">Step 01</span>
-      <h2 data-i="st1Title">Disable Play Protect</h2>
-      <p class="section-desc" data-i="st1Desc">Android can prevent sideloading background automation apps. Turn off scanning first.</p>
+  <!-- =========================================================
+       STEP 01: DISABLE GOOGLE PLAY PROTECT
+       ========================================================= -->
+  <section id="protect" class="reveal">
+    <div class="section-head">
+      <span class="step-counter-tag">Step 01</span>
+      <h2 class="section-title" data-i="st1Title">Disable Play Protect</h2>
+      <p class="section-subtitle" data-i="st1Subtitle">Android can block external automation services. Temporarily turn off scanning to proceed.</p>
     </div>
 
     <div class="protect-card" id="protectCard">
-      <div class="protect-header" id="protectHeader">
-        <div class="protect-left">
-          <div class="protect-icon">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <button class="protect-header-btn" id="protectToggle" aria-expanded="false">
+        <div class="protect-left-meta">
+          <div class="protect-symbol">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               <path d="m9 12 2 2 4-4"/>
             </svg>
           </div>
           <div>
-            <h3 data-i="st1CardTitle">Google Play Protect Guide</h3>
-            <p data-i="st1CardSub">Tap to open step-by-step instructions</p>
+            <h3 style="font-size: 1.25rem; font-weight: 700;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
+            <p style="font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant);" data-i="st1CardSub">Tap to view step-by-step instructions</p>
           </div>
         </div>
-        <button class="protect-toggle-btn" aria-label="Toggle instructions">
+        <div class="protect-chevron">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 9l6 6 6-6"/>
           </svg>
-        </button>
-      </div>
+        </div>
+      </button>
 
-      <div class="protect-body">
-        <div class="protect-content">
-          <div class="steps-list" id="protectSteps">
-            <!-- Injected via JavaScript -->
+      <div class="protect-drawer">
+        <div class="protect-drawer-inner">
+          <div class="step-timeline-list" id="protectStepsList">
+            <!-- Dynamically Rendered -->
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Step 2: Download Replica, Termux, Termux API -->
-  <section id="downloads" class="reveal-entry">
-    <div class="section-header">
-      <span class="section-tag">Step 02</span>
-      <h2 data-i="st2Title">Download the Trilogy</h2>
-      <p class="section-desc" data-i="st2Desc">Install all three companion packages to enable headless execution and UI touch automation.</p>
+  <!-- =========================================================
+       STEP 02: DOWNLOAD THE TRILOGY (3 CARDS)
+       ========================================================= -->
+  <section id="downloads" class="reveal">
+    <div class="section-head">
+      <span class="step-counter-tag">Step 02</span>
+      <h2 class="section-title" data-i="st2Title">Download the Trilogy</h2>
+      <p class="section-subtitle" data-i="st2Subtitle">Install these three essential packages to enable native background script execution and touch automation.</p>
     </div>
 
     <div class="downloads-grid">
-      <!-- Tile 1: Replica -->
-      <article class="download-card">
-        <span class="card-badge primary-badge">Main App</span>
+      <!-- 1. Download Replica -->
+      <article class="download-card-tile">
+        <span class="tile-badge primary-tag">Main Engine</span>
         <div>
-          <div class="card-icon-box c1">
+          <div class="tile-icon-box c-primary">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="3"/>
               <path d="M12 18h.01"/>
             </svg>
           </div>
-          <h3 class="card-title">Replica APK</h3>
-          <p class="card-desc" data-i="replicaDesc">The core automation client that interfaces with the SMM Kingdom tasks engine.</p>
+          <h3 class="tile-title">Download Replica</h3>
+          <p class="tile-desc" data-i="replicaTileDesc">The core automation app that receives and executes assignments from SMM Kingdom.</p>
         </div>
-        <a class="download-btn filled m3-ripple" id="dlReplica" href="#" download>
+        <a class="tile-action-btn filled m3-ripple" id="dlReplicaBtn" href="#" download>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="dlBtn">Download Replica</span>
+          <span data-i="btnDownloadReplica">Download Replica</span>
         </a>
       </article>
 
-      <!-- Tile 2: Termux -->
-      <article class="download-card">
-        <span class="card-badge neutral-badge">Runtime</span>
+      <!-- 2. Download Termux -->
+      <article class="download-card-tile">
+        <span class="tile-badge neutral-tag">Terminal</span>
         <div>
-          <div class="card-icon-box c2">
+          <div class="tile-icon-box c-secondary">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="4 17 10 11 4 5"/>
               <line x1="12" y1="19" x2="20" y2="19"/>
             </svg>
           </div>
-          <h3 class="card-title">Termux APK</h3>
-          <p class="card-desc" data-i="termuxDesc">Android terminal environment required to execute internal Python background scripts.</p>
+          <h3 class="tile-title">Download Termux</h3>
+          <p class="tile-desc" data-i="termuxTileDesc">Android terminal environment hosting the automated execution runtime and worker threads.</p>
         </div>
-        <a class="download-btn tonal m3-ripple" id="dlTermux" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
+        <a class="tile-action-btn tonal m3-ripple" id="dlTermuxBtn" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="dlTermuxBtn">Download Termux</span>
+          <span data-i="btnDownloadTermux">Download Termux</span>
         </a>
       </article>
 
-      <!-- Tile 3: Termux API -->
-      <article class="download-card">
-        <span class="card-badge neutral-badge">Bridge</span>
+      <!-- 3. Download Termux API -->
+      <article class="download-card-tile">
+        <span class="tile-badge neutral-tag">Device Bridge</span>
         <div>
-          <div class="card-icon-box c3">
+          <div class="tile-icon-box c-tertiary">
             <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
             </svg>
           </div>
-          <h3 class="card-title">Termux:API APK</h3>
-          <p class="card-desc" data-i="apiDesc">System bridging addon enabling clipboard, touch, and hardware dispatch communication.</p>
+          <h3 class="tile-title">Download Termux API</h3>
+          <p class="tile-desc" data-i="apiTileDesc">System plugin connecting scripts to native clipboard, screen clicks, and Android events.</p>
         </div>
-        <a class="download-btn tonal m3-ripple" id="dlTermuxApi" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
+        <a class="tile-action-btn tonal m3-ripple" id="dlTermuxApiBtn" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="dlApiBtn">Download Termux API</span>
+          <span data-i="btnDownloadApi">Download Termux API</span>
         </a>
       </article>
     </div>
   </section>
 
-  <!-- Step 3: Setup Tutorial Video -->
-  <section id="tutorial" class="reveal-entry">
-    <div class="section-header">
-      <span class="section-tag">Step 03</span>
-      <h2 data-i="st3Title">Setup Tutorial Video</h2>
-      <p class="section-desc" data-i="st3Desc">Watch the complete walkthrough from initial Telegram API linkage to hands-free execution.</p>
+  <!-- =========================================================
+       STEP 03: SETUP TUTORIAL VIDEO
+       ========================================================= -->
+  <section id="tutorial" class="reveal">
+    <div class="section-head">
+      <span class="step-counter-tag">Step 03</span>
+      <h2 class="section-title" data-i="st3Title">Setup Tutorial Video</h2>
+      <p class="section-subtitle" data-i="st3Subtitle">Follow along step-by-step from linking your Telegram API to hands-free automation.</p>
     </div>
 
-    <div class="video-showcase-card">
-      <div class="video-aspect-container" id="videoTrigger" aria-label="Watch Tutorial Video">
-        <button class="play-token-btn m3-ripple" id="playBtn" aria-label="Play Tutorial">
+    <div class="video-feature-card">
+      <div class="video-aspect-box" id="videoTrigger" aria-label="Watch Tutorial Video">
+        <button class="video-play-token m3-ripple" id="playBtn" aria-label="Play Tutorial">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M8 5v14l11-7z"/>
           </svg>
         </button>
-        <span class="video-pill" id="videoPill" data-i="videoLabel">Tutorial Video Walkthrough</span>
+        <span class="video-caption-chip" id="videoPill" data-i="videoLabel">Tutorial Video Walkthrough</span>
       </div>
     </div>
   </section>
 
-  <!-- Step 4: License Pricing (Just Below Tutorial) -->
-  <section id="pricing" class="pricing-section-container reveal-entry">
-    <div class="section-header">
-      <span class="section-tag">Pricing</span>
-      <h2 data-i="prTitle">Get Your License</h2>
-      <p class="section-desc" data-i="prDesc">Instant activation key tied directly to your Android device hardware.</p>
+  <!-- =========================================================
+       STEP 04: LICENSE PRICING (DIRECTLY BELOW TUTORIAL VIDEO)
+       ========================================================= -->
+  <section id="pricing" class="pricing-section-wrap reveal">
+    <div class="section-head">
+      <span class="step-counter-tag">Pricing</span>
+      <h2 class="section-title" data-i="prTitle">Get Your License</h2>
+      <p class="section-subtitle" data-i="prSubtitle">Direct license key issued instantly by the author for continuous operation.</p>
     </div>
 
-    <div class="pricing-hero-card">
-      <div class="pricing-accent-bg"></div>
-      <div class="pricing-top-row">
+    <div class="pricing-card-expressive">
+      <div class="pricing-bg-orb"></div>
+      
+      <div class="pricing-headline-row">
         <div>
-          <div class="pricing-amount-group">
-            <span class="price-currency">$</span>
-            <span class="price-value" id="priceNum">10</span>
-            <span class="price-period" data-i="prPeriod">/ month</span>
+          <div class="pricing-value-group">
+            <span class="price-symbol">$</span>
+            <span class="price-figure" id="priceFigure">10</span>
+            <span class="price-cadence" data-i="priceCadence">/ month</span>
           </div>
-          <p style="margin-top: 6px; font-weight: 600;" data-i="prSub">Single device personal license</p>
+          <p style="margin-top: 6px; font-weight: 600;" data-i="priceDeviceSub">Single device personal license</p>
         </div>
 
-        <a class="m3-btn primary large m3-ripple" data-tg target="_blank" rel="noopener noreferrer" data-i="btnBuy">
+        <a class="m3-btn primary large m3-ripple" data-tg target="_blank" rel="noopener noreferrer" data-i="btnGetLicense">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           Get License Key
         </a>
       </div>
 
-      <div class="pricing-features-list">
-        <div class="feature-item">
+      <div class="perks-list">
+        <div class="perk-row">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span data-i="f1">Unlimited Instagram tasks automation</span>
+          <span data-i="perk1">Unlimited automated Instagram tasks execution</span>
         </div>
-        <div class="feature-item">
+        <div class="perk-row">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span data-i="f2">Direct link with SMM Kingdom Tasks Bot</span>
+          <span data-i="perk2">Direct Telegram API session integration</span>
         </div>
-        <div class="feature-item">
+        <div class="perk-row">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span data-i="f3">Telegram support and automatic script updates</span>
+          <span data-i="perk3">Regular script improvements & admin support</span>
         </div>
       </div>
     </div>
 
     <!-- Multi-Device Inquiry Banner -->
-    <div class="multi-device-card">
-      <div class="multi-device-left">
+    <div class="multi-device-strip">
+      <div class="multi-left">
         <h3 data-i="multiTitle">Need Multiple Device Licenses?</h3>
-        <p data-i="multiDesc">Bulk discounts available for phone farm setups or multi-account handlers.</p>
+        <p data-i="multiSubtitle">Volume pricing and bulk tier keys available for multi-phone farming setups.</p>
       </div>
-      <a class="m3-btn tonal m3-ripple" data-tg target="_blank" rel="noopener noreferrer" data-i="btnContact">
+      <a class="m3-btn tonal m3-ripple" data-tg target="_blank" rel="noopener noreferrer" data-i="btnContactMulti">
         Contact Developer
       </a>
     </div>
@@ -1164,178 +1218,203 @@ footer a {
 
 <footer>
   <div class="app-wrapper" style="padding-bottom: 0;">
-    <p><span data-i="ftHelp">Need assistance? Contact</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftOnTg">on Telegram</span>.</p>
-    <p class="disclaimer" data-i="disclaimer">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p>
+    <p><span data-i="ftNeedHelp">Need assistance? Message</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftOnTelegram">on Telegram</span>.</p>
+    <p class="disclaimer-text" data-i="ftDisclaimer">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p>
   </div>
 </footer>
 
-<!-- MD3 Snackbar -->
-<div class="m3-snackbar" id="snackbar" role="status" aria-live="polite"></div>
+<!-- Toast Feedback -->
+<div class="m3-snackbar" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ---- Configuration ---- */
+/* =========================================================
+   CONFIG & MONET PALETTE DEFINITIONS
+   ========================================================= */
 const CONFIG = {
   links: {
-    replicaApk: '#', // Provide direct APK link
+    replicaApk: '#', // Provide direct APK file URL here
     termuxApk: 'https://github.com/termux/termux-app/releases',
     termuxApiApk: 'https://github.com/termux/termux-api/releases',
-    video: '',       // YouTube Video ID, e.g. 'dQw4w9WgXcQ' (leave empty until published)
+    video: '',       // YouTube Video ID, e.g. 'dQw4w9WgXcQ'
     telegram: 'https://t.me/iamrajatroel'
   },
-  hues: [152, 215, 275, 25, 85]
+  // Curated Material You / Monet Hues
+  monetHues: [
+    { hue: 152, name: 'Jade Mint' },
+    { hue: 215, name: 'Ocean Cyan' },
+    { hue: 275, name: 'Amethyst' },
+    { hue: 320, name: 'Sakura' },
+    { hue: 25,  name: 'Sunset Orange' },
+    { hue: 75,  name: 'Citrus Lime' },
+    { hue: 190, name: 'Nord Teal' },
+    { hue: 110, name: 'Emerald' }
+  ]
 };
 
-/* ---- Multilingual Content ---- */
+/* =========================================================
+   MULTILINGUAL STRINGS
+   ========================================================= */
 const I18N = {
   en: {
-    tag: "SMM Kingdom Tasks Automation",
-    h1: "Instagram tasks, <br><span class=\"accent\">on autopilot.</span>",
-    hp: "Replica accepts and processes automated actions directly on your Android phone, saving hours of manual work.",
+    navSetup: "Setup",
+    navLicense: "License",
+    navLanguage: "Language",
+    monetAccentTitle: "Monet Palette",
+    darkModeTitle: "Dark Theme",
+    heroBadge: "SMM Kingdom Tasks Automation",
+    heroHeadline: "Instagram tasks, <br><span class=\"hero-accent\">on autopilot.</span>",
+    heroDescription: "Replica automatically handles tasks dispatched from SMM Kingdom Tasks Bot right on your Android phone, saving hours of manual tapping.",
     btnStart: "Get Started",
     btnLicense: "Get a License",
     chip1: "$10 per month",
     chip2: "Single device",
-    themeAccent: "Palette Accent",
-    darkMode: "Dark Theme",
     st1Title: "Disable Play Protect",
-    st1Desc: "Android can prevent sideloading background automation apps. Turn off scanning first.",
-    st1CardTitle: "Google Play Protect Guide",
+    st1Subtitle: "Android can block external automation services. Temporarily turn off scanning to proceed.",
+    st1CardTitle: "Play Protect Walkthrough",
     st1CardSub: "Tap to view step-by-step instructions",
     st1Steps: [
-      "Open the <b>Google Play Store</b> and tap your profile avatar.",
-      "Select <b>Play Protect</b>, then tap the top-right <b>Settings gear</b>.",
-      "Toggle off <b>Scan apps with Play Protect</b>.",
-      "Confirm when prompted by Android."
+      "Open the <b>Google Play Store</b> and tap your profile avatar in the upper right.",
+      "Select <b>Play Protect</b>, then tap the <b>Settings gear</b> in the top right corner.",
+      "Turn off <b>Scan apps with Play Protect</b>.",
+      "Tap <b>Turn off</b> when prompted by Android to confirm."
     ],
     st2Title: "Download the Trilogy",
-    st2Desc: "Install all three companion packages to enable headless execution and UI touch automation.",
-    replicaDesc: "The core automation client that interfaces with the SMM Kingdom tasks engine.",
-    termuxDesc: "Android terminal environment required to execute internal Python background scripts.",
-    apiDesc: "System bridging addon enabling clipboard, touch, and hardware dispatch communication.",
-    dlBtn: "Download Replica",
-    dlTermuxBtn: "Download Termux",
-    dlApiBtn: "Download Termux API",
+    st2Subtitle: "Install these three essential packages to enable native background script execution and touch automation.",
+    replicaTileDesc: "The core automation app that receives and executes assignments from SMM Kingdom.",
+    termuxTileDesc: "Android terminal environment hosting the automated execution runtime and worker threads.",
+    apiTileDesc: "System plugin connecting scripts to native clipboard, screen clicks, and Android events.",
+    btnDownloadReplica: "Download Replica",
+    btnDownloadTermux: "Download Termux",
+    btnDownloadApi: "Download Termux API",
     st3Title: "Setup Tutorial Video",
-    st3Desc: "Watch the complete walkthrough from initial Telegram API linkage to hands-free execution.",
+    st3Subtitle: "Follow along step-by-step from linking your Telegram API to hands-free automation.",
     videoLabel: "Tutorial Video Walkthrough",
     videoSoon: "Tutorial video coming soon",
     dlSoon: "Replica APK download link coming soon",
     prTitle: "Get Your License",
-    prDesc: "Instant activation key tied directly to your Android device hardware.",
-    prPeriod: "/ month",
-    prSub: "Single device personal license",
-    btnBuy: "Get License Key",
-    f1: "Unlimited Instagram tasks automation",
-    f2: "Direct link with SMM Kingdom Tasks Bot",
-    f3: "Telegram support and automatic script updates",
+    prSubtitle: "Direct license key issued instantly by the author for continuous operation.",
+    priceCadence: "/ month",
+    priceDeviceSub: "Single device personal license",
+    btnGetLicense: "Get License Key",
+    perk1: "Unlimited automated Instagram tasks execution",
+    perk2: "Direct Telegram API session integration",
+    perk3: "Regular script improvements & admin support",
     multiTitle: "Need Multiple Device Licenses?",
-    multiDesc: "Bulk discounts available for phone farm setups or multi-account handlers.",
-    btnContact: "Contact Developer",
-    ftHelp: "Need assistance? Contact",
-    ftOnTg: "on Telegram",
-    disclaimer: "Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom."
+    multiSubtitle: "Volume pricing and bulk tier keys available for multi-phone farming setups.",
+    btnContactMulti: "Contact Developer",
+    ftNeedHelp: "Need assistance? Message",
+    ftOnTelegram: "on Telegram",
+    ftDisclaimer: "Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom."
   },
   uk: {
-    tag: "Автоматизація завдань SMM Kingdom",
-    h1: "Завдання Instagram, <br><span class=\"accent\">на автопілоті.</span>",
-    hp: "Replica приймає та виконує завдання бота SMM Kingdom безпосередньо на вашому телефоні Android.",
+    navSetup: "Налаштування",
+    navLicense: "Ліцензія",
+    navLanguage: "Мова",
+    monetAccentTitle: "Палітра Monet",
+    darkModeTitle: "Темна тема",
+    heroBadge: "Автоматизація завдань SMM Kingdom",
+    heroHeadline: "Завдання Instagram, <br><span class=\"hero-accent\">на автопілоті.</span>",
+    heroDescription: "Replica автоматично виконує завдання бота SMM Kingdom прямо на вашому Android смартфоні, заощаджуючи час ручної роботи.",
     btnStart: "Розпочати",
     btnLicense: "Отримати ліцензію",
     chip1: "$10 на місяць",
     chip2: "Один пристрій",
-    themeAccent: "Колір теми",
-    darkMode: "Темна тема",
     st1Title: "Вимкніть Play Захист",
-    st1Desc: "Android може блокувати додатки автоматизації. Спочатку вимкніть сканування.",
+    st1Subtitle: "Android може блокувати додатки автоматизації. Спочатку вимкніть сканування у Play Маркеті.",
     st1CardTitle: "Інструкція Play Захисту",
-    st1CardSub: "Торкніться, щоб відкрити кроки",
+    st1CardSub: "Торкніться, щоб відкрити покрокові вказівки",
     st1Steps: [
-      "Відкрийте <b>Google Play Маркет</b> та натисніть на аватар профілю.",
-      "Оберіть <b>Play Захист</b>, потім натисніть <b>значок налаштувань</b> вгорі.",
-      "Вимкніть <b>Сканувати додатки за допомогою Play Захисту</b>.",
-      "Підтвердьте вимкнення при запиті Android."
+      "Відкрийте <b>Google Play Маркет</b> та торкніться фото свого профілю.",
+      "Оберіть <b>Play Захист</b>, потім торкніться <b>значка налаштувань</b> праворуч угорі.",
+      "Вимкніть тумблер <b>Сканувати додатки за допомогою Play Захисту</b>.",
+      "Підтвердьте вимкнення при появі системного діалогу."
     ],
     st2Title: "Завантажте три додатки",
-    st2Desc: "Встановіть усі три пакети для забезпечення повної фонової роботи та емуляції дій.",
-    replicaDesc: "Основний додаток автоматизації, що взаємодіє з ботом SMM Kingdom.",
-    termuxDesc: "Термінал Android для запуску внутрішніх скриптів та сервісів.",
-    apiDesc: "Системний міст для доступу до буфера, кліків та керування.",
-    dlBtn: "Завантажити Replica",
-    dlTermuxBtn: "Завантажити Termux",
-    dlApiBtn: "Завантажити Termux API",
+    st2Subtitle: "Встановіть три основні пакети для підтримки термінальної емуляції та керування діями.",
+    replicaTileDesc: "Головний клієнт автоматизації, що взаємодіє з ботом завдань SMM Kingdom.",
+    termuxTileDesc: "Термінальне середовище для виконання фонових процесів і скриптів Python.",
+    apiTileDesc: "Системний міст для передачі натискань, буфера обміну та служб пристрою.",
+    btnDownloadReplica: "Завантажити Replica",
+    btnDownloadTermux: "Завантажити Termux",
+    btnDownloadApi: "Завантажити Termux API",
     st3Title: "Відеоінструкція",
-    st3Desc: "Подивіться повне відео з налаштування від API Telegram до повного запуску.",
+    st3Subtitle: "Покрокове керівництво від генерації Telegram API до автоматичного виконання завдань.",
     videoLabel: "Відеоурок з налаштування",
     videoSoon: "Відеоурок незабаром з'явиться",
     dlSoon: "Посилання на Replica APK незабаром",
     prTitle: "Отримайте ліцензію",
-    prDesc: "Миттєвий ключ активації, прив'язаний до вашого Android пристрою.",
-    prPeriod: "/ місяць",
-    prSub: "Ліцензія для одного пристрою",
-    btnBuy: "Отримати ключ",
-    f1: "Безлімітна автоматизація завдань Instagram",
-    f2: "Пряма інтеграція з SMM Kingdom Tasks Bot",
-    f3: "Підтримка в Telegram та оновлення",
+    prSubtitle: "Персональний ключ активації, прив'язаний до вашого смартфона.",
+    priceCadence: "/ місяць",
+    priceDeviceSub: "Ліцензія на один пристрій",
+    btnGetLicense: "Отримати ключ",
+    perk1: "Необмежене виконання завдань в Instagram",
+    perk2: "Пряме підключення сесії Telegram API",
+    perk3: "Постійні оновлення скрипта та підтримка автора",
     multiTitle: "Потрібно кілька пристроїв?",
-    multiDesc: "Знижки для ферм пристроїв або кількох акаунтів.",
-    btnContact: "Написати розробнику",
-    ftHelp: "Потрібна допомога? Напишіть",
-    ftOnTg: "в Telegram",
-    disclaimer: "Replica є незалежним інструментом і не пов'язана з Telegram, Instagram або SMM Kingdom."
+    multiSubtitle: "Спеціальні оптові ціни для ферм телефонів або мультиакаунтів.",
+    btnContactMulti: "Написати автору",
+    ftNeedHelp: "Потрібна допомога? Напишіть",
+    ftOnTelegram: "у Telegram",
+    ftDisclaimer: "Replica є незалежним інструментом і не пов'язана з Telegram, Instagram чи SMM Kingdom."
   },
   ru: {
-    tag: "Автоматизация заданий SMM Kingdom",
-    h1: "Задания Instagram, <br><span class=\"accent\">на автопилоте.</span>",
-    hp: "Replica принимает и выполняет задачи бота SMM Kingdom прямо на вашем Android смартфоне.",
+    navSetup: "Настройка",
+    navLicense: "Лицензия",
+    navLanguage: "Язык",
+    monetAccentTitle: "Палитра Monet",
+    darkModeTitle: "Тёмная тема",
+    heroBadge: "Автоматизация заданий SMM Kingdom",
+    heroHeadline: "Задания Instagram, <br><span class=\"hero-accent\">на автопилоте.</span>",
+    heroDescription: "Replica автоматически выполняет задания бота SMM Kingdom Tasks прямо на вашем смартфоне Android, избавляя от рутины.",
     btnStart: "Начать работу",
-    btnLicense: "Получить ключ",
+    btnLicense: "Купить лицензию",
     chip1: "$10 в месяц",
     chip2: "Одно устройство",
-    themeAccent: "Цвет темы",
-    darkMode: "Тёмная тема",
     st1Title: "Отключите Play Защиту",
-    st1Desc: "Android блокирует сторонние приложения автоматизации. Отключите сканирование.",
+    st1Subtitle: "Android блокирует сторонние фоновые утилиты. Отключите сканирование перед установкой.",
     st1CardTitle: "Инструкция Play Защиты",
-    st1CardSub: "Нажмите, чтобы открыть пошагово",
+    st1CardSub: "Нажмите, чтобы открыть пошаговые шаги",
     st1Steps: [
-      "Откройте <b>Google Play Маркет</b> и нажмите на фото профиля.",
-      "Выберите <b>Play Защита</b>, затем нажмите <b>значок настроек</b> вверху.",
+      "Откройте <b>Google Play Маркет</b> и нажмите на аватар своего профиля.",
+      "Выберите пункт <b>Play Защита</b>, затем нажмите на <b>шестерёнку настроек</b> вверху.",
       "Отключите пункт <b>Сканировать приложения с помощью Play Защиты</b>.",
-      "Подтвердите отключение, если система запросит."
+      "Подтвердите отключение во всплывающем окне Android."
     ],
     st2Title: "Скачайте три приложения",
-    st2Desc: "Установите все три пакета для обеспечения фоновой работы и симуляции действий.",
-    replicaDesc: "Основной клиент автоматизации, работающий с движком заданий SMM Kingdom.",
-    termuxDesc: "Среда терминала Android для выполнения внутренних фоновых скриптов.",
-    apiDesc: "Системный мост для взаимодействия с буфером, кликами и устройством.",
-    dlBtn: "Скачать Replica",
-    dlTermuxBtn: "Скачать Termux",
-    dlApiBtn: "Скачать Termux API",
+    st2Subtitle: "Установите эти три компонента для запуска фонового скрипта и кликера действий.",
+    replicaTileDesc: "Основное приложение автоматизации, управляющее очередью заданий бота.",
+    termuxTileDesc: "Эмулятор терминала Android для выполнения рабочих скриптов Python.",
+    apiTileDesc: "Системный мост для взаимодействия с буфером, кликами и системными событиями.",
+    btnDownloadReplica: "Скачать Replica",
+    btnDownloadTermux: "Скачать Termux",
+    btnDownloadApi: "Скачать Termux API",
     st3Title: "Видеоинструкция",
-    st3Desc: "Пошаговый видеоролик: от привязки Telegram API до полного запуска процесса.",
+    st3Subtitle: "Наглядное видео: от получения Telegram API до запуска автоматического цикла.",
     videoLabel: "Обучающий видеоролик",
     videoSoon: "Видео скоро появится",
-    dlSoon: "Ссылка на APK скоро появится",
-    prTitle: "Получить лицензию",
-    prDesc: "Мгновенная активация ключа, привязанного к вашему устройству.",
-    prPeriod: "/ месяц",
-    prSub: "Лицензия на один смартфон",
-    btnBuy: "Купить лицензию",
-    f1: "Безлимитное выполнение заданий Instagram",
-    f2: "Прямая работа с SMM Kingdom Tasks Bot",
-    f3: "Поддержка в Telegram и обновления",
-    multiTitle: "Нужно несколько лицензий?",
-    multiDesc: "Скидки для ферм телефонов и нескольких аккаунтов.",
-    btnContact: "Написать автору",
-    ftHelp: "Нужна помощь? Напишите",
-    ftOnTg: "в Telegram",
-    disclaimer: "Replica — независимый инструмент и не связан с Telegram, Instagram или SMM Kingdom."
+    dlSoon: "Ссылка на Replica APK скоро появится",
+    prTitle: "Купить лицензию",
+    prSubtitle: "Прямой ключ активации, привязанный к аппаратной части вашего смартфона.",
+    priceCadence: "/ месяц",
+    priceDeviceSub: "Лицензия на одно устройство",
+    btnGetLicense: "Получить лицензию",
+    perk1: "Безлимитное выполнение задач в Instagram",
+    perk2: "Прямая авторизация через Telegram API",
+    perk3: "Регулярные улучшения бота и поддержка разработчика",
+    multiTitle: "Нужно несколько устройств?",
+    multiSubtitle: "Скидки на лицензии при работе с фермами смартфонов и несколькими профилями.",
+    btnContactMulti: "Написать разработчику",
+    ftNeedHelp: "Нужна помощь? Напишите",
+    ftOnTelegram: "в Telegram",
+    ftDisclaimer: "Replica — независимый инструмент и не связан с Telegram, Instagram или SMM Kingdom."
   }
 };
 
-/* ---- State Management ---- */
-const $ = selector => document.querySelector(selector);
-const $$ = selector => document.querySelectorAll(selector);
+/* =========================================================
+   APPLICATION LOGIC & STATE
+   ========================================================= */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
 
 let currentLang = localStorage.getItem('rep_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
 if (!I18N[currentLang]) currentLang = 'en';
@@ -1343,233 +1422,205 @@ if (!I18N[currentLang]) currentLang = 'en';
 let currentHue = +(localStorage.getItem('rep_hue') || 152);
 let currentMode = localStorage.getItem('rep_mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-/* ---- Toast / Snackbar ---- */
-let snackTimer;
+// Toast Feedback Engine
+let toastTimer;
 function showToast(message) {
-  const sb = $('#snackbar');
-  sb.textContent = message;
-  sb.classList.add('show');
-  clearTimeout(snackTimer);
-  snackTimer = setTimeout(() => sb.classList.remove('show'), 3400);
+  const t = $('#toast');
+  t.textContent = message;
+  t.classList.add('active');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('active'), 3200);
 }
 
-/* ---- Material 3 Ripple Engine ---- */
+// Material 3 Ripple Generator
 document.addEventListener('pointerdown', e => {
-  const el = e.target.closest('.m3-ripple');
-  if (!el) return;
-  const rect = el.getBoundingClientRect();
+  const target = e.target.closest('.m3-ripple');
+  if (!target) return;
+  const rect = target.getBoundingClientRect();
   const radius = Math.max(rect.width, rect.height);
-  const wave = document.createElement('span');
-  wave.className = 'ripple-wave';
-  wave.style.width = wave.style.height = `${radius * 2}px`;
-  wave.style.left = `${e.clientX - rect.left - radius}px`;
-  wave.style.top = `${e.clientY - rect.top - radius}px`;
-  el.appendChild(wave);
-  setTimeout(() => wave.remove(), 650);
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple-wave';
+  ripple.style.width = ripple.style.height = `${radius * 2}px`;
+  ripple.style.left = `${e.clientX - rect.left - radius}px`;
+  ripple.style.top = `${e.clientY - rect.top - radius}px`;
+  target.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 700);
 });
 
-/* ---- Segmented Lang Bar Alignment ---- */
-function updateLangBar() {
-  const container = $('#langSeg');
-  const thumb = $('#segThumb');
-  const activeBtn = container.querySelector(`[data-lang="${currentLang}"]`);
-  if (!activeBtn) return;
-
-  container.querySelectorAll('.m3-segmented-btn').forEach(btn => {
-    const isActive = btn === activeBtn;
-    btn.classList.toggle('active', isActive);
-    btn.setAttribute('aria-checked', String(isActive));
-  });
-
-  thumb.style.width = `${activeBtn.offsetWidth}px`;
-  thumb.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
-}
-
-/* ---- Theme & Mode Functions ---- */
+// Set Dynamic Hue Color
 function setHue(hue) {
   currentHue = +hue;
   document.documentElement.style.setProperty('--h', currentHue);
   localStorage.setItem('rep_hue', currentHue);
-  $$('#paletteDots .palette-dot').forEach(dot => {
+  $$('#monetPalettes .monet-dot').forEach(dot => {
     dot.classList.toggle('active', +dot.dataset.hue === currentHue);
   });
 }
 
+// Set Theme Light/Dark Mode
 function setMode(mode) {
   currentMode = mode;
   document.documentElement.setAttribute('data-mode', mode);
   localStorage.setItem('rep_mode', mode);
-  $('#modeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
+  $('#darkModeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
 }
 
-/* ---- Render Content ---- */
-function renderContent() {
-  const t = I18N[currentLang];
+// Content Rendering
+function renderStrings() {
+  const dict = I18N[currentLang];
   document.documentElement.lang = currentLang;
 
   $$('[data-i]').forEach(el => {
     const key = el.dataset.i;
-    if (t[key]) el.innerHTML = t[key];
+    if (dict[key]) el.innerHTML = dict[key];
   });
 
-  // Render Play Protect Steps
-  $('#protectSteps').innerHTML = t.st1Steps.map((step, i) => `
-    <div class="step-item">
-      <div class="step-num">${i + 1}</div>
-      <div>${step}</div>
+  // Render Play Protect Steps list
+  $('#protectStepsList').innerHTML = dict.st1Steps.map((stepText, idx) => `
+    <div class="step-row-item">
+      <div class="step-bullet">${idx + 1}</div>
+      <div>${stepText}</div>
     </div>
   `).join('');
 
-  updateLangBar();
+  // Update active state in language menu deck
+  $$('#languageDeck [data-lang-choice]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.langChoice === currentLang);
+  });
 }
 
-/* ---- Setup Actions & Event Handlers ---- */
-function init() {
-  // Telegram Links
-  $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
-  $('#dlTermux').href = CONFIG.links.termuxApk;
-  $('#dlTermuxApi').href = CONFIG.links.termuxApiApk;
+// Navigation Deck Switcher (Morph between standard menu and language chooser)
+function showLanguageDeck(show) {
+  const std = $('#standardDeck');
+  const langDeck = $('#languageDeck');
+  if (show) {
+    std.classList.add('hidden');
+    langDeck.classList.remove('hidden');
+  } else {
+    langDeck.classList.add('hidden');
+    std.classList.remove('hidden');
+  }
+}
 
-  // Build Palette Dots
-  $('#paletteDots').innerHTML = CONFIG.hues.map(h => `
-    <button class="palette-dot ${h === currentHue ? 'active' : ''}" data-hue="${h}" style="background: oklch(0.65 0.16 ${h})" aria-label="Color hue ${h}"></button>
+// Initialize Interactive App
+function initApp() {
+  // Bind Static Telegram Links
+  $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
+  $('#dlTermuxBtn').href = CONFIG.links.termuxApk;
+  $('#dlTermuxApiBtn').href = CONFIG.links.termuxApiApk;
+
+  // Build Monet Palettes
+  $('#monetPalettes').innerHTML = CONFIG.monetHues.map(item => `
+    <button class="monet-dot ${item.hue === currentHue ? 'active' : ''}" 
+            data-hue="${item.hue}" 
+            title="${item.name}" 
+            style="background: oklch(0.65 0.17 ${item.hue})"
+            aria-label="${item.name}"></button>
   `).join('');
 
-  // Segmented Language Click
-  $('#langSeg').addEventListener('click', e => {
-    const btn = e.target.closest('[data-lang]');
-    if (btn && btn.dataset.lang !== currentLang) {
-      currentLang = btn.dataset.lang;
-      localStorage.setItem('rep_lang', currentLang);
-      renderContent();
-    }
+  // Language Trigger Click -> Switch to Language Deck
+  $('#btnLangTrigger').addEventListener('click', e => {
+    e.stopPropagation();
+    showLanguageDeck(true);
   });
 
-  // Palette Click
-  $('#paletteDots').addEventListener('click', e => {
-    const dot = e.target.closest('.palette-dot');
+  // Language Back Button -> Return to Standard Deck
+  $('#btnLangBack').addEventListener('click', e => {
+    e.stopPropagation();
+    showLanguageDeck(false);
+  });
+
+  // Language Item Selected
+  $('#languageDeck').addEventListener('click', e => {
+    const btn = e.target.closest('[data-lang-choice]');
+    if (!btn) return;
+    currentLang = btn.dataset.langChoice;
+    localStorage.setItem('rep_lang', currentLang);
+    renderStrings();
+    // Return back to standard deck with a subtle delay for fluid feel
+    setTimeout(() => showLanguageDeck(false), 240);
+  });
+
+  // Monet Palette Click
+  $('#monetPalettes').addEventListener('click', e => {
+    const dot = e.target.closest('.monet-dot');
     if (dot) setHue(dot.dataset.hue);
   });
 
-  // Theme Menu Toggle
-  const themeBtn = $('#themeBtn');
-  const themeMenu = $('#themeMenu');
+  // Theme Dropdown Toggle
+  const themeBtn = $('#btnThemeTrigger');
+  const themeMenu = $('#themeDropdown');
   themeBtn.addEventListener('click', e => {
     e.stopPropagation();
-    const isOpen = themeMenu.classList.toggle('open');
-    themeBtn.classList.toggle('active', isOpen);
+    const isOpen = themeMenu.classList.toggle('show');
+    themeBtn.classList.toggle('open', isOpen);
     themeBtn.setAttribute('aria-expanded', String(isOpen));
   });
 
+  // Dismiss Theme Dropdown on click outside
   document.addEventListener('click', e => {
-    if (!e.target.closest('#themeMenu') && !e.target.closest('#themeBtn')) {
-      themeMenu.classList.remove('open');
-      themeBtn.classList.remove('active');
+    if (!e.target.closest('#themeDropdown') && !e.target.closest('#btnThemeTrigger')) {
+      themeMenu.classList.remove('show');
+      themeBtn.classList.remove('open');
       themeBtn.setAttribute('aria-expanded', 'false');
     }
   });
 
   // Dark/Light Switch
-  $('#modeSwitch').addEventListener('click', () => {
+  $('#darkModeSwitch').addEventListener('click', () => {
     setMode(currentMode === 'dark' ? 'light' : 'dark');
   });
 
-  // Play Protect Accordion Toggle
+  // Play Protect Drawer Toggle
   const protectCard = $('#protectCard');
-  $('#protectHeader').addEventListener('click', () => {
-    protectCard.classList.toggle('open');
+  const protectBtn = $('#protectToggle');
+  protectBtn.addEventListener('click', () => {
+    const isOpen = protectCard.classList.toggle('open');
+    protectBtn.setAttribute('aria-expanded', String(isOpen));
   });
 
-  // Replica Download Guard
-  $('#dlReplica').addEventListener('click', e => {
+  // Replica Download Guard Check
+  $('#dlReplicaBtn').addEventListener('click', e => {
     if (CONFIG.links.replicaApk === '#' || !CONFIG.links.replicaApk) {
       e.preventDefault();
       showToast(I18N[currentLang].dlSoon);
     }
   });
 
-  // Video Play Action
+  // Video Embed Trigger
   $('#videoTrigger').addEventListener('click', () => {
     if (!CONFIG.links.video) {
       showToast(I18N[currentLang].videoSoon);
       return;
     }
-    const container = $('#videoTrigger');
-    container.innerHTML = `<iframe src="https://www.youtube.com/embed/${CONFIG.links.video}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+    const box = $('#videoTrigger');
+    box.innerHTML = `<iframe src="https://www.youtube.com/embed/${CONFIG.links.video}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
   });
 
-  // Initial State Application
+  // Setup Initial State & Renders
   setHue(currentHue);
   setMode(currentMode);
-  renderContent();
-  window.addEventListener('resize', updateLangBar);
-
-  // Blob Animation & Interaction
-  initHeroBlob();
-  initIntersectionReveal();
+  renderStrings();
+  initScrollReveal();
 }
 
-/* ---- Expressive Morphing SVG Tile ---- */
-function initHeroBlob() {
-  const path = $('#blobPath');
-  const blobBtn = $('#blobBtn');
-  const shapes = [[8, 0.08], [6, 0.16], [10, 0.07], [5, 0.14], [12, 0.05]];
-  const N = 120;
-
-  function generatePath(time) {
-    const cycle = time / 3.2;
-    const idx = Math.floor(cycle);
-    const f = cycle - idx;
-    let k = Math.max(0, Math.min(1, (f - 0.5) / 0.5));
-    k = k * k * (3 - 2 * k);
-
-    const A = shapes[idx % shapes.length];
-    const B = shapes[(idx + 1) % shapes.length];
-    let d = '';
-
-    for (let j = 0; j <= N; j++) {
-      const rad = (j / N) * Math.PI * 2;
-      const r = 96 * ((1 - A[1] + A[1] * Math.cos(A[0] * rad)) * (1 - k) + (1 - B[1] + B[1] * Math.cos(B[0] * rad)) * k);
-      d += (j ? 'L' : 'M') + (r * Math.cos(rad)).toFixed(1) + ' ' + (r * Math.sin(rad)).toFixed(1);
-    }
-    return d + 'Z';
-  }
-
-  path.setAttribute('d', generatePath(0));
-
-  blobBtn.addEventListener('click', () => {
-    const nextIdx = (CONFIG.hues.indexOf(currentHue) + 1) % CONFIG.hues.length;
-    setHue(CONFIG.hues[nextIdx]);
-  });
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const t0 = performance.now();
-  function animate(now) {
-    const t = (now - t0) / 1000;
-    path.setAttribute('d', generatePath(t));
-    path.setAttribute('transform', `rotate(${(t * 9).toFixed(2)})`);
-    requestAnimationFrame(animate);
-  }
-  requestAnimationFrame(animate);
-}
-
-/* ---- Scroll Reveal ---- */
-function initIntersectionReveal() {
+/* =========================================================
+   SCROLL REVEAL OBSERVER
+   ========================================================= */
+function initScrollReveal() {
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
+        entry.target.classList.add('visible');
         obs.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.08 });
 
-  $$('.reveal-entry').forEach(el => observer.observe(el));
+  $$('.reveal').forEach(el => observer.observe(el));
 }
 
-// Boot
-window.addEventListener('DOMContentLoaded', init);
+window.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
