@@ -48,7 +48,7 @@ def log_color(message):
 #   * a date line is written whenever a new day begins
 #   * entries older than 24 hours are dropped from memory and from the file
 # ==========================================
-LOG_FILE = os.path.join(os.path.expanduser("~"), "replica_logs.txt")
+LOG_FILE = os.path.join(os.path.expanduser("~"), "logs.txt")
 LOG_KEEP = timedelta(hours=24)
 LOG_REWRITE_EVERY = 600              # seconds between file clean-ups once old lines exist
 LOG_ENTRIES = deque()                # (datetime, text), oldest first
@@ -133,17 +133,13 @@ def share_logs():
     if not adb_serial:
         return False, "Share failed: ADB is not connected"
 
-    # A fresh file name each time, so apps never read a stale size; older shared copies are removed
-    name = f"replica_logs_{datetime.now():%Y%m%d_%H%M%S}.txt"
+    # The shared copy is always called logs.txt; the previous copy is removed first so it is never stale
+    name = "logs.txt"
     path = f"{SHARE_DIR}/{name}"
     try:
         os.makedirs(SHARE_DIR, exist_ok=True)
-        for old in os.listdir(SHARE_DIR):
-            if old.startswith("replica_logs_") and old.endswith(".txt"):
-                try:
-                    os.remove(os.path.join(SHARE_DIR, old))
-                except OSError:
-                    pass
+        if os.path.exists(path):
+            os.remove(path)
         shutil.copyfile(LOG_FILE, path)
     except Exception as e:
         return False, f"Share failed: could not copy the file ({type(e).__name__})"
