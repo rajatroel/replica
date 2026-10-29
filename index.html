@@ -3,273 +3,241 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Replica – SMM Kingdom Tasks Automation Guide</title>
-<meta name="description" content="Replica automates the SMM Kingdom Tasks Bot Instagram tasks. Setup guide, pricing and FAQs.">
+<title>Replica – SMM Kingdom Tasks Automation</title>
+<meta name="description" content="Replica automates Instagram tasks for the SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&subset=cyrillic" rel="stylesheet">
 <style>
-:root{
-  --bg:#f4fbf3; --surface:#e8f3e7; --surface2:#dcebdb; --card:#ffffff;
-  --text:#121e14; --muted:#475a49; --primary:#0b6b3a; --on-primary:#ffffff;
-  --accent:#c4f0cf; --on-accent:#00210f; --tertiary:#ffe08a; --on-tertiary:#3a2a00;
-  --outline:#b9ccba; --term:#0d1a11; --term-text:#b8f5c9;
-  --r-xl:36px; --r-lg:28px; --r-md:20px;
-}
-@media (prefers-color-scheme:dark){
-  :root{
-    --bg:#0c150e; --surface:#142018; --surface2:#1c2c21; --card:#18261c;
-    --text:#e2efe3; --muted:#a3b8a6; --primary:#7fe0a3; --on-primary:#00391c;
-    --accent:#1f4a30; --on-accent:#c9f5d6; --tertiary:#5c4a00; --on-tertiary:#ffe9a8;
-    --outline:#2f4635; --term:#070e09; --term-text:#8ff0b0;
-  }
-}
-*{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth;scroll-padding-top:84px}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
-a{color:var(--primary)}
-.wrap{max-width:880px;margin:0 auto;padding:0 18px}
+:root{--h:155;
+--p:oklch(.48 .15 var(--h));--onp:oklch(.99 .01 var(--h));--pc:oklch(.9 .07 var(--h));--onpc:oklch(.25 .08 var(--h));
+--sc:oklch(.92 .05 calc(var(--h) + 40));--tc:oklch(.9 .08 calc(var(--h) + 110));--ontc:oklch(.28 .07 calc(var(--h) + 110));
+--bg:oklch(.985 .008 var(--h));--s1:oklch(.96 .016 var(--h));--s2:oklch(.93 .026 var(--h));
+--tx:oklch(.22 .02 var(--h));--mut:oklch(.45 .03 var(--h));--ol:oklch(.86 .03 var(--h));
+--term:oklch(.17 .02 var(--h));--termtx:oklch(.88 .14 var(--h))}
+:root[data-mode=dark]{
+--p:oklch(.8 .13 var(--h));--onp:oklch(.25 .08 var(--h));--pc:oklch(.38 .09 var(--h));--onpc:oklch(.92 .05 var(--h));
+--sc:oklch(.33 .05 calc(var(--h) + 40));--tc:oklch(.4 .08 calc(var(--h) + 110));--ontc:oklch(.93 .06 calc(var(--h) + 110));
+--bg:oklch(.17 .015 var(--h));--s1:oklch(.22 .02 var(--h));--s2:oklch(.27 .025 var(--h));
+--tx:oklch(.93 .015 var(--h));--mut:oklch(.75 .03 var(--h));--ol:oklch(.35 .03 var(--h));--term:oklch(.12 .02 var(--h))}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+a{color:var(--p);font-weight:500}
+.w{width:100%;max-width:960px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--p);outline-offset:3px}
 
-/* top bar */
-header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--outline)}
-.bar{display:flex;align-items:center;gap:14px;height:64px}
-.logo{font-weight:800;font-size:20px;letter-spacing:-.02em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
-.logo i{width:30px;height:30px;background:var(--primary);border-radius:12px 12px 12px 4px;display:inline-block}
-nav{display:flex;gap:8px;overflow-x:auto;margin-left:auto;scrollbar-width:none}
+header{position:sticky;top:0;z-index:20;background:color-mix(in oklch,var(--bg) 88%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--ol)}
+.row1{display:flex;align-items:center;justify-content:space-between;gap:12px;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;color:var(--tx);text-decoration:none;letter-spacing:-.02em}
+.logo svg{width:30px;height:30px;animation:spin 18s linear infinite}
+.ctl{display:flex;align-items:center;gap:8px}
+.seg{display:flex;background:var(--s2);border-radius:99px;padding:3px}
+.seg button{border:0;background:none;color:var(--mut);font:600 12px Inter,sans-serif;padding:6px 10px;border-radius:99px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--p);color:var(--onp)}
+.dots{display:flex;gap:6px}
+.dots button{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:border-radius .25s,transform .2s}
+.dots button[aria-pressed=true]{border-color:var(--tx);border-radius:8px;transform:scale(1.1)}
+.mode{width:34px;height:34px;border-radius:50%;border:0;background:var(--s2);color:var(--tx);font-size:16px;cursor:pointer}
+nav{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
-nav a{white-space:nowrap;text-decoration:none;color:var(--text);font-size:14px;font-weight:500;padding:8px 16px;border-radius:99px;background:var(--surface)}
-nav a:hover{background:var(--accent)}
+nav a{white-space:nowrap;text-decoration:none;color:var(--tx);font-size:14px;font-weight:500;padding:7px 16px;border-radius:99px;background:var(--s1);transition:background .2s,border-radius .2s}
+nav a:hover{background:var(--pc);border-radius:12px}
 
-/* hero */
-.hero{padding:44px 0 28px}
-.hero h1{font-size:clamp(40px,10vw,76px);line-height:1;letter-spacing:-.04em;font-weight:800;max-width:11ch}
-.hero p{font-size:18px;color:var(--muted);max-width:46ch;margin:18px 0 26px}
-.btns{display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 28px;border-radius:99px;font:700 16px 'Plus Jakarta Sans',sans-serif;text-decoration:none;border:0;cursor:pointer;transition:border-radius .2s,transform .1s}
-.btn:hover{border-radius:16px}
-.btn:active{transform:scale(.97)}
-.btn.fill{background:var(--primary);color:var(--on-primary)}
-.btn.tonal{background:var(--accent);color:var(--on-accent)}
-:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+.hero{position:relative;overflow:hidden;margin-top:24px;background:var(--pc);color:var(--onpc);border-radius:40px;padding:44px 28px 28px}
+.hero .art{position:absolute;inset:0;pointer-events:none}
+.hero .art svg{position:absolute}
+.hero>*:not(.art){position:relative;z-index:1}
+h1{font-size:clamp(34px,8vw,64px);line-height:1.04;letter-spacing:-.04em;font-weight:600;max-width:14ch}
+.hero p{font-size:17px;max-width:48ch;margin:16px 0 26px;opacity:.85}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 26px;border-radius:99px;font:600 15px Inter,sans-serif;text-decoration:none;border:0;cursor:pointer;transition:border-radius .25s,transform .15s}
+.btn:hover{border-radius:16px}.btn:active{transform:scale(.96)}
+.btn.f{background:var(--p);color:var(--onp)}
+.btn.t{background:var(--bg);color:var(--tx)}
+.term{margin-top:30px;background:var(--term);color:var(--termtx);border-radius:28px 28px 28px 8px;padding:20px 22px;font:500 13.5px/1.9 ui-monospace,Menlo,Consolas,monospace;overflow-x:auto;white-space:nowrap}
+.term i{display:inline-block;width:8px;height:14px;background:var(--termtx);vertical-align:-2px;animation:blink 1.1s steps(2) infinite}
 
-.term{margin-top:34px;background:var(--term);border-radius:var(--r-xl) var(--r-xl) var(--r-xl) 8px;padding:22px 24px;font:500 14px/1.9 ui-monospace,Menlo,Consolas,monospace;color:var(--term-text);overflow-x:auto}
-.term b{color:#ffd166;font-weight:500}
-.term .dim{opacity:.55}
-.cur{display:inline-block;width:8px;height:15px;background:var(--term-text);vertical-align:-2px;animation:blink 1.1s steps(2) infinite}
-@keyframes blink{50%{opacity:0}}
-@media (prefers-reduced-motion:reduce){.cur{animation:none}html{scroll-behavior:auto}.btn{transition:none}}
+section{padding:56px 0 0}
+h2{font-size:clamp(26px,5vw,36px);letter-spacing:-.03em;line-height:1.15;font-weight:600;margin-bottom:6px}
+.lead{color:var(--mut);margin-bottom:24px;max-width:58ch}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{position:relative;background:var(--s1);border-radius:28px;padding:20px 22px;transition:border-radius .3s,background .3s}
+.card:hover{border-radius:28px 8px 28px 8px;background:var(--s2)}
+.card svg{width:34px;height:34px;margin-bottom:12px;animation:spin 14s linear infinite}
+.card:nth-child(2n) svg{animation-direction:reverse}
+.card h3{font-size:16px;font-weight:600;margin-bottom:2px}
+.card p{color:var(--mut);font-size:14.5px}
+.note{background:var(--tc);color:var(--ontc);border-radius:20px;padding:14px 20px;margin-top:14px;font-size:14.5px}
 
-/* sections */
-section{padding:44px 0 6px}
-h2{font-size:clamp(28px,6vw,40px);letter-spacing:-.03em;line-height:1.1;font-weight:800;margin-bottom:8px}
-.lead{color:var(--muted);margin-bottom:22px;max-width:60ch}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
-.card{background:var(--surface);border-radius:var(--r-lg);padding:20px 22px}
-.card:nth-child(3n+2){border-radius:var(--r-lg) var(--r-lg) var(--r-lg) 8px}
-.card h3{font-size:17px;margin-bottom:4px}
-.card p{color:var(--muted);font-size:15px}
-.card a{font-weight:700}
-.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 12px;border-radius:99px;background:var(--tertiary);color:var(--on-tertiary);margin-bottom:10px}
-.note{background:var(--tertiary);color:var(--on-tertiary);border-radius:var(--r-md);padding:14px 18px;margin:16px 0;font-size:15px}
-
-/* accordions */
-details{background:var(--surface);border-radius:var(--r-lg);margin-bottom:10px;overflow:hidden}
-summary{list-style:none;cursor:pointer;padding:18px 22px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px}
+details{background:var(--s1);border-radius:24px;margin-bottom:10px;transition:background .3s}
+details[open]{background:var(--s2)}
+summary{list-style:none;cursor:pointer;padding:17px 20px 17px 22px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:14px}
 summary::-webkit-details-marker{display:none}
-summary::after{content:'+';flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:20px;font-weight:500;transition:transform .2s}
-details[open] summary::after{transform:rotate(45deg)}
-details[open]{background:var(--surface2)}
-.body{padding:0 22px 20px;color:var(--muted)}
-.body ol,.body ul{padding-left:22px;margin:8px 0}
-.body li{margin:6px 0}
-.body strong{color:var(--text)}
+summary::after{content:'+';flex:none;width:30px;height:30px;border-radius:50%;background:var(--pc);color:var(--onpc);display:grid;place-items:center;font-size:20px;font-weight:400;transition:transform .3s,border-radius .3s}
+details[open] summary::after{transform:rotate(135deg);border-radius:10px}
+.bd{padding:0 22px 18px;color:var(--mut);font-size:15px}
+.bd ol,.bd ul{padding-left:20px}.bd li{margin:5px 0}.bd b{color:var(--tx);font-weight:600}.bd p{margin-top:8px}
 
-/* video */
-.video{aspect-ratio:16/9;background:var(--term);border-radius:var(--r-xl);display:grid;place-items:center;overflow:hidden}
+.video{aspect-ratio:16/9;background:var(--term);border-radius:32px;display:grid;place-items:center;overflow:hidden;color:var(--termtx);font-weight:600}
 .video iframe{width:100%;height:100%;border:0}
-.video span{color:var(--term-text);font-weight:700;text-align:center;padding:20px}
-
-/* commands */
-.cmd{display:flex;align-items:center;gap:10px;background:var(--term);color:var(--term-text);border-radius:99px;padding:8px 8px 8px 22px;font:500 15px ui-monospace,Menlo,monospace;margin:14px 0}
+.cmd{display:flex;align-items:center;gap:10px;background:var(--term);color:var(--termtx);border-radius:99px;padding:7px 7px 7px 22px;font:500 14.5px ui-monospace,Menlo,monospace;margin-bottom:14px}
 .cmd code{flex:1;overflow-x:auto;white-space:nowrap}
-.cmd button{height:38px;padding:0 18px;border:0;border-radius:99px;background:var(--accent);color:var(--on-accent);font:700 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.cmd button{height:38px;padding:0 18px;border:0;border-radius:99px;background:var(--pc);color:var(--onpc);font:600 13px Inter,sans-serif;cursor:pointer}
 
-/* pricing */
-.price{background:var(--primary);color:var(--on-primary);border-radius:var(--r-xl) var(--r-xl) 8px var(--r-xl);padding:30px 28px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
-.price strong{font-size:clamp(44px,12vw,72px);line-height:1;letter-spacing:-.04em;font-weight:800}
-.price small{display:block;font-size:16px;opacity:.85;margin-top:6px}
-.price .btn{background:var(--on-primary);color:var(--primary)}
+.price{position:relative;overflow:hidden;background:var(--p);color:var(--onp);border-radius:40px 40px 10px 40px;padding:32px 28px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.price .art{position:absolute;inset:0;pointer-events:none}
+.price .art svg{position:absolute;opacity:.18}
+.price>div:not(.art),.price>a{position:relative;z-index:1}
+.price strong{font-size:clamp(46px,12vw,72px);line-height:1;letter-spacing:-.05em;font-weight:600}
+.price small{display:block;margin-top:4px;opacity:.85}
+.price .btn{background:var(--bg);color:var(--tx)}
+footer{margin-top:64px;padding:26px 0 40px;border-top:1px solid var(--ol);color:var(--mut);font-size:14px}
 
-footer{margin:54px 0 0;padding:28px 0 40px;border-top:1px solid var(--outline);color:var(--muted);font-size:14px}
+.rv{opacity:0;transform:scale(.96);transition:opacity .6s,transform .6s,border-radius .3s,background .3s}
+.rv.in{opacity:1;transform:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{50%{opacity:0}}
+@media(max-width:520px){.hero{padding:34px 22px 22px;border-radius:32px}.seg button{padding:6px 8px}.dots{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="wrap bar">
-    <a class="logo" href="#top"><i></i>Replica</a>
-    <nav aria-label="Sections">
-      <a href="#requirements">Requirements</a>
-      <a href="#guides">Guides</a>
-      <a href="#setup">Setup</a>
-      <a href="#run">Run</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-    </nav>
+ <div class="w">
+  <div class="row1">
+   <a class="logo" href="#top"><span id="lg"></span>Replica</a>
+   <div class="ctl">
+    <div class="seg" id="lang" role="group" aria-label="Language"><button data-l="en">EN</button><button data-l="uk">УКР</button><button data-l="ru">РУС</button></div>
+    <div class="dots" id="pal" role="group" aria-label="Color palette"></div>
+    <button class="mode" id="mode" aria-label="Light or dark mode">◐</button>
+   </div>
   </div>
+  <nav id="nav"></nav>
+ </div>
 </header>
 
-<main class="wrap" id="top">
+<main class="w" id="top">
+ <div class="hero">
+  <div class="art" id="art"></div>
+  <h1 data-i="h1"></h1>
+  <p data-i="hp"></p>
+  <div class="btns"><a class="btn f" href="#setup" data-i="b1"></a><a class="btn t" href="https://t.me/iamrajatroel" data-i="b2"></a></div>
+  <div class="term" aria-hidden="true">$ python replica.py<br>Checking license... valid<br>Checking ADB... connected<br>Telegram connected<br>Ready <i></i></div>
+ </div>
 
-<div class="hero">
-  <h1>Instagram tasks, on autopilot.</h1>
-  <p>Replica automates the SMM Kingdom Tasks Bot. It takes the Instagram tasks from Telegram, completes them on your phone, and reports back.</p>
-  <div class="btns">
-    <a class="btn fill" href="#setup">Start setup</a>
-    <a class="btn tonal" href="https://t.me/iamrajatroel">Get a license</a>
-  </div>
-  <div class="term" aria-hidden="true">
-    <span class="dim">$</span> python replica.py<br>
-    Checking license... <b>valid</b><br>
-    Checking ADB... <b>connected</b><br>
-    Telegram connected<br>
-    Ready. Tap START AUTOMATION <span class="cur"></span>
-  </div>
-</div>
-
-<section id="requirements">
-  <h2>Before you begin</h2>
-  <p class="lead">Gather these first. Wi-Fi is only needed for the first-time setup.</p>
-  <div class="grid">
-    <div class="card"><h3>Termux</h3><p><a href="https://f-droid.org/packages/com.termux/">Download Termux</a></p></div>
-    <div class="card"><h3>Termux:API</h3><p><a href="https://f-droid.org/packages/com.termux.api/">Download Termux:API</a></p></div>
-    <div class="card"><h3>Replica app</h3><p><a href="#">Download Replica</a></p></div>
-    <div class="card"><h3>Bot in English</h3><p>The SMM Kingdom Tasks Bot language must be English.</p></div>
-    <div class="card"><h3>A second phone</h3><p>Official Telegram app, logged in to the account you want to automate. Used for first login only.</p></div>
-    <div class="card"><h3>Instagram app</h3><p>Official app, with all your VIP accounts for this bot logged in.</p></div>
-    <div class="card"><h3>License key</h3><p>Required to run Replica.</p></div>
-    <div class="card"><h3>API ID and Hash</h3><p>From Telegram's developer portal.</p></div>
-    <div class="card"><h3>Wi-Fi</h3><p>First-time setup only.</p></div>
-  </div>
-  <div class="note">Install Termux and Termux:API from the same source so they stay compatible.</div>
-</section>
-
-<section id="guides">
-  <h2>Setup guides</h2>
-  <p class="lead">Open a guide for the items you still need.</p>
-
-  <details>
-    <summary>Set the bot language to English</summary>
-    <div class="body"><ol>
-      <li>Open Telegram and go to the <strong>SMM Kingdom Tasks Bot</strong>.</li>
-      <li>Send <strong>/start</strong> if you have not already.</li>
-      <li>Open the bot's <strong>Settings</strong> or <strong>Language</strong> menu.</li>
-      <li>Choose <strong>English</strong> and confirm the replies are in English.</li>
-    </ol></div>
-  </details>
-
-  <details>
-    <summary>Get your Telegram API ID and Hash</summary>
-    <div class="body"><ol>
-      <li>Open <a href="https://my.telegram.org">my.telegram.org</a> in a browser.</li>
-      <li>Enter the phone number of the account to automate, with country code.</li>
-      <li>Enter the login code Telegram sends to your app.</li>
-      <li>Tap <strong>API development tools</strong>.</li>
-      <li>Fill in an app title and short name (any name works), then tap <strong>Create application</strong>.</li>
-      <li>Copy your <strong>api_id</strong> and <strong>api_hash</strong>.</li>
-    </ol>
-    <p><strong>Keep these private.</strong> Never share them publicly.</p></div>
-  </details>
-
-  <details>
-    <summary>Get a Replica license key</summary>
-    <div class="body"><ol>
-      <li>Message the admin on Telegram: <a href="https://t.me/iamrajatroel">@iamrajatroel</a>.</li>
-      <li>Pay $10 for one month on one device.</li>
-      <li>Receive your license key from the admin.</li>
-      <li>Enter it in the Replica app during setup.</li>
-    </ol>
-    <p>Each license works on one device only.</p></div>
-  </details>
-
-  <details>
-    <summary>Prepare your Instagram accounts</summary>
-    <div class="body"><ul>
-      <li>Install the official Instagram app on the phone that will run Replica.</li>
-      <li>Log in to every VIP account registered with the bot.</li>
-      <li>Make sure each account opens normally and stays logged in.</li>
-    </ul></div>
-  </details>
-
-  <details>
-    <summary>Use the second phone for first login</summary>
-    <div class="body"><ol>
-      <li>On the second phone, open the official Telegram app and log in to the same account.</li>
-      <li>When Replica shows the login QR code, go to <strong>Settings, Devices, Link Desktop Device</strong> and scan it.</li>
-      <li>If you use two-step verification, enter your password when asked.</li>
-    </ol>
-    <p>This is needed only once. Later runs reuse the saved session.</p></div>
-  </details>
-</section>
-
-<section id="setup">
-  <h2>Setup tutorial</h2>
-  <p class="lead">Follow the video to complete setup step by step.</p>
-  <div class="video">
-    <!-- Replace with: <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe> -->
-    <span>Tutorial video coming soon</span>
-  </div>
-  <div class="btns" style="margin-top:16px"><a class="btn tonal" href="#">Click here to view</a></div>
-</section>
-
-<section id="run">
-  <h2>Start and stop</h2>
-  <p class="lead">After setup is complete, run Replica from Termux.</p>
-  <div class="cmd"><code id="c">python replica.py</code><button onclick="copyCmd(this)">Copy</button></div>
-  <div class="grid">
-    <div class="card"><h3>Start</h3><p>Wait until the license, ADB and Telegram checks pass, then tap <strong>START AUTOMATION</strong>.</p></div>
-    <div class="card"><h3>Stop</h3><p>Tap <strong>STOP AUTOMATION</strong>. Tap <strong>EXIT</strong> to close Replica and Termux.</p></div>
-    <div class="card"><h3>Logs</h3><p>Activity is saved to <strong>logs.txt</strong>. Use <strong>SHARE</strong> to send it or <strong>CLEAR</strong> to empty it.</p></div>
-  </div>
-</section>
-
-<section id="pricing">
-  <h2>License</h2>
-  <p class="lead">Simple pricing, one license per device.</p>
-  <div class="price">
-    <div><strong>$10</strong><small>per month, per device</small></div>
-    <a class="btn" href="https://t.me/iamrajatroel">Contact @iamrajatroel</a>
-  </div>
-</section>
-
-<section id="faq">
-  <h2>FAQs</h2>
-  <p class="lead">&nbsp;</p>
-  <details><summary>What does Replica do?</summary><div class="body">It completes the Instagram tasks given by the SMM Kingdom Tasks Bot, so you do not have to do them manually.</div></details>
-  <details><summary>Do I need Wi-Fi all the time?</summary><div class="body">No. Wi-Fi is needed only for the first-time setup.</div></details>
-  <details><summary>Why do I need a second phone?</summary><div class="body">Telegram's first login is done by scanning a QR code from a device that is already logged in to the account.</div></details>
-  <details><summary>Can I use one license on multiple devices?</summary><div class="body">No. The license is $10 per month per device.</div></details>
-  <details><summary>The bot is not responding correctly. What should I check?</summary><div class="body">Confirm the bot language is English and every VIP Instagram account is logged in.</div></details>
-  <details><summary>Replica says my license is invalid or expired.</summary><div class="body">Check that the key was entered correctly in the Replica app. If it has expired, contact the admin to renew.</div></details>
-  <details><summary>It says "Create config first using Replica app".</summary><div class="body">Open the Replica app, enter your API ID, API Hash, license key and accounts, tap <strong>Save</strong>, then run the script again.</div></details>
-  <details><summary>The login QR code expired.</summary><div class="body">Wait about two minutes, then scan the new QR code quickly.</div></details>
-</section>
-
+ <section id="req"><h2 data-i="reT"></h2><p class="lead" data-i="reL"></p><div class="grid" id="cards"></div><div class="note" data-i="note"></div></section>
+ <section id="guides"><h2 data-i="guT"></h2><p class="lead" data-i="guL"></p><div id="gl"></div></section>
+ <section id="setup"><h2 data-i="seT"></h2><p class="lead" data-i="seL"></p>
+  <div class="video"><!-- Replace this span with: <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe> --><span data-i="vid"></span></div>
+  <div class="btns" style="margin-top:14px"><a class="btn f" href="#" data-i="seB"></a></div></section>
+ <section id="run"><h2 data-i="ruT"></h2><p class="lead" data-i="ruL"></p>
+  <div class="cmd"><code>python replica.py</code><button id="cp"></button></div><div class="grid" id="rc"></div></section>
+ <section id="price"><h2 data-i="prT"></h2><p class="lead" data-i="prL"></p>
+  <div class="price"><div class="art" id="art2"></div><div><strong>$10</strong><small data-i="prP"></small></div><a class="btn" href="https://t.me/iamrajatroel" data-i="prB"></a></div></section>
+ <section id="faq"><h2 data-i="faT"></h2><p class="lead" data-i="faL"></p><div id="fl"></div></section>
 </main>
-
-<footer>
-  <div class="wrap">
-    Need help? Message <a href="https://t.me/iamrajatroel">@iamrajatroel</a> on Telegram.<br>
-    Replica is an independent tool and is not affiliated with Telegram, Instagram or SMM Kingdom.
-  </div>
-</footer>
+<footer><div class="w"><span data-i="ft"></span><br><span data-i="dis"></span></div></footer>
 
 <script>
-function copyCmd(b){
-  var t=document.getElementById('c').textContent;
-  var done=function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)};
-  if(navigator.clipboard){navigator.clipboard.writeText(t).then(done,done)}else{done()}
-}
+var D={
+en:{nav:["Requirements","Guides","Setup","Run","Pricing","FAQ"],
+h1:"Instagram tasks, on autopilot.",hp:"Replica automates the SMM Kingdom Tasks Bot. It takes Instagram tasks from Telegram, completes them on your phone and reports back.",b1:"Start setup",b2:"Get a license",
+reT:"Before you begin",reL:"Gather these first. Wi-Fi is needed only for the first-time setup.",
+cards:[["Termux",'<a href="https://f-droid.org/packages/com.termux/">Download Termux</a>'],["Termux:API",'<a href="https://f-droid.org/packages/com.termux.api/">Download Termux:API</a>'],["Replica",'<a href="#">Download Replica</a>'],["Bot language","The SMM Kingdom Tasks Bot must be set to English."],["Second phone","Official Telegram app, logged in to the account you want to automate. First login only."],["Instagram","Official app with all your VIP accounts for this bot logged in."],["License key","Required to run Replica."],["API ID and Hash","From Telegram's developer portal."],["Wi-Fi","First-time setup only."]],
+note:"Install Termux and Termux:API from the same source so they stay compatible.",
+guT:"Setup guides",guL:"Open a guide for anything you still need.",
+g:[["Set the bot language to English","<ol><li>Open the <b>SMM Kingdom Tasks Bot</b> in Telegram.</li><li>Send <b>/start</b> if you have not already.</li><li>Open the <b>Settings</b> or <b>Language</b> menu.</li><li>Choose <b>English</b> and check that replies are in English.</li></ol>"],
+["Get your Telegram API ID and Hash",'<ol><li>Open <a href="https://my.telegram.org">my.telegram.org</a>.</li><li>Enter the phone number of the account to automate, with country code.</li><li>Enter the code Telegram sends to your app.</li><li>Tap <b>API development tools</b>.</li><li>Enter any app title and short name, then tap <b>Create application</b>.</li><li>Copy your <b>api_id</b> and <b>api_hash</b>.</li></ol><p>Keep them private. Never share them.</p>'],
+["Get a Replica license key",'<ol><li>Message <a href="https://t.me/iamrajatroel">@iamrajatroel</a> on Telegram.</li><li>Pay $10 for one month on one device.</li><li>Receive your key from the admin.</li><li>Enter it in the Replica app during setup.</li></ol>'],
+["Prepare Instagram","<ul><li>Install the official Instagram app on the phone that runs Replica.</li><li>Log in to every VIP account registered with the bot.</li><li>Make sure each account opens normally.</li></ul>"],
+["Use the second phone for first login","<ol><li>On the second phone, log in to the same Telegram account in the official app.</li><li>When Replica shows the QR code, open <b>Settings, Devices, Link Desktop Device</b> and scan it.</li><li>If you use two-step verification, enter your password.</li></ol><p>Needed only once. Later runs reuse the saved session.</p>"]],
+seT:"Setup tutorial",seL:"Follow the video to set up step by step.",vid:"Tutorial video coming soon",seB:"Click here to view",
+ruT:"Start and stop",ruL:"Once setup is done, run Replica in Termux.",cp:"Copy",cpd:"Copied",
+rc:[["Start","Wait for the license, ADB and Telegram checks, then tap <b>START AUTOMATION</b>."],["Stop","Tap <b>STOP AUTOMATION</b>. Tap <b>EXIT</b> to close Replica and Termux."],["Logs","Activity is saved in <b>logs.txt</b>. Use <b>SHARE</b> to send it or <b>CLEAR</b> to empty it."]],
+prT:"License",prL:"One license per device.",prP:"per month, per device",prB:"Contact @iamrajatroel",
+faT:"FAQs",faL:"Quick answers to common questions.",
+f:[["What does Replica do?","It completes the Instagram tasks from the SMM Kingdom Tasks Bot so you do not have to do them manually."],["Do I need Wi-Fi all the time?","No. Wi-Fi is needed only for the first-time setup."],["Why do I need a second phone?","Telegram's first login uses a QR code scanned from a device already logged in to the account."],["Can one license cover several devices?","No. The license is $10 per month per device."],["The bot is not responding correctly.","Check that the bot language is English and every VIP Instagram account is logged in."],["My license is invalid or expired.","Check the key in the Replica app. If it has expired, contact the admin to renew."],["It says to create the config first.","Open the Replica app, enter your API ID, API Hash, license key and accounts, tap Save, then run the script again."],["The login QR code expired.","Wait about two minutes, then scan the new code quickly."]],
+ft:'Need help? Message <a href="https://t.me/iamrajatroel">@iamrajatroel</a> on Telegram.',dis:"Replica is an independent tool and is not affiliated with Telegram, Instagram or SMM Kingdom."},
+
+uk:{nav:["Вимоги","Інструкції","Налаштування","Запуск","Ціна","Питання"],
+h1:"Завдання Instagram на автопілоті.",hp:"Replica автоматизує роботу бота SMM Kingdom Tasks. Вона бере завдання Instagram з Telegram, виконує їх на вашому телефоні та надсилає результат.",b1:"Почати налаштування",b2:"Отримати ліцензію",
+reT:"Перед початком",reL:"Підготуйте все це заздалегідь. Wi-Fi потрібен лише для першого налаштування.",
+cards:[["Termux",'<a href="https://f-droid.org/packages/com.termux/">Завантажити Termux</a>'],["Termux:API",'<a href="https://f-droid.org/packages/com.termux.api/">Завантажити Termux:API</a>'],["Replica",'<a href="#">Завантажити Replica</a>'],["Мова бота","Бот SMM Kingdom Tasks має бути налаштований на англійську."],["Другий телефон","Офіційний застосунок Telegram з акаунтом, який ви хочете автоматизувати. Лише для першого входу."],["Instagram","Офіційний застосунок з усіма VIP-акаунтами для цього бота."],["Ліцензійний ключ","Потрібен для роботи Replica."],["API ID та Hash","З порталу розробників Telegram."],["Wi-Fi","Лише для першого налаштування."]],
+note:"Встановлюйте Termux і Termux:API з одного джерела, щоб вони були сумісні.",
+guT:"Інструкції з налаштування",guL:"Відкрийте потрібну інструкцію.",
+g:[["Встановіть англійську мову бота","<ol><li>Відкрийте <b>SMM Kingdom Tasks Bot</b> у Telegram.</li><li>Надішліть <b>/start</b>, якщо ще не робили цього.</li><li>Відкрийте меню <b>Налаштування</b> або <b>Мова</b>.</li><li>Виберіть <b>English</b> і перевірте, що відповіді англійською.</li></ol>"],
+["Отримайте Telegram API ID та Hash",'<ol><li>Відкрийте <a href="https://my.telegram.org">my.telegram.org</a>.</li><li>Введіть номер телефону акаунта, який хочете автоматизувати, з кодом країни.</li><li>Введіть код, який Telegram надішле у застосунок.</li><li>Натисніть <b>API development tools</b>.</li><li>Введіть будь-яку назву та коротку назву, натисніть <b>Create application</b>.</li><li>Скопіюйте <b>api_id</b> та <b>api_hash</b>.</li></ol><p>Зберігайте їх у таємниці. Нікому не передавайте.</p>'],
+["Отримайте ліцензійний ключ Replica",'<ol><li>Напишіть <a href="https://t.me/iamrajatroel">@iamrajatroel</a> у Telegram.</li><li>Оплатіть $10 за один місяць на один пристрій.</li><li>Отримайте ключ від адміністратора.</li><li>Введіть його в застосунку Replica під час налаштування.</li></ol>'],
+["Підготуйте Instagram","<ul><li>Встановіть офіційний застосунок Instagram на телефон, де працюватиме Replica.</li><li>Увійдіть у всі VIP-акаунти, зареєстровані в боті.</li><li>Переконайтеся, що кожен акаунт працює нормально.</li></ul>"],
+["Другий телефон для першого входу","<ol><li>На другому телефоні увійдіть в той самий акаунт Telegram в офіційному застосунку.</li><li>Коли Replica покаже QR-код, відкрийте <b>Налаштування, Пристрої, Підключити пристрій</b> і скануйте його.</li><li>Якщо у вас двоетапна перевірка, введіть пароль.</li></ol><p>Потрібно лише раз. Далі використовується збережена сесія.</p>"]],
+seT:"Відеоурок з налаштування",seL:"Дивіться відео та налаштовуйте крок за кроком.",vid:"Відеоурок незабаром",seB:"Натисніть, щоб переглянути",
+ruT:"Запуск і зупинка",ruL:"Після налаштування запускайте Replica в Termux.",cp:"Копіювати",cpd:"Скопійовано",
+rc:[["Запуск","Дочекайтеся перевірок ліцензії, ADB і Telegram, потім натисніть <b>START AUTOMATION</b>."],["Зупинка","Натисніть <b>STOP AUTOMATION</b>. Кнопка <b>EXIT</b> закриває Replica і Termux."],["Журнал","Дії зберігаються в <b>logs.txt</b>. <b>SHARE</b> надсилає файл, <b>CLEAR</b> очищає його."]],
+prT:"Ліцензія",prL:"Одна ліцензія на один пристрій.",prP:"на місяць, за пристрій",prB:"Написати @iamrajatroel",
+faT:"Часті питання",faL:"Короткі відповіді на поширені питання.",
+f:[["Що робить Replica?","Вона виконує завдання Instagram від бота SMM Kingdom Tasks, щоб вам не потрібно було робити це вручну."],["Чи потрібен Wi-Fi постійно?","Ні. Wi-Fi потрібен лише для першого налаштування."],["Навіщо потрібен другий телефон?","Перший вхід у Telegram виконується скануванням QR-коду з пристрою, на якому акаунт уже авторизований."],["Одна ліцензія на кілька пристроїв?","Ні. Ліцензія коштує $10 на місяць за один пристрій."],["Бот відповідає неправильно.","Перевірте, що мова бота англійська і всі VIP-акаунти Instagram авторизовані."],["Ліцензія недійсна або прострочена.","Перевірте ключ у застосунку Replica. Якщо термін минув, зверніться до адміністратора для продовження."],["Пише, що спочатку потрібно створити конфігурацію.","Відкрийте застосунок Replica, введіть API ID, API Hash, ліцензійний ключ і акаунти, натисніть Save та запустіть скрипт знову."],["QR-код для входу застарів.","Зачекайте близько двох хвилин і швидко скануйте новий код."]],
+ft:'Потрібна допомога? Напишіть <a href="https://t.me/iamrajatroel">@iamrajatroel</a> у Telegram.',dis:"Replica є незалежним інструментом і не пов'язана з Telegram, Instagram чи SMM Kingdom."},
+
+ru:{nav:["Требования","Инструкции","Настройка","Запуск","Цена","Вопросы"],
+h1:"Задания Instagram на автопилоте.",hp:"Replica автоматизирует работу бота SMM Kingdom Tasks. Она берёт задания Instagram из Telegram, выполняет их на вашем телефоне и отправляет результат.",b1:"Начать настройку",b2:"Получить лицензию",
+reT:"Перед началом",reL:"Подготовьте всё это заранее. Wi-Fi нужен только для первой настройки.",
+cards:[["Termux",'<a href="https://f-droid.org/packages/com.termux/">Скачать Termux</a>'],["Termux:API",'<a href="https://f-droid.org/packages/com.termux.api/">Скачать Termux:API</a>'],["Replica",'<a href="#">Скачать Replica</a>'],["Язык бота","Бот SMM Kingdom Tasks должен быть переключён на английский."],["Второй телефон","Официальное приложение Telegram с аккаунтом, который вы хотите автоматизировать. Только для первого входа."],["Instagram","Официальное приложение со всеми VIP-аккаунтами для этого бота."],["Лицензионный ключ","Необходим для работы Replica."],["API ID и Hash","С портала разработчиков Telegram."],["Wi-Fi","Только для первой настройки."]],
+note:"Устанавливайте Termux и Termux:API из одного источника, чтобы они были совместимы.",
+guT:"Инструкции по настройке",guL:"Откройте нужную инструкцию.",
+g:[["Установите английский язык бота","<ol><li>Откройте <b>SMM Kingdom Tasks Bot</b> в Telegram.</li><li>Отправьте <b>/start</b>, если ещё не делали этого.</li><li>Откройте меню <b>Настройки</b> или <b>Язык</b>.</li><li>Выберите <b>English</b> и проверьте, что ответы на английском.</li></ol>"],
+["Получите Telegram API ID и Hash",'<ol><li>Откройте <a href="https://my.telegram.org">my.telegram.org</a>.</li><li>Введите номер телефона аккаунта, который хотите автоматизировать, с кодом страны.</li><li>Введите код, который Telegram пришлёт в приложение.</li><li>Нажмите <b>API development tools</b>.</li><li>Введите любое название и короткое название, нажмите <b>Create application</b>.</li><li>Скопируйте <b>api_id</b> и <b>api_hash</b>.</li></ol><p>Храните их в тайне. Никому не передавайте.</p>'],
+["Получите лицензионный ключ Replica",'<ol><li>Напишите <a href="https://t.me/iamrajatroel">@iamrajatroel</a> в Telegram.</li><li>Оплатите $10 за один месяц на одно устройство.</li><li>Получите ключ от администратора.</li><li>Введите его в приложении Replica при настройке.</li></ol>'],
+["Подготовьте Instagram","<ul><li>Установите официальное приложение Instagram на телефон, где будет работать Replica.</li><li>Войдите во все VIP-аккаунты, зарегистрированные в боте.</li><li>Убедитесь, что каждый аккаунт работает нормально.</li></ul>"],
+["Второй телефон для первого входа","<ol><li>На втором телефоне войдите в тот же аккаунт Telegram в официальном приложении.</li><li>Когда Replica покажет QR-код, откройте <b>Настройки, Устройства, Подключить устройство</b> и отсканируйте его.</li><li>Если включена двухэтапная проверка, введите пароль.</li></ol><p>Нужно только один раз. Дальше используется сохранённая сессия.</p>"]],
+seT:"Видеоурок по настройке",seL:"Смотрите видео и настраивайте шаг за шагом.",vid:"Видеоурок скоро появится",seB:"Нажмите, чтобы посмотреть",
+ruT:"Запуск и остановка",ruL:"После настройки запускайте Replica в Termux.",cp:"Копировать",cpd:"Скопировано",
+rc:[["Запуск","Дождитесь проверок лицензии, ADB и Telegram, затем нажмите <b>START AUTOMATION</b>."],["Остановка","Нажмите <b>STOP AUTOMATION</b>. Кнопка <b>EXIT</b> закрывает Replica и Termux."],["Журнал","Действия сохраняются в <b>logs.txt</b>. <b>SHARE</b> отправляет файл, <b>CLEAR</b> очищает его."]],
+prT:"Лицензия",prL:"Одна лицензия на одно устройство.",prP:"в месяц, за устройство",prB:"Написать @iamrajatroel",
+faT:"Частые вопросы",faL:"Короткие ответы на популярные вопросы.",
+f:[["Что делает Replica?","Она выполняет задания Instagram от бота SMM Kingdom Tasks, чтобы вам не нужно было делать это вручную."],["Нужен ли Wi-Fi постоянно?","Нет. Wi-Fi нужен только для первой настройки."],["Зачем нужен второй телефон?","Первый вход в Telegram выполняется сканированием QR-кода с устройства, на котором аккаунт уже авторизован."],["Одна лицензия на несколько устройств?","Нет. Лицензия стоит $10 в месяц за одно устройство."],["Бот отвечает неправильно.","Проверьте, что язык бота английский и все VIP-аккаунты Instagram авторизованы."],["Лицензия недействительна или истекла.","Проверьте ключ в приложении Replica. Если срок истёк, обратитесь к администратору для продления."],["Пишет, что сначала нужно создать конфигурацию.","Откройте приложение Replica, введите API ID, API Hash, лицензионный ключ и аккаунты, нажмите Save и запустите скрипт снова."],["QR-код для входа устарел.","Подождите около двух минут и быстро отсканируйте новый код."]],
+ft:'Нужна помощь? Напишите <a href="https://t.me/iamrajatroel">@iamrajatroel</a> в Telegram.',dis:"Replica — независимый инструмент и не связана с Telegram, Instagram или SMM Kingdom."}
+};
+
+/* expressive shapes: scalloped circles, cookies, flowers */
+function shape(n,a,s,c,extra){var p='',R=100,N=180;for(var i=0;i<=N;i++){var t=i/N*2*Math.PI,r=R*(1-a+a*Math.cos(n*t));p+=(i?'L':'M')+(r*Math.cos(t)).toFixed(1)+' '+(r*Math.sin(t)).toFixed(1)}
+return '<svg viewBox="-105 -105 210 210" width="'+s+'" height="'+s+'" style="'+(extra||'')+'" aria-hidden="true"><path d="'+p+'Z" fill="'+c+'"/></svg>'}
+var $=function(q){return document.querySelector(q)};
+var H=[[8,.07,260,'var(--p)','top:-70px;right:-60px;opacity:.28;animation:spin 40s linear infinite'],
+[12,.05,150,'var(--tc)','top:150px;right:90px;opacity:.7;animation:spin 26s linear infinite reverse'],
+[6,.18,110,'var(--sc)','top:20px;right:150px;opacity:.9;animation:spin 20s linear infinite']];
+$('#art').innerHTML=H.map(function(h){return shape(h[0],h[1],h[2],h[3],h[4])}).join('');
+$('#art2').innerHTML=shape(10,.08,200,'currentColor','right:-40px;top:-50px;animation:spin 30s linear infinite')+shape(6,.16,110,'currentColor','right:120px;bottom:-40px;animation:spin 22s linear infinite reverse');
+$('#lg').innerHTML=shape(8,.14,30,'var(--p)');
+var cols=[155,255,300,10,70];
+$('#pal').innerHTML=cols.map(function(h){return '<button data-h="'+h+'" aria-label="Palette '+h+'" style="background:oklch(.6 .15 '+h+')"></button>'}).join('');
+
+var L=localStorage.getItem('rl')||(/^uk/.test(navigator.language)?'uk':/^ru/.test(navigator.language)?'ru':'en');
+function render(){var d=D[L];document.documentElement.lang=L;
+ document.querySelectorAll('[data-i]').forEach(function(e){e.innerHTML=d[e.dataset.i]});
+ var ids=['req','guides','setup','run','price','faq'];
+ $('#nav').innerHTML=d.nav.map(function(n,i){return '<a href="#'+ids[i]+'">'+n+'</a>'}).join('');
+ var sh=[[8,.1],[12,.06],[6,.18],[10,.08]],k=0;
+ function card(c){var s=sh[k%4];k++;return '<div class="card rv">'+shape(s[0],s[1],34,['var(--p)','var(--tc)','var(--sc)'][k%3])+'<h3>'+c[0]+'</h3><p>'+c[1]+'</p></div>'}
+ $('#cards').innerHTML=d.cards.map(card).join('');
+ $('#rc').innerHTML=d.rc.map(card).join('');
+ $('#gl').innerHTML=d.g.map(function(g){return '<details><summary>'+g[0]+'</summary><div class="bd">'+g[1]+'</div></details>'}).join('');
+ $('#fl').innerHTML=d.f.map(function(g){return '<details><summary>'+g[0]+'</summary><div class="bd">'+g[1]+'</div></details>'}).join('');
+ $('#cp').textContent=d.cp;
+ document.querySelectorAll('#lang button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.l===L)});
+ reveal()}
+function reveal(){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});
+ document.querySelectorAll('.rv').forEach(function(e,i){e.style.transitionDelay=(i%3)*80+'ms';io.observe(e)})}
+function setH(h){document.documentElement.style.setProperty('--h',h);try{localStorage.setItem('rh',h)}catch(e){}
+ document.querySelectorAll('#pal button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.h==h)})}
+function setM(m){document.documentElement.dataset.mode=m;try{localStorage.setItem('rm',m)}catch(e){}}
+$('#lang').onclick=function(e){if(e.target.dataset.l){L=e.target.dataset.l;try{localStorage.setItem('rl',L)}catch(x){}render()}};
+$('#pal').onclick=function(e){if(e.target.dataset.h)setH(e.target.dataset.h)};
+$('#mode').onclick=function(){setM(document.documentElement.dataset.mode==='dark'?'light':'dark')};
+$('#cp').onclick=function(){var b=this;function ok(){b.textContent=D[L].cpd;setTimeout(function(){b.textContent=D[L].cp},1500)}
+ navigator.clipboard?navigator.clipboard.writeText('python replica.py').then(ok,ok):ok()};
+setM(localStorage.getItem('rm')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));setH(localStorage.getItem('rh')||155);
+render();
 </script>
 </body>
 </html>
