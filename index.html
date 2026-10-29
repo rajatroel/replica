@@ -12,23 +12,20 @@
 @property --h {
   syntax: '<number>';
   inherits: true;
-  initial-value: 154;
+  initial-value: 120;
 }
 
 :root {
-  --h: 154;
+  --h: 120;
 
-  /* Material 3 Expressive motion tokens (spring approximations) */
   --spring-fast-spatial: cubic-bezier(0.42, 1.67, 0.21, 0.90);
   --spring-default-spatial: cubic-bezier(0.38, 1.21, 0.22, 1.00);
   --spring-fast-effects: cubic-bezier(0.31, 0.94, 0.34, 1.00);
   --spring-default-effects: cubic-bezier(0.34, 0.80, 0.34, 1.00);
   --ease-expressive-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-expressive-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
-  --ease-expressive-spring: var(--spring-default-spatial);
   --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
 
-  /* Light MD3E palette */
   --md-sys-color-primary: oklch(0.44 0.18 var(--h));
   --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
   --md-sys-color-primary-container: oklch(0.92 0.08 var(--h));
@@ -55,7 +52,6 @@
   --md-sys-color-outline: oklch(0.72 0.025 var(--h));
   --md-sys-color-outline-variant: oklch(0.86 0.015 var(--h));
 
-  /* MD3E shape scale */
   --shape-corner-extra-small: 8px;
   --shape-corner-small: 12px;
   --shape-corner-medium: 18px;
@@ -101,9 +97,7 @@
   --press-shadow: 0 3px 12px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-/* =========================================================
-   RESET
-   ========================================================= */
+/* RESET */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -136,7 +130,6 @@ body {
   -webkit-user-select: none;
 }
 
-/* Icons */
 .ic {
   width: 20px;
   height: 20px;
@@ -144,9 +137,7 @@ body {
   display: block;
 }
 
-/* =========================================================
-   STATE LAYERS + RIPPLE
-   ========================================================= */
+/* STATE LAYERS + RIPPLE (press state only via .is-pressed, never from scrolling) */
 .m3e-state {
   position: relative;
   overflow: hidden;
@@ -166,7 +157,7 @@ body {
 @media (hover: hover) and (pointer: fine) {
   .m3e-state:hover::before { opacity: 0.08; }
 }
-.m3e-state:is(:active, .is-pressed)::before { opacity: 0.12; }
+.m3e-state.is-pressed::before { opacity: 0.12; }
 
 .m3e-rip {
   position: absolute;
@@ -181,14 +172,12 @@ body {
   to { transform: scale(4); opacity: 0; }
 }
 
-/* =========================================================
-   LOADER
-   ========================================================= */
+/* LOADER */
 #m3eLoader {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #141212;
+  background: var(--md-sys-color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -216,32 +205,28 @@ body {
 }
 .curly-loader-icon {
   position: absolute;
-  width: 56px;
-  height: 56px;
-  color: #ffdad6;
+  width: 60px;
+  height: 60px;
+  color: var(--md-sys-color-on-primary-container);
   display: grid;
   place-items: center;
   pointer-events: none;
 }
-.curly-loader-icon .ic { width: 52px; height: 52px; }
+.curly-loader-icon .ic { width: 56px; height: 56px; }
 @keyframes m3eCurlySpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* =========================================================
-   PAGE WRAPPER
-   ========================================================= */
+/* PAGE WRAPPER (no bottom gap before footer) */
 .wrapper {
   width: 100%;
   max-width: 860px;
   margin: 0 auto;
-  padding: 0 20px 96px;
+  padding: 0 20px;
 }
 
-/* =========================================================
-   TRANSLUCENT NAV + BLUR SCRIM
-   ========================================================= */
+/* NAV + BLUR SCRIM */
 .top-blur-scrim {
   position: fixed;
   top: 0;
@@ -292,15 +277,13 @@ header.m3e-app-bar {
   border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 55%, transparent);
   border-radius: 30px;
   box-shadow: var(--elevation-1);
-  margin-inline: 0;
   transition: background-color 0.35s var(--ease-expressive-standard),
-              box-shadow 0.35s var(--ease-expressive-standard),
-              margin 0.5s var(--ease-expressive-emphasized);
+              box-shadow 0.35s var(--ease-expressive-standard);
 }
+/* size never changes on scroll: only colour/shadow */
 .m3e-capsule-nav.scrolled {
   background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 64%, transparent);
   box-shadow: var(--elevation-2);
-  margin-inline: 6px;
 }
 
 .brand-deck {
@@ -328,8 +311,8 @@ header.m3e-app-bar {
 }
 .nav-curly-bot {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   color: var(--md-sys-color-on-primary-container);
   z-index: 2;
 }
@@ -345,7 +328,6 @@ header.m3e-app-bar {
   gap: 6px;
 }
 
-/* Icon buttons: round at rest, squircle when toggled (MD3E) */
 .m3e-action-btn {
   width: 44px;
   height: 44px;
@@ -364,10 +346,9 @@ header.m3e-app-bar {
   color: var(--md-sys-color-on-primary-container);
   border-radius: 14px;
 }
-.m3e-action-btn:is(:active, .is-pressed) { border-radius: 14px; scale: 0.92; }
+.m3e-action-btn.is-pressed { border-radius: 14px; scale: 0.92; }
 .m3e-action-btn .ic { width: 22px; height: 22px; }
 
-/* Nav layers slide away when the language tray opens */
 .brand-deck, .actions-cluster {
   transition: opacity 0.25s var(--spring-default-effects),
               translate 0.5s var(--spring-default-spatial),
@@ -388,14 +369,10 @@ header.m3e-app-bar {
 .m3e-capsule-nav.lang-open .brand-deck { translate: -28px 0; }
 .m3e-capsule-nav.lang-open .actions-cluster { translate: 28px 0; }
 
-/* =========================================================
-   LANGUAGE SEGMENTED SELECTOR (sliding indicator)
-   ========================================================= */
+/* LANGUAGE SLIDER: one unified track, draggable thumb */
 .lang-morph-tray {
   position: absolute;
   inset: 6px 8px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
   visibility: hidden;
   pointer-events: none;
   opacity: 0;
@@ -418,17 +395,34 @@ header.m3e-app-bar {
               visibility 0s;
 }
 
+.lang-track {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 4px;
+  border-radius: 24px;
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.18);
+  touch-action: none;
+  cursor: grab;
+}
+.lang-track.dragging { cursor: grabbing; }
+
 .lang-indicator {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: calc(100% / 3);
-  border-radius: 24px;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / 3);
+  border-radius: 20px;
   background: var(--md-sys-color-primary);
+  box-shadow: var(--elevation-1);
   translate: calc(var(--idx, 0) * 100%) 0;
   transition: translate 0.55s var(--spring-default-spatial);
+  pointer-events: none;
 }
+.lang-track.dragging .lang-indicator { transition: none; }
 
 .lang-chip-btn {
   position: relative;
@@ -442,17 +436,15 @@ header.m3e-app-bar {
   font-size: 0.88rem;
   font-weight: 700;
   padding: 0 6px;
-  border-radius: 24px;
+  border-radius: 20px;
   white-space: nowrap;
-  transition: border-radius 0.4s var(--spring-fast-spatial),
-              color 0.3s var(--ease-smooth);
+  transition: color 0.3s var(--ease-smooth);
+  overflow: visible;
 }
+.lang-chip-btn::before { display: none; }
 .lang-chip-btn.active { color: var(--md-sys-color-on-primary); }
-.lang-chip-btn:is(:active, .is-pressed) { border-radius: 14px; }
 
-/* =========================================================
-   PALETTE SHEET (sibling of capsule so its blur is real)
-   ========================================================= */
+/* PALETTE SHEET */
 .monet-sheet {
   position: absolute;
   top: calc(100% + 12px);
@@ -509,7 +501,7 @@ header.m3e-app-bar {
 @media (hover: hover) and (pointer: fine) {
   .monet-swatch:hover { transform: scale(1.08); }
 }
-.monet-swatch:is(:active, .is-pressed) { transform: scale(0.9); }
+.monet-swatch.is-pressed { transform: scale(0.9); }
 .monet-swatch.active {
   border-radius: 50%;
   outline: 3px solid var(--md-sys-color-primary);
@@ -528,7 +520,6 @@ header.m3e-app-bar {
 .dark-mode-row > span { display: inline-flex; align-items: center; gap: 10px; }
 .dark-mode-row .ic { color: var(--md-sys-color-on-surface-variant); }
 
-/* MD3E switch: icon in thumb, thumb grows when pressed */
 .m3e-switch {
   width: 52px;
   height: 32px;
@@ -558,12 +549,10 @@ header.m3e-app-bar {
 .m3e-switch[aria-checked="true"] { background: var(--md-sys-color-primary); border-color: var(--md-sys-color-primary); }
 .m3e-switch[aria-checked="true"] .m3e-switch-thumb { left: 20px; width: 24px; height: 24px; background: var(--md-sys-color-on-primary); }
 .m3e-switch[aria-checked="true"] .m3e-switch-thumb .ic { opacity: 1; scale: 1; }
-.m3e-switch:is(:active, .is-pressed) .m3e-switch-thumb { left: 2px; width: 28px; height: 28px; }
-.m3e-switch[aria-checked="true"]:is(:active, .is-pressed) .m3e-switch-thumb { left: 18px; width: 28px; height: 28px; }
+.m3e-switch.is-pressed .m3e-switch-thumb { left: 2px; width: 28px; height: 28px; }
+.m3e-switch[aria-checked="true"].is-pressed .m3e-switch-thumb { left: 18px; width: 28px; height: 28px; }
 
-/* =========================================================
-   HERO
-   ========================================================= */
+/* HERO */
 .hero-box {
   padding-top: calc(128px + env(safe-area-inset-top, 0px));
   display: flex;
@@ -590,7 +579,6 @@ header.m3e-app-bar {
   margin-top: 6px;
 }
 
-/* ---------- Buttons: pill at rest, squarer + lifted + icon tilt on press ---------- */
 .m3e-btn, .tile-action-btn {
   display: inline-flex;
   align-items: center;
@@ -615,18 +603,18 @@ header.m3e-app-bar {
 .m3e-btn.tonal { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
 .m3e-btn .ic { width: 22px; height: 22px; }
 
-.m3e-btn:is(:active, .is-pressed),
-.tile-action-btn:is(:active, .is-pressed) {
+.m3e-btn.is-pressed,
+.tile-action-btn.is-pressed {
   border-radius: 18px;
   box-shadow: var(--press-shadow);
 }
-.tile-action-btn:is(:active, .is-pressed) { border-radius: 16px; }
+.tile-action-btn.is-pressed { border-radius: 16px; }
 
 .m3e-btn .ic, .tile-action-btn .ic {
   transition: rotate 0.45s var(--spring-fast-spatial), translate 0.45s var(--spring-fast-spatial);
 }
-.m3e-btn:is(:active, .is-pressed) .ic,
-.tile-action-btn:is(:active, .is-pressed) .ic {
+.m3e-btn.is-pressed .ic,
+.tile-action-btn.is-pressed .ic {
   rotate: -10deg;
   translate: 0 1px;
 }
@@ -653,7 +641,7 @@ header.m3e-app-bar {
   transition: border-radius 0.4s var(--spring-fast-spatial), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .m3e-chip .ic { color: var(--md-sys-color-primary); width: 20px; height: 20px; }
-.m3e-chip.m3e-state:is(:active, .is-pressed) { border-radius: 12px; }
+.m3e-chip.m3e-state.is-pressed { border-radius: 12px; }
 @media (hover: hover) and (pointer: fine) {
   .m3e-chip.m3e-state:hover {
     background: var(--md-sys-color-primary-container);
@@ -662,9 +650,7 @@ header.m3e-app-bar {
   }
 }
 
-/* =========================================================
-   SECTION HEADINGS
-   ========================================================= */
+/* SECTION HEADINGS */
 .step-section-header { margin: 64px 0 22px; }
 .step-label {
   display: inline-block;
@@ -687,9 +673,7 @@ header.m3e-app-bar {
   max-width: 56ch;
 }
 
-/* =========================================================
-   TILES & ICON FRAMES
-   ========================================================= */
+/* TILES */
 .sym-shape-frame {
   width: 56px;
   height: 56px;
@@ -709,10 +693,8 @@ header.m3e-app-bar {
   .trilogy-tile:hover .sym-shape-frame,
   .tutorial-card:hover .sym-shape-frame { border-radius: 28px; }
 }
-.trilogy-tile:active .sym-shape-frame,
-.tutorial-card:active .sym-shape-frame { border-radius: 28px; }
 
-/* STEP 01: expandable */
+/* STEP 01 */
 .m3e-expandable {
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-large);
@@ -756,7 +738,7 @@ header.m3e-app-bar {
               background-color 0.3s var(--ease-expressive-standard),
               color 0.3s var(--ease-expressive-standard);
 }
-.expandable-trigger:is(:active, .is-pressed) .expand-chevron { scale: 0.88; border-radius: 13px; }
+.expandable-trigger.is-pressed .expand-chevron { scale: 0.88; border-radius: 13px; }
 .m3e-expandable.open .expand-chevron {
   transform: rotate(180deg);
   background: var(--md-sys-color-primary-container);
@@ -813,7 +795,7 @@ header.m3e-app-bar {
   .walkthrough-steps { padding: 4px 20px 22px 20px; }
 }
 
-/* STEP 02: downloads */
+/* STEP 02 */
 .trilogy-layout { display: grid; grid-template-columns: 1fr; gap: 18px; }
 @media (min-width: 768px) { .trilogy-layout { grid-template-columns: repeat(3, 1fr); } }
 
@@ -826,12 +808,11 @@ header.m3e-app-bar {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  transition: border-color 0.25s var(--ease-expressive-standard), scale 0.4s var(--spring-fast-spatial);
+  transition: border-color 0.25s var(--ease-expressive-standard);
 }
 @media (hover: hover) and (pointer: fine) {
   .trilogy-tile:hover { border-color: var(--md-sys-color-primary); }
 }
-.trilogy-tile:active { scale: 0.985; }
 
 .tile-badge {
   position: absolute;
@@ -879,7 +860,7 @@ header.m3e-app-bar {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  transition: border-color 0.25s var(--ease-expressive-standard), scale 0.4s var(--spring-fast-spatial);
+  transition: border-color 0.25s var(--ease-expressive-standard);
 }
 @media (min-width: 640px) {
   .tutorial-card { flex-direction: row; align-items: center; justify-content: space-between; }
@@ -891,7 +872,7 @@ header.m3e-app-bar {
 .tutorial-left h3 { font-size: 1.2rem; font-weight: 800; }
 .tutorial-left p { font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant); }
 
-/* STEP 04 */
+/* PRICING */
 .pricing-expressive-card {
   position: relative;
   overflow: hidden;
@@ -946,15 +927,13 @@ header.m3e-app-bar {
 
 /* FOOTER & SNACKBAR */
 footer {
-  margin-top: 60px;
-  padding: 32px 0;
+  margin-top: 28px;
+  padding: 22px 0 calc(22px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--md-sys-color-outline-variant);
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--md-sys-color-on-surface-variant);
 }
-footer a { color: var(--md-sys-color-primary); font-weight: 700; text-decoration: none; }
-footer a:hover { text-decoration: underline; }
 
 .m3e-snackbar {
   position: fixed;
@@ -976,20 +955,18 @@ footer a:hover { text-decoration: underline; }
 }
 .m3e-snackbar.active { transform: translate(-50%, 0); }
 
-/* =========================================================
-   MOTION
-   ========================================================= */
+/* MOTION (fade + gentle slide only, no scaling) */
 :root { transition: --h 0.6s var(--ease-expressive-standard); }
 
 .reveal:not(.in) { opacity: 0; }
 .reveal.in {
   animation: m3e-fade 0.5s var(--ease-expressive-standard) var(--d, 0ms) both,
-             m3e-rise 0.9s var(--spring-default-spatial) var(--d, 0ms) both;
+             m3e-rise 0.8s var(--ease-expressive-emphasized) var(--d, 0ms) both;
 }
 @keyframes m3e-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes m3e-rise {
-  from { translate: 0 var(--ty, 30px); scale: 0.95; }
-  to   { translate: 0 0; scale: 1; }
+  from { translate: 0 var(--ty, 18px); }
+  to   { translate: 0 0; }
 }
 
 ::view-transition-old(root), ::view-transition-new(root) {
@@ -1010,12 +987,11 @@ footer a:hover { text-decoration: underline; }
 <!-- Shared SVG symbols -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <path id="scallopShape" d="__SCALLOP__"/>
+    <path id="scallopShape" d=""/>
 
-    <!-- Android (custom bot icon) -->
+    <!-- Default Android robot icon -->
     <symbol id="icAndroid" viewBox="0 0 24 24">
-      <path fill="currentColor" fill-rule="evenodd" d="M5 10.5V7.4A4.4 4.4 0 0 1 9.4 3h5.2A4.4 4.4 0 0 1 19 7.4v3.1ZM8 7.6a1 1 0 1 0 2 0 1 1 0 1 0-2 0ZM14 7.6a1 1 0 1 0 2 0 1 1 0 1 0-2 0ZM5 11.6h14v4.2a7 7 0 0 1-14 0Z"/>
-      <path fill="none" stroke="currentColor" stroke-width="1.4" d="M5.5 1.8 8.4 4.7M18.5 1.8 15.6 4.7"/>
+      <path fill="currentColor" fill-rule="evenodd" d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24a11.43 11.43 0 0 0-8.94 0L5.65 5.67c-.19-.29-.58-.38-.87-.2-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 0 0 1 18h22a10.78 10.78 0 0 0-5.4-8.52ZM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z"/>
     </symbol>
 
     <symbol id="icDownload" viewBox="0 0 24 24">
@@ -1077,11 +1053,23 @@ footer a:hover { text-decoration: underline; }
     </symbol>
   </defs>
 </svg>
+<script>
+/* Curly (scalloped) circle path */
+(function () {
+  var pts = [], N = 240, lobes = 12;
+  for (var i = 0; i < N; i++) {
+    var t = (i / N) * Math.PI * 2;
+    var r = 42 + 4.2 * Math.cos(lobes * t);
+    pts.push((50 + r * Math.cos(t)).toFixed(2) + ' ' + (50 + r * Math.sin(t)).toFixed(2));
+  }
+  document.getElementById('scallopShape').setAttribute('d', 'M' + pts.join('L') + 'Z');
+})();
+</script>
 
-<!-- Loader -->
-<div id="m3eLoader" role="status" aria-live="polite">
+<!-- Loader: just the icon inside a rotating curly circle -->
+<div id="m3eLoader" role="status" aria-label="Loading">
   <div class="curly-loader-container">
-    <svg class="curly-svg-loader" viewBox="0 0 100 100"><use href="#scallopShape" fill="#59433b"/></svg>
+    <svg class="curly-svg-loader" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/></svg>
     <div class="curly-loader-icon"><svg class="ic"><use href="#icAndroid"/></svg></div>
   </div>
 </div>
@@ -1109,12 +1097,14 @@ footer a:hover { text-decoration: underline; }
         </button>
       </div>
 
-      <!-- Sliding language selector -->
-      <div class="lang-morph-tray" id="langTray" role="radiogroup" aria-label="Language" aria-hidden="true">
-        <span class="lang-indicator" aria-hidden="true"></span>
-        <button class="lang-chip-btn m3e-state" role="radio" data-lang="en">English</button>
-        <button class="lang-chip-btn m3e-state" role="radio" data-lang="uk">Українська</button>
-        <button class="lang-chip-btn m3e-state" role="radio" data-lang="ru">Русский</button>
+      <!-- Language slider -->
+      <div class="lang-morph-tray" id="langTray" aria-hidden="true">
+        <div class="lang-track" id="langTrack" role="radiogroup" aria-label="Language">
+          <span class="lang-indicator" aria-hidden="true"></span>
+          <button class="lang-chip-btn" role="radio" data-lang="en">English</button>
+          <button class="lang-chip-btn" role="radio" data-lang="uk">Українська</button>
+          <button class="lang-chip-btn" role="radio" data-lang="ru">Русский</button>
+        </div>
       </div>
     </div>
 
@@ -1298,17 +1288,14 @@ footer a:hover { text-decoration: underline; }
 </main>
 
 <footer>
-  <div class="wrapper" style="padding-bottom: 0;">
-    <p><span data-i="ftHelp">Need help? Message</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftTg">on Telegram</span>.</p>
+  <div class="wrapper">
+    <p data-i="ftCopy">© Replica. All rights reserved.</p>
   </div>
 </footer>
 
 <div class="m3e-snackbar" id="toastNotice" role="status" aria-live="polite"></div>
 
 <script>
-/* =========================================================
-   CONFIG
-   ========================================================= */
 const CONFIG = {
   links: {
     replicaApk: '#',
@@ -1323,9 +1310,6 @@ const CONFIG = {
   ]
 };
 
-/* =========================================================
-   TRANSLATIONS
-   ========================================================= */
 const I18N = {
   en: {
     monetPaletteTitle: "Monet Color Hues",
@@ -1373,8 +1357,7 @@ const I18N = {
     bulkTitle: "Need More Than One Device?",
     bulkSub: "Contact the developer for a discount on multiple-device licenses.",
     btnBulk: "Contact Developer",
-    ftHelp: "Need help? Message",
-    ftTg: "on Telegram"
+    ftCopy: "© {y} Replica. All rights reserved."
   },
   uk: {
     monetPaletteTitle: "Палітра кольорів",
@@ -1422,8 +1405,7 @@ const I18N = {
     bulkTitle: "Потрібно кілька пристроїв?",
     bulkSub: "Напишіть розробнику, щоб отримати знижку на ліцензії для кількох пристроїв.",
     btnBulk: "Написати автору",
-    ftHelp: "Потрібна допомога? Напишіть",
-    ftTg: "у Telegram"
+    ftCopy: "© {y} Replica. Усі права захищено."
   },
   ru: {
     monetPaletteTitle: "Палитра цветов",
@@ -1471,14 +1453,11 @@ const I18N = {
     bulkTitle: "Нужно несколько устройств?",
     bulkSub: "Свяжитесь с автором для скидки на лицензии для нескольких устройств.",
     btnBulk: "Написать автору",
-    ftHelp: "Нужна помощь? Напишите",
-    ftTg: "в Telegram"
+    ftCopy: "© {y} Replica. Все права защищены."
   }
 };
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
+/* HELPERS */
 const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -1491,32 +1470,22 @@ const store = {
 const LANGS = ['en', 'uk', 'ru'];
 let lang = store.get('replica_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
 if (!I18N[lang]) lang = 'en';
-let hue = +(store.get('replica_hue') || 154);
+let hue = +(store.get('replica_hue_v2') || 120);   // default: light green
 let mode = store.get('replica_mode') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-/* =========================================================
-   HAPTICS (Android: Vibration API · iOS 17.4+: switch-input trick)
-   ========================================================= */
+/* HAPTICS: only fired on real taps (click), never on touch-start / scroll */
 const canVibrate = typeof navigator.vibrate === 'function';
 const HAPTIC = {
-  tap:    [8],
-  tick:   [5],
-  select: [12],
-  toggle: [10, 28, 14],
-  open:   [8, 24, 14],
-  close:  [6],
-  warn:   [16, 40, 16]
+  tap: [8], tick: [5], select: [12], toggle: [10, 28, 14],
+  open: [8, 24, 14], close: [6], warn: [16, 40, 16]
 };
-let iosSwitch = null, lastIosHaptic = 0;
+let iosSwitch = null, lastHapticAt = 0;
 function haptic(kind = 'tap') {
+  const now = performance.now();
+  if (now - lastHapticAt < 40) return;
+  lastHapticAt = now;
   try {
-    if (canVibrate) {
-      navigator.vibrate(HAPTIC[kind] || HAPTIC.tap);
-      return;
-    }
-    const now = performance.now();
-    if (now - lastIosHaptic < 40) return;
-    lastIosHaptic = now;
+    if (canVibrate) { navigator.vibrate(HAPTIC[kind] || HAPTIC.tap); return; }
     if (!iosSwitch) {
       iosSwitch = document.createElement('label');
       iosSwitch.setAttribute('aria-hidden', 'true');
@@ -1531,48 +1500,66 @@ function haptic(kind = 'tap') {
   } catch (_) {}
 }
 
-/* =========================================================
-   PRESS EFFECT (shape morph held for a minimum time) + RIPPLE
-   ========================================================= */
-const PRESS_SEL = '.m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .lang-chip-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
-const MIN_PRESS_MS = 180;
+/* PRESS EFFECT: touch presses show only after a short hold and are cancelled
+   as soon as the finger moves (scrolling) or the browser takes over the gesture */
+const PRESS_SEL = '.m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
+const MIN_PRESS_MS = 160;
+let pend = null;
+
+function cancelPress() {
+  if (!pend) return;
+  clearTimeout(pend.timer);
+  pend.el.classList.remove('is-pressed');
+  pend = null;
+}
+function endPress() {
+  if (!pend) return;
+  const p = pend; pend = null;
+  clearTimeout(p.timer);
+  if (!p.on) { p.el.classList.add('is-pressed'); p.t0 = performance.now(); }
+  setTimeout(() => p.el.classList.remove('is-pressed'), Math.max(0, MIN_PRESS_MS - (performance.now() - p.t0)));
+}
 
 document.addEventListener('pointerdown', e => {
+  cancelPress();
   const el = e.target.closest(PRESS_SEL);
-  if (el) {
-    el.classList.add('is-pressed');
-    const t0 = performance.now();
-    const release = () => {
-      window.removeEventListener('pointerup', release, true);
-      window.removeEventListener('pointercancel', release, true);
-      setTimeout(() => el.classList.remove('is-pressed'), Math.max(0, MIN_PRESS_MS - (performance.now() - t0)));
-    };
-    window.addEventListener('pointerup', release, true);
-    window.addEventListener('pointercancel', release, true);
-    if (canVibrate) haptic('tap');
+  if (!el) return;
+  const p = { el, on: false, t0: 0, x: e.clientX, y: e.clientY, timer: 0 };
+  if (e.pointerType === 'mouse') {
+    p.on = true; p.t0 = performance.now(); el.classList.add('is-pressed');
+  } else {
+    p.timer = setTimeout(() => { p.on = true; p.t0 = performance.now(); el.classList.add('is-pressed'); }, 90);
   }
+  pend = p;
+}, { passive: true });
 
-  const host = e.target.closest('.m3e-state');
-  if (!host) return;
-  const rect = host.getBoundingClientRect();
-  const radius = Math.max(rect.width, rect.height);
-  const ripple = document.createElement('span');
-  ripple.className = 'm3e-rip';
-  ripple.style.width = ripple.style.height = `${radius * 2}px`;
-  ripple.style.left = `${e.clientX - rect.left - radius}px`;
-  ripple.style.top = `${e.clientY - rect.top - radius}px`;
-  host.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 600);
-});
+window.addEventListener('pointermove', e => {
+  if (pend && Math.hypot(e.clientX - pend.x, e.clientY - pend.y) > 8) cancelPress();
+}, { passive: true });
+window.addEventListener('pointerup', endPress, true);
+window.addEventListener('pointercancel', cancelPress, true);
+window.addEventListener('scroll', cancelPress, { passive: true });
 
-// iOS: haptics need a click gesture; specific handlers fire first and de-dupe this
+/* Ripple + generic haptic only on actual click */
 document.addEventListener('click', e => {
-  if (!canVibrate && e.target.closest(PRESS_SEL)) haptic('tap');
+  const host = e.target.closest('.m3e-state');
+  if (host) {
+    const rect = host.getBoundingClientRect();
+    const radius = Math.max(rect.width, rect.height);
+    const cx = e.detail === 0 ? rect.left + rect.width / 2 : e.clientX;
+    const cy = e.detail === 0 ? rect.top + rect.height / 2 : e.clientY;
+    const ripple = document.createElement('span');
+    ripple.className = 'm3e-rip';
+    ripple.style.width = ripple.style.height = `${radius * 2}px`;
+    ripple.style.left = `${cx - rect.left - radius}px`;
+    ripple.style.top = `${cy - rect.top - radius}px`;
+    host.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  }
+  if (e.target.closest(PRESS_SEL)) haptic('tap');   // deduped against specific haptics
 });
 
-/* =========================================================
-   TOAST
-   ========================================================= */
+/* TOAST */
 let toastTimeout;
 function showToast(text) {
   const toast = $('#toastNotice');
@@ -1582,13 +1569,11 @@ function showToast(text) {
   toastTimeout = setTimeout(() => toast.classList.remove('active'), 3200);
 }
 
-/* =========================================================
-   THEME
-   ========================================================= */
+/* THEME */
 function applyHue(newHue) {
   hue = +newHue;
   document.documentElement.style.setProperty('--h', hue);
-  store.set('replica_hue', hue);
+  store.set('replica_hue_v2', hue);
   $$('#swatchGrid .monet-swatch').forEach(sw => sw.classList.toggle('active', +sw.dataset.hue === hue));
 }
 
@@ -1604,12 +1589,10 @@ function applyMode(newMode) {
   $('#modeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
 }
 
-/* =========================================================
-   LANGUAGE: apply text, sliding indicator, sliding page swap
-   ========================================================= */
+/* LANGUAGE */
 function markActiveLang() {
-  $('#langTray').style.setProperty('--idx', LANGS.indexOf(lang));
-  $$('#langTray [data-lang]').forEach(btn => {
+  $('#langTrack').style.setProperty('--idx', LANGS.indexOf(lang));
+  $$('#langTrack [data-lang]').forEach(btn => {
     const on = btn.dataset.lang === lang;
     btn.classList.toggle('active', on);
     btn.setAttribute('aria-checked', String(on));
@@ -1618,10 +1601,11 @@ function markActiveLang() {
 
 function applyI18n() {
   const dict = I18N[lang];
+  const year = new Date().getFullYear();
   document.documentElement.lang = lang;
   $$('[data-i]').forEach(el => {
     const k = el.dataset.i;
-    if (dict[k] !== undefined) el.innerHTML = dict[k];
+    if (dict[k] !== undefined) el.innerHTML = dict[k].replace('{y}', year);
   });
   $('#protectStepRows').innerHTML = dict.st1Steps.map((txt, i) => `
     <div class="step-point" style="--i:${i}">
@@ -1631,7 +1615,6 @@ function applyI18n() {
   `).join('');
 }
 
-/* Page content slides out in the direction of travel, text swaps, new content slides in */
 async function slideSwap(dir) {
   const blocks = [...$$('main > section'), $('footer')];
   if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
@@ -1667,9 +1650,7 @@ function closeThemeSheet() {
   btn.setAttribute('aria-expanded', 'false');
 }
 
-/* =========================================================
-   SCROLL-AWARE NAV + REVEAL CHOREOGRAPHY
-   ========================================================= */
+/* SCROLL: nav only changes colour, never size; reveal is fade + slight slide */
 function setupMotion() {
   const nav = $('#capsuleNav');
   let ticking = false;
@@ -1687,17 +1668,15 @@ function setupMotion() {
   if (reduceMotion) return;
 
   const groups = [
-    ['#capsuleNav', 0, '-26px'],
     ['.hero-heading', 120], ['.hero-text', 220], ['.hero-button-group', 320], ['.chips-row', 420],
     ['.step-section-header'], ['.m3e-expandable'], ['.trilogy-tile'],
-    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box'], ['footer']
+    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box']
   ];
   const targets = [];
-  groups.forEach(([sel, delay, ty]) => {
+  groups.forEach(([sel, delay]) => {
     $$(sel).forEach((el, i) => {
       el.classList.add('reveal');
       el.dataset.d = (delay !== undefined ? delay : 0) + (sel === '.trilogy-tile' ? i * 90 : 0);
-      if (ty) el.style.setProperty('--ty', ty);
       targets.push(el);
     });
   });
@@ -1719,13 +1698,86 @@ function setupMotion() {
     }
   });
 
-  setTimeout(() => targets.forEach(el => io.observe(el)), 1000);
+  setTimeout(() => targets.forEach(el => io.observe(el)), 900);
 }
 
-/* =========================================================
-   INIT
-   ========================================================= */
+/* INIT */
 let langBusy = false;
+
+async function selectLang(next) {
+  if (langBusy) return;
+  if (next === lang) {
+    haptic('tick');
+    markActiveLang();
+    await sleep(160);
+    setLangTrayVisible(false);
+    return;
+  }
+  langBusy = true;
+  haptic('select');
+  const dir = LANGS.indexOf(next) > LANGS.indexOf(lang) ? 1 : -1;
+  lang = next;
+  store.set('replica_lang', lang);
+  markActiveLang();
+
+  await sleep(120);
+  await slideSwap(dir);
+  await sleep(300);
+  setLangTrayVisible(false);
+  haptic('close');
+  langBusy = false;
+}
+
+function setupLangSlider() {
+  const track = $('#langTrack');
+  let dragging = false, lastIdx = -1;
+
+  const geom = () => {
+    const r = track.getBoundingClientRect();
+    return { left: r.left + 4, w: (r.width - 8) / 3 };
+  };
+  const posAt = x => {
+    const g = geom();
+    return Math.max(0, Math.min(2, (x - g.left) / g.w - 0.5));
+  };
+
+  track.addEventListener('pointerdown', e => {
+    if (langBusy) return;
+    dragging = true;
+    try { track.setPointerCapture(e.pointerId); } catch (_) {}
+    track.classList.add('dragging');
+    const p = posAt(e.clientX);
+    lastIdx = Math.round(p);
+    track.style.setProperty('--idx', p);
+  });
+  track.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const p = posAt(e.clientX);
+    track.style.setProperty('--idx', p);
+    const idx = Math.round(p);
+    if (idx !== lastIdx) { lastIdx = idx; haptic('tick'); }
+  });
+  const finish = e => {
+    if (!dragging) return;
+    dragging = false;
+    track.classList.remove('dragging');
+    const idx = Math.round(posAt(e.clientX));
+    track.style.setProperty('--idx', idx);
+    selectLang(LANGS[idx]);
+  };
+  track.addEventListener('pointerup', finish);
+  track.addEventListener('pointercancel', () => {
+    dragging = false;
+    track.classList.remove('dragging');
+    markActiveLang();
+  });
+
+  /* keyboard access */
+  track.addEventListener('click', e => {
+    const btn = e.target.closest('[data-lang]');
+    if (btn && e.detail === 0) selectLang(btn.dataset.lang);
+  });
+}
 
 function init() {
   $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
@@ -1738,7 +1790,6 @@ function init() {
             style="background: oklch(0.68 0.16 ${item.hue})"></button>
   `).join('');
 
-  /* Language button opens the sliding selector */
   $('#btnLangToggle').addEventListener('click', e => {
     e.stopPropagation();
     haptic('open');
@@ -1746,35 +1797,8 @@ function init() {
     setLangTrayVisible(true);
   });
 
-  /* Picking a language: indicator slides, page slides, tray closes */
-  $('#langTray').addEventListener('click', async e => {
-    const btn = e.target.closest('[data-lang]');
-    if (!btn || langBusy) return;
-    const next = btn.dataset.lang;
+  setupLangSlider();
 
-    if (next === lang) {
-      haptic('tick');
-      await sleep(160);
-      setLangTrayVisible(false);
-      return;
-    }
-
-    langBusy = true;
-    haptic('select');
-    const dir = LANGS.indexOf(next) > LANGS.indexOf(lang) ? 1 : -1;
-    lang = next;
-    store.set('replica_lang', lang);
-    markActiveLang();                 // indicator slides immediately
-
-    await sleep(120);
-    await slideSwap(dir);
-    await sleep(300);
-    setLangTrayVisible(false);
-    haptic('close');
-    langBusy = false;
-  });
-
-  /* Outside tap closes both tray and sheet */
   document.addEventListener('click', e => {
     if (!e.target.closest('#capsuleNav') && !langBusy) setLangTrayVisible(false);
     if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) closeThemeSheet();
@@ -1783,7 +1807,6 @@ function init() {
     if (e.key === 'Escape') { setLangTrayVisible(false); closeThemeSheet(); }
   });
 
-  /* Palette */
   $('#swatchGrid').addEventListener('click', e => {
     const swatch = e.target.closest('.monet-swatch');
     if (!swatch) return;
@@ -1806,7 +1829,6 @@ function init() {
     withTransition(() => applyMode(mode === 'dark' ? 'light' : 'dark'));
   });
 
-  /* Play Protect expandable */
   const protectWrap = $('#protectExpandable');
   const protectBtn = $('#protectToggleBtn');
   protectBtn.addEventListener('click', () => {
@@ -1815,7 +1837,6 @@ function init() {
     haptic(isOpen ? 'open' : 'close');
   });
 
-  /* Replica APK placeholder */
   $('#dlReplicaAnchor').addEventListener('click', e => {
     if (CONFIG.links.replicaApk === '#' || !CONFIG.links.replicaApk) {
       e.preventDefault();
