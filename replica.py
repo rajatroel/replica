@@ -8,6 +8,8 @@ import subprocess
 import threading
 import tty
 import termios
+from collections import deque
+from datetime import datetime, timedelta
 
 from rich.console import Console
 from rich.panel import Panel
@@ -40,11 +42,101 @@ def log_color(message):
         return "bold #C9B8FF"
     return "bold #5CC8FF"
 
+# ==========================================
+# PERSISTENT LOG STORE (Termux home, last 24 hours only)
+#   * the file is replaced when the script starts, then only grows during the run
+#   * a date line is written whenever a new day begins
+#   * entries older than 24 hours are dropped from memory and from the file
+# ==========================================
+LOG_FILE = os.path.join(os.path.expanduser("~"), "replica_logs.txt")
+LOG_KEEP = timedelta(hours=24)
+LOG_REWRITE_EVERY = 600              # seconds between file clean-ups once old lines exist
+LOG_ENTRIES = deque()                # (datetime, text), oldest first
+_LOG_LOCK = threading.Lock()
+_LOG_STATE = {"started": False, "file_date": None, "dirty": False, "rewritten": 0.0}
+
+def _date_header(moment):
+    return f"──── {moment:%A, %d %b %Y} ────"
+
+def _file_write(lines, mode):
+    try:
+        with open(LOG_FILE, mode, encoding="utf-8") as fh:
+            fh.write("\n".join(lines) + ("\n" if lines else ""))
+    except Exception:
+        pass
+
+def _rewrite_file_locked():
+    """Rewrite the whole file from memory (used after old entries were dropped)."""
+    lines = []
+    last_date = None
+    for moment, text in LOG_ENTRIES:
+        if moment.date() != last_date:
+            lines.append(_date_header(moment))
+            last_date = moment.date()
+        lines.append(f"[{moment:%H:%M:%S}] {text}")
+    _file_write(lines, "w")
+    _LOG_STATE.update(started=True, file_date=last_date, dirty=False, rewritten=time.time())
+
+def prune_logs(force=False):
+    """Drop entries older than 24 hours. Returns True when something was removed."""
+    cutoff = datetime.now() - LOG_KEEP
+    removed = False
+    with _LOG_LOCK:
+        while LOG_ENTRIES and LOG_ENTRIES[0][0] < cutoff:
+            LOG_ENTRIES.popleft()
+            removed = True
+        if removed:
+            _LOG_STATE["dirty"] = True
+        if _LOG_STATE["dirty"] and (force or time.time() - _LOG_STATE["rewritten"] > LOG_REWRITE_EVERY):
+            _rewrite_file_locked()
+    return removed
+
+def record_log(text):
+    """Store one log line in memory and in the file. Returns its timestamp."""
+    now = datetime.now()
+    with _LOG_LOCK:
+        LOG_ENTRIES.append((now, text))
+        lines = []
+        if now.date() != _LOG_STATE["file_date"]:
+            lines.append(_date_header(now))
+            _LOG_STATE["file_date"] = now.date()
+        lines.append(f"[{now:%H:%M:%S}] {text}")
+        mode = "a" if _LOG_STATE["started"] else "w"     # first write of a run replaces the old file
+        _LOG_STATE["started"] = True
+        _file_write(lines, mode)
+    prune_logs()
+    return now
+
+def clear_logs():
+    """Empty the logs in memory and the file."""
+    with _LOG_LOCK:
+        LOG_ENTRIES.clear()
+        _LOG_STATE.update(started=True, file_date=None, dirty=False, rewritten=time.time())
+        _file_write([], "w")
+
+def share_logs():
+    """Open the Android share sheet for the log file. Returns (ok, message)."""
+    prune_logs(force=True)
+    try:
+        if not os.path.exists(LOG_FILE) or os.path.getsize(LOG_FILE) == 0:
+            return False, "No logs to share"
+    except OSError:
+        return False, "No logs to share"
+    if shutil.which("termux-share") is None:
+        return False, "Share failed: termux-api is not installed"
+    try:
+        subprocess.run(["termux-share", "-a", "send", "-c", "text/plain", "-t", "Replica logs", LOG_FILE],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
+        return True, "Share sheet opened"
+    except Exception as e:
+        return False, f"Share failed: {e}"
+
 def term_log(message):
-    """Print a concise, flush-left colored line to the terminal without blank lines."""
+    """Print a concise, flush-left colored line to the terminal and keep it in the log file."""
     for raw_line in str(message).splitlines():
         clean = raw_line.strip()
         if clean:
+            record_log(clean)
             console.print(Text(clean, style=log_color(clean)))
 
 # ==========================================
@@ -180,7 +272,6 @@ import io
 import base64
 import requests
 from concurrent.futures import Future
-from datetime import datetime, timedelta
 
 import uiautomator2 as u2
 from telethon import TelegramClient, events, errors
@@ -189,8 +280,8 @@ from telethon.tl.types import MessageEntityTextUrl
 
 import qrcode
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
-from textual.widgets import Button, Static
+from textual.containers import Horizontal, Vertical
+from textual.widgets import Button, RichLog, Static
 
 from PIL import Image, ImageOps
 import cv2
@@ -266,6 +357,7 @@ HWID = API_HASH
 # ==========================================
 LICENSE_OK = False
 LICENSE_MSG = "checking..."
+LICENSE_DAYS = None      # whole days left until the license expires (None if unknown)
 LICENSE_EXPIRES = ""     # human readable expiry date, e.g. "31 Dec 2026" (empty if the server didn't send one)
 
 def format_expiry(raw):
@@ -279,9 +371,36 @@ def format_expiry(raw):
     except Exception:
         return raw
 
+def days_left(raw):
+    """Whole days from today until the expiry date, or None if it cannot be read."""
+    raw = str(raw or "").strip()
+    if not raw:
+        return None
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        if parsed.tzinfo is not None:
+            parsed = parsed.astimezone().replace(tzinfo=None)
+        return (parsed.date() - datetime.now().date()).days
+    except Exception:
+        return None
+
+def license_days_text():
+    """Short text for the dashboard: '183 days left'."""
+    if LICENSE_DAYS is None:
+        return f"Expires on {LICENSE_EXPIRES}" if LICENSE_EXPIRES else "Active"
+    if LICENSE_DAYS < 0:
+        return "Expired"
+    if LICENSE_DAYS == 0:
+        return "Expires today"
+    if LICENSE_DAYS == 1:
+        return "1 day left"
+    return f"{LICENSE_DAYS} days left"
+
 def check_license():
-    """Verify the license with the server. Updates LICENSE_OK / LICENSE_MSG / LICENSE_EXPIRES."""
-    global LICENSE_OK, LICENSE_MSG, LICENSE_EXPIRES
+    """Verify the license with the server. Updates LICENSE_OK / LICENSE_MSG / LICENSE_EXPIRES / LICENSE_DAYS."""
+    global LICENSE_OK, LICENSE_MSG, LICENSE_EXPIRES, LICENSE_DAYS
+    LICENSE_DAYS = None
+    log("Checking license...")
     try:
         response = requests.post(AI_PROXY_URL, json={"license_key": LICENSE_KEY, "hwid": HWID, "action": "verify"}, timeout=10)
         if response.status_code == 403:
@@ -294,6 +413,7 @@ def check_license():
                 LICENSE_OK = True
                 LICENSE_MSG = "valid"
                 LICENSE_EXPIRES = format_expiry(body.get("expires"))
+                LICENSE_DAYS = days_left(body.get("expires"))
             else:
                 LICENSE_OK = False
                 LICENSE_EXPIRES = ""
@@ -310,6 +430,10 @@ def check_license():
         LICENSE_OK = False
         LICENSE_EXPIRES = ""
         LICENSE_MSG = f"server offline ({e})"
+    if LICENSE_OK:
+        log(f"License valid: {license_days_text()}" + (f" (until {LICENSE_EXPIRES})" if LICENSE_EXPIRES else ""))
+    else:
+        log(f"License check failed: {LICENSE_MSG}")
     return LICENSE_OK
 
 # ==========================================
@@ -403,18 +527,24 @@ d = None
 # UI BRIDGE
 # ==========================================
 def log(message=""):
-    """Write a line to the UI log or colored terminal log. Safe to call from any thread."""
+    """Record a line in the log file and show it in the UI log (or the terminal before the UI exists).
+    Safe to call from any thread."""
     app = ui
     if app is None:
         term_log(message)
         return
-    try:
-        app.call_from_thread(app.add_log, str(message))
-    except RuntimeError:
-        # Already on the UI thread
-        app.add_log(str(message))
-    except Exception:
-        pass
+    for raw_line in str(message).splitlines():
+        clean = raw_line.strip()
+        if not clean:
+            continue
+        moment = record_log(clean)
+        try:
+            app.call_from_thread(app.add_log, moment, clean)
+        except RuntimeError:
+            # Already on the UI thread
+            app.add_log(moment, clean)
+        except Exception:
+            pass
 
 # Cashcoins earned this session (kept in tenths to avoid float drift)
 CASH = {"tenths": 0}
@@ -910,6 +1040,7 @@ def connect_with_retry(max_retries=5, delay=3):
         except Exception as e:
             log(f"Connection failed: {e}")
             if attempt < max_retries:
+                log(f"Retrying in {delay}s")
                 time.sleep(delay)
     log("Device connection failed")
     return None
@@ -928,20 +1059,25 @@ def perform_switch(device, target):
     ig_pkg = "com.instagram.android"
     screen_width, screen_height = device.window_size()
 
+    log("Closing Instagram")
     device.app_stop(ig_pkg)
     time.sleep(1.5)
+    log("Opening Instagram")
     device.app_start(ig_pkg)
 
+    log("Waiting for the profile tab")
     profile_btn = device(resourceIdMatches=".*profile_tab.*")
 
     if profile_btn.exists(timeout=25):
         time.sleep(1.5)
+        log("Long pressing the profile tab")
         profile_btn.long_click(duration=1.0)
     else:
         log("Profile tab not found")
         device.app_stop(ig_pkg)
         return False
 
+    log("Waiting 3.5s for the account list")
     time.sleep(3.5)
 
     meta_logo_pattern = "(?i)^(Логотип Meta|Meta logo)$"
@@ -951,14 +1087,19 @@ def perform_switch(device, target):
         target_elem = device(text=target)
 
         if target_elem.exists(timeout=0):
+            log(f"Account {target} found, tapping it")
             target_elem.click()
+            log("Waiting 3.5s for the switch to finish")
             time.sleep(3.5)
+            log("Closing Instagram")
             device.app_stop(ig_pkg)
+            log(f"Switched to {target}")
             return True
 
         if device(descriptionMatches=meta_logo_pattern).exists(timeout=0):
             break
 
+        log("Scrolling the account list")
         device.swipe(screen_width * 0.5, screen_height * 0.8, screen_width * 0.5, screen_height * 0.4, duration=0.5)
         time.sleep(3.5)
 
@@ -972,12 +1113,16 @@ def perform_like(device, post_url):
     chrome_pkg = "com.android.chrome"
     screen_width, screen_height = device.window_size()
 
+    log("Closing Instagram")
     device.app_stop(ig_pkg)
     time.sleep(1.5)
+    log("Opening the post")
     device.shell(f'am start -a android.intent.action.VIEW -d "{post_url}" -f 0x10000000 -p {ig_pkg}')
 
+    log("Waiting for the post to load")
     media_options = device(resourceId="com.instagram.android:id/media_option_button")
     if not media_options.exists(timeout=15):
+        log("Post did not open")
         cleanup_apps(device, ig_pkg, chrome_pkg)
         return False
 
@@ -986,12 +1131,16 @@ def perform_like(device, post_url):
     target_x = screen_width // 2
     target_y = bounds['bottom'] + (screen_width // 2)
 
+    log("Post loaded, waiting 3.5s")
     time.sleep(3.5)
     # Both taps run in one shell command to avoid Python-side latency
+    log(f"Double tapping at {target_x},{target_y}")
     device.shell(f"input tap {target_x} {target_y} && sleep 0.125 && input tap {target_x} {target_y}")
+    log("Waiting 3.5s for the like to register")
     time.sleep(3.5)
 
     cleanup_apps(device, ig_pkg, chrome_pkg)
+    log("Like finished")
     return True
 
 def perform_comment(device, post_url, my_comment):
@@ -1000,32 +1149,40 @@ def perform_comment(device, post_url, my_comment):
     chrome_pkg = "com.android.chrome"
     screen_width, screen_height = device.window_size()
 
+    log("Closing Instagram")
     device.app_stop(ig_pkg)
     time.sleep(1.5)
+    log("Opening the post")
     device.shell(f'am start -a android.intent.action.VIEW -d "{post_url}" -f 0x10000000 -p {ig_pkg}')
 
     # Find the comment button, scrolling once if it is not visible
+    log("Looking for the comment button")
     comment_btn = device(resourceId="com.instagram.android:id/row_feed_button_comment")
     if not comment_btn.exists(timeout=15):
+        log("Comment button not visible, scrolling once")
         time.sleep(2.5)
         device.swipe(screen_width * 0.5, screen_height * 0.80, screen_width * 0.5, screen_height * 0.40, duration=0.7)
         time.sleep(2.5)
         comment_btn = device(resourceId="com.instagram.android:id/row_feed_button_comment")
 
     if not comment_btn.exists(timeout=5):
+        log("Comment button not found")
         cleanup_apps(device, ig_pkg, chrome_pkg)
         return False
 
     time.sleep(2.5)
+    log("Opening the comment box")
     comment_btn.click()
     time.sleep(2.5)
 
     input_box = device(resourceIdMatches=".*layout_comment_thread_edittext.*")
 
     if input_box.exists(timeout=5):
+        log("Typing the comment")
         input_box.set_text(my_comment)
         time.sleep(0.5)
     else:
+        log("Comment input not found")
         cleanup_apps(device, ig_pkg, chrome_pkg)
         return False
 
@@ -1033,10 +1190,14 @@ def perform_comment(device, post_url, my_comment):
     post_btn = device(descriptionMatches=post_pattern)
 
     if post_btn.exists(timeout=5):
+        log("Tapping Post")
         post_btn.click()
         time.sleep(2.5)
+    else:
+        log("Post button not found")
 
     # The edit button appears once the comment is published
+    log("Waiting for the comment to be published")
     edit_button = device(resourceIdMatches=".*row_comment_textview_edit_button.*")
 
     success = False
@@ -1047,11 +1208,14 @@ def perform_comment(device, post_url, my_comment):
         time.sleep(1.0)
 
     if success:
+        log("Comment published, saving the proof screenshot")
         device.screenshot().save("/sdcard/Proof.png")
         time.sleep(2.5)
+        log("Proof screenshot saved")
         cleanup_apps(device, ig_pkg, chrome_pkg)
         return True
     else:
+        log("Comment was not confirmed on screen")
         cleanup_apps(device, ig_pkg, chrome_pkg)
         return False
 
@@ -1061,13 +1225,16 @@ def perform_captcha(device, hidden_url, answer_box):
     Then wait for the solver result (answer_box) and submit its first answer.
     """
     chrome_pkg = "com.android.chrome"
+    log("Opening the captcha page in Chrome")
     device.shell(f'am start -a android.intent.action.VIEW -d "{hidden_url}" -p {chrome_pkg}')
 
     lang_pattern = "(?i)^(Verify you are human|Подтвердите, что вы человек|Підтвердьте, що ви людина)$"
     success_pattern = "(?i)^(Success!|Успех!|Успіх!)$"
 
     start_time = time.time()
+    tapped = False
 
+    log("Waiting for the Turnstile check")
     while time.time() - start_time < 30:
         # Tap the Turnstile checkbox when it is visible
         device.dump_hierarchy()
@@ -1076,16 +1243,22 @@ def perform_captcha(device, hidden_url, answer_box):
             bounds = verify_target.info['bounds']
             target_x = (bounds['left'] + bounds['right']) // 2
             target_y = (bounds['top'] + bounds['bottom']) // 2
+            if not tapped:
+                log("Tapping the verify checkbox")
+                tapped = True
             device.click(target_x, target_y)
 
         time.sleep(1)
+        if time.time() - start_time >= 30: break
 
         # Turnstile passed: wait for the solver, then submit the first answer
         device.dump_hierarchy()
         success_target = device(textMatches=success_pattern)
         if success_target.exists():
+            log("Turnstile passed")
             input_element = device(resourceId="captcha-answer")
             if input_element.exists(timeout=5):
+                log("Waiting for the solver answer")
                 try:
                     answers = answer_box.result(timeout=90)
                 except Exception:
@@ -1095,10 +1268,12 @@ def perform_captcha(device, hidden_url, answer_box):
                     log("Captcha: no solver answer to type")
                     return False
 
+                log(f"Typing the answer: {answers[0]}")
                 input_element.click()
                 input_element.set_text(answers[0])
                 time.sleep(0.5)
                 device.press("enter")
+                log("Answer submitted")
                 time.sleep(2.0)
                 return True
             log("Captcha: answer box not found on the page")
@@ -1180,6 +1355,7 @@ def get_math_answer(target_emoji, b64_images):
     }
     for attempt in range(1, 4):
         try:
+            log(f"Contacting the solver ({attempt}/3)")
             response = requests.post(AI_PROXY_URL, json=payload, timeout=30)
             if response.status_code == 403:
                 log(response.json().get('error', 'License Error'))
@@ -1223,6 +1399,7 @@ async def stop_automation(reason="Stopped by user"):
     RUNNING = False
     log(f"Stopped: {reason}")
     await asyncio.to_thread(stop_device_apps)
+    log("Instagram and Chrome closed")
     refresh_ui()
     ui_set_state("Stopped")
 
@@ -1231,14 +1408,18 @@ async def kill_everything(reason):
 
 async def smart_send(text_to_send):
     """Send a message to the bot and wait for its reply, retrying once."""
-    await asyncio.sleep(random.uniform(5.0, 7.0))
+    delay = random.uniform(5.0, 7.0)
+    log(f"Waiting {delay:.1f}s before sending: {text_to_send}")
+    await asyncio.sleep(delay)
     if not RUNNING: return
     for attempt in range(1, 3):
         bot_replied_event.clear()
         log(f"Clicking: {text_to_send} ({attempt}/2)")
         await client.send_message(TARGET_CHAT, text_to_send, parse_mode=None, link_preview=False)
+        log("Waiting for the bot reply (60s max)")
         try:
             await asyncio.wait_for(bot_replied_event.wait(), timeout=60.0)
+            log("Bot replied")
             return
         except asyncio.TimeoutError:
             if not RUNNING: return
@@ -1250,20 +1431,30 @@ async def smart_send(text_to_send):
 async def smart_send_photo():
     """Upload the proof screenshot to the bot and wait for its reply."""
     photo_path = "/sdcard/Proof.png"
-    await asyncio.sleep(random.uniform(3.0, 4.0))
+    delay = random.uniform(3.0, 4.0)
+    log(f"Waiting {delay:.1f}s before uploading the proof")
+    await asyncio.sleep(delay)
     if not RUNNING: return True
-    if not os.path.exists(photo_path): return False
+    if not os.path.exists(photo_path):
+        log("Proof screenshot file not found")
+        return False
 
     for attempt in range(1, 3):
         bot_replied_event.clear()
         log(f"Uploading proof ({attempt}/2)")
         try:
             await client.send_file(TARGET_CHAT, photo_path)
+            log("Waiting for the bot reply (60s max)")
             await asyncio.wait_for(bot_replied_event.wait(), timeout=60.0)
+            log("Bot replied to the proof")
             return True
         except asyncio.TimeoutError:
-            if attempt == 2: return False
-        except Exception:
+            if attempt == 2:
+                log("No reply to the proof")
+                return False
+            log("No reply in 60s, retrying the upload...")
+        except Exception as e:
+            log(f"Proof upload error: {type(e).__name__}")
             if attempt == 1: await asyncio.sleep(3.0)
             else: return False
 
@@ -1278,21 +1469,24 @@ async def do_switch_account(target_username):
     return success
 
 async def do_like_task(link):
-    log("Like task detected")
+    log(f"Like task detected: {link}")
     success = await asyncio.to_thread(perform_like, d, link)
     if success:
         add_cash("like")
+        log("Like completed (+1.1 cashcoins)")
         await smart_send("✅Completed")
     else:
         log("Like failed: post did not open")
         await smart_send("❌Skip")
 
 async def do_comment_task(link, full_msg_text):
-    log("Comment task detected")
+    log(f"Comment task detected: {link}")
     comment_text = full_msg_text.split("Text to comment :")[1].strip() if "Text to comment :" in full_msg_text else full_msg_text.strip()
+    log(f"Comment text: {' '.join(comment_text.split())[:80]}")
 
     # Skip comments containing mentions
     if "@" in comment_text:
+        log("Skipping: the comment contains a @mention")
         await smart_send("❌Skip")
         return
 
@@ -1301,6 +1495,7 @@ async def do_comment_task(link, full_msg_text):
     if success:
         if await smart_send_photo():
             add_cash("comment")
+            log("Comment completed (+6.0 cashcoins)")
         else:
             log("Comment proof could not be sent")
             await smart_send("❌Skip")
@@ -1328,10 +1523,15 @@ async def process_bot_message(event):
     text = getattr(message, 'raw_text', getattr(message, 'text', ''))
     if not text: return
     text_lower = text.lower()
+    log(f"Bot: {' '.join(text.split())[:90]}")
 
     # Ignore informational messages
-    if any(word in text_lower for word in ABSOLUTE_BLOCKS): return
-    if "warnings" in text_lower and "profile's username" not in text_lower and "too many" not in text_lower: return
+    if any(word in text_lower for word in ABSOLUTE_BLOCKS):
+        log("Ignored: information message")
+        return
+    if "warnings" in text_lower and "profile's username" not in text_lower and "too many" not in text_lower:
+        log("Ignored: warnings message")
+        return
 
     # Stop everything when verification fails
     if "verification failed" in text_lower:
@@ -1351,6 +1551,7 @@ async def process_bot_message(event):
             log("Captcha: could not read the emoji")
             return
         target_emoji = emoji_match.group(2).strip()
+        log(f"Captcha target emoji: {target_emoji}")
 
         # Extract the hidden verification link
         hidden_url = None
@@ -1371,6 +1572,7 @@ async def process_bot_message(event):
         answers = []
         try:
             # Collect the 3 captcha images sent just before this message
+            log("Collecting captcha images")
             photo_messages = []
             time_threshold = message.date - timedelta(seconds=15)
 
@@ -1381,14 +1583,17 @@ async def process_bot_message(event):
                     if len(photo_messages) == 3: break
 
             if len(photo_messages) == 3:
+                log("Downloading 3 captcha images")
                 downloads = await asyncio.gather(*[client.download_media(msg, bytes) for msg in photo_messages])
                 downloads.reverse()
+                log("Cleaning captcha images")
                 b64_images = await asyncio.gather(*[
                     asyncio.to_thread(lambda b=img_bytes: process_image_in_ram(Image.open(io.BytesIO(b))))
                     for img_bytes in downloads
                 ])
 
                 # Ordered answers: [emoji match, next answer, next answer]
+                log("Sending images to the solver")
                 answers = await asyncio.to_thread(get_math_answer, target_emoji, list(b64_images))
             else:
                 log(f"Captcha: found {len(photo_messages)} of 3 images")
@@ -1409,6 +1614,7 @@ async def process_bot_message(event):
 
         log(f"Captcha computed: {answers}")
 
+        log("Waiting for the Chrome step to finish")
         captcha_success = await captcha_task
         if not captcha_success:
             log("Captcha Chrome step failed")
@@ -1423,28 +1629,34 @@ async def process_bot_message(event):
             text = f"{text}\n\nText to comment : {pending_text}"
             pending_text = None
             text_lower = text.lower()
+            log("Comment task paired with its text")
         else:
             pending_task = text
+            log("Comment task received, waiting for its text")
             return
     elif pending_task:
         text = f"{pending_task}\n\nText to comment : {text}"
         pending_task = None
         text_lower = text.lower()
+        log("Comment text received, task is complete")
 
     match = re.search(r'(https?://[^\s\]\)\>]+)', text)
     extracted_link = match.group(1) if match else None
 
     if "choose social network" in text_lower:
+        log("Choosing social network: Instagram")
         await smart_send("Instagram")
 
     # Account selection (rotates through configured accounts)
     elif any(phrase in text_lower for phrase in ["profile's username for tasks completing", "is on review", "please choose account from the list", "too many"]):
         account_info = accounts[current_account_index]
         current_account_index = (current_account_index + 1) % len(accounts)
+        log(f"Selecting account: {account_info['username']}")
         await smart_send(account_info["username"])
 
     # Like task
     elif re.search(r'1\.1\s*cashcoins', text_lower):
+        log("Like task offered (1.1 cashcoins)")
         if extracted_link:
             target_index = (current_account_index - 1) % len(accounts)
             if active_phone_account_index != target_index:
@@ -1453,12 +1665,16 @@ async def process_bot_message(event):
                     await smart_send("❌Skip")
                     return
                 active_phone_account_index = target_index
+            else:
+                log("Phone is already on the right account")
             await do_like_task(extracted_link)
         else:
+            log("No link in the task, skipping")
             await smart_send("❌Skip")
 
     # Comment task
     elif re.search(r'6\.0\s*cashcoins', text_lower) or ("leave the comment" in text_lower and extracted_link):
+        log("Comment task offered (6.0 cashcoins)")
         target_index = (current_account_index - 1) % len(accounts)
         if active_phone_account_index != target_index:
             success = await do_switch_account(accounts[target_index]["username"])
@@ -1466,21 +1682,27 @@ async def process_bot_message(event):
                 await smart_send("❌Skip")
                 return
             active_phone_account_index = target_index
+        else:
+            log("Phone is already on the right account")
         await do_comment_task(extracted_link, text)
 
     # Unsupported task types
     elif re.search(r'(2\.5|1\.0)\s*cashcoins', text_lower):
+        log("Unsupported task type, skipping")
         await smart_send("❌Skip")
 
     elif "saved successfully" in text_lower:
+        log("Task saved, confirming")
         await smart_send("✅Completed")
 
     elif "no active tasks" in text_lower:
+        log("No active tasks, asking again")
         await smart_send("Instagram")
 
     elif "verification passed" in text_lower:
         log("Verification passed")
         if d:
+            log("Closing Chrome")
             await asyncio.to_thread(d.app_stop, "com.android.chrome")
         await smart_send("✅Completed")
 
@@ -1488,6 +1710,7 @@ async def process_bot_message(event):
     else:
         if not re.search(r'cashcoins', text_lower) and "verification" not in text_lower:
             pending_text = text
+            log("Stored as possible comment text")
 
 # ==========================================
 # AUTOMATION CONTROL
@@ -1509,19 +1732,26 @@ async def start_automation():
     log("Automation started")
 
     # Reset the chat and start the task flow (each step stops early if Stop is pressed)
+    log("Waiting 7s before resetting the bot chat")
     await asyncio.sleep(7)
     if not RUNNING: return False
+    log("Clearing the bot chat history")
     try:
         await client(DeleteHistoryRequest(peer=TARGET_CHAT, max_id=0, revoke=True))
-    except Exception:
-        pass
+    except Exception as e:
+        log(f"Could not clear the chat history: {type(e).__name__}")
 
+    log("Waiting 7s before restarting the bot")
     await asyncio.sleep(7)
     if not RUNNING: return False
     log("Bot restarted")
+    log("Sending /start")
     await client.send_message(TARGET_CHAT, "/start", parse_mode=None, link_preview=False)
-    await asyncio.sleep(random.uniform(5.0, 7.0))
+    delay = random.uniform(5.0, 7.0)
+    log(f"Waiting {delay:.1f}s before opening Tasks")
+    await asyncio.sleep(delay)
     if not RUNNING: return False
+    log("Opening Tasks")
     await client.send_message(TARGET_CHAT, "📝Tasks📝", parse_mode=None, link_preview=False)
     return True
 
@@ -1534,7 +1764,7 @@ def license_error_text():
     return known.get((LICENSE_MSG or "").strip().lower(), LICENSE_MSG)
 
 class BotApp(App):
-    """Minimal automation dashboard: info tile, live log, and state-aware controls."""
+    """Minimal automation dashboard: info tile, live log with Clear/Share, and state-aware controls."""
 
     CSS = """
     Screen {
@@ -1554,7 +1784,7 @@ class BotApp(App):
     #info_card, #log_card {
         width: 100%;
         margin: 1 1 0 1;
-        padding: 0 2;
+        padding: 0 1 0 2;
         background: #000000;
         border: round #5E4FB3;
         border-title-color: #B69DFF;
@@ -1570,14 +1800,36 @@ class BotApp(App):
         min-height: 4;
     }
 
-    #panel, #log {
+    #panel {
         width: 100%;
         height: auto;
         background: #000000;
     }
 
+    RichLog {
+        background: #000000;
+        background-tint: #000000 0%;
+    }
+
     #log {
+        width: 100%;
+        height: 1fr;
         color: #DAD3EE;
+        padding: 0;
+        scrollbar-size-vertical: 1;
+        scrollbar-color: #5E4FB3;
+        scrollbar-background: #000000;
+    }
+
+    #log:focus {
+        background: #000000;
+        background-tint: #000000 0%;
+    }
+
+    #log_actions {
+        width: 100%;
+        height: auto;
+        margin: 1 1 0 1;
     }
 
     #actions {
@@ -1586,8 +1838,7 @@ class BotApp(App):
         margin: 1 1 1 1;
     }
 
-    #actions Button {
-        width: 100%;
+    Button {
         min-width: 0;
         height: 3;
         margin: 0;
@@ -1597,10 +1848,29 @@ class BotApp(App):
         border: round #5E4FB3;
     }
 
-    #actions Button:hover, #actions Button:focus {
+    Button:hover, Button:focus {
         background: #000000;
         background-tint: #000000 0%;
         text-style: bold;
+    }
+
+    #actions Button {
+        width: 100%;
+    }
+
+    #log_actions Button {
+        width: 1fr;
+    }
+
+    #share_logs {
+        margin-left: 1;
+        color: #B69DFF;
+        border: round #B69DFF;
+    }
+
+    #clear_logs {
+        color: #9A93B5;
+        border: round #5E4FB3;
     }
 
     #actions Button.start {
@@ -1619,7 +1889,7 @@ class BotApp(App):
         border: round #FF4D61;
     }
 
-    #actions Button:disabled {
+    Button:disabled {
         color: #4A4565;
         border: round #1F1B2E;
     }
@@ -1631,6 +1901,8 @@ class BotApp(App):
         ("ctrl+q", "quit", "Terminal"),
     ]
 
+    UI_LOG_LINES = 1000      # newest lines shown on screen (the file keeps the full last 24 hours)
+
     def __init__(self, account_name):
         super().__init__()
         self.account_name = account_name
@@ -1639,13 +1911,17 @@ class BotApp(App):
         self.state_text = "Starting up..."
         self._busy = False
         self._opened_at = time.time()
+        self._log_date = None
 
     def compose(self) -> ComposeResult:
         yield Static("Automation dashboard", id="title")
         with Vertical(id="info_card"):
             yield Static(id="panel")
         with Vertical(id="log_card"):
-            yield Static("", id="log")
+            yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False, max_lines=self.UI_LOG_LINES)
+        with Horizontal(id="log_actions"):
+            yield Button("Clear logs", id="clear_logs")
+            yield Button("Share logs", id="share_logs")
         with Vertical(id="actions"):
             yield Button("Start Automation", id="toggle_run", classes="start")
             yield Button("Exit", id="exit", classes="exit")
@@ -1689,8 +1965,9 @@ class BotApp(App):
             account_val, account_style = "◌ not logged in", "bold #FFD166"
 
         if LICENSE_OK:
-            license_val = f"● Expires on {LICENSE_EXPIRES}" if LICENSE_EXPIRES else "● ACTIVE (VALID)"
-            license_style = "bold #5CF2A0"
+            license_val = f"● {license_days_text()}"
+            soon = LICENSE_DAYS is not None and LICENSE_DAYS <= 7
+            license_style = "bold #FFD166" if soon else "bold #5CF2A0"
         elif LICENSE_MSG == "checking...":
             license_val, license_style = "◌ VERIFYING...", "bold #FFD166"
         else:
@@ -1723,22 +2000,41 @@ class BotApp(App):
             pass
         self.update_buttons()
 
-    def add_log(self, message):
-        """Show only the latest log line: timestamped and color-coded by purpose."""
-        stamp = datetime.now().strftime("%H:%M:%S")
+    # ---- log view ----
+    def _write_log(self, box, moment, text):
+        """Write one entry; a date line is added first when a new day starts."""
+        if moment.date() != self._log_date:
+            self._log_date = moment.date()
+            box.write(Text(_date_header(moment), style="bold #B69DFF"))
         entry = Text()
-        for raw_line in str(message).splitlines():
-            line = raw_line.strip()
-            if not line:
-                continue
-            if entry:
-                entry.append("\n")
-            entry.append(f"{stamp} ", style="#9A93B5")
-            entry.append(line, style=log_color(line))
+        entry.append(f"{moment:%H:%M:%S} ", style="#9A93B5")
+        entry.append(text, style=log_color(text))
+        box.write(entry)
+
+    def add_log(self, moment, text):
         try:
-            self.query_one("#log", Static).update(entry)
+            box = self.query_one("#log", RichLog)
         except Exception:
-            pass
+            return
+        self._write_log(box, moment, text)
+
+    def reload_logs(self):
+        """Rebuild the on-screen log from memory (newest lines)."""
+        try:
+            box = self.query_one("#log", RichLog)
+        except Exception:
+            return
+        box.clear()
+        self._log_date = None
+        with _LOG_LOCK:
+            items = list(LOG_ENTRIES)[-self.UI_LOG_LINES:]
+        for moment, text in items:
+            self._write_log(box, moment, text)
+
+    def periodic_prune(self):
+        """Every few minutes: drop log lines older than 24 hours."""
+        if prune_logs():
+            self.reload_logs()
 
     def set_state(self, state):
         self.state_text = state
@@ -1756,6 +2052,8 @@ class BotApp(App):
         self.query_one("#info_card").border_title = "System information"
         self.query_one("#log_card").border_title = "System logs"
         self.refresh_panel()
+        self.reload_logs()                      # shows everything logged before the dashboard opened
+        self.set_interval(300, self.periodic_prune)
         self.run_worker(self.boot(), exclusive=False)
 
     def on_unmount(self):
@@ -1763,6 +2061,7 @@ class BotApp(App):
         ui = None
 
     async def boot(self):
+        log("Dashboard started")
         # License and device are checked at the same time
         license_task = asyncio.create_task(asyncio.to_thread(check_license))
         try:
@@ -1788,8 +2087,11 @@ class BotApp(App):
     # ---- ADB ----
     async def ensure_adb(self):
         global adb_serial
+        log("Checking ADB device...")
         if adb_serial and await asyncio.to_thread(adb_alive, adb_serial):
-            self.set_adb(await asyncio.to_thread(get_device_name, adb_serial))
+            name = await asyncio.to_thread(get_device_name, adb_serial)
+            self.set_adb(name)
+            log(f"ADB device ready: {name}")
             self.update_ready_state()
             return True
         self.set_adb("checking...")
@@ -1805,7 +2107,9 @@ class BotApp(App):
                 log("Termux:API not installed")
         if serial:
             adb_serial = serial
-            self.set_adb(await asyncio.to_thread(get_device_name, serial))
+            name = await asyncio.to_thread(get_device_name, serial)
+            self.set_adb(name)
+            log(f"ADB device ready: {name}")
             self.update_ready_state()
             return True
         self.set_adb("not connected")
@@ -1825,6 +2129,7 @@ class BotApp(App):
         if time.time() - self._opened_at < 1.5:
             return   # ignore stray taps/keys right at launch
         QUIT_REASON = "terminal"
+        log("Leaving to the terminal")
         await stop_automation("Quit")
         try:
             await client.disconnect()
@@ -1838,6 +2143,7 @@ class BotApp(App):
         if time.time() - self._opened_at < 1.5:
             return   # ignore stray taps/keys right at launch
         EXIT_TERMUX = True
+        log("Exit pressed, closing Termux")
         await stop_automation("Exit")
         try:
             await client.disconnect()
@@ -1856,6 +2162,7 @@ class BotApp(App):
             if not self.logged_in:
                 log("Not logged in")
                 return
+            log("Start pressed")
             reset_cash()         # a new run starts from zero
             self.set_state("Starting...")
             # Re-verify the license and the device at the same time
@@ -1883,7 +2190,18 @@ class BotApp(App):
         if not RUNNING:
             log("Not running")
             return
+        log("Stop pressed")
         await stop_automation("Stopped by user")
+
+    async def clear_logs_flow(self):
+        clear_logs()
+        self.reload_logs()
+        log("Logs cleared")
+
+    async def share_logs_flow(self):
+        log("Preparing logs to share...")
+        ok, message = await asyncio.to_thread(share_logs)
+        log(message)
 
     async def on_button_pressed(self, event: Button.Pressed):
         button_id = event.button.id
@@ -1892,6 +2210,10 @@ class BotApp(App):
                 self.action_stop()
             else:
                 self.action_start()
+        elif button_id == "clear_logs":
+            await self.clear_logs_flow()
+        elif button_id == "share_logs":
+            self.run_worker(self.share_logs_flow(), exclusive=False)
         elif button_id == "exit":
             await self.action_exit()
 
