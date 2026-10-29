@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import time
 import shutil
@@ -18,6 +19,19 @@ from rich.table import Table
 from rich.text import Text
 
 console = Console()
+
+_URL_RE = re.compile(r"https?://\S+")
+
+def caps(text):
+    """Uppercase a log line but leave links untouched (Instagram/Telegram links are case-sensitive)."""
+    s = str(text)
+    out, last = [], 0
+    for m in _URL_RE.finditer(s):
+        out.append(s[last:m.start()].upper())
+        out.append(m.group())
+        last = m.end()
+    out.append(s[last:].upper())
+    return "".join(out)
 
 # ==========================================
 # COLORED TERMINAL LOGGING (NO LEADING SPACES)
@@ -58,7 +72,7 @@ _LOG_LOCK = threading.Lock()
 _LOG_STATE = {"file_date": None, "checked": False}
 
 def _date_header(moment):
-    return f"{moment:%A, %d %B %Y}"
+    return f"{moment:%A, %d %B %Y}".upper()   # strptime reads it back case-insensitively
 
 def _file_write(lines, mode="a"):
     try:
@@ -88,6 +102,7 @@ def _last_file_date():
 def record_log(text):
     """Append one log line to logs.txt and keep it for the screen. Returns its timestamp."""
     now = datetime.now()
+    text = caps(text)
     with _LOG_LOCK:
         LOG_ENTRIES.append((now, text))
         if not _LOG_STATE["checked"]:
@@ -160,7 +175,7 @@ def term_log(message):
         clean = raw_line.strip()
         if clean:
             record_log(clean)
-            console.print(Text(clean, style=log_color(clean)))
+            console.print(Text(caps(clean), style=log_color(clean)))
 
 # ==========================================
 # TERMINAL & KEYBOARD UTILITIES
@@ -188,9 +203,9 @@ def start_gate():
 
         def compose(self) -> ComposeResult:
             with Vertical(id="gate_card"):
-                yield Static("Press continue to setup", id="gate_msg")
-                yield Button("Continue", id="go")
-                yield Button("Cancel", id="cancel")
+                yield Static("PRESS CONTINUE TO SETUP", id="gate_msg")
+                yield Button("CONTINUE", id="go")
+                yield Button("CANCEL", id="cancel")
 
         def on_button_pressed(self, event: Button.Pressed):
             # Keep the screen (and its mouse tracking) alive for a moment so the finger-lift of
@@ -354,7 +369,7 @@ def fail_startup(title, detail="", seconds=7, prefix="ERROR: "):
     if detail:
         term_log(detail)
     for remaining in range(seconds, 0, -1):
-        print(f"\r\033[1;38;2;255;209;102mExiting in {remaining}s\033[0m   ", end="", flush=True)
+        print(f"\r\033[1;38;2;255;209;102mEXITING IN {remaining}S\033[0m   ", end="", flush=True)
         time.sleep(1)
     clear_terminal()
     close_termux()
@@ -1014,7 +1029,7 @@ def ensure_adb_startup():
     adb_prepare()
 
     if shutil.which("adb") is None:
-        fail_startup("ADB not installed (pkg install android-tools)", prefix="")
+        fail_startup("ADB not installed", prefix="")
 
     term_log("Checking ADB...")
     run_adb("start-server", timeout=30)
@@ -1034,7 +1049,7 @@ def ensure_adb_startup():
         return serial
 
     if not notif_available():
-        fail_startup("Install termux-api for ADB setup", prefix="")
+        fail_startup("Termux-API not installed", prefix="")
 
     term_log("Starting ADB setup...")
     for attempt in range(3):
@@ -1821,21 +1836,6 @@ def make_title():
     out.append_text(bar)
     return out
 
-_HAPTIC_BUSY = threading.Lock()
-
-def haptic_tick():
-    """One minimal 'tak' tick through Termux:API (runs in the background, never blocks the UI)."""
-    if shutil.which("termux-vibrate") is None:
-        return
-    def run():
-        if not _HAPTIC_BUSY.acquire(blocking=False):
-            return                      # a tick is already playing; skip instead of piling up
-        try:
-            _quiet(["termux-vibrate", "-d", "20", "-f"], timeout=5)
-        finally:
-            _HAPTIC_BUSY.release()
-    threading.Thread(target=run, daemon=True).start()
-
 def info_row(label, value, color, dot="●", pill_bg=None):
     """One key/value row: label pinned left, value pinned right (symmetrical edges)."""
     grid = Table.grid(expand=True)
@@ -1843,9 +1843,9 @@ def info_row(label, value, color, dot="●", pill_bg=None):
     grid.add_column(justify="right", ratio=1, overflow="fold")
     value_text = Text(justify="right")
     if pill_bg:
-        value_text.append(f" {dot} {value} ", style=f"bold {color} on {pill_bg}")
+        value_text.append(f" {dot} {str(value).upper()} ", style=f"bold {color} on {pill_bg}")
     else:
-        value_text.append(f"{value} ", style=color)
+        value_text.append(f"{str(value).upper()} ", style=color)
         value_text.append(dot, style=color)
     grid.add_row(Text(label, style=f"bold {THEME['label']}"), value_text)
     return grid
@@ -1959,23 +1959,17 @@ class BotApp(App):
         background: #2D0C15;
     }
 
-    #clear_logs {
-        background: #0A0914;
-        color: #A29BC0;
-        border: round #4A3F91;
-    }
-    #clear_logs:hover, #clear_logs:focus {
-        background: #121022;
-    }
-
-    #share_logs {
-        margin-left: 2;
+    #clear_logs, #share_logs {
         background: #120E2B;
         color: #B69DFF;
         border: round #8F73FF;
     }
+    #clear_logs:hover, #clear_logs:focus,
     #share_logs:hover, #share_logs:focus {
         background: #1B1540;
+    }
+    #share_logs {
+        margin-left: 2;
     }
 
     #actions Button:disabled,
@@ -2009,13 +2003,13 @@ class BotApp(App):
         with Vertical(id="info_card"):
             yield Static(id="panel")
         with Vertical(id="actions"):
-            yield Button("Start Automation", id="toggle_run", classes="start")
+            yield Button("START AUTOMATION", id="toggle_run", classes="start")
         with Vertical(id="log_card"):
             yield Static(id="log")
             with Horizontal(id="log_actions"):
-                yield Button("Clear logs", id="clear_logs")
-                yield Button("Share logs", id="share_logs")
-        yield Button("Exit", id="exit")          # docked to the very bottom of the screen
+                yield Button("CLEAR", id="clear_logs")
+                yield Button("SHARE", id="share_logs")
+        yield Button("EXIT", id="exit")          # docked to the very bottom of the screen
 
     # ---- panel / log helpers ----
     def state_style(self):
@@ -2035,12 +2029,12 @@ class BotApp(App):
         try:
             toggle_btn = self.query_one("#toggle_run", Button)
             if RUNNING:
-                toggle_btn.label = "Stop Automation"
+                toggle_btn.label = "STOP AUTOMATION"
                 toggle_btn.remove_class("start")
                 toggle_btn.add_class("stop")
                 toggle_btn.disabled = False
             else:
-                toggle_btn.label = "Start Automation"
+                toggle_btn.label = "START AUTOMATION"
                 toggle_btn.remove_class("stop")
                 toggle_btn.add_class("start")
                 toggle_btn.disabled = self._busy or not (self.logged_in and LICENSE_OK)
@@ -2116,10 +2110,10 @@ class BotApp(App):
         if items:
             for moment, text in items:
                 grid.add_row(Text(f"{moment:%H:%M:%S}", style=THEME["muted"]),
-                             Text(text, style=log_color(text)))
+                             Text(caps(text), style=log_color(text)))
         else:
             grid.add_row(Text("--:--:--", style=THEME["muted"]),
-                         Text("No activity yet", style=THEME["muted"]))
+                         Text("NO ACTIVITY YET", style=THEME["muted"]))
         box.update(grid)
 
     def add_log(self, moment, text):
@@ -2138,8 +2132,8 @@ class BotApp(App):
         global ui
         ui = self
         self._opened_at = time.time()
-        self.query_one("#info_card").border_title = "System information"
-        self.query_one("#log_card").border_title = "System logs"
+        self.query_one("#info_card").border_title = "SYSTEM INFORMATION"
+        self.query_one("#log_card").border_title = "SYSTEM LOGS"
         self.refresh_panel()
         self.reload_logs()                      # shows the latest lines logged before the dashboard opened
         self.run_worker(self.boot(), exclusive=False)
@@ -2283,6 +2277,8 @@ class BotApp(App):
 
     async def clear_logs_flow(self):
         clear_logs()
+        with _LOG_LOCK:
+            LOG_ENTRIES.append((datetime.now(), "LOGS CLEARED"))   # screen only; logs.txt stays empty
         self.reload_logs()
 
     async def share_logs_flow(self):
@@ -2292,7 +2288,6 @@ class BotApp(App):
 
     async def on_button_pressed(self, event: Button.Pressed):
         button_id = event.button.id
-        haptic_tick()
         if button_id == "toggle_run":
             if RUNNING:
                 self.action_stop()
@@ -2368,7 +2363,7 @@ def render_full_width_continue_button():
     """Render a full-width Continue button in the terminal."""
     width = max(20, console.size.width)
     pad_line = " " * width
-    label_line = "Continue".center(width)
+    label_line = "CONTINUE".center(width)
     console.print(Text(pad_line, style="bold #EADDFF on #4F378B"))
     console.print(Text(label_line, style="bold #EADDFF on #4F378B"))
     console.print(Text(pad_line, style="bold #EADDFF on #4F378B"))
@@ -2422,7 +2417,7 @@ async def ask_password_terminal():
     """Ask for the Telegram 2FA password using standard visible input."""
     while True:
         try:
-            password = (await asyncio.to_thread(input, "Enter 2FA password: ")).strip()
+            password = (await asyncio.to_thread(input, "ENTER 2FA PASSWORD: ")).strip()
         except (EOFError, KeyboardInterrupt):
             return False
         if not password:
@@ -2443,7 +2438,7 @@ async def expired_and_exit():
     clear_terminal()
     term_log("QR code expired. Wait 2 minutes.")
     for remaining in range(RETRY_WAIT, 0, -1):
-        print(f"\r\033[1;38;2;255;209;102mTry again in {remaining // 60}:{remaining % 60:02d}\033[0m   ", end="", flush=True)
+        print(f"\r\033[1;38;2;255;209;102mTRY AGAIN IN {remaining // 60}:{remaining % 60:02d}\033[0m   ", end="", flush=True)
         await asyncio.sleep(1)
     print()
 
@@ -2472,14 +2467,14 @@ async def terminal_login():
     clear_terminal()
 
     console.print(Panel(
-        "[bold #E6E1E5]You are not logged in to Telegram yet.[/]\n"
-        "[#CAC4D0]You will log in by scanning a QR code with another phone.[/]\n\n"
-        "[bold #D0BCFF]Before you continue[/]\n"
-        "[#CAC4D0]1. Take the other phone that has your Telegram account.\n"
-        "2. Open Telegram, then Settings > Devices > Link Desktop Device.\n"
-        "3. Keep the scanner open and ready.\n"
-        "4. Press Continue below. The QR code opens as a picture on this phone.\n"
-        "5. Point the other phone at it. You have 30 seconds.[/]",
+        "[bold #E6E1E5]YOU ARE NOT LOGGED IN TO TELEGRAM YET.[/]\n"
+        "[#CAC4D0]YOU WILL LOG IN BY SCANNING A QR CODE WITH ANOTHER PHONE.[/]\n\n"
+        "[bold #D0BCFF]BEFORE YOU CONTINUE[/]\n"
+        "[#CAC4D0]1. TAKE THE OTHER PHONE THAT HAS YOUR TELEGRAM ACCOUNT.\n"
+        "2. OPEN TELEGRAM, THEN SETTINGS > DEVICES > LINK DESKTOP DEVICE.\n"
+        "3. KEEP THE SCANNER OPEN AND READY.\n"
+        "4. PRESS CONTINUE BELOW. THE QR CODE OPENS AS A PICTURE ON THIS PHONE.\n"
+        "5. POINT THE OTHER PHONE AT IT. YOU HAVE 30 SECONDS.[/]",
         title="[bold #D0BCFF]TELEGRAM LOGIN[/]", border_style="#4F378B", padding=(1, 2),
     ))
     render_full_width_continue_button()
@@ -2507,7 +2502,7 @@ async def terminal_login():
     start = time.time()
     while not wait_task.done():
         remaining = max(0, QR_TIMEOUT - int(time.time() - start))
-        print(f"\r\033[1;38;2;255;209;102mWaiting for scan: {remaining:>2}s\033[0m  ", end="", flush=True)
+        print(f"\r\033[1;38;2;255;209;102mWAITING FOR SCAN: {remaining:>2}S\033[0m  ", end="", flush=True)
         await asyncio.sleep(0.5)
     print()
 
