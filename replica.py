@@ -1895,9 +1895,10 @@ class BotApp(App):
     }
 
     #actions {
-        width: 1fr;
+        dock: bottom;
+        width: 100%;
         height: auto;
-        margin: 1 2 0 2;
+        margin: 0 2 1 2;
     }
 
     #log_actions {
@@ -1948,9 +1949,7 @@ class BotApp(App):
     }
 
     #exit {
-        dock: bottom;
-        width: 100%;
-        margin: 0 2 1 2;
+        margin-top: 1;
         background: #1F080E;
         color: #FF8A96;
         border: round #FF4D61;
@@ -2002,14 +2001,14 @@ class BotApp(App):
         yield Static(make_title(), id="title")
         with Vertical(id="info_card"):
             yield Static(id="panel")
-        with Vertical(id="actions"):
-            yield Button("START AUTOMATION", id="toggle_run", classes="start")
         with Vertical(id="log_card"):
             yield Static(id="log")
             with Horizontal(id="log_actions"):
                 yield Button("CLEAR", id="clear_logs")
                 yield Button("SHARE", id="share_logs")
-        yield Button("EXIT", id="exit")          # docked to the very bottom of the screen
+        with Vertical(id="actions"):             # docked to the very bottom: Start/Stop above Exit
+            yield Button("START AUTOMATION", id="toggle_run", classes="start")
+            yield Button("EXIT", id="exit")
 
     # ---- panel / log helpers ----
     def state_style(self):
