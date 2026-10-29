@@ -11,8 +11,10 @@ import termios
 from collections import deque
 from datetime import datetime, timedelta
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.panel import Panel
+from rich.rule import Rule
+from rich.table import Table
 from rich.text import Text
 
 console = Console()
@@ -1784,6 +1786,55 @@ def license_error_text():
     known = {"invalid license key": "Invalid license key", "license expired": "License expired"}
     return known.get((LICENSE_MSG or "").strip().lower(), LICENSE_MSG)
 
+
+# ==========================================
+# DASHBOARD THEME
+# ==========================================
+THEME = {
+    "label":   "#8F89AD",   # row labels
+    "muted":   "#6F6A8C",   # timestamps, hints
+    "divider": "#1D1A33",   # thin lines between rows
+}
+
+def _lerp_hex(a, b, t):
+    a = a.lstrip("#"); b = b.lstrip("#")
+    ca = [int(a[i:i + 2], 16) for i in (0, 2, 4)]
+    cb = [int(b[i:i + 2], 16) for i in (0, 2, 4)]
+    return "#" + "".join(f"{round(x + (y - x) * t):02X}" for x, y in zip(ca, cb))
+
+def gradient_text(text, start, end, bold=True):
+    """Colour a string with a smooth left-to-right gradient."""
+    out = Text(justify="center")
+    last = max(1, len(text) - 1)
+    for i, ch in enumerate(text):
+        style = _lerp_hex(start, end, i / last)
+        out.append(ch, style=f"bold {style}" if bold else style)
+    return out
+
+def make_title():
+    """Gradient heading with a small accent bar underneath."""
+    title = gradient_text("AUTOMATION DASHBOARD", "#C9B8FF", "#5CC8FF")
+    bar = gradient_text("━" * 8, "#7C5CFF", "#3FB6FF", bold=False)
+    out = Text(justify="center")
+    out.append_text(title)
+    out.append("\n")
+    out.append_text(bar)
+    return out
+
+def info_row(label, value, color, dot="●", pill_bg=None):
+    """One key/value row: label pinned left, value pinned right (symmetrical edges)."""
+    grid = Table.grid(expand=True)
+    grid.add_column(no_wrap=True, width=11)
+    grid.add_column(justify="right", ratio=1, overflow="fold")
+    value_text = Text(justify="right")
+    if pill_bg:
+        value_text.append(f" {dot} {value} ", style=f"bold {color} on {pill_bg}")
+    else:
+        value_text.append(f"{value} ", style=color)
+        value_text.append(dot, style=color)
+    grid.add_row(Text(label, style=f"bold {THEME['label']}"), value_text)
+    return grid
+
 class BotApp(App):
     """Minimal automation dashboard: info tile, live log with Clear/Share, and state-aware controls."""
 
@@ -1795,29 +1846,22 @@ class BotApp(App):
 
     #title {
         width: 100%;
-        height: 1;
+        height: auto;
         margin: 1 0 0 0;
         text-align: center;
-        text-style: bold;
-        color: #E8DEFF;
+        background: #000000;
     }
 
     #info_card, #log_card {
-        width: 100%;
-        margin: 1 1 0 1;
-        padding: 0 1 0 2;
+        width: 1fr;
+        height: auto;
+        margin: 1 2 0 2;
+        padding: 1 2;
         background: #000000;
-        border: round #5E4FB3;
+        border: round #4A3F91;
         border-title-color: #B69DFF;
         border-title-style: bold;
-    }
-
-    #info_card {
-        height: auto;
-    }
-
-    #log_card {
-        height: auto;
+        border-title-align: left;
     }
 
     #panel {
@@ -1826,30 +1870,25 @@ class BotApp(App):
         background: #000000;
     }
 
-    RichLog {
-        background: #000000;
-        background-tint: #000000 0%;
-    }
-
     #log {
         width: 100%;
         height: auto;
-        min-height: 1;
+        min-height: 2;
         color: #DAD3EE;
         padding: 0;
         background: #000000;
     }
 
-    #log_actions {
-        width: 100%;
+    #actions {
+        width: 1fr;
         height: auto;
-        margin: 1 1 1 1;
+        margin: 1 2 0 2;
     }
 
-    #actions {
-        width: 100%;
+    #log_actions {
+        width: 1fr;
         height: auto;
-        margin: 1 1 0 1;
+        margin: 1 2 1 2;
     }
 
     Button {
@@ -1859,11 +1898,10 @@ class BotApp(App):
         text-style: bold;
         background: #000000;
         color: #F1ECFF;
-        border: round #5E4FB3;
+        border: round #4A3F91;
     }
 
     Button:hover, Button:focus {
-        background: #000000;
         background-tint: #000000 0%;
         text-style: bold;
     }
@@ -1876,34 +1914,55 @@ class BotApp(App):
         width: 1fr;
     }
 
-    #share_logs {
-        margin-left: 1;
-        color: #B69DFF;
-        border: round #B69DFF;
-    }
-
-    #clear_logs {
-        color: #9A93B5;
-        border: round #5E4FB3;
-    }
-
     #actions Button.start {
+        background: #071F13;
         color: #5CF2A0;
         border: round #2BE37F;
     }
+    #actions Button.start:hover, #actions Button.start:focus {
+        background: #0B2E1C;
+    }
 
     #actions Button.stop {
+        background: #261B05;
         color: #FFD166;
         border: round #FFB020;
+    }
+    #actions Button.stop:hover, #actions Button.stop:focus {
+        background: #33240A;
     }
 
     #actions Button.exit {
         margin-top: 1;
+        background: #1F080E;
         color: #FF8A96;
         border: round #FF4D61;
     }
+    #actions Button.exit:hover, #actions Button.exit:focus {
+        background: #2D0C15;
+    }
 
-    Button:disabled {
+    #clear_logs {
+        background: #0A0914;
+        color: #A29BC0;
+        border: round #4A3F91;
+    }
+    #clear_logs:hover, #clear_logs:focus {
+        background: #121022;
+    }
+
+    #share_logs {
+        margin-left: 2;
+        background: #120E2B;
+        color: #B69DFF;
+        border: round #8F73FF;
+    }
+    #share_logs:hover, #share_logs:focus {
+        background: #1B1540;
+    }
+
+    #actions Button:disabled {
+        background: #000000;
         color: #4A4565;
         border: round #1F1B2E;
     }
@@ -1927,7 +1986,7 @@ class BotApp(App):
         self._opened_at = time.time()
 
     def compose(self) -> ComposeResult:
-        yield Static("Automation dashboard", id="title")
+        yield Static(make_title(), id="title")
         with Vertical(id="info_card"):
             yield Static(id="panel")
         with Vertical(id="actions"):
@@ -1971,44 +2030,52 @@ class BotApp(App):
         except Exception:
             pass
 
+    def state_palette(self):
+        """(text colour, pill background) for the STATUS row."""
+        lowered = self.state_text.lower()
+        if RUNNING:
+            return "#5CF2A0", "#0C2B1B"
+        if any(word in lowered for word in ("error", "failed", "offline", "contact developer")):
+            return "#FF6B7A", "#2B0F15"
+        if any(word in lowered for word in ("not logged", "not connected", "scan", "starting", "checking", "logging", "wait")):
+            return "#FFD166", "#2B2209"
+        if lowered.startswith("ready"):
+            return "#7CB7FF", "#0E1F36"
+        return "#F1ECFF", "#1D1A30"
+
     def refresh_panel(self):
         if self.account_name:
-            account_val, account_style = f"● {self.account_name}", "bold #FFFFFF"
+            account = ("Account", self.account_name, "#FFFFFF", "●")
         else:
-            account_val, account_style = "◌ not logged in", "#FFD166"
+            account = ("Account", "Not logged in", "#FFD166", "◌")
 
         if LICENSE_OK:
-            license_val = f"● {license_days_text()}"
             soon = LICENSE_DAYS is not None and LICENSE_DAYS <= 7
-            license_style = "#FFD166" if soon else "#5CF2A0"
+            license_row = ("License", license_days_text(), "#FFD166" if soon else "#5CF2A0", "●")
         elif LICENSE_MSG == "checking...":
-            license_val, license_style = "◌ VERIFYING...", "#FFD166"
+            license_row = ("License", "Verifying...", "#FFD166", "◌")
         else:
-            license_val, license_style = f"● {license_error_text()}", "#FF6B7A"
+            license_row = ("License", license_error_text(), "#FF6B7A", "●")
 
         if adb_serial:
-            adb_val, adb_style = f"● {self.adb_text}", "#5CC8FF"
+            device = ("Device", self.adb_text, "#5CC8FF", "●")
         else:
-            adb_val, adb_style = f"◌ {self.adb_text}", "#FFD166"
+            device = ("Device", self.adb_text, "#FFD166", "◌")
 
-        cash_val = f"● {CASH['tenths'] / 10:.1f}"
+        cash = ("Cashcoins", f"{CASH['tenths'] / 10:.1f}", "#FFD166", "●")
+        fg, bg = self.state_palette()
 
-        rows = [
-            ("ACCOUNT", account_val, account_style),
-            ("LICENSE", license_val, license_style),
-            ("DEVICE", adb_val, adb_style),
-            ("CASHCOINS", cash_val, "#FFD166"),
-            ("STATUS", f"● {self.state_text}", self.state_style()),
-        ]
-        text = Text()
-        for index, (label, value, style) in enumerate(rows):
+        rows = [info_row(label.upper(), value, color, dot)
+                for label, value, color, dot in (account, license_row, device, cash)]
+        rows.append(info_row("STATUS", self.state_text, fg, "●", pill_bg=bg))
+
+        parts = []
+        for index, row in enumerate(rows):
             if index:
-                text.append("\n")
-            text.append(f"{label:<10} ", style="bold #9A93B5")
-            text.append("│ ", style="#4A4565")
-            text.append(str(value), style=style)
+                parts.append(Rule(characters="─", style=THEME["divider"]))
+            parts.append(row)
         try:
-            self.query_one("#panel", Static).update(text)
+            self.query_one("#panel", Static).update(Group(*parts))
         except Exception:
             pass
         self.update_buttons()
@@ -2022,11 +2089,17 @@ class BotApp(App):
             return
         with _LOG_LOCK:
             items = list(LOG_ENTRIES)[-1:]
-        entry = Text()
-        for moment, text in items:
-            entry.append(f"{moment:%H:%M:%S}  ", style="#7E7A96")
-            entry.append(text, style=log_color(text))
-        box.update(entry)
+        grid = Table.grid(expand=True, padding=(0, 2, 0, 0))
+        grid.add_column(no_wrap=True)                 # timestamp
+        grid.add_column(ratio=1, overflow="fold")     # message wraps under itself
+        if items:
+            for moment, text in items:
+                grid.add_row(Text(f"{moment:%H:%M:%S}", style=THEME["muted"]),
+                             Text(text, style=log_color(text)))
+        else:
+            grid.add_row(Text("--:--:--", style=THEME["muted"]),
+                         Text("No activity yet", style=THEME["muted"]))
+        box.update(grid)
 
     def add_log(self, moment, text):
         self.reload_logs()
