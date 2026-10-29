@@ -27,104 +27,89 @@ def log_color(message):
         "error", "fail", "timed out", "timeout", "invalid", "not found",
         "not installed", "corrupt", "expired", "cancel", "blocked", "stopped"
     )):
-        return "bold #FF6B7A"
+        return "#FF6B7A"
     if any(w in lowered for w in (
         "connected", "paired", "granted", "ready", "success", "logged in",
         "completed", "passed", "started", "valid", "scanned"
     )):
-        return "bold #5CF2A0"
+        return "#5CF2A0"
     if any(w in lowered for w in (
         "wait", "enter", "open", "allow", "retry", "requesting",
         "switch", "skip", "popup", "notification"
     )):
-        return "bold #FFD166"
+        return "#FFD166"
     if any(w in lowered for w in ("captcha", "computed", "security", "qr")):
-        return "bold #C9B8FF"
-    return "bold #5CC8FF"
+        return "#C9B8FF"
+    return "#5CC8FF"
 
 # ==========================================
-# PERSISTENT LOG STORE (Termux home, last 24 hours only)
-#   * the file is replaced when the script starts, then only grows during the run
-#   * a date line is written whenever a new day begins
-#   * entries older than 24 hours are dropped from memory and from the file
+# PERSISTENT LOG STORE (Termux home)
+#   * every log line is appended to logs.txt and is never removed automatically
+#   * stopping / restarting the automation or the script keeps the file; new lines go after the old ones
+#   * the file is emptied ONLY when the Clear logs button is pressed
+#   * the screen shows just the 7 most recent lines (the file keeps everything)
 # ==========================================
 LOG_FILE = os.path.join(os.path.expanduser("~"), "logs.txt")
-LOG_KEEP = timedelta(hours=24)
-LOG_REWRITE_EVERY = 600              # seconds between file clean-ups once old lines exist
-LOG_ENTRIES = deque()                # (datetime, text), oldest first
+LOG_SCREEN_LINES = 7
+LOG_ENTRIES = deque(maxlen=LOG_SCREEN_LINES)   # (datetime, text) - only what the screen needs
 _LOG_LOCK = threading.Lock()
-_LOG_STATE = {"started": False, "file_date": None, "dirty": False, "rewritten": 0.0}
+_LOG_STATE = {"file_date": None, "checked": False}
 
 def _date_header(moment):
-    return f"──── {moment:%A, %d %b %Y} ────"
+    return f"── {moment:%a, %d %b %Y} ──"
 
-def _file_write(lines, mode):
+def _file_write(lines, mode="a"):
     try:
         with open(LOG_FILE, mode, encoding="utf-8") as fh:
             fh.write("\n".join(lines) + ("\n" if lines else ""))
     except Exception:
         pass
 
-def _rewrite_file_locked():
-    """Rewrite the whole file from memory (used after old entries were dropped)."""
-    lines = []
-    last_date = None
-    for moment, text in LOG_ENTRIES:
-        if moment.date() != last_date:
-            if last_date is not None:
-                lines.append("")
-            lines.append(_date_header(moment))
-            lines.append("")
-            last_date = moment.date()
-        lines.append(f"[{moment:%H:%M:%S}] {text}")
-    _file_write(lines, "w")
-    _LOG_STATE.update(started=True, file_date=last_date, dirty=False, rewritten=time.time())
-
-def prune_logs(force=False):
-    """Drop entries older than 24 hours. Returns True when something was removed."""
-    cutoff = datetime.now() - LOG_KEEP
-    removed = False
-    with _LOG_LOCK:
-        while LOG_ENTRIES and LOG_ENTRIES[0][0] < cutoff:
-            LOG_ENTRIES.popleft()
-            removed = True
-        if removed:
-            _LOG_STATE["dirty"] = True
-        if _LOG_STATE["dirty"] and (force or time.time() - _LOG_STATE["rewritten"] > LOG_REWRITE_EVERY):
-            _rewrite_file_locked()
-    return removed
+def _last_file_date():
+    """Date of the last date header already in logs.txt (so a restart does not repeat it)."""
+    try:
+        size = os.path.getsize(LOG_FILE)
+        if size == 0:
+            return None
+        with open(LOG_FILE, "rb") as fh:
+            fh.seek(max(0, size - 8192))
+            tail = fh.read().decode("utf-8", "ignore").splitlines()
+        for line in reversed(tail):
+            if line.startswith("── "):
+                return datetime.strptime(line.strip("─ ").strip(), "%a, %d %b %Y").date()
+    except Exception:
+        pass
+    return None
 
 def record_log(text):
-    """Store one log line in memory and in the file. Returns its timestamp."""
+    """Append one log line to logs.txt and keep it for the screen. Returns its timestamp."""
     now = datetime.now()
     with _LOG_LOCK:
         LOG_ENTRIES.append((now, text))
+        if not _LOG_STATE["checked"]:
+            _LOG_STATE["file_date"] = _last_file_date()
+            _LOG_STATE["checked"] = True
         lines = []
         if now.date() != _LOG_STATE["file_date"]:
-            if _LOG_STATE["file_date"] is not None:
+            if os.path.exists(LOG_FILE) and os.path.getsize(LOG_FILE) > 0:
                 lines.append("")
             lines.append(_date_header(now))
-            lines.append("")
             _LOG_STATE["file_date"] = now.date()
-        lines.append(f"[{now:%H:%M:%S}] {text}")
-        mode = "a" if _LOG_STATE["started"] else "w"     # first write of a run replaces the old file
-        _LOG_STATE["started"] = True
-        _file_write(lines, mode)
-    prune_logs()
+        lines.append(f"{now:%H:%M:%S}  {text}")
+        _file_write(lines, "a")
     return now
 
 def clear_logs():
-    """Empty the logs in memory and the file."""
+    """Empty the file immediately and the on-screen logs."""
     with _LOG_LOCK:
         LOG_ENTRIES.clear()
-        _LOG_STATE.update(started=True, file_date=None, dirty=False, rewritten=time.time())
+        _LOG_STATE.update(file_date=None, checked=True)
         _file_write([], "w")
 
 SHARE_DIR = "/sdcard/Download"   # the shared copy lives here so other apps can open it
 
 def share_logs():
     """Share the log .txt file through the Android share sheet, started over adb. Returns (ok, message)."""
-    prune_logs(force=True)
     try:
         if not os.path.exists(LOG_FILE) or os.path.getsize(LOG_FILE) == 0:
             return False, "No logs to share"
@@ -1934,7 +1919,7 @@ class BotApp(App):
         ("ctrl+q", "quit", "Terminal"),
     ]
 
-    UI_LOG_LINES = 1000      # newest lines shown on screen (the file keeps the full last 24 hours)
+    UI_LOG_LINES = LOG_SCREEN_LINES      # newest lines shown on screen (logs.txt keeps everything)
 
     def __init__(self, account_name):
         super().__init__()
@@ -1944,14 +1929,13 @@ class BotApp(App):
         self.state_text = "Starting up..."
         self._busy = False
         self._opened_at = time.time()
-        self._log_date = None
 
     def compose(self) -> ComposeResult:
         yield Static("Automation dashboard", id="title")
         with Vertical(id="info_card"):
             yield Static(id="panel")
         with Vertical(id="log_card"):
-            yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False, max_lines=self.UI_LOG_LINES)
+            yield RichLog(id="log", wrap=True, min_width=10, markup=False, highlight=False)
         with Horizontal(id="log_actions"):
             yield Button("Clear logs", id="clear_logs")
             yield Button("Share logs", id="share_logs")
@@ -1963,11 +1947,11 @@ class BotApp(App):
     def state_style(self):
         lowered = self.state_text.lower()
         if RUNNING:
-            return "bold #5CF2A0"
+            return "#5CF2A0"
         if any(word in lowered for word in ("error", "failed", "offline", "contact developer")):
-            return "bold #FF6B7A"
+            return "#FF6B7A"
         if any(word in lowered for word in ("not logged", "not connected", "scan", "starting", "checking", "logging", "wait")):
-            return "bold #FFD166"
+            return "#FFD166"
         if lowered.startswith("ready"):
             return "bold #7CB7FF"
         return "bold #F1ECFF"
@@ -1995,21 +1979,21 @@ class BotApp(App):
         if self.account_name:
             account_val, account_style = f"● {self.account_name}", "bold #FFFFFF"
         else:
-            account_val, account_style = "◌ not logged in", "bold #FFD166"
+            account_val, account_style = "◌ not logged in", "#FFD166"
 
         if LICENSE_OK:
             license_val = f"● {license_days_text()}"
             soon = LICENSE_DAYS is not None and LICENSE_DAYS <= 7
-            license_style = "bold #FFD166" if soon else "bold #5CF2A0"
+            license_style = "#FFD166" if soon else "#5CF2A0"
         elif LICENSE_MSG == "checking...":
-            license_val, license_style = "◌ VERIFYING...", "bold #FFD166"
+            license_val, license_style = "◌ VERIFYING...", "#FFD166"
         else:
-            license_val, license_style = f"● {license_error_text()}", "bold #FF6B7A"
+            license_val, license_style = f"● {license_error_text()}", "#FF6B7A"
 
         if adb_serial:
-            adb_val, adb_style = f"● {self.adb_text}", "bold #5CC8FF"
+            adb_val, adb_style = f"● {self.adb_text}", "#5CC8FF"
         else:
-            adb_val, adb_style = f"◌ {self.adb_text}", "bold #FFD166"
+            adb_val, adb_style = f"◌ {self.adb_text}", "#FFD166"
 
         cash_val = f"● {CASH['tenths'] / 10:.1f}"
 
@@ -2017,7 +2001,7 @@ class BotApp(App):
             ("ACCOUNT", account_val, account_style),
             ("LICENSE", license_val, license_style),
             ("DEVICE", adb_val, adb_style),
-            ("CASHCOINS", cash_val, "bold #FFD166"),
+            ("CASHCOINS", cash_val, "#FFD166"),
             ("STATUS", f"● {self.state_text}", self.state_style()),
         ]
         text = Text()
@@ -2034,42 +2018,23 @@ class BotApp(App):
         self.update_buttons()
 
     # ---- log view ----
-    def _write_log(self, box, moment, text):
-        """Write one entry; a date line is added first when a new day starts."""
-        if moment.date() != self._log_date:
-            self._log_date = moment.date()
-            box.write(Text(" "))
-            box.write(Text(_date_header(moment), style="bold #B69DFF"))
-            box.write(Text(" "))
-        entry = Text()
-        entry.append(f"{moment:%H:%M:%S} ", style="#9A93B5")
-        entry.append(text, style=log_color(text))
-        box.write(entry)
-
-    def add_log(self, moment, text):
-        try:
-            box = self.query_one("#log", RichLog)
-        except Exception:
-            return
-        self._write_log(box, moment, text)
-
     def reload_logs(self):
-        """Rebuild the on-screen log from memory (newest lines)."""
+        """Redraw the screen with only the most recent lines (older ones stay in logs.txt)."""
         try:
             box = self.query_one("#log", RichLog)
         except Exception:
             return
-        box.clear()
-        self._log_date = None
         with _LOG_LOCK:
             items = list(LOG_ENTRIES)[-self.UI_LOG_LINES:]
+        box.clear()
         for moment, text in items:
-            self._write_log(box, moment, text)
+            entry = Text()
+            entry.append(f"{moment:%H:%M:%S}  ", style="#7E7A96")
+            entry.append(text, style=log_color(text))
+            box.write(entry)
 
-    def periodic_prune(self):
-        """Every few minutes: drop log lines older than 24 hours."""
-        if prune_logs():
-            self.reload_logs()
+    def add_log(self, moment, text):
+        self.reload_logs()
 
     def set_state(self, state):
         self.state_text = state
@@ -2087,8 +2052,7 @@ class BotApp(App):
         self.query_one("#info_card").border_title = "System information"
         self.query_one("#log_card").border_title = "System logs"
         self.refresh_panel()
-        self.reload_logs()                      # shows everything logged before the dashboard opened
-        self.set_interval(300, self.periodic_prune)
+        self.reload_logs()                      # shows the latest lines logged before the dashboard opened
         self.run_worker(self.boot(), exclusive=False)
 
     def on_unmount(self):
@@ -2231,7 +2195,6 @@ class BotApp(App):
     async def clear_logs_flow(self):
         clear_logs()
         self.reload_logs()
-        log("Logs cleared")
 
     async def share_logs_flow(self):
         log("Preparing logs to share...")
