@@ -4,6 +4,7 @@ import time
 import shutil
 import socket
 import sqlite3
+import shlex
 import subprocess
 import threading
 import tty
@@ -71,7 +72,10 @@ def _rewrite_file_locked():
     last_date = None
     for moment, text in LOG_ENTRIES:
         if moment.date() != last_date:
+            if last_date is not None:
+                lines.append("")
             lines.append(_date_header(moment))
+            lines.append("")
             last_date = moment.date()
         lines.append(f"[{moment:%H:%M:%S}] {text}")
     _file_write(lines, "w")
@@ -98,7 +102,10 @@ def record_log(text):
         LOG_ENTRIES.append((now, text))
         lines = []
         if now.date() != _LOG_STATE["file_date"]:
+            if _LOG_STATE["file_date"] is not None:
+                lines.append("")
             lines.append(_date_header(now))
+            lines.append("")
             _LOG_STATE["file_date"] = now.date()
         lines.append(f"[{now:%H:%M:%S}] {text}")
         mode = "a" if _LOG_STATE["started"] else "w"     # first write of a run replaces the old file
@@ -114,22 +121,44 @@ def clear_logs():
         _LOG_STATE.update(started=True, file_date=None, dirty=False, rewritten=time.time())
         _file_write([], "w")
 
+SHARE_MAX_CHARS = 25000     # the share sheet gets the newest part of the logs when they are longer
+
 def share_logs():
-    """Open the Android share sheet for the log file. Returns (ok, message)."""
+    """Open the Android share sheet with the latest log text. Returns (ok, message)."""
     prune_logs(force=True)
     try:
-        if not os.path.exists(LOG_FILE) or os.path.getsize(LOG_FILE) == 0:
-            return False, "No logs to share"
+        with open(LOG_FILE, "r", encoding="utf-8") as fh:
+            content = fh.read()
     except OSError:
+        content = ""
+    if not content.strip():
         return False, "No logs to share"
-    if shutil.which("termux-share") is None:
-        return False, "Share failed: termux-api is not installed"
-    try:
-        subprocess.run(["termux-share", "-a", "send", "-c", "text/plain", "-t", "Replica logs", LOG_FILE],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
-        return True, "Share sheet opened"
-    except Exception as e:
-        return False, f"Share failed: {e}"
+
+    trimmed = len(content) > SHARE_MAX_CHARS
+    if trimmed:
+        content = content[-SHARE_MAX_CHARS:]
+        cut = content.find("\n")
+        if cut != -1:
+            content = content[cut + 1:]
+
+    # 1) Through adb: starts the share sheet from the shell, which Android always allows
+    if adb_serial:
+        cmd = ("am start -a android.intent.action.SEND -t text/plain "
+               f"--es android.intent.extra.SUBJECT {shlex.quote('Replica logs')} "
+               f"--es android.intent.extra.TEXT {shlex.quote(content)}")
+        out = run_adb("-s", adb_serial, "shell", cmd, timeout=20).lower()
+        if "error" not in out and "exception" not in out:
+            return True, "Share sheet opened" + (" (newest part of the logs)" if trimmed else "")
+
+    # 2) Fallback: Termux:API (can hang on some phones, so only a short wait)
+    if shutil.which("termux-share"):
+        try:
+            subprocess.run(["termux-share", "-a", "send", "-c", "text/plain", "-t", "Replica logs", LOG_FILE],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=8)
+            return True, "Share sheet opened"
+        except Exception:
+            pass
+    return False, "Share failed, the logs are in ~/replica_logs.txt"
 
 def term_log(message):
     """Print a concise, flush-left colored line to the terminal and keep it in the log file."""
@@ -2005,7 +2034,9 @@ class BotApp(App):
         """Write one entry; a date line is added first when a new day starts."""
         if moment.date() != self._log_date:
             self._log_date = moment.date()
+            box.write(Text(" "))
             box.write(Text(_date_header(moment), style="bold #B69DFF"))
+            box.write(Text(" "))
         entry = Text()
         entry.append(f"{moment:%H:%M:%S} ", style="#9A93B5")
         entry.append(text, style=log_color(text))
