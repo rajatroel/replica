@@ -209,7 +209,7 @@ BOLD_K = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 UPSCALE = 3   # Enlarge small captchas
 PAD = 40      # White border (px) so shapes touching the edge are not cut off
 
-TARGET_CHAT = "@SmmKingdomTasksBot"
+TARGET_CHAT = "@iamrajatroel"
 SESSION_PATH = '/sdcard/userbot'
 AI_PROXY_URL = "https://replica.imrajatroel.workers.dev"
 
