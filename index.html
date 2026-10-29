@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Replica – Instagram Automation</title>
-<meta name="description" content="Automate Instagram tasks on Android with Replica, Termux, and SMM Kingdom Tasks Bot.">
+<meta name="description" content="Automate Instagram tasks on Android 11+ with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 @property --h {
   syntax: '<number>';
@@ -114,21 +114,21 @@ body {
 }
 
 /* =========================================================
-   TOP DISSOLVE VIGNETTE (Fade Behind Fixed Navigation)
+   TOP DISSOLVE VIGNETTE (Soft gradient scrim behind bar)
    ========================================================= */
 .top-scrim-vignette {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 108px;
+  height: 110px;
   pointer-events: none;
   z-index: 80;
   background: linear-gradient(
     to bottom,
     var(--md-sys-color-surface) 0%,
-    color-mix(in oklch, var(--md-sys-color-surface) 92%, transparent) 40%,
-    color-mix(in oklch, var(--md-sys-color-surface) 40%, transparent) 75%,
+    color-mix(in oklch, var(--md-sys-color-surface) 90%, transparent) 42%,
+    color-mix(in oklch, var(--md-sys-color-surface) 35%, transparent) 78%,
     transparent 100%
   );
   backdrop-filter: blur(8px);
@@ -177,7 +177,7 @@ body {
 }
 
 /* =========================================================
-   TOP HEADER (TITLE + 4 ACTION ICONS ONLY)
+   TOP HEADER (TITLE + ONLY 2 ICONS: LANGUAGE & THEME)
    ========================================================= */
 header.m3-app-bar {
   position: sticky;
@@ -186,7 +186,7 @@ header.m3-app-bar {
   display: flex;
   justify-content: center;
   padding: 0 12px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .m3-nav-capsule {
@@ -195,8 +195,8 @@ header.m3-app-bar {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 580px;
-  min-height: 56px;
+  max-width: 540px;
+  min-height: 58px;
   padding: 6px 8px 6px 18px;
   background: color-mix(in oklch, var(--md-sys-color-surface-container) 88%, transparent);
   backdrop-filter: blur(28px) saturate(1.8);
@@ -207,22 +207,21 @@ header.m3-app-bar {
   transition: all 0.45s var(--spring);
 }
 
-/* Replica Logo Title */
 .brand-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1.28rem;
   letter-spacing: -0.035em;
   color: var(--md-sys-color-on-surface);
   text-decoration: none;
   user-select: none;
 }
 .brand-icon-glyph {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
   display: grid;
@@ -230,16 +229,16 @@ header.m3-app-bar {
   transition: transform 0.45s var(--spring), border-radius 0.4s var(--spring);
 }
 .brand-title:hover .brand-icon-glyph {
-  transform: rotate(18deg) scale(1.1);
-  border-radius: 14px;
+  transform: rotate(20deg) scale(1.12);
+  border-radius: 16px;
 }
-.brand-icon-glyph svg { width: 18px; height: 18px; }
+.brand-icon-glyph svg { width: 19px; height: 19px; }
 
-/* 4 Icon Controls Deck */
+/* 2 Action Icons Deck: [Language, Theme] */
 .actions-deck {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   transition: opacity 0.3s var(--smooth), transform 0.35s var(--spring);
 }
 .actions-deck.hidden {
@@ -266,26 +265,22 @@ header.m3-app-bar {
   color: var(--md-sys-color-on-primary-container);
   transform: translateY(-2px) scale(1.08);
 }
-.m3-icon-action:active {
-  transform: scale(0.92);
-}
+.m3-icon-action:active { transform: scale(0.92); }
 .m3-icon-action.active-btn {
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
 }
 .m3-icon-action svg { width: 20px; height: 20px; }
 
-/* Language Morph Deck (Triggered on Lang Click) */
+/* Language Morph Deck */
 .lang-morph-deck {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   width: 100%;
   animation: deckAppear 0.35s var(--spring);
 }
-.lang-morph-deck.hidden {
-  display: none;
-}
+.lang-morph-deck.hidden { display: none; }
 @keyframes deckAppear {
   from { opacity: 0; transform: scale(0.94); }
   to { opacity: 1; transform: scale(1); }
@@ -315,9 +310,9 @@ header.m3-app-bar {
 /* Monet Palette Popup */
 .monet-popup {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   right: 0;
-  width: 290px;
+  width: 294px;
   background: var(--md-sys-color-surface-container);
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--shape-corner-extra-large);
@@ -355,7 +350,6 @@ header.m3-app-bar {
   border-radius: 14px;
   border: 0;
   cursor: pointer;
-  position: relative;
   transition: transform 0.3s var(--spring), border-radius 0.3s var(--spring);
   box-shadow: var(--elevation-1);
 }
@@ -413,19 +407,62 @@ header.m3-app-bar {
 }
 
 /* =========================================================
-   HERO DISPLAY
+   HERO DISPLAY - REDESIGNED WITH DYNAMIC MD3E SHAPES
    ========================================================= */
 .hero-wrapper {
-  padding: 30px 0 24px;
+  position: relative;
+  padding: 34px 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
+
+/* Ambient Floating MD3E Shapes */
+.hero-ambient-shape-1 {
+  position: absolute;
+  right: -20px;
+  top: 20px;
+  width: 210px;
+  height: 210px;
+  border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  background: linear-gradient(135deg, color-mix(in oklch, var(--md-sys-color-primary) 22%, transparent), color-mix(in oklch, var(--md-sys-color-secondary) 14%, transparent));
+  filter: blur(28px);
+  pointer-events: none;
+  animation: floatMorph 16s ease-in-out infinite alternate;
+  z-index: -1;
+}
+.hero-ambient-shape-2 {
+  position: absolute;
+  right: 18px;
+  top: 48px;
+  width: 140px;
+  height: 140px;
+  opacity: 0.65;
+  pointer-events: none;
+  animation: spinSlow 34s linear infinite;
+  color: var(--md-sys-color-primary-container);
+  z-index: -1;
+}
+@media (max-width: 600px) {
+  .hero-ambient-shape-1 { width: 140px; height: 140px; right: -10px; }
+  .hero-ambient-shape-2 { width: 100px; height: 100px; right: 0; }
+}
+
+@keyframes floatMorph {
+  0% { transform: translateY(0) rotate(0deg) scale(1); border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+  50% { transform: translateY(-18px) rotate(180deg) scale(1.12); border-radius: 58% 42% 38% 62% / 60% 38% 62% 40%; }
+  100% { transform: translateY(12px) rotate(360deg) scale(0.96); border-radius: 36% 64% 64% 36% / 40% 60% 40% 60%; }
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 7px 16px;
   border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
@@ -433,60 +470,99 @@ header.m3-app-bar {
   font-weight: 800;
   width: fit-content;
   letter-spacing: 0.02em;
-  animation: heroIn 0.8s var(--spring) backwards;
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-secondary) 25%, transparent);
 }
+.pulse-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 currentColor;
+  animation: pulseDot 2.2s infinite;
+}
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 70%, transparent); }
+  70% { transform: scale(1); box-shadow: 0 0 0 7px transparent; }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 transparent; }
+}
+
 .hero-title {
-  font-size: clamp(2.6rem, 7.5vw, 4.2rem);
-  line-height: 1.05;
+  font-size: clamp(2.7rem, 7.8vw, 4.4rem);
+  line-height: 1.04;
   letter-spacing: -0.04em;
   font-weight: 800;
   max-width: 14ch;
-  animation: heroIn 0.8s var(--spring) 0.1s backwards;
 }
 .accent-gradient-word {
   color: var(--md-sys-color-primary);
-  position: relative;
   display: inline-block;
 }
+
 .hero-body {
   font-size: clamp(1.05rem, 2.4vw, 1.25rem);
   color: var(--md-sys-color-on-surface-variant);
   max-width: 46ch;
   line-height: 1.5;
-  animation: heroIn 0.8s var(--spring) 0.2s backwards;
 }
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 10px;
-  animation: heroIn 0.8s var(--spring) 0.3s backwards;
-}
-.chips-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-  animation: heroIn 0.8s var(--spring) 0.4s backwards;
-}
-.spec-chip {
-  padding: 8px 16px;
-  background: var(--md-sys-color-surface-container);
-  color: var(--md-sys-color-on-surface-variant);
-  border-radius: var(--shape-corner-medium);
-  font-size: 0.84rem;
-  font-weight: 700;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  transition: all 0.3s var(--spring);
-}
-.spec-chip:hover {
-  background: var(--md-sys-color-surface-container-high);
-  transform: translateY(-2px);
+  margin-top: 8px;
 }
 
-@keyframes heroIn {
-  from { opacity: 0; transform: translateY(24px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+/* =========================================================
+   INTERACTIVE HERO CHIPS (SETUP, TUTORIAL VIDEO, ANDROID 11+)
+   ========================================================= */
+.hero-chips-deck {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.interactive-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--shape-corner-medium);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  cursor: pointer;
+  transition: all 0.3s var(--spring);
+}
+.interactive-chip svg {
+  color: var(--md-sys-color-primary);
+  width: 17px;
+  height: 17px;
+  transition: transform 0.3s var(--spring);
+}
+.interactive-chip:hover {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-color: var(--md-sys-color-primary);
+  transform: translateY(-3px) scale(1.03);
+  border-radius: 20px;
+}
+.interactive-chip:hover svg {
+  transform: rotate(-15deg) scale(1.15);
+}
+.interactive-chip.static-badge {
+  cursor: default;
+  background: var(--md-sys-color-surface-container-high);
+}
+.interactive-chip.static-badge:hover {
+  transform: none;
+  border-radius: var(--shape-corner-medium);
+  border-color: var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* =========================================================
@@ -535,7 +611,7 @@ header.m3-app-bar {
 }
 
 /* =========================================================
-   SECTION HEADINGS
+   SECTION HEADINGS & STEP TAGS
    ========================================================= */
 .step-heading {
   margin: 54px 0 20px;
@@ -563,7 +639,7 @@ header.m3-app-bar {
 }
 
 /* =========================================================
-   CARD 1: DISABLE PLAY PROTECT (EXPRESSIVE DROPDOWN)
+   STEP 01: DISABLE PLAY PROTECT (EXPANDABLE CARD)
    ========================================================= */
 .protect-card {
   background: var(--md-sys-color-surface-container);
@@ -595,8 +671,8 @@ header.m3-app-bar {
   gap: 18px;
 }
 .protect-art {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 18px;
   background: var(--md-sys-color-tertiary-container);
   color: var(--md-sys-color-on-tertiary-container);
@@ -637,7 +713,7 @@ header.m3-app-bar {
   overflow: hidden;
 }
 .step-sequence {
-  padding: 0 24px 28px 94px;
+  padding: 0 24px 28px 96px;
   display: grid;
   gap: 14px;
 }
@@ -670,21 +746,22 @@ header.m3-app-bar {
 }
 
 /* =========================================================
-   CARD 2: 3 DOWNLOAD TILES
+   STEP 02: 3 IDENTICAL DOWNLOAD TILES (EXACT DESIGN CONSISTENCY)
    ========================================================= */
 .trilogy-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 18px;
 }
 @media (min-width: 768px) {
   .trilogy-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
 .trilogy-card {
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-extra-large);
   border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 26px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -693,28 +770,23 @@ header.m3-app-bar {
   transition: transform 0.35s var(--spring), border-radius 0.35s var(--spring), background-color 0.3s;
 }
 .trilogy-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
   border-radius: 34px 16px 34px 16px;
   background: var(--md-sys-color-surface-container-high);
+  border-color: var(--md-sys-color-outline);
 }
 .card-badge {
   position: absolute;
-  top: 18px;
-  right: 18px;
-  padding: 4px 10px;
+  top: 20px;
+  right: 20px;
+  padding: 5px 12px;
   border-radius: var(--shape-corner-full);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-}
-.card-badge.badge-primary {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-}
-.card-badge.badge-tonal {
-  background: var(--md-sys-color-surface-container-highest);
-  color: var(--md-sys-color-on-surface-variant);
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
 }
 .card-icon-token {
   width: 58px;
@@ -723,63 +795,53 @@ header.m3-app-bar {
   display: grid;
   place-items: center;
   margin-bottom: 22px;
-  transition: transform 0.4s var(--spring);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  transition: transform 0.4s var(--spring), border-radius 0.35s var(--spring);
 }
 .trilogy-card:hover .card-icon-token {
-  transform: scale(1.12) rotate(8deg);
+  transform: scale(1.12) rotate(10deg);
+  border-radius: 14px;
 }
-.card-icon-token.primary {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-}
-.card-icon-token.secondary {
-  background: var(--md-sys-color-secondary);
-  color: var(--md-sys-color-secondary-container);
-}
-.card-icon-token.tertiary {
-  background: var(--md-sys-color-tertiary);
-  color: var(--md-sys-color-tertiary-container);
-}
+.card-icon-token svg { width: 28px; height: 28px; }
 .card-heading {
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.28rem;
+  font-weight: 800;
   letter-spacing: -0.02em;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .card-copy {
   font-size: 0.92rem;
   color: var(--md-sys-color-on-surface-variant);
   line-height: 1.5;
-  margin-bottom: 24px;
+  margin-bottom: 26px;
+  min-height: 66px;
 }
 .card-action-link {
   width: 100%;
-  height: 48px;
+  height: 50px;
   border-radius: var(--shape-corner-full);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   cursor: pointer;
   border: 0;
   text-decoration: none;
-  transition: all 0.25s var(--spring);
-}
-.card-action-link.filled {
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
+  transition: all 0.28s var(--spring);
 }
-.card-action-link.tonal {
-  background: var(--md-sys-color-surface-container-highest);
-  color: var(--md-sys-color-on-surface);
+.card-action-link:hover {
+  transform: translateY(-2px);
+  border-radius: 16px;
 }
-.card-action-link:hover { transform: translateY(-2px); }
-.card-action-link:active { transform: scale(0.97); }
+.card-action-link:active { transform: scale(0.96); }
 
 /* =========================================================
-   CARD 3: TUTORIAL VIDEO CARD
+   STEP 03: SETUP TUTORIAL VIDEO
    ========================================================= */
 .tutorial-screen-card {
   position: relative;
@@ -798,8 +860,8 @@ header.m3-app-bar {
   cursor: pointer;
 }
 .giant-play-disc {
-  width: 84px;
-  height: 84px;
+  width: 86px;
+  height: 86px;
   border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
@@ -813,17 +875,17 @@ header.m3-app-bar {
   transform: scale(1.15);
   border-radius: 26px;
 }
-.giant-play-disc svg { width: 36px; height: 36px; margin-left: 4px; }
+.giant-play-disc svg { width: 38px; height: 38px; margin-left: 4px; }
 .bottom-media-chip {
   position: absolute;
   bottom: 20px;
   left: 20px;
   background: color-mix(in oklch, var(--md-sys-color-surface) 84%, transparent);
   backdrop-filter: blur(14px);
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: var(--shape-corner-full);
   font-size: 0.84rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--md-sys-color-on-surface);
   border: 1px solid var(--md-sys-color-outline-variant);
 }
@@ -836,33 +898,41 @@ header.m3-app-bar {
 }
 
 /* =========================================================
-   CARD 4: LICENSE PRICING (DIRECTLY BELOW TUTORIAL)
+   STEP 04: REDESIGNED HIGH-IMPACT LICENSE PRICING CARD
    ========================================================= */
 .pricing-wrap {
-  margin-top: 36px;
+  margin-top: 42px;
 }
 .expressive-price-card {
   position: relative;
   overflow: hidden;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
   border-radius: var(--shape-corner-extra-large);
   padding: clamp(28px, 6vw, 48px);
   display: grid;
   gap: 28px;
   border: 1px solid var(--md-sys-color-outline-variant);
-  box-shadow: var(--elevation-2);
+  box-shadow: var(--elevation-3);
+  transition: all 0.35s var(--spring);
 }
-.ambient-monet-glow {
+.expressive-price-card:hover {
+  border-color: var(--md-sys-color-primary);
+}
+
+/* Rotating Squircle Monet Accent inside Price Card */
+.price-card-shape {
   position: absolute;
-  right: -90px;
-  top: -90px;
-  width: 360px;
-  height: 360px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in oklch, var(--md-sys-color-primary) 36%, transparent) 0%, transparent 70%);
+  right: -50px;
+  bottom: -50px;
+  width: 280px;
+  height: 280px;
+  opacity: 0.16;
   pointer-events: none;
+  animation: spinSlow 40s linear infinite;
+  color: var(--md-sys-color-primary);
 }
+
 .price-hero-row {
   display: flex;
   flex-wrap: wrap;
@@ -875,11 +945,11 @@ header.m3-app-bar {
 .cost-figure-group {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 4px;
 }
 .unit-currency {
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 2.4rem;
+  font-weight: 800;
   color: var(--md-sys-color-primary);
 }
 .numeric-amt {
@@ -891,12 +961,13 @@ header.m3-app-bar {
 }
 .recurrence-period {
   font-size: 1.15rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--md-sys-color-on-surface-variant);
 }
+
 .privileges-list {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   position: relative;
   z-index: 2;
 }
@@ -908,14 +979,21 @@ header.m3-app-bar {
   font-weight: 600;
   color: var(--md-sys-color-on-surface);
 }
-.privilege-item svg {
-  color: var(--md-sys-color-primary);
+.check-token {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  display: grid;
+  place-items: center;
   flex: none;
 }
+.check-token svg { width: 16px; height: 16px; stroke-width: 3; }
 
 /* Multi-device strip */
 .multi-key-banner {
-  margin-top: 16px;
+  margin-top: 18px;
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-large);
   border: 1px solid var(--md-sys-color-outline-variant);
@@ -927,9 +1005,9 @@ header.m3-app-bar {
   gap: 18px;
 }
 .multi-key-banner h3 {
-  font-size: 1.18rem;
-  font-weight: 700;
-  margin-bottom: 2px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 3px;
 }
 .multi-key-banner p {
   color: var(--md-sys-color-on-surface-variant);
@@ -950,7 +1028,9 @@ footer {
 footer a {
   color: var(--md-sys-color-primary);
   font-weight: 700;
+  text-decoration: none;
 }
+footer a:hover { text-decoration: underline; }
 .disclaimer-line {
   font-size: 0.82rem;
   margin-top: 8px;
@@ -976,30 +1056,53 @@ footer a {
 }
 .m3-snackbar.active { transform: translate(-50%, 0); }
 
-/* Scroll Animation In */
+/* =========================================================
+   LOADING & STAGGERED REVEAL ANIMATIONS (ALL ELEMENTS)
+   ========================================================= */
+@keyframes md3eIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.anim-entry {
+  animation: md3eIn 0.85s var(--spring) both;
+}
+
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+.delay-3 { animation-delay: 0.24s; }
+.delay-4 { animation-delay: 0.32s; }
+.delay-5 { animation-delay: 0.40s; }
+
 .reveal-box {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.65s var(--smooth), transform 0.65s var(--spring);
+  transform: translateY(26px) scale(0.98);
+  transition: opacity 0.7s var(--smooth), transform 0.7s var(--spring);
 }
 .reveal-box.in-view {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 </style>
 </head>
 <body>
 
-<!-- Dynamic Vignette to fade elements behind header -->
+<!-- Dynamic Vignette to dissolve background text when scrolling behind the bar -->
 <div class="top-scrim-vignette" aria-hidden="true"></div>
 
 <!-- =========================================================
-     TOP HEADER (REPLICA TITLE + 4 ICONS ONLY)
+     TOP HEADER (TITLE + ONLY 2 ICONS: LANGUAGE & THEME)
      ========================================================= -->
-<header class="m3-app-bar">
+<header class="m3-app-bar anim-entry">
   <div class="m3-nav-capsule" id="capsuleBar">
     
-    <!-- Brand Title (Always visible in Default state) -->
+    <!-- Replica Brand Title -->
     <a href="#hero" class="brand-title" id="brandTitle">
       <div class="brand-icon-glyph">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1010,27 +1113,9 @@ footer a {
       <span>Replica</span>
     </a>
 
-    <!-- 4 Action Icons Deck: [Setup, License, Language, Theme] -->
+    <!-- Action Icons Deck: Only [Language, Theme] -->
     <div class="actions-deck" id="actionsDeck">
-      <!-- Icon 1: Setup Steps -->
-      <a href="#protect" class="m3-icon-action m3-rip" id="iconSetup" aria-label="Setup Guide" title="Setup Guide">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-      </a>
-
-      <!-- Icon 2: Purchase License Key -->
-      <a href="#pricing" class="m3-icon-action m3-rip" id="iconLicense" aria-label="Purchase License Key" title="License Key">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 2l-2 2m-1.5 1.5L14 9l-3-3 2.5-2.5a2.12 2.12 0 0 1 3 0l4.5 4.5z"/>
-          <path d="M3 21l3.5-3.5"/>
-          <path d="M14 9l-8.5 8.5"/>
-          <path d="M9 14l-2 2"/>
-        </svg>
-      </a>
-
-      <!-- Icon 3: Language Selector Trigger -->
+      <!-- Icon 1: Language Switcher Trigger -->
       <button class="m3-icon-action m3-rip" id="btnLanguage" aria-label="Select Language" title="Select Language">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/>
@@ -1039,8 +1124,8 @@ footer a {
         </svg>
       </button>
 
-      <!-- Icon 4: Theme Palette Trigger -->
-      <button class="m3-icon-action m3-rip" id="btnTheme" aria-label="Customize Theme & Color Palette" title="Monet Palette" aria-haspopup="true" aria-expanded="false">
+      <!-- Icon 2: Theme / Monet Palette Trigger -->
+      <button class="m3-icon-action m3-rip" id="btnTheme" aria-label="Customize Theme & Palette" title="Monet Palette" aria-haspopup="true" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"/>
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
@@ -1048,9 +1133,8 @@ footer a {
       </button>
     </div>
 
-    <!-- Language Morph Deck (Shown when clicking Language Icon) -->
+    <!-- Language Morph Deck (Back Button + Languages) -->
     <div class="lang-morph-deck hidden" id="langMorphDeck">
-      <!-- Back Arrow -->
       <button class="m3-icon-action m3-rip" id="btnLangBack" aria-label="Back to main navigation">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -1080,23 +1164,35 @@ footer a {
 
 <main class="wrapper">
   <!-- =========================================================
-       HERO
+       HERO (DYNAMIC MD3E SHAPES & NEW REPLACED CHIPS)
        ========================================================= -->
   <section class="hero-wrapper" id="hero">
-    <div class="status-pill">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z"/></svg>
+    <!-- Ambient Floating MD3E Shapes -->
+    <div class="hero-ambient-shape-1" aria-hidden="true"></div>
+    <div class="hero-ambient-shape-2" aria-hidden="true">
+      <svg viewBox="0 0 100 100" fill="currentColor">
+        <path d="M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0 Z"/>
+      </svg>
+    </div>
+
+    <!-- Status Badge -->
+    <div class="status-pill anim-entry delay-1">
+      <span class="pulse-indicator"></span>
       <span data-i="heroBadge">SMM Kingdom Tasks Automation</span>
     </div>
 
-    <h1 class="hero-title" data-i="heroTitle">
+    <!-- Headline -->
+    <h1 class="hero-title anim-entry delay-2" data-i="heroTitle">
       Instagram tasks, <br><span class="accent-gradient-word">on autopilot.</span>
     </h1>
 
-    <p class="hero-body" data-i="heroSubtitle">
+    <!-- Description -->
+    <p class="hero-body anim-entry delay-3" data-i="heroSubtitle">
       Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.
     </p>
 
-    <div class="hero-actions">
+    <!-- CTAs -->
+    <div class="hero-actions anim-entry delay-4">
       <a href="#protect" class="m3-btn filled hero-xl m3-rip" data-i="btnHeroGetStarted">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
         Get Started
@@ -1106,10 +1202,33 @@ footer a {
       </a>
     </div>
 
-    <div class="chips-row">
-      <span class="spec-chip" data-i="chipRate">$10 per month</span>
-      <span class="spec-chip" data-i="chipDevice">One device per license</span>
-      <span class="spec-chip">Android 11+</span>
+    <!-- NEW INTERACTIVE CHIPS (SETUP, TUTORIAL VIDEO, ANDROID 11+) -->
+    <div class="hero-chips-deck anim-entry delay-5">
+      <!-- Interactive Setup Chip -->
+      <a href="#protect" class="interactive-chip m3-rip" id="chipSetup" title="Jump to Setup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span data-i="chipSetupText">Setup</span>
+      </a>
+
+      <!-- Interactive Tutorial Video Chip -->
+      <a href="#tutorial" class="interactive-chip m3-rip" id="chipTutorial" title="Jump to Tutorial Video">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <span data-i="chipTutorialText">Tutorial Video</span>
+      </a>
+
+      <!-- Android 11+ Static Chip -->
+      <div class="interactive-chip static-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3"/>
+          <path d="M12 18h.01"/>
+        </svg>
+        <span>Android 11+</span>
+      </div>
     </div>
   </section>
 
@@ -1133,7 +1252,7 @@ footer a {
             </svg>
           </div>
           <div>
-            <h3 style="font-size: 1.25rem; font-weight: 700;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
+            <h3 style="font-size: 1.25rem; font-weight: 800;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
             <p style="font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant);" data-i="st1CardPrompt">Tap to see quick instructions</p>
           </div>
         </div>
@@ -1147,7 +1266,7 @@ footer a {
       <div class="protect-body">
         <div class="protect-body-content">
           <div class="step-sequence" id="protectStepRows">
-            <!-- Rendered by JS -->
+            <!-- Rendered by JavaScript -->
           </div>
         </div>
       </div>
@@ -1155,7 +1274,7 @@ footer a {
   </section>
 
   <!-- =========================================================
-       STEP 02: DOWNLOAD TILES (REPLICA, TERMUX, TERMUX:API)
+       STEP 02: 3 IDENTICAL DOWNLOAD TILES
        ========================================================= -->
   <section id="downloads" class="reveal-box">
     <div class="step-heading">
@@ -1167,10 +1286,10 @@ footer a {
     <div class="trilogy-grid">
       <!-- Tile 1: Replica -->
       <article class="trilogy-card">
-        <span class="card-badge badge-primary">Automation</span>
+        <span class="card-badge">Automation</span>
         <div>
-          <div class="card-icon-token primary">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <div class="card-icon-token">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="3"/>
               <path d="M12 18h.01"/>
             </svg>
@@ -1178,7 +1297,7 @@ footer a {
           <h3 class="card-heading">Download Replica</h3>
           <p class="card-copy" data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
         </div>
-        <a class="card-action-link filled m3-rip" id="dlReplicaAnchor" href="#" download>
+        <a class="card-action-link m3-rip" id="dlReplicaAnchor" href="#" download>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
           <span data-i="btnDlReplica">Download Replica</span>
         </a>
@@ -1186,10 +1305,10 @@ footer a {
 
       <!-- Tile 2: Termux -->
       <article class="trilogy-card">
-        <span class="card-badge badge-tonal">Environment</span>
+        <span class="card-badge">Environment</span>
         <div>
-          <div class="card-icon-token secondary">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <div class="card-icon-token">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="4 17 10 11 4 5"/>
               <line x1="12" y1="19" x2="20" y2="19"/>
             </svg>
@@ -1197,7 +1316,7 @@ footer a {
           <h3 class="card-heading">Download Termux</h3>
           <p class="card-copy" data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
         </div>
-        <a class="card-action-link tonal m3-rip" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
+        <a class="card-action-link m3-rip" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
           <span data-i="btnDlTermux">Download Termux</span>
         </a>
@@ -1205,10 +1324,10 @@ footer a {
 
       <!-- Tile 3: Termux API -->
       <article class="trilogy-card">
-        <span class="card-badge badge-tonal">System API</span>
+        <span class="card-badge">System Bridge</span>
         <div>
-          <div class="card-icon-token tertiary">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <div class="card-icon-token">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
             </svg>
@@ -1216,7 +1335,7 @@ footer a {
           <h3 class="card-heading">Download Termux API</h3>
           <p class="card-copy" data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
         </div>
-        <a class="card-action-link tonal m3-rip" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
+        <a class="card-action-link m3-rip" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
           <span data-i="btnDlTermuxApi">Download Termux API</span>
         </a>
@@ -1247,7 +1366,7 @@ footer a {
   </section>
 
   <!-- =========================================================
-       STEP 04: LICENSE PRICING (DIRECTLY BELOW TUTORIAL)
+       STEP 04: REDESIGNED HIGH-IMPACT LICENSE PRICING CARD
        ========================================================= -->
   <section id="pricing" class="pricing-wrap reveal-box">
     <div class="step-heading">
@@ -1257,8 +1376,11 @@ footer a {
     </div>
 
     <div class="expressive-price-card">
-      <div class="ambient-monet-glow"></div>
-      
+      <!-- Decorative Rotating MD3 Squircle Shape -->
+      <svg class="price-card-shape" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
+        <path d="M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0 Z"/>
+      </svg>
+
       <div class="price-hero-row">
         <div>
           <div class="cost-figure-group">
@@ -1266,7 +1388,7 @@ footer a {
             <span class="numeric-amt" id="numericAmt">10</span>
             <span class="recurrence-period" data-i="priceCadence">/ month</span>
           </div>
-          <p style="margin-top: 6px; font-weight: 600;" data-i="priceDesc">Single device per license</p>
+          <p style="margin-top: 6px; font-weight: 700; color: var(--md-sys-color-primary);" data-i="priceDesc">Single device per license</p>
         </div>
 
         <a class="m3-btn filled hero-xl m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnGetLicense">
@@ -1277,15 +1399,15 @@ footer a {
 
       <div class="privileges-list">
         <div class="privilege-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span>
         </div>
         <div class="privilege-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span data-i="feature2">Runs smoothly on Android 11+</span>
         </div>
         <div class="privilege-item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span data-i="feature3">Direct support & script updates</span>
         </div>
       </div>
@@ -1326,7 +1448,6 @@ const APP_CONFIG = {
     video: '',       // YouTube Video ID, e.g. 'dQw4w9WgXcQ'
     telegram: 'https://t.me/iamrajatroel'
   },
-  // 12 Curated Material You Expressive Hues
   monetHues: [
     { hue: 154, name: 'Emerald Jade' },
     { hue: 185, name: 'Ocean Cyan' },
@@ -1355,8 +1476,8 @@ const TRANSLATIONS = {
     heroSubtitle: "Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.",
     btnHeroGetStarted: "Get Started",
     btnHeroLicense: "Get a License",
-    chipRate: "$10 per month",
-    chipDevice: "One device per license",
+    chipSetupText: "Setup",
+    chipTutorialText: "Tutorial Video",
     st1Head: "Disable Play Protect",
     st1Sub: "Android can prevent sideloading background automation apps. Turn off scanning first.",
     st1CardTitle: "Play Protect Walkthrough",
@@ -1403,8 +1524,8 @@ const TRANSLATIONS = {
     heroSubtitle: "Replica бере завдання з бота SMM Kingdom Tasks, виконує їх на вашому телефоні та звітує назад.",
     btnHeroGetStarted: "Почати",
     btnHeroLicense: "Отримати ліцензію",
-    chipRate: "$10 на місяць",
-    chipDevice: "Один пристрій на ліцензію",
+    chipSetupText: "Налаштування",
+    chipTutorialText: "Відеоінструкція",
     st1Head: "Вимкніть Play Захист",
     st1Sub: "Android може блокувати додатки не з Play Маркету. Спочатку вимкніть сканування.",
     st1CardTitle: "Інструкція Play Захисту",
@@ -1451,8 +1572,8 @@ const TRANSLATIONS = {
     heroSubtitle: "Replica берёт задания из бота SMM Kingdom Tasks, выполняет их на вашем телефоне и отправляет результат.",
     btnHeroGetStarted: "Начать",
     btnHeroLicense: "Получить лицензию",
-    chipRate: "$10 в месяц",
-    chipDevice: "Одно устройство на лицензию",
+    chipSetupText: "Настройка",
+    chipTutorialText: "Видеоурок",
     st1Head: "Отключите Play Защиту",
     st1Sub: "Android может блокировать внешние скрипты. Сначала отключите сканирование.",
     st1CardTitle: "Инструкция Play Защиты",
@@ -1572,7 +1693,7 @@ function renderI18n() {
   });
 }
 
-// Morph Navigation Bar between [Title + 4 Icons] and [Back + 3 Language Pills]
+// Morph Navigation Bar between [Title + 2 Icons] and [Back + 3 Language Pills]
 function toggleLanguageMorph(showLang) {
   const brandTitle = $('#brandTitle');
   const actionsDeck = $('#actionsDeck');
@@ -1589,9 +1710,26 @@ function toggleLanguageMorph(showLang) {
   }
 }
 
+// Number Count-Up Animation
+function animateNumericAmt() {
+  const amtEl = $('#numericAmt');
+  if (!amtEl) return;
+  let start = 0;
+  const target = 10;
+  const duration = 900;
+  const startTime = performance.now();
+  function update(time) {
+    const elapsed = time - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    amtEl.textContent = Math.round(start + (target - start) * ease);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
 // Initialize Application Events
 function init() {
-  // Bind Static Telegram Links
   $$('[data-tg]').forEach(a => a.href = APP_CONFIG.links.telegram);
   $('#dlTermuxAnchor').href = APP_CONFIG.links.termuxApk;
   $('#dlTermuxApiAnchor').href = APP_CONFIG.links.termuxApiApk;
@@ -1611,7 +1749,7 @@ function init() {
     toggleLanguageMorph(true);
   });
 
-  // Language Back Button -> Restore Title & 4 Icons
+  // Language Back Button -> Restore Title & 2 Icons
   $('#btnLangBack').addEventListener('click', e => {
     e.stopPropagation();
     toggleLanguageMorph(false);
@@ -1691,13 +1829,16 @@ function init() {
 }
 
 /* =========================================================
-   SCROLL REVEAL OBSERVER
+   SCROLL REVEAL OBSERVER WITH TRIGGERED NUMBER ANIMATION
    ========================================================= */
 function initObserver() {
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('in-view');
+        if (entry.target.id === 'pricing') {
+          animateNumericAmt();
+        }
         obs.unobserve(entry.target);
       }
     });
