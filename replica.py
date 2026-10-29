@@ -1821,6 +1821,21 @@ def make_title():
     out.append_text(bar)
     return out
 
+_HAPTIC_BUSY = threading.Lock()
+
+def haptic_tick():
+    """One minimal 'tak' tick through Termux:API (runs in the background, never blocks the UI)."""
+    if shutil.which("termux-vibrate") is None:
+        return
+    def run():
+        if not _HAPTIC_BUSY.acquire(blocking=False):
+            return                      # a tick is already playing; skip instead of piling up
+        try:
+            _quiet(["termux-vibrate", "-d", "20", "-f"], timeout=5)
+        finally:
+            _HAPTIC_BUSY.release()
+    threading.Thread(target=run, daemon=True).start()
+
 def info_row(label, value, color, dot="●", pill_bg=None):
     """One key/value row: label pinned left, value pinned right (symmetrical edges)."""
     grid = Table.grid(expand=True)
@@ -1886,9 +1901,9 @@ class BotApp(App):
     }
 
     #log_actions {
-        width: 1fr;
+        width: 100%;
         height: auto;
-        margin: 1 2 1 2;
+        margin: 1 0 0 0;
     }
 
     Button {
@@ -1932,13 +1947,15 @@ class BotApp(App):
         background: #33240A;
     }
 
-    #actions Button.exit {
-        margin-top: 1;
+    #exit {
+        dock: bottom;
+        width: 100%;
+        margin: 0 2 1 2;
         background: #1F080E;
         color: #FF8A96;
         border: round #FF4D61;
     }
-    #actions Button.exit:hover, #actions Button.exit:focus {
+    #exit:hover, #exit:focus {
         background: #2D0C15;
     }
 
@@ -1961,7 +1978,9 @@ class BotApp(App):
         background: #1B1540;
     }
 
-    #actions Button:disabled {
+    #actions Button:disabled,
+    #log_actions Button:disabled,
+    #exit:disabled {
         background: #000000;
         color: #4A4565;
         border: round #1F1B2E;
@@ -1991,12 +2010,12 @@ class BotApp(App):
             yield Static(id="panel")
         with Vertical(id="actions"):
             yield Button("Start Automation", id="toggle_run", classes="start")
-            yield Button("Exit", id="exit", classes="exit")
         with Vertical(id="log_card"):
             yield Static(id="log")
-        with Horizontal(id="log_actions"):
-            yield Button("Clear logs", id="clear_logs")
-            yield Button("Share logs", id="share_logs")
+            with Horizontal(id="log_actions"):
+                yield Button("Clear logs", id="clear_logs")
+                yield Button("Share logs", id="share_logs")
+        yield Button("Exit", id="exit")          # docked to the very bottom of the screen
 
     # ---- panel / log helpers ----
     def state_style(self):
@@ -2026,7 +2045,9 @@ class BotApp(App):
                 toggle_btn.add_class("start")
                 toggle_btn.disabled = self._busy or not (self.logged_in and LICENSE_OK)
 
-            self.query_one("#exit", Button).disabled = RUNNING or self._busy
+            locked = RUNNING or self._busy
+            for button_id in ("#exit", "#clear_logs", "#share_logs"):
+                self.query_one(button_id, Button).disabled = locked
         except Exception:
             pass
 
@@ -2067,7 +2088,7 @@ class BotApp(App):
 
         rows = [info_row(label.upper(), value, color, dot)
                 for label, value, color, dot in (account, license_row, device, cash)]
-        rows.append(info_row("STATUS", self.state_text, fg, "●", pill_bg=bg))
+        rows.append(info_row("STATUS", self.state_text, fg, "●"))
 
         parts = []
         for index, row in enumerate(rows):
@@ -2271,6 +2292,7 @@ class BotApp(App):
 
     async def on_button_pressed(self, event: Button.Pressed):
         button_id = event.button.id
+        haptic_tick()
         if button_id == "toggle_run":
             if RUNNING:
                 self.action_stop()
