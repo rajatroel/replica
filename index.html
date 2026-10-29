@@ -1,546 +1,2055 @@
+```html
 <!DOCTYPE html>
 <html lang="en" data-mode="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101510">
-<title>Replica — Instagram Automation</title>
-<meta name="description" content="Automate Instagram tasks on Android with Replica, Termux, and SMM Kingdom Tasks Bot.">
+<title>Replica – Instagram Automation</title>
+<meta name="description" content="Automate Instagram tasks on Android 11+ with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-@property --h { syntax: '<number>'; inherits: true; initial-value: 154; }
-@property --orbit { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@property --h {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 154;
+}
+
 :root {
   --h: 154;
-  --spring: cubic-bezier(.2,.85,.25,1.25);
-  --smooth: cubic-bezier(.2,.7,.2,1);
-  --motion: cubic-bezier(.34,1.56,.64,1);
-  --md-sys-color-primary: oklch(.44 .16 var(--h));
-  --md-sys-color-on-primary: oklch(.99 .01 var(--h));
-  --md-sys-color-primary-container: oklch(.91 .075 var(--h));
-  --md-sys-color-on-primary-container: oklch(.2 .075 var(--h));
-  --md-sys-color-secondary: oklch(.47 .09 calc(var(--h) + 30));
-  --md-sys-color-on-secondary: oklch(.99 .01 calc(var(--h) + 30));
-  --md-sys-color-secondary-container: oklch(.91 .055 calc(var(--h) + 30));
-  --md-sys-color-on-secondary-container: oklch(.22 .06 calc(var(--h) + 30));
-  --md-sys-color-tertiary: oklch(.48 .12 calc(var(--h) + 78));
-  --md-sys-color-tertiary-container: oklch(.91 .075 calc(var(--h) + 78));
-  --md-sys-color-on-tertiary-container: oklch(.2 .09 calc(var(--h) + 78));
-  --md-sys-color-surface: oklch(.985 .006 var(--h));
-  --md-sys-color-surface-dim: oklch(.94 .012 var(--h));
+  /* True MD3E Expressive Physics Curves */
+  --spring-fast: cubic-bezier(0.22, 1.4, 0.36, 1);
+  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-smooth: cubic-bezier(0.2, 0.9, 0.25, 1);
+  --standard-Easing: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Light MD3E Dynamic Token Palette */
+  --md-sys-color-primary: oklch(0.44 0.17 var(--h));
+  --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
+  --md-sys-color-primary-container: oklch(0.91 0.085 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.18 0.09 var(--h));
+
+  --md-sys-color-secondary: oklch(0.46 0.1 calc(var(--h) + 28));
+  --md-sys-color-on-secondary: oklch(0.99 0.01 calc(var(--h) + 28));
+  --md-sys-color-secondary-container: oklch(0.91 0.055 calc(var(--h) + 28));
+  --md-sys-color-on-secondary-container: oklch(0.2 0.07 calc(var(--h) + 28));
+
+  --md-sys-color-tertiary: oklch(0.46 0.14 calc(var(--h) + 64));
+  --md-sys-color-on-tertiary: oklch(0.99 0.01 calc(var(--h) + 64));
+  --md-sys-color-tertiary-container: oklch(0.9 0.08 calc(var(--h) + 64));
+  --md-sys-color-on-tertiary-container: oklch(0.2 0.08 calc(var(--h) + 64));
+
+  --md-sys-color-surface: oklch(0.98 0.008 var(--h));
+  --md-sys-color-surface-dim: oklch(0.93 0.014 var(--h));
   --md-sys-color-surface-container-lowest: oklch(1 0 var(--h));
-  --md-sys-color-surface-container-low: oklch(.967 .009 var(--h));
-  --md-sys-color-surface-container: oklch(.943 .014 var(--h));
-  --md-sys-color-surface-container-high: oklch(.916 .02 var(--h));
-  --md-sys-color-surface-container-highest: oklch(.885 .025 var(--h));
-  --md-sys-color-on-surface: oklch(.18 .018 var(--h));
-  --md-sys-color-on-surface-variant: oklch(.43 .025 var(--h));
-  --md-sys-color-outline: oklch(.68 .02 var(--h));
-  --md-sys-color-outline-variant: oklch(.85 .015 var(--h));
-  --md-sys-color-error: oklch(.54 .2 25);
-  --md-sys-color-scrim: oklch(.08 .015 var(--h) / .45);
-  --radius-xs: 8px; --radius-sm: 12px; --radius-md: 16px; --radius-lg: 22px;
-  --radius-xl: 28px; --radius-2xl: 36px; --radius-full: 999px;
-  --elevation-1: 0 2px 8px oklch(0 0 0 / .06), 0 1px 2px oklch(0 0 0 / .05);
-  --elevation-2: 0 10px 28px oklch(0 0 0 / .12), 0 3px 8px oklch(0 0 0 / .07);
-  --elevation-3: 0 24px 70px oklch(0 0 0 / .2), 0 5px 16px oklch(0 0 0 / .08);
-  --page-width: 1120px;
-  --gutter: clamp(20px, 4vw, 42px);
+  --md-sys-color-surface-container-low: oklch(0.96 0.012 var(--h));
+  --md-sys-color-surface-container: oklch(0.935 0.018 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.905 0.024 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.875 0.03 var(--h));
+
+  --md-sys-color-on-surface: oklch(0.17 0.022 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.42 0.03 var(--h));
+  --md-sys-color-outline: oklch(0.74 0.025 var(--h));
+  --md-sys-color-outline-variant: oklch(0.86 0.018 var(--h));
+
+  /* MD3E Corner Tokens */
+  --corner-xl: 36px;
+  --corner-lg: 28px;
+  --corner-md: 20px;
+  --corner-sm: 14px;
+  --corner-full: 9999px;
+
+  --shadow-sm: 0 4px 16px -4px oklch(0 0 0 / 0.07), 0 2px 6px -1px oklch(0 0 0 / 0.04);
+  --shadow-lg: 0 20px 44px -12px oklch(0 0 0 / 0.14), 0 6px 16px -4px oklch(0 0 0 / 0.06);
 }
+
 :root[data-mode="dark"] {
-  color-scheme: dark;
-  --md-sys-color-primary: oklch(.82 .14 var(--h));
-  --md-sys-color-on-primary: oklch(.2 .075 var(--h));
-  --md-sys-color-primary-container: oklch(.31 .095 var(--h));
-  --md-sys-color-on-primary-container: oklch(.93 .045 var(--h));
-  --md-sys-color-secondary: oklch(.79 .085 calc(var(--h) + 30));
-  --md-sys-color-on-secondary: oklch(.2 .05 calc(var(--h) + 30));
-  --md-sys-color-secondary-container: oklch(.28 .055 calc(var(--h) + 30));
-  --md-sys-color-on-secondary-container: oklch(.91 .04 calc(var(--h) + 30));
-  --md-sys-color-tertiary: oklch(.81 .105 calc(var(--h) + 78));
-  --md-sys-color-tertiary-container: oklch(.3 .075 calc(var(--h) + 78));
-  --md-sys-color-on-tertiary-container: oklch(.93 .045 calc(var(--h) + 78));
-  --md-sys-color-surface: oklch(.13 .012 var(--h));
-  --md-sys-color-surface-dim: oklch(.09 .01 var(--h));
-  --md-sys-color-surface-container-lowest: oklch(.075 .008 var(--h));
-  --md-sys-color-surface-container-low: oklch(.155 .014 var(--h));
-  --md-sys-color-surface-container: oklch(.19 .018 var(--h));
-  --md-sys-color-surface-container-high: oklch(.225 .022 var(--h));
-  --md-sys-color-surface-container-highest: oklch(.27 .026 var(--h));
-  --md-sys-color-on-surface: oklch(.94 .012 var(--h));
-  --md-sys-color-on-surface-variant: oklch(.73 .022 var(--h));
-  --md-sys-color-outline: oklch(.42 .02 var(--h));
-  --md-sys-color-outline-variant: oklch(.27 .018 var(--h));
-  --md-sys-color-error: oklch(.74 .16 25);
-  --md-sys-color-scrim: oklch(.02 .01 var(--h) / .65);
-  --elevation-1: 0 2px 10px oklch(0 0 0 / .18), 0 1px 3px oklch(0 0 0 / .14);
-  --elevation-2: 0 14px 34px oklch(0 0 0 / .25), 0 3px 9px oklch(0 0 0 / .16);
-  --elevation-3: 0 28px 80px oklch(0 0 0 / .42), 0 5px 18px oklch(0 0 0 / .18);
+  /* Dark MD3E Dynamic Token Palette */
+  --md-sys-color-primary: oklch(0.82 0.15 var(--h));
+  --md-sys-color-on-primary: oklch(0.18 0.08 var(--h));
+  --md-sys-color-primary-container: oklch(0.31 0.11 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.94 0.045 var(--h));
+
+  --md-sys-color-secondary: oklch(0.8 0.09 calc(var(--h) + 28));
+  --md-sys-color-on-secondary: oklch(0.19 0.06 calc(var(--h) + 28));
+  --md-sys-color-secondary-container: oklch(0.28 0.065 calc(var(--h) + 28));
+  --md-sys-color-on-secondary-container: oklch(0.92 0.04 calc(var(--h) + 28));
+
+  --md-sys-color-tertiary: oklch(0.82 0.12 calc(var(--h) + 64));
+  --md-sys-color-on-tertiary: oklch(0.19 0.07 calc(var(--h) + 64));
+  --md-sys-color-tertiary-container: oklch(0.3 0.09 calc(var(--h) + 64));
+  --md-sys-color-on-tertiary-container: oklch(0.93 0.045 calc(var(--h) + 64));
+
+  --md-sys-color-surface: oklch(0.12 0.014 var(--h));
+  --md-sys-color-surface-dim: oklch(0.09 0.01 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(0.075 0.008 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.155 0.017 var(--h));
+  --md-sys-color-surface-container: oklch(0.185 0.021 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.225 0.026 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.265 0.032 var(--h));
+
+  --md-sys-color-on-surface: oklch(0.95 0.012 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.74 0.024 var(--h));
+  --md-sys-color-outline: oklch(0.44 0.024 var(--h));
+  --md-sys-color-outline-variant: oklch(0.25 0.02 var(--h));
+
+  --shadow-sm: 0 6px 20px -4px oklch(0 0 0 / 0.32);
+  --shadow-lg: 0 24px 52px -12px oklch(0 0 0 / 0.52);
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
-html { scroll-behavior: smooth; scroll-padding-top: 108px; color-scheme: light dark; }
-body { min-height: 100vh; overflow-x: clip; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; font-size: 15px; line-height: 1.6; letter-spacing: -.018em; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); transition: background .4s var(--smooth), color .4s var(--smooth); }
-button, a { font: inherit; }
-button { color: inherit; }
-a { color: inherit; }
-button:focus-visible, a:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 4px; }
-::selection { color: var(--md-sys-color-on-primary); background: var(--md-sys-color-primary); }
-svg { display: block; }
-.icon { width: 20px; height: 20px; flex: 0 0 auto; }
-.icon-sm { width: 17px; height: 17px; }
-.page-noise { position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: .13; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E"); }
-.ambient { position: absolute; inset: 0 0 auto; height: 920px; overflow: hidden; z-index: -1; pointer-events: none; }
-.ambient-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .16; transform: translate3d(0,0,0); }
-.ambient-orb.orb-one { width: 450px; height: 450px; top: 20px; right: -130px; background: var(--md-sys-color-primary); animation: drift-a 16s ease-in-out infinite alternate; }
-.ambient-orb.orb-two { width: 350px; height: 350px; top: 370px; left: -180px; background: var(--md-sys-color-tertiary); animation: drift-b 21s ease-in-out infinite alternate; }
-@keyframes drift-a { to { transform: translate(-55px, 70px) scale(1.08); } }
-@keyframes drift-b { to { transform: translate(75px, -40px) scale(.9); } }
-.top-progress { position: fixed; z-index: 200; top: 0; left: 0; width: 100%; height: 2px; pointer-events: none; }
-.top-progress span { display: block; width: 0; height: 100%; background: var(--md-sys-color-primary); box-shadow: 0 0 16px var(--md-sys-color-primary); }
-/* Glass app bar */
-.top-scrim { position: fixed; z-index: 80; inset: 0 0 auto; height: 108px; pointer-events: none; background: linear-gradient(to bottom, color-mix(in oklch, var(--md-sys-color-surface) 75%, transparent), transparent); backdrop-filter: blur(2px); }
-.m3-app-bar { position: fixed; z-index: 100; inset: 14px 0 auto; display: flex; justify-content: center; padding: 0 16px; pointer-events: none; }
-.m3-nav-capsule { position: relative; display: flex; align-items: center; justify-content: space-between; width: min(100%, 720px); min-height: 64px; padding: 5px 8px 5px 18px; border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 78%, transparent); border-radius: var(--radius-full); background: color-mix(in oklch, var(--md-sys-color-surface-container) 68%, transparent); box-shadow: 0 8px 32px oklch(0 0 0 / .12), inset 0 1px 0 oklch(1 0 0 / .06); backdrop-filter: blur(28px) saturate(1.65); -webkit-backdrop-filter: blur(28px) saturate(1.65); pointer-events: auto; transition: background .35s, border-color .35s, box-shadow .35s, transform .45s var(--spring); }
-.m3-nav-capsule.scrolled { background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 82%, transparent); box-shadow: 0 12px 40px oklch(0 0 0 / .19), inset 0 1px 0 oklch(1 0 0 / .07); }
-.brand-title { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 800; font-size: 1.15rem; letter-spacing: -.045em; white-space: nowrap; }
-.brand-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px 13px 13px 5px; color: var(--md-sys-color-on-primary); background: var(--md-sys-color-primary); box-shadow: 0 5px 15px color-mix(in oklch, var(--md-sys-color-primary) 24%, transparent); transition: transform .5s var(--motion), border-radius .4s var(--spring); }
-.brand-title:hover .brand-icon { transform: rotate(-10deg) scale(1.08); border-radius: 50%; }
-.brand-icon svg { width: 22px; height: 22px; }
-.brand-copy { display: grid; line-height: 1.1; gap: 3px; }
-.brand-copy small { color: var(--md-sys-color-on-surface-variant); font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.actions-deck { display: flex; align-items: center; gap: 5px; }
-.actions-deck.hidden { display: none !important; }
-.m3-icon-action { width: 46px; height: 46px; border: 0; display: grid; place-items: center; border-radius: 50%; color: var(--md-sys-color-on-surface-variant); background: transparent; cursor: pointer; transition: color .22s, background .22s, transform .32s var(--spring); }
-.m3-icon-action:hover { background: var(--md-sys-color-surface-container-highest); color: var(--md-sys-color-on-surface); transform: scale(1.05); }
-.m3-icon-action:active { transform: scale(.9); }
-.m3-icon-action.active-btn { color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container); }
-.m3-icon-action svg { width: 21px; height: 21px; }
-.m3-rip { position: relative; isolation: isolate; overflow: hidden; cursor: pointer; }
-.m3-rip::after { content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0; pointer-events: none; transition: opacity .18s; }
-.m3-rip:hover::after { opacity: .045; }
-.m3-rip:active::after { opacity: .11; }
-.rip-drop { position: absolute; z-index: -1; border-radius: 50%; background: currentColor; opacity: .19; transform: scale(0); animation: ripple .58s var(--smooth) forwards; pointer-events: none; }
-@keyframes ripple { to { transform: scale(3.5); opacity: 0; } }
-.lang-morph-deck { display: flex; align-items: center; gap: 3px; animation: deck-in .36s var(--spring) both; }
+
+/* =========================================================
+   GLOBAL RESET & NATIVE APP TOUCH FEEL
+   ========================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 3px;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 108px;
+  color-scheme: light dark;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.55;
+  font-size: 16px;
+  letter-spacing: -0.014em;
+  overflow-x: hidden;
+  transition: background-color 0.45s var(--standard-Easing), color 0.45s var(--standard-Easing);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Ambient Expressive Background Mesh */
+.ambient-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  opacity: 0.22;
+  transition: background 0.6s ease;
+}
+:root[data-mode="light"] .ambient-blob { opacity: 0.32; }
+.ambient-blob.b1 {
+  width: 480px;
+  height: 480px;
+  top: -140px;
+  left: -100px;
+  background: var(--md-sys-color-primary);
+  animation: floatAmbient 18s ease-in-out infinite alternate;
+}
+.ambient-blob.b2 {
+  width: 420px;
+  height: 420px;
+  bottom: 5%;
+  right: -120px;
+  background: var(--md-sys-color-tertiary);
+  animation: floatAmbient 22s ease-in-out infinite alternate-reverse;
+}
+@keyframes floatAmbient {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  100% { transform: translate(60px, 40px) scale(1.14) rotate(25deg); }
+}
+
+/* =========================================================
+   MD3E RIPPLE & TACTILE SQUISH ENGINE
+   ========================================================= */
+.m3-rip {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.m3-rip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1;
+}
+.m3-rip:hover::before { opacity: 0.07; }
+.m3-rip:active::before { opacity: 0.14; }
+
+.rip-drop {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.22;
+  transform: scale(0);
+  animation: rip-anim 0.65s var(--spring-smooth) forwards;
+  pointer-events: none;
+  z-index: 2;
+}
+@keyframes rip-anim {
+  to { transform: scale(3.8); opacity: 0; }
+}
+
+/* Continuous Rotation Keyframes for Curly Circles & Dynamic Shapes */
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes spinReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+@keyframes floatPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.06) rotate(8deg); }
+}
+
+.spin-slow {
+  animation: spinSlow 24s linear infinite;
+}
+.spin-reverse {
+  animation: spinReverse 28s linear infinite;
+}
+.spin-fast {
+  animation: spinSlow 7s linear infinite !important;
+}
+
+/* =========================================================
+   BLURRED FROSTED GLASS TOP HEADER (MD3E EXPRESSIVE BAR)
+   ========================================================= */
+header.m3-app-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 12px 16px;
+  background: color-mix(in oklch, var(--md-sys-color-surface) 62%, transparent);
+  backdrop-filter: blur(26px) saturate(190%);
+  -webkit-backdrop-filter: blur(26px) saturate(190%);
+  border-bottom: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 65%, transparent);
+  transition: background-color 0.35s ease, box-shadow 0.35s ease, padding 0.3s var(--spring-smooth);
+}
+header.m3-app-bar.scrolled {
+  padding: 8px 16px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-low) 76%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+
+.m3-header-inner {
+  max-width: 1020px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.m3-nav-capsule {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 58px;
+  padding: 6px 8px 6px 12px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 78%, transparent);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--corner-full);
+  box-shadow: var(--shadow-sm);
+  transition: border-radius 0.4s var(--spring-fast), transform 0.3s var(--spring-smooth);
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-weight: 800;
+  font-size: 1.24rem;
+  letter-spacing: -0.03em;
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+  padding: 4px 10px 4px 4px;
+  border-radius: var(--corner-full);
+  transition: transform 0.3s var(--spring-bounce);
+}
+.brand-title:active {
+  transform: scale(0.94);
+}
+.brand-cookie-wrap {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+.brand-cookie-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--md-sys-color-primary);
+  transition: transform 0.6s var(--spring-bounce), fill 0.3s;
+  animation: spinSlow 18s linear infinite;
+}
+.brand-title:hover .brand-cookie-bg {
+  animation-duration: 4s;
+  transform: scale(1.1);
+}
+.brand-cookie-icon {
+  position: relative;
+  z-index: 2;
+  width: 20px;
+  height: 20px;
+  color: var(--md-sys-color-on-primary);
+}
+
+/* Center Expressive Section Pills (Desktop/Tablet) */
+.header-nav-pills {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  background: color-mix(in oklch, var(--md-sys-color-surface) 55%, transparent);
+  padding: 4px;
+  border-radius: var(--corner-full);
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 70%, transparent);
+}
+@media (min-width: 780px) {
+  .header-nav-pills { display: flex; }
+}
+.nav-section-pill {
+  padding: 7px 15px;
+  border-radius: var(--corner-full);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: none;
+  transition: all 0.3s var(--spring-fast);
+}
+.nav-section-pill:hover {
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container-highest);
+}
+.nav-section-pill:active {
+  transform: scale(0.92);
+  border-radius: 12px;
+}
+.nav-section-pill.active {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.actions-deck {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.m3-icon-action {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--corner-full);
+  border: 0;
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  display: grid;
+  place-items: center;
+  transition: transform 0.3s var(--spring-bounce), border-radius 0.3s var(--spring-fast), background-color 0.25s;
+}
+.m3-icon-action:hover {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  transform: scale(1.06) rotate(6deg);
+}
+.m3-icon-action:active {
+  transform: scale(0.88);
+  border-radius: 14px;
+}
+.m3-icon-action.active-btn {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border-radius: 16px;
+}
+.m3-icon-action svg { width: 20px; height: 20px; }
+
+/* Language Switch Inline Flyout */
+.lang-morph-deck {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  animation: morphIn 0.35s var(--spring-fast);
+}
+@keyframes morphIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
 .lang-morph-deck.hidden { display: none; }
-@keyframes deck-in { from { opacity: 0; transform: translateX(12px) scale(.96); } to { opacity: 1; transform: none; } }
-.lang-pill-btn { border: 0; border-radius: var(--radius-full); padding: 10px 13px; background: transparent; color: var(--md-sys-color-on-surface-variant); font-size: .79rem; font-weight: 800; white-space: nowrap; cursor: pointer; transition: background .2s, color .2s, transform .2s; }
-.lang-pill-btn:hover { background: var(--md-sys-color-surface-container-high); }
-.lang-pill-btn.active { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-.monet-popup { position: absolute; top: calc(100% + 12px); right: 0; width: min(300px, calc(100vw - 32px)); padding: 20px; border-radius: 28px; border: 1px solid var(--md-sys-color-outline-variant); background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 92%, transparent); backdrop-filter: blur(26px) saturate(1.5); -webkit-backdrop-filter: blur(26px) saturate(1.5); box-shadow: var(--elevation-3); opacity: 0; visibility: hidden; transform: translateY(-10px) scale(.96); transform-origin: top right; transition: opacity .22s, transform .35s var(--spring), visibility 0s .25s; }
-.monet-popup.show { opacity: 1; visibility: visible; transform: none; transition: opacity .22s, transform .35s var(--spring), visibility 0s; }
-.popup-label { margin-bottom: 14px; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--md-sys-color-on-surface-variant); }
-.palette-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 17px; }
-.palette-swatch { position: relative; aspect-ratio: 1; border: 0; border-radius: 13px 13px 13px 5px; cursor: pointer; transition: transform .28s var(--spring), border-radius .3s; }
-.palette-swatch:hover { transform: rotate(-8deg) scale(1.12); border-radius: 50%; }
-.palette-swatch.active { outline: 2px solid var(--md-sys-color-on-surface); outline-offset: 3px; border-radius: 50%; }
-.mode-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 15px; border-top: 1px solid var(--md-sys-color-outline-variant); font-size: .88rem; font-weight: 700; }
-.m3-switch { width: 50px; height: 30px; padding: 0; position: relative; border: 2px solid var(--md-sys-color-outline); border-radius: var(--radius-full); background: var(--md-sys-color-surface-container-highest); cursor: pointer; transition: background .25s, border-color .25s; }
-.m3-switch-thumb { position: absolute; top: 50%; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--md-sys-color-outline); transform: translateY(-50%); transition: transform .35s var(--spring), background .25s, width .25s; }
-.m3-switch[aria-checked="true"] { background: var(--md-sys-color-primary); border-color: var(--md-sys-color-primary); }
-.m3-switch[aria-checked="true"] .m3-switch-thumb { transform: translate(20px,-50%); background: var(--md-sys-color-on-primary); width: 20px; height: 20px; }
-/* page frame */
-.wrapper { width: min(100%, var(--page-width)); margin-inline: auto; padding-inline: var(--gutter); }
-main.wrapper { padding-top: 118px; padding-bottom: 84px; }
-.eyebrow { display: inline-flex; align-items: center; gap: 9px; width: fit-content; padding: 8px 13px; border: 1px solid color-mix(in oklch, var(--md-sys-color-primary) 22%, var(--md-sys-color-outline-variant)); border-radius: var(--radius-full); color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container); font-size: .75rem; font-weight: 800; letter-spacing: .025em; }
-.pulse-indicator { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--md-sys-color-primary); box-shadow: 0 0 0 4px color-mix(in oklch, var(--md-sys-color-primary) 17%, transparent); animation: pulse 2s ease-in-out infinite; }
-@keyframes pulse { 50% { box-shadow: 0 0 0 7px color-mix(in oklch, var(--md-sys-color-primary) 0%, transparent); transform: scale(.85); } }
-.hero-wrapper { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(340px, .98fr); align-items: center; gap: clamp(26px, 5vw, 64px); min-height: 590px; padding: 34px 0 70px; }
-.hero-copy { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
-.hero-title { max-width: 650px; font-size: clamp(3.15rem, 7vw, 5.65rem); line-height: .99; letter-spacing: -.075em; font-weight: 800; text-wrap: balance; }
-.hero-title .accent-word { display: inline-block; padding: 0 .04em .08em 0; color: transparent; background: linear-gradient(105deg, var(--md-sys-color-primary) 12%, var(--md-sys-color-tertiary) 75%); background-clip: text; -webkit-background-clip: text; }
-.hero-body { max-width: 49ch; color: var(--md-sys-color-on-surface-variant); font-size: clamp(1rem, 1.45vw, 1.13rem); line-height: 1.8; }
-.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 2px; }
-.m3-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 23px; border: 1px solid transparent; border-radius: var(--radius-full); text-decoration: none; text-align: center; font-size: .9rem; font-weight: 800; letter-spacing: -.01em; cursor: pointer; transition: transform .3s var(--spring), box-shadow .3s, background .25s, color .25s; }
-.m3-btn:active { transform: scale(.96); }
-.m3-btn.filled { color: var(--md-sys-color-on-primary); background: var(--md-sys-color-primary); box-shadow: 0 7px 20px color-mix(in oklch, var(--md-sys-color-primary) 22%, transparent), inset 0 1px 0 oklch(1 0 0 / .18); }
-.m3-btn.filled:hover { transform: translateY(-3px); box-shadow: 0 14px 28px color-mix(in oklch, var(--md-sys-color-primary) 27%, transparent); }
-.m3-btn.tonal { color: var(--md-sys-color-on-secondary-container); background: var(--md-sys-color-secondary-container); }
-.m3-btn.tonal:hover { transform: translateY(-2px); box-shadow: var(--elevation-1); }
-.m3-btn.outlined { color: var(--md-sys-color-primary); border-color: var(--md-sys-color-outline); background: transparent; }
-.m3-btn.outlined:hover { background: var(--md-sys-color-primary-container); border-color: transparent; }
-.hero-chips-deck { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 4px; }
-.interactive-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 7px 12px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--radius-full); background: color-mix(in oklch, var(--md-sys-color-surface-container) 86%, transparent); color: var(--md-sys-color-on-surface-variant); font-size: .78rem; font-weight: 800; text-decoration: none; transition: transform .25s var(--spring), color .2s, background .2s, border-color .2s; }
-.interactive-chip svg { width: 15px; height: 15px; color: var(--md-sys-color-primary); }
-.interactive-chip:hover { transform: translateY(-2px); color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container); border-color: transparent; }
-.interactive-chip.static-badge { cursor: default; }
-/* Hero's animated illustration */
-.hero-art { position: relative; min-height: 430px; display: grid; place-items: center; perspective: 1000px; isolation: isolate; }
-.art-glow { position: absolute; inset: 10% 4%; z-index: -2; border-radius: 46% 54% 50% 50% / 47% 42% 58% 53%; background: radial-gradient(ellipse at 50% 45%, color-mix(in oklch, var(--md-sys-color-primary) 20%, transparent), transparent 65%); filter: blur(15px); animation: blob-shape 14s ease-in-out infinite alternate; }
-@keyframes blob-shape { 0% { border-radius: 46% 54% 50% 50% / 47% 42% 58% 53%; transform: rotate(0); } 100% { border-radius: 58% 42% 44% 56% / 60% 52% 48% 40%; transform: rotate(9deg) scale(1.04); } }
-.hero-art-grid { position: absolute; inset: 9% 4%; z-index: -1; opacity: .36; border-radius: 38px; background-image: radial-gradient(var(--md-sys-color-outline) .75px, transparent .75px); background-size: 17px 17px; mask-image: radial-gradient(ellipse, black 20%, transparent 75%); }
-.orbit-ring { position: absolute; width: min(94%, 410px); aspect-ratio: 1; border: 1px solid color-mix(in oklch, var(--md-sys-color-primary) 35%, transparent); border-radius: 50%; animation: orbit-rotate 28s linear infinite; }
-.orbit-ring::before, .orbit-ring::after { content: ''; position: absolute; border-radius: 50%; }
-.orbit-ring::before { inset: 11%; border: 1px dashed color-mix(in oklch, var(--md-sys-color-tertiary) 45%, transparent); animation: orbit-rotate 34s linear infinite reverse; }
-.orbit-ring::after { width: 12px; height: 12px; left: 12%; top: 18%; background: var(--md-sys-color-tertiary); box-shadow: 0 0 0 7px color-mix(in oklch, var(--md-sys-color-tertiary) 16%, transparent), 0 0 22px color-mix(in oklch, var(--md-sys-color-tertiary) 70%, transparent); }
-@keyframes orbit-rotate { to { transform: rotate(360deg); } }
-.phone-shell { position: relative; width: 216px; height: 354px; padding: 9px; border: 1px solid color-mix(in oklch, var(--md-sys-color-outline) 70%, transparent); border-radius: 39px; background: linear-gradient(140deg, color-mix(in oklch, var(--md-sys-color-surface-container-highest) 96%, transparent), var(--md-sys-color-surface-container-low)); box-shadow: 0 25px 60px oklch(0 0 0 / .22), inset 0 1px 0 oklch(1 0 0 / .12); transform: rotateY(-8deg) rotateX(4deg); animation: phone-float 6s ease-in-out infinite; }
-@keyframes phone-float { 0%,100% { transform: translateY(0) rotateY(-8deg) rotateX(4deg); } 50% { transform: translateY(-10px) rotateY(-4deg) rotateX(2deg); } }
-.phone-screen { position: relative; height: 100%; border-radius: 31px; overflow: hidden; padding: 21px 13px 14px; background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline-variant); }
-.phone-notch { position: absolute; left: 50%; top: 8px; width: 57px; height: 13px; border-radius: var(--radius-full); transform: translateX(-50%); background: var(--md-sys-color-surface-container-highest); }
-.phone-topline { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: .62rem; font-weight: 800; }
-.phone-topline .online { display: inline-flex; align-items: center; gap: 4px; color: var(--md-sys-color-primary); }
-.phone-topline .online::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.phone-heading { margin-top: 19px; font-size: 1.18rem; line-height: 1.15; letter-spacing: -.06em; font-weight: 800; }
-.phone-sub { margin-top: 4px; color: var(--md-sys-color-on-surface-variant); font-size: .58rem; }
-.mini-activity { display: flex; align-items: center; gap: 10px; margin-top: 15px; padding: 10px; border-radius: 15px; background: var(--md-sys-color-surface-container); border: 1px solid var(--md-sys-color-outline-variant); }
-.mini-activity-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px 12px 12px 5px; background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
-.mini-activity-icon svg { width: 17px; height: 17px; }
-.mini-activity b { display: block; font-size: .64rem; }
-.mini-activity small { display: block; margin-top: 2px; color: var(--md-sys-color-on-surface-variant); font-size: .53rem; }
-.mini-check { display: grid; place-items: center; width: 19px; height: 19px; margin-left: auto; border-radius: 50%; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-.mini-check svg { width: 12px; height: 12px; }
-.phone-progress-label { display: flex; justify-content: space-between; margin-top: 18px; font-size: .57rem; font-weight: 800; }
-.phone-progress { height: 6px; margin-top: 7px; border-radius: var(--radius-full); overflow: hidden; background: var(--md-sys-color-surface-container-highest); }
-.phone-progress span { display: block; width: 76%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary)); transform-origin: left; animation: progress-run 3.3s ease-in-out infinite alternate; }
-@keyframes progress-run { from { transform: scaleX(.66); } to { transform: scaleX(1); } }
-.phone-bottom-pill { margin-top: 18px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; border-radius: var(--radius-full); color: var(--md-sys-color-on-primary); background: var(--md-sys-color-primary); font-size: .62rem; font-weight: 800; }
-.phone-bottom-pill svg { width: 13px; height: 13px; }
-.float-bubble { position: absolute; display: flex; align-items: center; gap: 9px; padding: 11px 15px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 18px; background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 84%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: var(--elevation-2); font-size: .72rem; font-weight: 800; animation: bubble-float 5s ease-in-out infinite; }
-.float-bubble svg { color: var(--md-sys-color-primary); width: 18px; height: 18px; }
-.float-bubble.bubble-a { top: 19%; left: -2%; transform: rotate(-5deg); }
-.float-bubble.bubble-b { right: -3%; bottom: 20%; animation-delay: -2.3s; transform: rotate(4deg); }
-.float-bubble.bubble-c { top: 13%; right: 6%; padding: 10px; border-radius: 50%; animation-delay: -1s; }
-.float-bubble.bubble-c svg { width: 22px; height: 22px; }
-@keyframes bubble-float { 0%,100% { margin-top: 0; } 50% { margin-top: -11px; } }
-.hero-footnote { display: flex; align-items: center; gap: 10px; margin-top: -4px; color: var(--md-sys-color-on-surface-variant); font-size: .76rem; font-weight: 700; }
-.avatar-stack { display: flex; padding-left: 4px; }
-.avatar-dot { display: grid; place-items: center; width: 23px; height: 23px; margin-left: -4px; border: 2px solid var(--md-sys-color-surface); border-radius: 50%; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font-size: .55rem; font-weight: 800; }
-/* Shared section headings */
-.section-block { margin-top: 26px; scroll-margin-top: 104px; }
-.step-heading { display: grid; justify-items: start; gap: 8px; margin-bottom: 23px; }
-.tag-step { display: inline-flex; align-items: center; gap: 8px; font-size: .7rem; line-height: 1; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; color: var(--md-sys-color-primary); }
-.tag-step::before { content: ''; width: 18px; height: 2px; border-radius: var(--radius-full); background: currentColor; }
-.main-step-title { max-width: 780px; font-size: clamp(1.9rem, 4.4vw, 2.8rem); line-height: 1.1; letter-spacing: -.06em; font-weight: 800; text-wrap: balance; }
-.step-desc { max-width: 58ch; color: var(--md-sys-color-on-surface-variant); font-size: .96rem; line-height: 1.7; }
-/* play protect accordion */
-.protect-card { overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--radius-xl); background: color-mix(in oklch, var(--md-sys-color-surface-container) 90%, transparent); box-shadow: var(--elevation-1); transition: border-color .3s, box-shadow .3s, transform .3s var(--spring); }
-.protect-card:hover { border-color: color-mix(in oklch, var(--md-sys-color-primary) 45%, var(--md-sys-color-outline-variant)); box-shadow: var(--elevation-2); }
-.protect-btn-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px; border: 0; color: inherit; background: transparent; text-align: left; cursor: pointer; }
-.protect-lead { display: flex; align-items: center; gap: 16px; min-width: 0; }
-.protect-art { position: relative; display: grid; place-items: center; width: 54px; height: 54px; flex: 0 0 auto; border-radius: 18px 18px 18px 6px; color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container); transition: border-radius .4s var(--spring), transform .4s var(--spring); }
-.protect-card.open .protect-art { border-radius: 50%; transform: rotate(-8deg); }
-.protect-art svg { width: 25px; height: 25px; }
-.protect-title { font-size: 1.04rem; font-weight: 800; letter-spacing: -.035em; }
-.protect-prompt { margin-top: 3px; color: var(--md-sys-color-on-surface-variant); font-size: .82rem; }
-.protect-chevron { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 auto; border-radius: 50%; color: var(--md-sys-color-on-surface); background: var(--md-sys-color-surface-container-high); transition: transform .4s var(--spring), color .25s, background .25s; }
-.protect-chevron svg { width: 19px; height: 19px; }
-.protect-card.open .protect-chevron { transform: rotate(180deg); color: var(--md-sys-color-on-primary); background: var(--md-sys-color-primary); }
-.protect-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--smooth); }
-.protect-card.open .protect-body { grid-template-rows: 1fr; }
-.protect-body-content { overflow: hidden; }
-.step-sequence { display: grid; gap: 0; padding: 0 28px 24px 95px; }
-.sequence-item { position: relative; display: flex; align-items: flex-start; gap: 13px; padding: 12px 0; color: var(--md-sys-color-on-surface-variant); font-size: .9rem; }
-.sequence-item + .sequence-item { border-top: 1px solid var(--md-sys-color-outline-variant); }
+.actions-deck.hidden { display: none; }
+
+.lang-pills-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.lang-pill-btn {
+  border: 0;
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: var(--corner-full);
+  transition: all 0.3s var(--spring-bounce);
+}
+.lang-pill-btn:hover {
+  color: var(--md-sys-color-on-surface);
+  transform: translateY(-1px);
+}
+.lang-pill-btn:active {
+  transform: scale(0.92);
+  border-radius: 12px;
+}
+.lang-pill-btn.active {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border-radius: 14px;
+}
+
+/* Monet Palette Dropdown Menu */
+.monet-popup {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 300px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 92%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--corner-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(-12px) scale(0.92);
+  transform-origin: top right;
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.38s var(--spring-bounce), visibility 0s 0.25s;
+  z-index: 120;
+}
+.monet-popup.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  transition: opacity 0.25s ease, transform 0.38s var(--spring-bounce), visibility 0s;
+}
+.popup-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 14px;
+}
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.palette-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 18px;
+  border: 0;
+  cursor: pointer;
+  position: relative;
+  display: grid;
+  place-items: center;
+  transition: transform 0.3s var(--spring-bounce), border-radius 0.3s var(--spring-fast);
+}
+.palette-swatch:hover {
+  transform: scale(1.12) rotate(8deg);
+  border-radius: 24px;
+}
+.palette-swatch:active {
+  transform: scale(0.9);
+}
+.palette-swatch.active {
+  border-radius: 50%;
+  outline: 3px solid var(--md-sys-color-on-surface);
+  outline-offset: 3px;
+}
+.palette-swatch.active::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.mode-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.m3-switch {
+  width: 54px;
+  height: 32px;
+  border-radius: var(--corner-full);
+  background: var(--md-sys-color-surface-container-highest);
+  border: 2px solid var(--md-sys-color-outline);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+.m3-switch-thumb {
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: var(--md-sys-color-outline);
+  transition: transform 0.38s var(--spring-bounce), width 0.2s, height 0.2s, margin-top 0.2s, background-color 0.25s;
+}
+.m3-switch:active .m3-switch-thumb {
+  width: 24px;
+}
+.m3-switch[aria-checked="true"] {
+  background: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+}
+.m3-switch[aria-checked="true"] .m3-switch-thumb {
+  transform: translateX(22px);
+  width: 22px;
+  height: 22px;
+  margin-top: -11px;
+  background: var(--md-sys-color-on-primary);
+}
+
+/* =========================================================
+   LAYOUT CONTAINER
+   ========================================================= */
+.wrapper {
+  width: 100%;
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 0 20px 96px;
+}
+
+/* =========================================================
+   HERO BENTO SECTION (EXPRESSIVE SHAPES + LIVE TELEMETRY)
+   ========================================================= */
+.hero-bento {
+  padding-top: 104px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+@media (min-width: 880px) {
+  .hero-bento {
+    grid-template-columns: 1.25fr 0.95fr;
+    align-items: stretch;
+  }
+}
+
+.hero-main-tile {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--corner-xl);
+  padding: clamp(26px, 4.5vw, 44px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  isolation: isolate;
+  transition: transform 0.4s var(--spring-smooth), border-radius 0.4s var(--spring-fast);
+}
+.hero-main-tile:hover {
+  border-color: var(--md-sys-color-outline);
+}
+
+/* Giant Rotating Curly Circle in Hero Background */
+.hero-bg-curly {
+  position: absolute;
+  right: -85px;
+  top: -85px;
+  width: 310px;
+  height: 310px;
+  fill: color-mix(in oklch, var(--md-sys-color-primary) 13%, transparent);
+  z-index: -1;
+  pointer-events: none;
+  transition: transform 0.6s var(--spring-bounce), fill 0.4s;
+}
+.hero-main-tile:hover .hero-bg-curly {
+  fill: color-mix(in oklch, var(--md-sys-color-primary) 20%, transparent);
+}
+.hero-bg-clover {
+  position: absolute;
+  left: -60px;
+  bottom: -70px;
+  width: 220px;
+  height: 220px;
+  fill: color-mix(in oklch, var(--md-sys-color-tertiary) 10%, transparent);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px 7px 10px;
+  border-radius: var(--corner-full);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 0.83rem;
+  font-weight: 800;
+  width: fit-content;
+  cursor: pointer;
+  transition: transform 0.3s var(--spring-bounce), border-radius 0.3s;
+}
+.status-pill:active {
+  transform: scale(0.93);
+  border-radius: 12px;
+}
+.status-cookie-dot {
+  width: 22px;
+  height: 22px;
+  fill: var(--md-sys-color-primary);
+  animation: spinSlow 8s linear infinite;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.1rem);
+  line-height: 1.03;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+.accent-word {
+  color: var(--md-sys-color-primary);
+  display: inline-block;
+  position: relative;
+}
+
+.hero-body {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--md-sys-color-on-surface-variant);
+  max-width: 48ch;
+  line-height: 1.55;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* Expressive Morphing Buttons */
+.m3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 28px;
+  border-radius: var(--corner-full);
+  font-family: inherit;
+  font-size: 0.96rem;
+  font-weight: 800;
+  border: 0;
+  text-decoration: none;
+  transition: transform 0.35s var(--spring-bounce), border-radius 0.3s var(--spring-fast), box-shadow 0.25s, background-color 0.25s;
+}
+.m3-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-radius: 20px;
+}
+.m3-btn:active {
+  transform: scale(0.93);
+  border-radius: 14px;
+}
+.m3-btn.filled {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  box-shadow: var(--shadow-sm);
+}
+.m3-btn.filled:hover {
+  box-shadow: var(--shadow-lg);
+}
+.m3-btn.tonal {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.hero-chips-deck {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 6px;
+}
+.interactive-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 18px;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--corner-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  transition: all 0.32s var(--spring-bounce);
+}
+.interactive-chip svg {
+  color: var(--md-sys-color-primary);
+  width: 17px;
+  height: 17px;
+  transition: transform 0.4s var(--spring-bounce);
+}
+.interactive-chip:hover {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-color: var(--md-sys-color-primary);
+  transform: translateY(-2px);
+  border-radius: 16px;
+}
+.interactive-chip:hover svg {
+  transform: rotate(25deg) scale(1.15);
+}
+.interactive-chip:active {
+  transform: scale(0.92);
+}
+
+/* =========================================================
+   HERO INTERACTIVE LIVE AUTOPILOT WIDGET (RIGHT BENTO TILE)
+   ========================================================= */
+.hero-live-tile {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--corner-xl);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  isolation: isolate;
+}
+.live-tile-bg-shape {
+  position: absolute;
+  right: -55px;
+  bottom: -55px;
+  width: 240px;
+  height: 240px;
+  fill: color-mix(in oklch, var(--md-sys-color-secondary) 14%, transparent);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.live-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.live-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  border-radius: var(--corner-full);
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulseDot 1.6s infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { transform: scale(0.85); opacity: 0.45; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Interactive Curly Core Dial */
+.curly-core-stage {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--md-sys-color-surface-container);
+  padding: 16px;
+  border-radius: var(--corner-lg);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  cursor: pointer;
+  transition: transform 0.35s var(--spring-bounce), border-radius 0.3s, border-color 0.25s;
+}
+.curly-core-stage:hover {
+  border-color: var(--md-sys-color-primary);
+  transform: scale(1.015);
+}
+.curly-core-stage:active {
+  transform: scale(0.96);
+  border-radius: 18px;
+}
+
+.curly-dial-box {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.curly-dial-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--md-sys-color-primary);
+  transition: fill 0.3s;
+}
+.curly-dial-inner {
+  position: relative;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--md-sys-color-on-primary);
+  color: var(--md-sys-color-primary);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.78rem;
+}
+
+.core-metrics {
+  flex: 1;
+}
+.core-metrics-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+.core-metrics-sub {
+  font-size: 0.82rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Live Terminal Pill Feed */
+.telemetry-console {
+  background: var(--md-sys-color-surface-container-lowest);
+  border-radius: var(--corner-md);
+  padding: 14px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  display: grid;
+  gap: 8px;
+}
+.telemetry-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.telemetry-row b {
+  color: var(--md-sys-color-primary);
+}
+
+.sim-trigger-btn {
+  width: 100%;
+  height: 46px;
+  border-radius: var(--corner-full);
+  border: 0;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.3s var(--spring-bounce), border-radius 0.3s, background-color 0.25s;
+}
+.sim-trigger-btn:hover {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border-radius: 16px;
+}
+.sim-trigger-btn:active {
+  transform: scale(0.94);
+}
+
+/* =========================================================
+   EXPRESSIVE SECTION HEADERS
+   ========================================================= */
+.step-heading {
+  margin: 64px 0 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.step-badge-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 8px;
+  border-radius: var(--corner-full);
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.step-badge-shape {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  animation: spinSlow 14s linear infinite;
+}
+.main-step-title {
+  font-size: clamp(1.75rem, 4.2vw, 2.45rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  font-weight: 800;
+}
+.step-desc {
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 6px;
+  font-size: 0.98rem;
+  max-width: 54ch;
+}
+
+/* =========================================================
+   STEP 01: PLAY PROTECT INTERACTIVE ACCORDION + CHECKLIST
+   ========================================================= */
+.protect-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--corner-xl);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  isolation: isolate;
+  transition: border-color 0.3s, border-radius 0.4s var(--spring-fast), box-shadow 0.3s;
+}
+.protect-card:hover {
+  border-color: var(--md-sys-color-outline);
+  box-shadow: var(--shadow-sm);
+}
+.protect-card.open {
+  border-radius: 32px;
+  border-color: var(--md-sys-color-primary);
+}
+
+.protect-bg-shape {
+  position: absolute;
+  right: -65px;
+  top: -65px;
+  width: 240px;
+  height: 240px;
+  fill: color-mix(in oklch, var(--md-sys-color-primary) 11%, transparent);
+  z-index: -1;
+  pointer-events: none;
+  transition: transform 0.6s var(--spring-bounce);
+}
+.protect-card:hover .protect-bg-shape {
+  transform: scale(1.12) rotate(25deg);
+}
+
+.protect-btn-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 26px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.protect-lead {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Curly Scalloped Shield Badge */
+.protect-art-wrap {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.protect-art-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--md-sys-color-primary-container);
+  transition: transform 0.5s var(--spring-bounce), fill 0.3s;
+}
+.protect-card.open .protect-art-bg {
+  fill: var(--md-sys-color-primary);
+}
+.protect-art-icon {
+  position: relative;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  color: var(--md-sys-color-on-primary-container);
+  transition: color 0.3s;
+}
+.protect-card.open .protect-art-icon {
+  color: var(--md-sys-color-on-primary);
+}
+
+.protect-chevron {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--corner-full);
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition: transform 0.45s var(--spring-bounce), background-color 0.25s, border-radius 0.3s;
+}
+.protect-card.open .protect-chevron {
+  transform: rotate(180deg);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-radius: 16px;
+}
+
+.protect-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s var(--spring-smooth);
+}
+.protect-card.open .protect-body {
+  grid-template-rows: 1fr;
+}
+.protect-body-content {
+  overflow: hidden;
+}
+.step-sequence {
+  padding: 0 26px 26px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.sequence-item {
+  background: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--corner-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 0.92rem;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: transform 0.3s var(--spring-bounce), border-radius 0.3s, background-color 0.25s, border-color 0.25s;
+}
+.sequence-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--md-sys-color-primary);
+}
+.sequence-item:active {
+  transform: scale(0.95);
+  border-radius: 12px;
+}
+.sequence-item.done {
+  background: color-mix(in oklch, var(--md-sys-color-primary-container) 55%, var(--md-sys-color-surface-container-high));
+  border-color: var(--md-sys-color-primary);
+}
 .sequence-item b { color: var(--md-sys-color-on-surface); }
-.sequence-counter { display: grid; place-items: center; flex: 0 0 auto; width: 26px; height: 26px; border-radius: 9px 9px 9px 3px; background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); font-size: .74rem; font-weight: 800; }
-/* expressive downloads cards */
-.trilogy-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
-.trilogy-card { --tile-accent: var(--md-sys-color-primary); --tile-bg: var(--md-sys-color-primary-container); --tile-fg: var(--md-sys-color-on-primary-container); position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 390px; overflow: hidden; padding: 18px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--radius-xl); background: var(--md-sys-color-surface-container); box-shadow: var(--elevation-1); isolation: isolate; transition: transform .45s var(--spring), border-color .3s, box-shadow .3s, background .3s; transform-style: preserve-3d; }
-.trilogy-card:nth-child(2) { --tile-accent: var(--md-sys-color-tertiary); --tile-bg: var(--md-sys-color-tertiary-container); --tile-fg: var(--md-sys-color-on-tertiary-container); }
-.trilogy-card:nth-child(3) { --tile-accent: var(--md-sys-color-secondary); --tile-bg: var(--md-sys-color-secondary-container); --tile-fg: var(--md-sys-color-on-secondary-container); }
-.trilogy-card:hover { transform: translateY(-7px); border-color: color-mix(in oklch, var(--tile-accent) 55%, var(--md-sys-color-outline-variant)); box-shadow: var(--elevation-2); }
-.trilogy-card:active { transform: translateY(-2px) scale(.99); }
-.card-topline { display: flex; justify-content: space-between; align-items: center; gap: 8px; position: relative; z-index: 2; }
-.card-index { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--md-sys-color-on-surface-variant); }
-.card-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: var(--radius-full); color: var(--tile-fg); background: var(--tile-bg); font-size: .63rem; font-weight: 800; white-space: nowrap; }
-.card-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--tile-accent); }
-.card-art { position: relative; display: grid; place-items: center; height: 148px; margin: 0 -1px 16px; overflow: hidden; border-radius: 24px; background: color-mix(in oklch, var(--tile-bg) 48%, var(--md-sys-color-surface-container-low)); isolation: isolate; }
-.card-art::before { content: ''; position: absolute; width: 148px; height: 148px; border: 1px solid color-mix(in oklch, var(--tile-accent) 38%, transparent); border-radius: 50%; animation: orbit-rotate 18s linear infinite; }
-.card-art::after { content: ''; position: absolute; width: 101px; height: 101px; border: 1px dashed color-mix(in oklch, var(--tile-accent) 45%, transparent); border-radius: 34% 66% 62% 38% / 40% 42% 58% 60%; animation: art-wobble 8s ease-in-out infinite alternate, orbit-rotate 24s linear infinite reverse; }
-@keyframes art-wobble { to { border-radius: 61% 39% 35% 65% / 53% 61% 39% 47%; transform: scale(1.08); } }
-.art-shape { position: relative; z-index: 1; display: grid; place-items: center; width: 76px; height: 76px; border-radius: 28px 28px 28px 9px; color: var(--tile-fg); background: var(--tile-bg); box-shadow: 0 10px 26px color-mix(in oklch, var(--tile-accent) 19%, transparent), inset 0 1px 0 oklch(1 0 0 / .15); transform: rotate(-7deg); transition: transform .5s var(--spring), border-radius .45s var(--spring); }
-.trilogy-card:hover .art-shape { transform: rotate(5deg) scale(1.09); border-radius: 50%; }
-.art-shape svg { width: 34px; height: 34px; }
-.art-spark { position: absolute; z-index: 1; width: 10px; height: 10px; border-radius: 3px; background: var(--tile-accent); opacity: .8; animation: spark-dance 4.6s ease-in-out infinite; }
-.art-spark.spark-1 { top: 23%; left: 20%; }
-.art-spark.spark-2 { right: 19%; bottom: 22%; width: 7px; height: 7px; border-radius: 50%; animation-delay: -1.8s; }
-.art-spark.spark-3 { top: 24%; right: 25%; width: 5px; height: 5px; animation-delay: -3s; }
-@keyframes spark-dance { 0%,100% { transform: translate(0,0) rotate(0) scale(1); } 50% { transform: translate(9px,-9px) rotate(90deg) scale(.72); } }
-.card-heading { font-size: 1.08rem; line-height: 1.25; letter-spacing: -.04em; font-weight: 800; }
-.card-copy { flex: 1; margin-top: 8px; margin-bottom: 18px; color: var(--md-sys-color-on-surface-variant); font-size: .82rem; line-height: 1.65; }
-.card-action-link { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; width: 100%; padding: 0 12px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--radius-full); color: var(--tile-fg); background: var(--tile-bg); text-decoration: none; font-size: .8rem; font-weight: 800; transition: transform .27s var(--spring), color .25s, background .25s, border-color .25s; }
-.card-action-link:hover { transform: translateY(-2px); border-color: transparent; color: var(--md-sys-color-on-primary); background: var(--md-sys-color-primary); }
-.card-action-link svg { width: 16px; height: 16px; }
-/* Tutorial feature panel */
-.tutorial-tile { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; overflow: hidden; padding: clamp(22px, 4vw, 34px); border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--radius-2xl); background: linear-gradient(112deg, var(--md-sys-color-surface-container) 0%, var(--md-sys-color-surface-container) 58%, color-mix(in oklch, var(--md-sys-color-tertiary-container) 52%, var(--md-sys-color-surface-container)) 100%); }
-.tutorial-tile::before { content: ''; position: absolute; width: 250px; height: 250px; top: -150px; right: 14%; border: 1px solid color-mix(in oklch, var(--md-sys-color-tertiary) 32%, transparent); border-radius: 50%; box-shadow: 0 0 0 22px color-mix(in oklch, var(--md-sys-color-tertiary) 5%, transparent), 0 0 0 44px color-mix(in oklch, var(--md-sys-color-tertiary) 4%, transparent); animation: orbit-rotate 30s linear infinite; pointer-events: none; }
-.tutorial-tile-left { position: relative; z-index: 1; display: flex; align-items: center; gap: 18px; }
-.tutorial-icon { position: relative; display: grid; place-items: center; width: 64px; height: 64px; flex: 0 0 auto; border-radius: 22px 22px 22px 7px; color: var(--md-sys-color-on-tertiary-container); background: var(--md-sys-color-tertiary-container); transition: transform .4s var(--spring), border-radius .4s; }
-.tutorial-tile:hover .tutorial-icon { transform: rotate(-7deg) scale(1.06); border-radius: 50%; }
-.tutorial-icon svg { width: 27px; height: 27px; }
-.tutorial-title { font-size: 1.13rem; line-height: 1.3; font-weight: 800; letter-spacing: -.04em; }
-.tutorial-sub { max-width: 44ch; margin-top: 5px; color: var(--md-sys-color-on-surface-variant); font-size: .83rem; }
-.tutorial-tile > .m3-btn { position: relative; z-index: 1; flex: 0 0 auto; }
-/* Pricing */
-.pricing-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(245px, .8fr); gap: 18px; }
-.expressive-price-card { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-width: 0; padding: clamp(24px, 4vw, 36px); overflow: hidden; border: 1px solid color-mix(in oklch, var(--md-sys-color-primary) 26%, var(--md-sys-color-outline-variant)); border-radius: var(--radius-2xl); background: linear-gradient(140deg, var(--md-sys-color-surface-container-high), color-mix(in oklch, var(--md-sys-color-primary-container) 28%, var(--md-sys-color-surface-container-high))); isolation: isolate; }
-.expressive-price-card::before { content: ''; position: absolute; z-index: -1; width: 260px; height: 260px; right: -95px; top: -105px; border: 1px solid color-mix(in oklch, var(--md-sys-color-primary) 42%, transparent); border-radius: 42% 58% 52% 48% / 55% 42% 58% 45%; box-shadow: 0 0 0 18px color-mix(in oklch, var(--md-sys-color-primary) 4%, transparent), 0 0 0 38px color-mix(in oklch, var(--md-sys-color-primary) 3%, transparent); animation: blob-shape 12s ease-in-out infinite alternate; }
-.price-overline { display: inline-flex; align-items: center; gap: 7px; color: var(--md-sys-color-primary); font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
-.price-overline svg { width: 15px; height: 15px; }
-.price-hero-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; }
-.cost-figure-group { display: flex; align-items: flex-start; gap: 3px; }
-.unit-currency { margin-top: 8px; color: var(--md-sys-color-primary); font-size: 1.65rem; font-weight: 800; }
-.numeric-amt { font-size: clamp(4rem, 8vw, 5.7rem); line-height: .9; font-weight: 800; letter-spacing: -.085em; }
-.recurrence-period { align-self: flex-end; margin: 0 0 5px 6px; color: var(--md-sys-color-on-surface-variant); font-size: .9rem; font-weight: 700; }
-.price-desc { margin-top: 12px; color: var(--md-sys-color-primary); font-size: .86rem; font-weight: 800; }
-.price-cta { margin-top: 5px; }
-.privileges-list { display: grid; gap: 13px; }
-.privilege-item { display: flex; align-items: center; gap: 11px; font-size: .84rem; font-weight: 700; }
-.check-token { display: grid; place-items: center; width: 24px; height: 24px; flex: 0 0 auto; border-radius: 50%; color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container); }
-.check-token svg { width: 14px; height: 14px; stroke-width: 3; }
-.side-note { display: flex; flex-direction: column; justify-content: space-between; gap: 26px; padding: 26px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--radius-2xl); background: var(--md-sys-color-surface-container); }
-.side-note-art { position: relative; display: grid; place-items: center; width: 76px; height: 76px; border-radius: 27px 27px 27px 8px; color: var(--md-sys-color-on-secondary-container); background: var(--md-sys-color-secondary-container); }
-.side-note-art::before { content: ''; position: absolute; inset: -8px; border: 1px dashed color-mix(in oklch, var(--md-sys-color-secondary) 58%, transparent); border-radius: 50%; animation: orbit-rotate 18s linear infinite; }
-.side-note-art svg { width: 31px; height: 31px; }
-.side-note h3 { font-size: 1.2rem; line-height: 1.2; letter-spacing: -.05em; font-weight: 800; }
-.side-note p { margin-top: 8px; color: var(--md-sys-color-on-surface-variant); font-size: .85rem; line-height: 1.65; }
-.side-note .m3-btn { align-self: flex-start; }
-/* footer */
-footer { margin-top: 30px; border-top: 1px solid var(--md-sys-color-outline-variant); background: color-mix(in oklch, var(--md-sys-color-surface-container-low) 55%, transparent); }
-.footer-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-top: 25px; padding-bottom: 32px; }
-.footer-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; }
-.footer-brand .brand-icon { width: 30px; height: 30px; border-radius: 11px 11px 11px 4px; }
-.footer-brand .brand-icon svg { width: 17px; height: 17px; }
-.footer-copy { max-width: 530px; color: var(--md-sys-color-on-surface-variant); font-size: .8rem; }
-.footer-copy p + p { margin-top: 6px; }
-footer a { color: var(--md-sys-color-primary); font-weight: 800; text-decoration: none; }
+.sequence-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sequence-counter {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--md-sys-color-on-primary-container);
+}
+.sequence-counter svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--md-sys-color-primary-container);
+  z-index: 0;
+  transition: transform 0.4s var(--spring-bounce), fill 0.25s;
+}
+.sequence-item.done .sequence-counter svg {
+  fill: var(--md-sys-color-primary);
+  transform: rotate(45deg) scale(1.08);
+}
+.sequence-item.done .sequence-counter span {
+  color: var(--md-sys-color-on-primary);
+}
+.sequence-counter span {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================
+   STEP 02: DOWNLOAD TILES (DYNAMIC ROTATING SHAPES IN EACH TILE)
+   ========================================================= */
+.trilogy-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+@media (min-width: 768px) {
+  .trilogy-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.trilogy-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--corner-xl);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  isolation: isolate;
+  transition: transform 0.4s var(--spring-bounce), border-radius 0.35s var(--spring-fast), border-color 0.25s, box-shadow 0.3s;
+}
+.trilogy-card:hover {
+  transform: translateY(-6px);
+  border-radius: 26px;
+  border-color: var(--md-sys-color-primary);
+  box-shadow: var(--shadow-lg);
+}
+.trilogy-card:active {
+  transform: scale(0.97);
+}
+
+/* Dynamic Rotating Watermark Shape Inside Every Card */
+.tile-watermark-shape {
+  position: absolute;
+  right: -55px;
+  top: -55px;
+  width: 210px;
+  height: 210px;
+  fill: color-mix(in oklch, var(--md-sys-color-primary) 11%, transparent);
+  z-index: -1;
+  pointer-events: none;
+  transition: transform 0.65s var(--spring-bounce), fill 0.35s;
+}
+.trilogy-card:nth-child(2) .tile-watermark-shape {
+  fill: color-mix(in oklch, var(--md-sys-color-secondary) 14%, transparent);
+}
+.trilogy-card:nth-child(3) .tile-watermark-shape {
+  fill: color-mix(in oklch, var(--md-sys-color-tertiary) 14%, transparent);
+}
+.trilogy-card:hover .tile-watermark-shape {
+  fill: color-mix(in oklch, var(--md-sys-color-primary) 22%, transparent);
+  animation-duration: 6s;
+}
+
+.card-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+/* Expressive Shaped Icon Container (Curly Circle, Starburst, Clover) */
+.card-expressive-icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+}
+.card-expressive-icon .shape-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--md-sys-color-primary-container);
+  transition: transform 0.55s var(--spring-bounce), fill 0.3s;
+}
+.trilogy-card:nth-child(2) .card-expressive-icon .shape-bg {
+  fill: var(--md-sys-color-secondary-container);
+}
+.trilogy-card:nth-child(3) .card-expressive-icon .shape-bg {
+  fill: var(--md-sys-color-tertiary-container);
+}
+.trilogy-card:hover .card-expressive-icon .shape-bg {
+  transform: rotate(35deg) scale(1.1);
+  fill: var(--md-sys-color-primary);
+}
+.card-expressive-icon .fg-icon {
+  position: relative;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  color: var(--md-sys-color-on-primary-container);
+  transition: color 0.3s, transform 0.4s var(--spring-bounce);
+}
+.trilogy-card:hover .card-expressive-icon .fg-icon {
+  color: var(--md-sys-color-on-primary);
+  transform: scale(1.1);
+}
+
+.card-badge {
+  padding: 6px 13px;
+  border-radius: var(--corner-full);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.card-heading {
+  font-size: 1.28rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
+}
+.card-copy {
+  font-size: 0.92rem;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.52;
+  margin-bottom: 26px;
+  min-height: 58px;
+}
+
+.card-action-link {
+  width: 100%;
+  height: 50px;
+  border-radius: var(--corner-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  text-decoration: none;
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  transition: transform 0.3s var(--spring-bounce), border-radius 0.3s var(--spring-fast), background-color 0.25s, color 0.25s;
+}
+.trilogy-card:hover .card-action-link {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border-color: transparent;
+  border-radius: 18px;
+}
+.card-action-link:active {
+  transform: scale(0.93);
+  border-radius: 12px !important;
+}
+
+/* =========================================================
+   STEP 03: SETUP TUTORIAL EXPRESSIVE MEDIA TILE
+   ========================================================= */
+.tutorial-tile {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--corner-xl);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: clamp(24px, 4vw, 36px);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  isolation: isolate;
+  transition: transform 0.35s var(--spring-smooth), border-color 0.3s;
+}
+.tutorial-tile:hover {
+  border-color: var(--md-sys-color-primary);
+}
+@media (min-width: 700px) {
+  .tutorial-tile {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.tutorial-bg-curly {
+  position: absolute;
+  right: 12%;
+  bottom: -95px;
+  width: 260px;
+  height: 260px;
+  fill: color-mix(in oklch, var(--md-sys-color-tertiary) 13%, transparent);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.tutorial-tile-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.tutorial-cookie-btn {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.tutorial-cookie-btn .cookie-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--md-sys-color-tertiary-container);
+  transition: transform 0.5s var(--spring-bounce), fill 0.3s;
+}
+.tutorial-tile:hover .tutorial-cookie-btn .cookie-svg {
+  fill: var(--md-sys-color-tertiary);
+}
+.tutorial-cookie-btn .play-ico {
+  position: relative;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  color: var(--md-sys-color-on-tertiary-container);
+  transition: color 0.3s, transform 0.35s var(--spring-bounce);
+}
+.tutorial-tile:hover .tutorial-cookie-btn .play-ico {
+  color: var(--md-sys-color-on-tertiary);
+  transform: scale(1.15);
+}
+
+/* =========================================================
+   STEP 04: PRICING BENTO & MULTI-DEVICE BANNER
+   ========================================================= */
+.pricing-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+@media (min-width: 840px) {
+  .pricing-bento-grid {
+    grid-template-columns: 1.35fr 0.85fr;
+  }
+}
+
+.expressive-price-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container-high);
+  border-radius: var(--corner-xl);
+  padding: clamp(28px, 4.5vw, 42px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  isolation: isolate;
+}
+.price-bg-starburst {
+  position: absolute;
+  right: -75px;
+  top: -75px;
+  width: 290px;
+  height: 290px;
+  fill: color-mix(in oklch, var(--md-sys-color-primary) 14%, transparent);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.price-hero-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.cost-figure-group {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.unit-currency {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--md-sys-color-primary);
+}
+.numeric-amt {
+  font-size: clamp(4rem, 9vw, 5.6rem);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+}
+.recurrence-period {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.privileges-list {
+  display: grid;
+  gap: 12px;
+}
+.privilege-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: var(--corner-md);
+  background: color-mix(in oklch, var(--md-sys-color-surface-container) 75%, transparent);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  font-size: 0.96rem;
+  font-weight: 700;
+  transition: transform 0.3s var(--spring-bounce), border-color 0.25s;
+}
+.privilege-item:hover {
+  transform: translateX(6px);
+  border-color: var(--md-sys-color-primary);
+}
+.check-token {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.check-token .token-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--md-sys-color-primary-container);
+}
+.check-token .token-ico {
+  position: relative;
+  z-index: 2;
+  width: 15px;
+  height: 15px;
+  color: var(--md-sys-color-on-primary-container);
+  stroke-width: 3;
+}
+
+.multi-key-banner {
+  position: relative;
+  overflow: hidden;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-radius: var(--corner-xl);
+  padding: clamp(28px, 4vw, 38px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  isolation: isolate;
+}
+.multi-bg-clover {
+  position: absolute;
+  right: -50px;
+  bottom: -50px;
+  width: 230px;
+  height: 230px;
+  fill: color-mix(in oklch, var(--md-sys-color-on-primary-container) 10%, transparent);
+  z-index: -1;
+  pointer-events: none;
+}
+.multi-icon-flower {
+  width: 56px;
+  height: 56px;
+  border-radius: 20px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  display: grid;
+  place-items: center;
+}
+.multi-key-banner h3 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
+}
+.multi-key-banner p {
+  font-size: 0.95rem;
+  opacity: 0.88;
+  line-height: 1.5;
+}
+.multi-key-banner .m3-btn.filled {
+  background: var(--md-sys-color-on-primary-container);
+  color: var(--md-sys-color-primary-container);
+  width: 100%;
+}
+
+/* =========================================================
+   FOOTER & SNACKBAR
+   ========================================================= */
+footer {
+  margin-top: 64px;
+  padding: 32px 24px;
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--corner-xl);
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+footer a {
+  color: var(--md-sys-color-primary);
+  font-weight: 800;
+  text-decoration: none;
+}
 footer a:hover { text-decoration: underline; }
-.disclaimer-line { opacity: .72; font-size: .73rem; }
-.footer-meta { color: var(--md-sys-color-on-surface-variant); font-size: .72rem; font-weight: 700; white-space: nowrap; }
-/* Native-feeling toast, mobile rail, entrance animations */
-.m3-snackbar { position: fixed; z-index: 210; left: 50%; bottom: max(22px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px); padding: 14px 19px; border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 55%, transparent); border-radius: 18px; color: var(--md-sys-color-surface); background: var(--md-sys-color-on-surface); box-shadow: var(--elevation-3); font-size: .85rem; font-weight: 700; opacity: 0; visibility: hidden; transform: translate(-50%, 24px) scale(.95); transition: opacity .25s, transform .4s var(--spring), visibility 0s .4s; pointer-events: none; }
-.m3-snackbar::before { content: ''; width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: var(--md-sys-color-primary); }
-.m3-snackbar.active { opacity: 1; visibility: visible; transform: translate(-50%, 0) scale(1); transition: opacity .25s, transform .4s var(--spring), visibility 0s; }
-.mobile-nav { display: none; }
-.reveal { opacity: 0; transform: translateY(20px) scale(.99); transition: opacity .7s var(--smooth), transform .8s var(--spring); }
-.reveal.in-view { opacity: 1; transform: none; }
-.reveal.delay-1 { transition-delay: .08s; }
-.reveal.delay-2 { transition-delay: .16s; }
-.reveal.delay-3 { transition-delay: .24s; }
-@media (max-width: 850px) {
-  .hero-wrapper { grid-template-columns: minmax(0,1fr) minmax(290px,.82fr); gap: 20px; min-height: 540px; }
-  .hero-title { font-size: clamp(3rem, 7.4vw, 4.4rem); }
-  .hero-art { min-height: 360px; }
-  .phone-shell { transform: scale(.91) rotateY(-8deg) rotateX(4deg); }
-  .float-bubble.bubble-a { left: -3%; }
-  .float-bubble.bubble-b { right: -2%; }
-  .trilogy-grid { gap: 12px; }
-  .trilogy-card { padding: 14px; }
-  .card-art { height: 130px; }
-  .card-badge { font-size: .57rem; }
+.disclaimer-line {
+  font-size: 0.8rem;
+  margin-top: 8px;
+  opacity: 0.75;
 }
-@media (max-width: 680px) {
-  html { scroll-padding-top: 90px; }
-  .top-scrim { height: 91px; }
-  .m3-app-bar { top: 10px; padding-inline: 12px; }
-  .m3-nav-capsule { min-height: 58px; padding-left: 12px; }
-  .brand-icon { width: 35px; height: 35px; }
-  .brand-copy small { display: none; }
-  .m3-icon-action { width: 42px; height: 42px; }
-  .lang-pill-btn { padding-inline: 9px; font-size: .72rem; }
-  main.wrapper { padding-top: 91px; padding-bottom: 112px; }
-  .hero-wrapper { display: flex; flex-direction: column; align-items: stretch; gap: 7px; min-height: 0; padding: 30px 0 52px; }
-  .hero-copy { gap: 19px; }
-  .hero-title { font-size: clamp(3.25rem, 12.8vw, 5.25rem); max-width: 10ch; }
-  .hero-body { max-width: 42ch; font-size: .98rem; }
-  .hero-art { min-height: 365px; margin-top: 10px; }
-  .orbit-ring { width: min(85%, 340px); }
-  .phone-shell { transform: scale(.88) rotateY(-5deg) rotateX(3deg); }
-  .float-bubble.bubble-a { left: 2%; top: 17%; }
-  .float-bubble.bubble-b { right: 0; bottom: 16%; }
-  .float-bubble.bubble-c { right: 8%; top: 10%; }
-  .section-block { margin-top: 24px; }
-  .step-heading { margin-bottom: 18px; }
-  .main-step-title { font-size: clamp(1.85rem, 8vw, 2.4rem); }
-  .step-desc { font-size: .88rem; }
-  .protect-btn-row { padding: 17px; gap: 12px; }
-  .protect-lead { gap: 12px; }
-  .protect-art { width: 47px; height: 47px; border-radius: 15px 15px 15px 5px; }
-  .protect-title { font-size: .94rem; }
-  .protect-prompt { font-size: .75rem; }
-  .protect-chevron { width: 36px; height: 36px; }
-  .step-sequence { padding: 0 17px 18px; }
-  .sequence-item { font-size: .83rem; }
-  .trilogy-grid { grid-template-columns: 1fr; gap: 13px; }
-  .trilogy-card { display: grid; grid-template-columns: 112px minmax(0,1fr); grid-template-rows: auto 1fr auto; gap: 0 14px; min-height: 0; padding: 14px; border-radius: 25px; }
-  .card-topline { grid-column: 1 / -1; margin-bottom: 10px; }
-  .card-art { grid-column: 1; grid-row: 2 / 4; height: 142px; margin: 0; border-radius: 20px; }
-  .card-art::before { width: 108px; height: 108px; }
-  .card-art::after { width: 76px; height: 76px; }
-  .art-shape { width: 58px; height: 58px; border-radius: 21px 21px 21px 7px; }
-  .art-shape svg { width: 27px; height: 27px; }
-  .card-heading { grid-column: 2; align-self: end; font-size: 1.02rem; }
-  .card-copy { grid-column: 2; align-self: start; margin-top: 6px; margin-bottom: 11px; font-size: .77rem; }
-  .card-action-link { grid-column: 2; min-height: 40px; align-self: end; font-size: .76rem; }
-  .tutorial-tile { align-items: stretch; flex-direction: column; gap: 21px; border-radius: 27px; }
-  .tutorial-tile-left { align-items: flex-start; gap: 14px; }
-  .tutorial-icon { width: 54px; height: 54px; border-radius: 18px 18px 18px 5px; }
-  .tutorial-title { font-size: 1rem; }
-  .tutorial-tile > .m3-btn { align-self: flex-start; }
-  .pricing-layout { grid-template-columns: 1fr; }
-  .expressive-price-card { gap: 25px; }
-  .price-hero-row { align-items: flex-start; flex-direction: column; }
-  .price-cta { margin-top: 0; }
-  .side-note { gap: 20px; }
-  .footer-inner { flex-direction: column; gap: 13px; padding-bottom: 25px; }
-  .footer-meta { white-space: normal; }
-  .mobile-nav { position: fixed; z-index: 75; left: 12px; right: 12px; bottom: max(10px, env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 7px; border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 70%, transparent); border-radius: 26px; background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 84%, transparent); box-shadow: 0 10px 35px oklch(0 0 0 / .22); backdrop-filter: blur(26px) saturate(1.5); -webkit-backdrop-filter: blur(26px) saturate(1.5); }
-  .mobile-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 49px; padding: 3px; border-radius: 18px; color: var(--md-sys-color-on-surface-variant); text-decoration: none; font-size: .64rem; font-weight: 800; transition: background .25s, color .25s, transform .25s var(--spring); }
-  .mobile-nav a svg { width: 19px; height: 19px; }
-  .mobile-nav a.active { color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container); }
-  .mobile-nav a:active { transform: scale(.94); }
-  .m3-snackbar { bottom: calc(83px + env(safe-area-inset-bottom)); }
+
+.m3-snackbar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 200;
+  transform: translate(-50%, 180%) scale(0.9);
+  background: var(--md-sys-color-on-surface);
+  color: var(--md-sys-color-surface);
+  padding: 14px 24px;
+  border-radius: var(--corner-full);
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.4s var(--spring-bounce);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-@media (max-width: 390px) {
-  :root { --gutter: 17px; }
-  .hero-title { font-size: 3.05rem; }
-  .hero-actions { width: 100%; }
-  .hero-actions .m3-btn { flex: 1; padding-inline: 14px; }
-  .hero-art { min-height: 325px; }
-  .phone-shell { transform: scale(.79) rotateY(-5deg) rotateX(3deg); }
-  .float-bubble { padding: 9px 11px; font-size: .65rem; }
-  .float-bubble.bubble-a { left: 0; }
-  .card-art { height: 134px; }
-  .trilogy-card { grid-template-columns: 98px minmax(0,1fr); gap: 0 11px; }
-  .card-badge { padding: 5px 7px; }
-  .card-heading { font-size: .96rem; }
-  .card-copy { font-size: .73rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .reveal { opacity: 1; transform: none; }
+.m3-snackbar.active {
+  transform: translate(-50%, 0) scale(1);
 }
 </style>
 </head>
 <body>
-<div class="page-noise" aria-hidden="true"></div>
-<div class="ambient" aria-hidden="true"><span class="ambient-orb orb-one"></span><span class="ambient-orb orb-two"></span></div>
-<div class="top-progress" aria-hidden="true"><span id="scrollProgress"></span></div>
-<div class="top-scrim" aria-hidden="true"></div>
 
-<header class="m3-app-bar">
-  <nav class="m3-nav-capsule" id="capsuleBar" aria-label="Main navigation">
-    <a href="#hero" class="brand-title" id="brandTitle" aria-label="Replica home">
-      <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5"/><path d="M12 7v5l3.5 2.2"/><path d="M15.5 3.5h5v5"/><path d="m20.5 3.5-5 5"/></svg></span>
-      <span class="brand-copy"><span>Replica</span><small>Automation suite</small></span>
-    </a>
-    <div class="actions-deck" id="actionsDeck">
-      <button type="button" class="m3-icon-action m3-rip" id="btnLanguage" aria-label="Select language" title="Select language"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.8 9h18.4M2.8 15h18.4M12 2.5c2.4 2.5 3.6 5.7 3.6 9.5s-1.2 7-3.6 9.5C9.6 19 8.4 15.8 8.4 12S9.6 5 12 2.5Z"/></svg></button>
-      <button type="button" class="m3-icon-action m3-rip" id="btnTheme" aria-label="Customize theme" title="Customize theme" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42m-9.88 9.88-1.42 1.42"/><circle cx="12" cy="12" r="4.2"/></svg></button>
+<!-- Reusable Expressive MD3E SVG Geometry Definitions (Curly Circle, Clover, Starburst, Squircle) -->
+<svg width="0" height="0" style="position:absolute; pointer-events:none;" aria-hidden="true">
+  <defs>
+    <!-- 12-Lobe Scalloped Curly Circle (MD3E Iconic Cookie) -->
+    <path id="shape-curly-circle" d="M 50,4 C 55.6,4 58.6,9.7 63.7,11.1 C 68.8,12.5 74.2,9 78.8,12.6 C 83.4,16.2 81.9,22.4 85.5,26.9 C 89.1,31.5 95.3,31.5 96.7,37.1 C 98.1,42.7 93.1,46.9 93.1,52.5 C 93.1,58.1 98.1,62.3 96.7,67.9 C 95.3,73.5 89.1,73.5 85.5,78.1 C 81.9,82.6 83.4,88.8 78.8,92.4 C 74.2,96 68.8,92.5 63.7,93.9 C 58.6,95.3 55.6,101 50,101 C 44.4,101 41.4,95.3 36.3,93.9 C 31.2,92.5 25.8,96 21.2,92.4 C 16.6,88.8 18.1,82.6 14.5,78.1 C 10.9,73.5 4.7,73.5 3.3,67.9 C 1.9,62.3 6.9,58.1 6.9,52.5 C 6.9,46.9 1.9,42.7 3.3,37.1 C 4.7,31.5 10.9,31.5 14.5,26.9 C 18.1,22.4 16.6,16.2 21.2,12.6 C 25.8,9 31.2,12.5 36.3,11.1 C 41.4,9.7 44.4,4 50,4 Z" />
+    <!-- 8-Point Soft Expressive Starburst -->
+    <path id="shape-starburst" d="M 50,2 C 58,2 61,13 68,16 C 75,19 86,14 91,20 C 96,26 89,36 92,43 C 95,50 100,56 96,64 C 92,72 82,72 77,78 C 72,84 74,95 66,98 C 58,101 52,92 44,92 C 36,92 30,101 22,98 C 14,95 16,84 11,78 C 6,72 -4,72 -8,64 C -12,56 -7,50 -4,43 C -1,36 -8,26 -3,20 C 2,14 13,19 20,16 C 27,13 30,2 50,2 Z" transform="scale(0.88) translate(7, 2)" />
+    <!-- 4-Leaf Expressive Clover Cookie -->
+    <path id="shape-clover" d="M 50,10 C 62,10 72,2 82,12 C 92,22 84,32 84,44 C 84,56 96,66 86,78 C 76,90 64,82 50,82 C 36,82 24,90 14,78 C 4,66 16,56 16,44 C 16,32 8,22 18,12 C 28,2 38,10 50,10 Z" transform="scale(1.04) translate(-2, 3)" />
+  </defs>
+</svg>
+
+<!-- Ambient Expressive Color Mesh -->
+<div class="ambient-canvas" aria-hidden="true">
+  <div class="ambient-blob b1"></div>
+  <div class="ambient-blob b2"></div>
+</div>
+
+<!-- FROSTED BLUR TOP HEADER (MD3E EXPRESSIVE BAR) -->
+<header class="m3-app-bar" id="topHeader">
+  <div class="m3-header-inner">
+    <div class="m3-nav-capsule" id="capsuleBar">
+      
+      <!-- Replica Brand Title with Rotating Curly Circle -->
+      <a href="#hero" class="brand-title m3-rip" id="brandTitle">
+        <div class="brand-cookie-wrap">
+          <svg class="brand-cookie-bg" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+          <svg class="brand-cookie-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 8v4l2.5 2.5"/>
+          </svg>
+        </div>
+        <span>Replica</span>
+      </a>
+
+      <!-- Expressive Quick Jump Section Pills -->
+      <nav class="header-nav-pills" id="headerNavPills" aria-label="Quick navigation">
+        <a href="#protect" class="nav-section-pill m3-rip" data-i="chipSetupText">Setup</a>
+        <a href="#downloads" class="nav-section-pill m3-rip">Trilogy</a>
+        <a href="#tutorial" class="nav-section-pill m3-rip" data-i="chipTutorialText">Tutorial Video</a>
+        <a href="#pricing" class="nav-section-pill m3-rip" data-i="btnHeroLicense">Get a License</a>
+      </nav>
+
+      <!-- Action Icons Deck: [Language, Theme] -->
+      <div class="actions-deck" id="actionsDeck">
+        <button class="m3-icon-action m3-rip" id="btnLanguage" aria-label="Select Language" title="Select Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </button>
+
+        <button class="m3-icon-action m3-rip" id="btnTheme" aria-label="Customize Theme" title="Theme Palette" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Language Morph Deck (Back Button + Languages) -->
+      <div class="lang-morph-deck hidden" id="langMorphDeck">
+        <button class="m3-icon-action m3-rip" id="btnLangBack" aria-label="Back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <div class="lang-pills-group">
+          <button class="lang-pill-btn m3-rip" data-lang="en">English</button>
+          <button class="lang-pill-btn m3-rip" data-lang="uk">Українська</button>
+          <button class="lang-pill-btn m3-rip" data-lang="ru">Русский</button>
+        </div>
+      </div>
+
+      <!-- Monet Palette & Mode Dropdown Menu -->
+      <div class="monet-popup" id="monetPopup">
+        <div class="popup-label" data-i="monetPaletteTitle">Dynamic Monet Hues</div>
+        <div class="palette-grid" id="paletteGrid"></div>
+        
+        <div class="mode-switch-row">
+          <span data-i="darkThemeLabel">Dark Theme</span>
+          <button class="m3-switch" id="themeSwitch" role="switch" aria-checked="true">
+            <span class="m3-switch-thumb"></span>
+          </button>
+        </div>
+      </div>
+
     </div>
-    <div class="lang-morph-deck hidden" id="langMorphDeck" aria-label="Choose language">
-      <button type="button" class="m3-icon-action m3-rip" id="btnLangBack" aria-label="Back to header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7 7-7-7 7-7"/></svg></button>
-      <button type="button" class="lang-pill-btn m3-rip" data-lang="en">English</button>
-      <button type="button" class="lang-pill-btn m3-rip" data-lang="uk">Українська</button>
-      <button type="button" class="lang-pill-btn m3-rip" data-lang="ru">Русский</button>
-    </div>
-    <div class="monet-popup" id="monetPopup" role="dialog" aria-label="Appearance settings">
-      <div class="popup-label" data-i="monetPaletteTitle">Monet Color Hues</div>
-      <div class="palette-grid" id="paletteGrid"></div>
-      <div class="mode-switch-row"><span data-i="darkThemeLabel">Dark Theme</span><button type="button" class="m3-switch" id="themeSwitch" role="switch" aria-checked="true" aria-label="Toggle dark theme"><span class="m3-switch-thumb"></span></button></div>
-    </div>
-  </nav>
+  </div>
 </header>
 
 <main class="wrapper">
-  <section class="hero-wrapper" id="hero">
-    <div class="hero-copy">
-      <div class="eyebrow"><span class="pulse-indicator" aria-hidden="true"></span><span data-i="heroBadge">SMM Kingdom Tasks Automation</span></div>
-      <h1 class="hero-title" data-i="heroTitle">Instagram tasks,<br><span class="accent-word">on autopilot.</span></h1>
-      <p class="hero-body" data-i="heroSubtitle">Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.</p>
-      <div class="hero-actions">
-        <a href="#protect" class="m3-btn filled m3-rip"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m-7-7 7 7 7-7"/></svg><span data-i="btnHeroGetStarted">Get Started</span></a>
-        <a href="#pricing" class="m3-btn tonal m3-rip"><span data-i="btnHeroLicense">Get a License</span><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
-      </div>
-      <div class="hero-chips-deck">
-        <a href="#protect" class="interactive-chip m3-rip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/><path d="M4.5 5.5 3 4m16.5 1.5L21 4"/></svg><span data-i="chipSetupText">Setup</span></a>
-        <a href="#tutorial" class="interactive-chip m3-rip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg><span data-i="chipTutorialText">Tutorial Video</span></a>
-        <span class="interactive-chip static-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>Android 11+</span>
-      </div>
-      <div class="hero-footnote"><span class="avatar-stack" aria-hidden="true"><span class="avatar-dot">R</span><span class="avatar-dot">↗</span><span class="avatar-dot">✓</span></span><span>Built for focused, hands-free task flow</span></div>
-    </div>
-    <div class="hero-art" aria-label="Illustration of Replica running tasks on an Android phone" role="img">
-      <div class="art-glow"></div><div class="hero-art-grid"></div><div class="orbit-ring"></div>
-      <div class="phone-shell"><div class="phone-screen"><span class="phone-notch"></span>
-        <div class="phone-topline"><span>replica.app</span><span class="online">Live</span></div>
-        <h2 class="phone-heading">Your tasks,<br>in motion.</h2><p class="phone-sub">Everything is moving as expected.</p>
-        <div class="mini-activity"><span class="mini-activity-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg></span><span><b>Task completed</b><small>Instagram · Just now</small></span><span class="mini-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span></div>
-        <div class="mini-activity"><span class="mini-activity-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="16" r="3"/></svg></span><span><b>Task queue</b><small>Next action ready</small></span><span class="mini-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span></div>
-        <div class="phone-progress-label"><span>Session progress</span><span>76%</span></div><div class="phone-progress"><span></span></div>
-        <div class="phone-bottom-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m8 5 11 7-11 7z"/></svg>Automation active</div>
-      </div></div>
-      <div class="float-bubble bubble-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="7"/></svg><span>Task synced</span></div>
-      <div class="float-bubble bubble-b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg><span>All systems ready</span></div>
-      <div class="float-bubble bubble-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.3 6.7L21 11l-6.7 2.3L12 20l-2.3-6.7L3 11l6.7-2.3z"/><path d="m19 15 1.2 2.3L22.5 18.5l-2.3 1.2L19 22l-1.2-2.3-2.3-1.2 2.3-1.2z"/></svg></div>
-    </div>
-  </section>
+  <!-- HERO BENTO GRID -->
+  <section class="hero-bento" id="hero">
+    
+    <!-- Left Hero Bento Card -->
+    <div class="hero-main-tile">
+      <!-- Dynamic Rotating Curly Circle & Clover Watermarks -->
+      <svg class="hero-bg-curly spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+      <svg class="hero-bg-clover spin-reverse" viewBox="0 0 100 100"><use href="#shape-clover"/></svg>
 
-  <section class="section-block reveal" id="protect">
-    <div class="step-heading"><span class="tag-step">Step 01 · Preparation</span><h2 class="main-step-title" data-i="st1Head">Disable Play Protect</h2><p class="step-desc" data-i="st1Sub">Android can prevent sideloading background automation apps. Turn off scanning first.</p></div>
-    <div class="protect-card" id="protectCard">
-      <button type="button" class="protect-btn-row m3-rip" id="protectToggleBtn" aria-expanded="false" aria-controls="protectDetails">
-        <span class="protect-lead"><span class="protect-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><span><span class="protect-title" data-i="st1CardTitle">Play Protect Walkthrough</span><span class="protect-prompt" data-i="st1CardPrompt">Tap to view step-by-step instructions</span></span></span>
-        <span class="protect-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-      </button>
-      <div class="protect-body" id="protectDetails"><div class="protect-body-content"><div class="step-sequence" id="protectStepRows"></div></div></div>
-    </div>
-  </section>
-
-  <section class="section-block reveal" id="downloads">
-    <div class="step-heading"><span class="tag-step">Step 02 · Essentials</span><h2 class="main-step-title" data-i="st2Head">Download the Trilogy</h2><p class="step-desc" data-i="st2Sub">Install these three apps to establish automation, background terminal sessions, and system hooks.</p></div>
-    <div class="trilogy-grid">
-      <article class="trilogy-card reveal delay-1">
-        <div class="card-topline"><span class="card-index">MODULE / 01</span><span class="card-badge">Automation</span></div>
-        <div class="card-art card-art--replica" aria-hidden="true"><span class="art-spark spark-1"></span><span class="art-spark spark-2"></span><span class="art-spark spark-3"></span><span class="art-shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M9 6h6M12 17h.01"/><path d="m9 12 2 2 4-4"/></svg></span></div>
-        <h3 class="card-heading">Download Replica</h3><p class="card-copy" data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
-        <a class="card-action-link m3-rip" id="dlReplicaAnchor" href="#" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3"/></svg><span data-i="btnDlReplica">Download Replica</span></a>
-      </article>
-      <article class="trilogy-card reveal delay-2">
-        <div class="card-topline"><span class="card-index">MODULE / 02</span><span class="card-badge">Environment</span></div>
-        <div class="card-art card-art--termux" aria-hidden="true"><span class="art-spark spark-1"></span><span class="art-spark spark-2"></span><span class="art-spark spark-3"></span><span class="art-shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="19" height="17" rx="3"/><path d="m7 9 3 3-3 3m6 0h4"/></svg></span></div>
-        <h3 class="card-heading">Download Termux</h3><p class="card-copy" data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
-        <a class="card-action-link m3-rip" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3"/></svg><span data-i="btnDlTermux">Download Termux</span></a>
-      </article>
-      <article class="trilogy-card reveal delay-3">
-        <div class="card-topline"><span class="card-index">MODULE / 03</span><span class="card-badge">System Bridge</span></div>
-        <div class="card-art card-art--api" aria-hidden="true"><span class="art-spark spark-1"></span><span class="art-spark spark-2"></span><span class="art-spark spark-3"></span><span class="art-shape"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V8"/><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M8 13h.01M16 13h.01M9 17h6"/></svg></span></div>
-        <h3 class="card-heading">Download Termux API</h3><p class="card-copy" data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
-        <a class="card-action-link m3-rip" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3"/></svg><span data-i="btnDlTermuxApi">Download Termux API</span></a>
-      </article>
-    </div>
-  </section>
-
-  <section class="section-block reveal" id="tutorial">
-    <div class="step-heading"><span class="tag-step">Step 03 · Guided setup</span><h2 class="main-step-title" data-i="st3Head">Setup Tutorial Video</h2><p class="step-desc" data-i="st3Sub">Watch the step-by-step walkthrough to get everything set up in minutes.</p></div>
-    <div class="tutorial-tile">
-      <div class="tutorial-tile-left"><span class="tutorial-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span><span><span class="tutorial-title" data-i="videoTileTitle">Video Walkthrough</span><span class="tutorial-sub" data-i="videoTileSub">Available directly inside our official Telegram channel</span></span></div>
-      <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span data-i="btnWatchVideo">Watch Video</span><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
-    </div>
-  </section>
-
-  <section class="section-block reveal" id="pricing">
-    <div class="step-heading"><span class="tag-step">Step 04 · Access</span><h2 class="main-step-title" data-i="priceHead">License Pricing</h2><p class="step-desc" data-i="priceSub">Simple, affordable monthly license per device with continuous feature updates.</p></div>
-    <div class="pricing-layout">
-      <div class="expressive-price-card">
-        <div><span class="price-overline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg>Replica Pro access</span>
-          <div class="price-hero-row"><div><div class="cost-figure-group"><span class="unit-currency">$</span><span class="numeric-amt" id="numericAmt">10</span><span class="recurrence-period" data-i="priceCadence">/ month</span></div><p class="price-desc" data-i="priceDesc">Single device per license</p></div><a class="m3-btn filled m3-rip price-cta" data-tg target="_blank" rel="noopener noreferrer"><span data-i="btnGetLicense">Get a License</span><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a></div>
+      <div>
+        <div class="status-pill m3-rip" id="heroStatusBadge">
+          <svg class="status-cookie-dot" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+          <span data-i="heroBadge">SMM Kingdom Tasks Automation</span>
         </div>
-        <div class="privileges-list"><div class="privilege-item"><span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></div><div class="privilege-item"><span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></div><div class="privilege-item"><span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6"/></svg></span><span data-i="feature3">Direct support & script updates</span></div></div>
+
+        <h1 class="hero-title" style="margin-top: 18px;" data-i="heroTitle">
+          Instagram tasks, <br><span class="accent-word">on autopilot.</span>
+        </h1>
+
+        <p class="hero-body" style="margin-top: 14px;" data-i="heroSubtitle">
+          Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.
+        </p>
       </div>
-      <aside class="side-note"><div class="side-note-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M8 9h8M8 13h4"/><circle cx="17" cy="15" r="2"/></svg></div><div><h3 data-i="bulkTitle">Need More Than One Device?</h3><p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p></div><a class="m3-btn tonal m3-rip" data-tg target="_blank" rel="noopener noreferrer"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-.9L3 21l1.9-5.3a8.5 8.5 0 1 1 16.1-4.2Z"/></svg><span data-i="btnBulk">Contact Developer</span></a></aside>
+
+      <div>
+        <div class="hero-actions">
+          <a href="#protect" class="m3-btn filled m3-rip">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            <span data-i="btnHeroGetStarted">Get Started</span>
+          </a>
+          <a href="#pricing" class="m3-btn tonal m3-rip" data-i="btnHeroLicense">
+            Get a License
+          </a>
+        </div>
+
+        <div class="hero-chips-deck" style="margin-top: 16px;">
+          <a href="#protect" class="interactive-chip m3-rip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span data-i="chipSetupText">Setup</span>
+          </a>
+
+          <a href="#tutorial" class="interactive-chip m3-rip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span data-i="chipTutorialText">Tutorial Video</span>
+          </a>
+
+          <div class="interactive-chip m3-rip" id="androidBadgeChip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="3"/>
+              <path d="M12 18h.01"/>
+            </svg>
+            <span>Android 11+</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Hero Bento Card: Interactive Live Autopilot Engine -->
+    <aside class="hero-live-tile">
+      <svg class="live-tile-bg-shape spin-reverse" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+
+      <div class="live-top-bar">
+        <span style="font-weight: 800; font-size: 0.95rem;">Replica Engine</span>
+        <span class="live-tag"><span class="live-dot"></span> Live Node</span>
+      </div>
+
+      <!-- Interactive Curly Circle Core -->
+      <div class="curly-core-stage m3-rip" id="curlyCoreTrigger" title="Tap to boost autopilot simulation">
+        <div class="curly-dial-box">
+          <svg class="curly-dial-svg spin-slow" id="liveCurlyWheel" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+          <div class="curly-dial-inner" id="liveRateBadge">100%</div>
+        </div>
+        <div class="core-metrics">
+          <div class="core-metrics-title" id="simTaskTitle">Autopilot Active</div>
+          <div class="core-metrics-sub" id="simTaskSub">Tap wheel to test task cycle</div>
+        </div>
+      </div>
+
+      <!-- Simulated Real-Time Telemetry -->
+      <div class="telemetry-console">
+        <div class="telemetry-row">
+          <span>Bot Bridge</span>
+          <b id="telBotState">SMM_KINGDOM_OK</b>
+        </div>
+        <div class="telemetry-row">
+          <span>Termux Session</span>
+          <b id="telSession">:8022 ACTIVE</b>
+        </div>
+        <div class="telemetry-row">
+          <span>Tasks Completed</span>
+          <b id="telCount">1,428</b>
+        </div>
+      </div>
+
+      <button class="sim-trigger-btn m3-rip" id="btnSimulateTask" type="button">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span>Pulse Task Cycle</span>
+      </button>
+    </aside>
+
+  </section>
+
+  <!-- STEP 01: DISABLE PLAY PROTECT -->
+  <section id="protect">
+    <div class="step-heading">
+      <div>
+        <div class="step-badge-row">
+          <svg class="step-badge-shape" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+          <span>Step 01</span>
+        </div>
+        <h2 class="main-step-title" data-i="st1Head">Disable Play Protect</h2>
+        <p class="step-desc" data-i="st1Sub">Android can prevent sideloading background automation apps. Turn off scanning first.</p>
+      </div>
+    </div>
+
+    <div class="protect-card open" id="protectCard">
+      <svg class="protect-bg-shape spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+
+      <button class="protect-btn-row m3-rip" id="protectToggleBtn" aria-expanded="true">
+        <div class="protect-lead">
+          <div class="protect-art-wrap">
+            <svg class="protect-art-bg spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+            <svg class="protect-art-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div>
+            <h3 style="font-size: 1.22rem; font-weight: 800;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
+            <p style="font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant);" data-i="st1CardPrompt">Tap to see quick instructions</p>
+          </div>
+        </div>
+        <div class="protect-chevron">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+      </button>
+
+      <div class="protect-body">
+        <div class="protect-body-content">
+          <div class="step-sequence" id="protectStepRows"></div>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- STEP 02: 3 DOWNLOAD TILES WITH DYNAMIC ROTATING SHAPES -->
+  <section id="downloads">
+    <div class="step-heading">
+      <div>
+        <div class="step-badge-row">
+          <svg class="step-badge-shape" viewBox="0 0 100 100"><use href="#shape-clover"/></svg>
+          <span>Step 02</span>
+        </div>
+        <h2 class="main-step-title" data-i="st2Head">Download the Trilogy</h2>
+        <p class="step-desc" data-i="st2Sub">Install these three apps to establish automation, background terminal sessions, and system hooks.</p>
+      </div>
+    </div>
+
+    <div class="trilogy-grid">
+      <!-- Tile 1: Replica (Curly Circle Geometry) -->
+      <article class="trilogy-card">
+        <svg class="tile-watermark-shape spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+        <div>
+          <div class="card-top-row">
+            <div class="card-expressive-icon">
+              <svg class="shape-bg spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+              <svg class="fg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="3"/>
+                <path d="M12 18h.01"/>
+              </svg>
+            </div>
+            <span class="card-badge">Automation</span>
+          </div>
+          <h3 class="card-heading">Download Replica</h3>
+          <p class="card-copy" data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
+        </div>
+        <a class="card-action-link m3-rip" id="dlReplicaAnchor" href="#" download>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <span data-i="btnDlReplica">Download Replica</span>
+        </a>
+      </article>
+
+      <!-- Tile 2: Termux (Starburst Cookie Geometry) -->
+      <article class="trilogy-card">
+        <svg class="tile-watermark-shape spin-reverse" viewBox="0 0 100 105"><use href="#shape-starburst"/></svg>
+        <div>
+          <div class="card-top-row">
+            <div class="card-expressive-icon">
+              <svg class="shape-bg spin-reverse" viewBox="0 0 100 105"><use href="#shape-starburst"/></svg>
+              <svg class="fg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="4 17 10 11 4 5"/>
+                <line x1="12" y1="19" x2="20" y2="19"/>
+              </svg>
+            </div>
+            <span class="card-badge">Environment</span>
+          </div>
+          <h3 class="card-heading">Download Termux</h3>
+          <p class="card-copy" data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
+        </div>
+        <a class="card-action-link m3-rip" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <span data-i="btnDlTermux">Download Termux</span>
+        </a>
+      </article>
+
+      <!-- Tile 3: Termux API (4-Leaf Clover Geometry) -->
+      <article class="trilogy-card">
+        <svg class="tile-watermark-shape spin-slow" viewBox="0 0 100 100"><use href="#shape-clover"/></svg>
+        <div>
+          <div class="card-top-row">
+            <div class="card-expressive-icon">
+              <svg class="shape-bg spin-slow" viewBox="0 0 100 100"><use href="#shape-clover"/></svg>
+              <svg class="fg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            </div>
+            <span class="card-badge">System Bridge</span>
+          </div>
+          <h3 class="card-heading">Download Termux API</h3>
+          <p class="card-copy" data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
+        </div>
+        <a class="card-action-link m3-rip" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <span data-i="btnDlTermuxApi">Download Termux API</span>
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <!-- STEP 03: SETUP TUTORIAL TILE -->
+  <section id="tutorial">
+    <div class="step-heading">
+      <div>
+        <div class="step-badge-row">
+          <svg class="step-badge-shape" viewBox="0 0 100 105"><use href="#shape-starburst"/></svg>
+          <span>Step 03</span>
+        </div>
+        <h2 class="main-step-title" data-i="st3Head">Setup Tutorial Video</h2>
+        <p class="step-desc" data-i="st3Sub">Watch the step-by-step walkthrough to get everything set up in minutes.</p>
+      </div>
+    </div>
+
+    <div class="tutorial-tile">
+      <svg class="tutorial-bg-curly spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+
+      <div class="tutorial-tile-left">
+        <div class="tutorial-cookie-btn">
+          <svg class="cookie-svg spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+          <svg class="play-ico" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+          </svg>
+        </div>
+        <div>
+          <h3 style="font-size: 1.28rem; font-weight: 800;" data-i="videoTileTitle">Video Walkthrough</h3>
+          <p style="font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant); margin-top: 2px;" data-i="videoTileSub">Available directly inside our official Telegram channel</p>
+        </div>
+      </div>
+
+      <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span data-i="btnWatchVideo">Watch Video</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- STEP 04: PRICING BENTO & MULTI-DEVICE BANNER -->
+  <section id="pricing">
+    <div class="step-heading">
+      <div>
+        <div class="step-badge-row">
+          <svg class="step-badge-shape" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+          <span>License</span>
+        </div>
+        <h2 class="main-step-title" data-i="priceHead">License Pricing</h2>
+        <p class="step-desc" data-i="priceSub">Simple, affordable monthly license per device with continuous feature updates.</p>
+      </div>
+    </div>
+
+    <div class="pricing-bento-grid">
+      <!-- Primary Price Card -->
+      <div class="expressive-price-card">
+        <svg class="price-bg-starburst spin-slow" viewBox="0 0 100 105"><use href="#shape-starburst"/></svg>
+
+        <div class="price-hero-row">
+          <div>
+            <div class="cost-figure-group">
+              <span class="unit-currency">$</span>
+              <span class="numeric-amt" id="numericAmt">10</span>
+              <span class="recurrence-period" data-i="priceCadence">/ month</span>
+            </div>
+            <p style="margin-top: 8px; font-weight: 800; color: var(--md-sys-color-primary);" data-i="priceDesc">Single device per license</p>
+          </div>
+
+          <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <span data-i="btnGetLicense">Get a License</span>
+          </a>
+        </div>
+
+        <div class="privileges-list">
+          <div class="privilege-item m3-rip">
+            <span class="check-token">
+              <svg class="token-bg spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+              <svg class="token-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span>
+          </div>
+          <div class="privilege-item m3-rip">
+            <span class="check-token">
+              <svg class="token-bg spin-reverse" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+              <svg class="token-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span data-i="feature2">Runs smoothly on Android 11+</span>
+          </div>
+          <div class="privilege-item m3-rip">
+            <span class="check-token">
+              <svg class="token-bg spin-slow" viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+              <svg class="token-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span data-i="feature3">Direct support & script updates</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-Device Expressive Side Card -->
+      <div class="multi-key-banner">
+        <svg class="multi-bg-clover spin-reverse" viewBox="0 0 100 100"><use href="#shape-clover"/></svg>
+
+        <div>
+          <div class="multi-icon-flower" style="margin-bottom: 18px;">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="9" height="16" rx="2"/>
+              <rect x="13" y="4" width="9" height="16" rx="2"/>
+            </svg>
+          </div>
+          <h3 data-i="bulkTitle">Need More Than One Device?</h3>
+          <p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p>
+        </div>
+
+        <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnBulk">
+          Contact Developer
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><span data-i="ftHelp">Need help? Message</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftTg">on Telegram</span>.</p>
+    <p class="disclaimer-line" data-i="ftLegal">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p>
+  </footer>
 </main>
 
-<footer><div class="wrapper footer-inner"><div class="footer-brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span>Replica</span></div><div class="footer-copy"><p><span data-i="ftHelp">Need help? Message</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftTg">on Telegram</span>.</p><p class="disclaimer-line" data-i="ftLegal">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p></div><div class="footer-meta">Made for Android · 11+</div></div></footer>
-
-<nav class="mobile-nav" aria-label="Quick navigation"><a href="#protect" data-nav-target="protect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Setup</span></a><a href="#downloads" data-nav-target="downloads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="6" height="6" rx="1.5"/><rect x="14" y="3" width="6" height="6" rx="1.5"/><rect x="4" y="13" width="6" height="6" rx="1.5"/><rect x="14" y="13" width="6" height="6" rx="1.5"/></svg><span>Downloads</span></a><a href="#pricing" data-nav-target="pricing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/></svg><span>License</span></a></nav>
+<!-- Toast Feedback -->
 <div class="m3-snackbar" id="toastBox" role="status" aria-live="polite"></div>
 
 <script>
+/* =========================================================
+   CONFIG & PALETTE SYSTEM
+   ========================================================= */
 const APP_CONFIG = {
   links: {
     replicaApk: '#',
@@ -581,7 +2090,7 @@ const TRANSLATIONS = {
     st1Head: "Disable Play Protect",
     st1Sub: "Android can prevent sideloading background automation apps. Turn off scanning first.",
     st1CardTitle: "Play Protect Walkthrough",
-    st1CardPrompt: "Tap to view step-by-step instructions",
+    st1CardPrompt: "Tap any card step to mark it complete",
     st1Steps: [
       "Open the <b>Play Store</b> and tap your profile picture in the top corner.",
       "Tap <b>Play Protect</b>, then tap the <b>settings gear</b>.",
@@ -630,7 +2139,7 @@ const TRANSLATIONS = {
     st1Head: "Вимкніть Play Захист",
     st1Sub: "Android може блокувати додатки не з маркету. Спочатку вимкніть сканування.",
     st1CardTitle: "Інструкція Play Захисту",
-    st1CardPrompt: "Торкніться, щоб переглянути інструкцію",
+    st1CardPrompt: "Торкніться кроку, щоб позначити виконаним",
     st1Steps: [
       "Відкрийте <b>Play Маркет</b> і торкніться фото профілю.",
       "Торкніться <b>Play Захист</b>, потім значка <b>налаштувань</b>.",
@@ -679,7 +2188,7 @@ const TRANSLATIONS = {
     st1Head: "Отключите Play Защиту",
     st1Sub: "Android может блокировать внешние скрипты. Сначала отключите сканирование.",
     st1CardTitle: "Инструкция Play Защиты",
-    st1CardPrompt: "Нажмите, чтобы увидеть шаги",
+    st1CardPrompt: "Нажмите на шаг, чтобы отметить выполненным",
     st1Steps: [
       "Откройте <b>Play Маркет</b> и нажмите на фото профиля.",
       "Нажмите <b>Play Защита</b>, затем значок <b>настроек</b>.",
@@ -717,211 +2226,231 @@ const TRANSLATIONS = {
   }
 };
 
+/* =========================================================
+   APPLICATION CONTROLLER
+   ========================================================= */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
 
-/* Material motion + theme + multilingual controller */
-const $ = selector => document.querySelector(selector);
-const $$ = selector => document.querySelectorAll(selector);
-let lang = localStorage.getItem('replica_lang') || (/^uk/i.test(navigator.language) ? 'uk' : /^ru/i.test(navigator.language) ? 'ru' : 'en');
+let lang = localStorage.getItem('replica_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
 if (!TRANSLATIONS[lang]) lang = 'en';
-let hue = Number(localStorage.getItem('replica_hue') || 154);
-let mode = localStorage.getItem('replica_mode') || 'dark';
+
+let hue = +(localStorage.getItem('replica_hue') || 154);
+let mode = localStorage.getItem('replica_mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+let simulatedTasks = 1428;
+
 let toastTimer;
-function showToast(message) {
+function showToast(text) {
   const box = $('#toastBox');
-  if (!box) return;
-  box.textContent = message;
+  box.textContent = text;
   box.classList.add('active');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => box.classList.remove('active'), 3200);
+  toastTimer = setTimeout(() => box.classList.remove('active'), 3000);
 }
-function setHue(value) {
-  hue = Number(value);
+
+// Authentic Material 3 Ripple
+document.addEventListener('pointerdown', e => {
+  const host = e.target.closest('.m3-rip');
+  if (!host) return;
+  const rect = host.getBoundingClientRect();
+  const radius = Math.max(rect.width, rect.height);
+  const ripple = document.createElement('span');
+  ripple.className = 'rip-drop';
+  ripple.style.width = ripple.style.height = `${radius * 2}px`;
+  ripple.style.left = `${e.clientX - rect.left - radius}px`;
+  ripple.style.top = `${e.clientY - rect.top - radius}px`;
+  host.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 650);
+});
+
+function setHue(newHue) {
+  hue = +newHue;
   document.documentElement.style.setProperty('--h', hue);
-  localStorage.setItem('replica_hue', String(hue));
-  $$('#paletteGrid .palette-swatch').forEach(swatch => {
-    const active = Number(swatch.dataset.hue) === hue;
-    swatch.classList.toggle('active', active);
-    swatch.setAttribute('aria-pressed', String(active));
+  localStorage.setItem('replica_hue', hue);
+  $$('#paletteGrid .palette-swatch').forEach(sw => {
+    sw.classList.toggle('active', +sw.dataset.hue === hue);
   });
 }
-function setMode(value) {
-  mode = value;
+
+function setMode(newMode) {
+  mode = newMode;
   document.documentElement.setAttribute('data-mode', mode);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', mode === 'dark' ? '#101510' : '#f5f7f2');
   localStorage.setItem('replica_mode', mode);
-  $('#themeSwitch')?.setAttribute('aria-checked', String(mode === 'dark'));
+  $('#themeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
 }
+
 function renderI18n() {
-  const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  const dict = TRANSLATIONS[lang];
   document.documentElement.lang = lang;
-  $$('[data-i]').forEach(element => {
-    const key = element.dataset.i;
-    if (Object.prototype.hasOwnProperty.call(dict, key)) element.innerHTML = dict[key];
+
+  $$('[data-i]').forEach(el => {
+    const k = el.dataset.i;
+    if (dict[k]) el.innerHTML = dict[k];
   });
-  $('#protectStepRows').innerHTML = dict.st1Steps.map((text, index) => `
-    <div class="sequence-item"><span class="sequence-counter">${index + 1}</span><span>${text}</span></div>
+
+  $('#protectStepRows').innerHTML = dict.st1Steps.map((txt, i) => `
+    <div class="sequence-item m3-rip" data-step-idx="${i}">
+      <div class="sequence-top">
+        <div class="sequence-counter">
+          <svg viewBox="0 0 100 105"><use href="#shape-curly-circle"/></svg>
+          <span>${i + 1}</span>
+        </div>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>${txt}</div>
+    </div>
   `).join('');
-  $$('#langMorphDeck [data-lang]').forEach(button => {
-    button.classList.toggle('active', button.dataset.lang === lang);
-    button.setAttribute('aria-pressed', String(button.dataset.lang === lang));
+
+  $$('#langMorphDeck [data-lang]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
   });
 }
-function toggleLanguageMorph(show) {
-  $('#brandTitle').style.display = show ? 'none' : 'inline-flex';
-  $('#actionsDeck').classList.toggle('hidden', show);
-  $('#langMorphDeck').classList.toggle('hidden', !show);
-  if (show) $('#langMorphDeck [data-lang]')?.focus({ preventScroll: true });
+
+function toggleLanguageMorph(showLang) {
+  const brandTitle = $('#brandTitle');
+  const navPills = $('#headerNavPills');
+  const actionsDeck = $('#actionsDeck');
+  const langDeck = $('#langMorphDeck');
+
+  if (showLang) {
+    brandTitle.style.display = 'none';
+    if (navPills) navPills.style.display = 'none';
+    actionsDeck.classList.add('hidden');
+    langDeck.classList.remove('hidden');
+  } else {
+    langDeck.classList.add('hidden');
+    brandTitle.style.display = 'flex';
+    if (navPills) navPills.style.display = '';
+    actionsDeck.classList.remove('hidden');
+  }
 }
+
+function pulseTaskSimulation() {
+  const wheel = $('#liveCurlyWheel');
+  const countEl = $('#telCount');
+  const titleEl = $('#simTaskTitle');
+  const subEl = $('#simTaskSub');
+  const botState = $('#telBotState');
+
+  wheel.classList.add('spin-fast');
+  simulatedTasks += 1;
+  countEl.textContent = simulatedTasks.toLocaleString();
+  titleEl.textContent = 'Executing Follow Task...';
+  subEl.textContent = 'Termux API touch bridge dispatched';
+  botState.textContent = 'REPORTING +1';
+
+  setTimeout(() => {
+    wheel.classList.remove('spin-fast');
+    titleEl.textContent = 'Autopilot Active';
+    subEl.textContent = 'Task verified by SMM Kingdom Bot';
+    botState.textContent = 'SMM_KINGDOM_OK';
+  }, 1200);
+}
+
 function init() {
-  $$('[data-tg]').forEach(anchor => {
-    anchor.href = APP_CONFIG.links.telegram;
-    if (!anchor.textContent.trim()) anchor.textContent = '@iamrajatroel';
-  });
+  $$('[data-tg]').forEach(a => a.href = APP_CONFIG.links.telegram);
   $('#dlTermuxAnchor').href = APP_CONFIG.links.termuxApk;
   $('#dlTermuxApiAnchor').href = APP_CONFIG.links.termuxApiApk;
+
+  // Populate Expressive Swatches
   $('#paletteGrid').innerHTML = APP_CONFIG.monetHues.map(item => `
-    <button type="button" class="palette-swatch" data-hue="${item.hue}" title="${item.name}" aria-label="${item.name}" aria-pressed="false" style="background:oklch(.68 .16 ${item.hue})"></button>
+    <button class="palette-swatch m3-rip ${item.hue === hue ? 'active' : ''}" 
+            data-hue="${item.hue}" 
+            title="${item.name}" 
+            style="background: oklch(0.68 0.16 ${item.hue})"
+            aria-label="${item.name}"></button>
   `).join('');
-  $('#btnLanguage').addEventListener('click', event => {
-    event.stopPropagation();
-    $('#monetPopup').classList.remove('show');
-    $('#btnTheme').classList.remove('active-btn');
-    $('#btnTheme').setAttribute('aria-expanded', 'false');
+
+  // Header scroll blur elevation
+  const topHeader = $('#topHeader');
+  window.addEventListener('scroll', () => {
+    topHeader.classList.toggle('scrolled', window.scrollY > 24);
+  }, { passive: true });
+
+  // Language switcher morph
+  $('#btnLanguage').addEventListener('click', e => {
+    e.stopPropagation();
     toggleLanguageMorph(true);
   });
-  $('#btnLangBack').addEventListener('click', event => { event.stopPropagation(); toggleLanguageMorph(false); $('#btnLanguage').focus(); });
-  $('#langMorphDeck').addEventListener('click', event => {
-    const button = event.target.closest('[data-lang]');
-    if (!button) return;
-    lang = button.dataset.lang;
+
+  $('#btnLangBack').addEventListener('click', e => {
+    e.stopPropagation();
+    toggleLanguageMorph(false);
+  });
+
+  $('#langMorphDeck').addEventListener('click', e => {
+    const btn = e.target.closest('[data-lang]');
+    if (!btn) return;
+    lang = btn.dataset.lang;
     localStorage.setItem('replica_lang', lang);
     renderI18n();
-    setTimeout(() => toggleLanguageMorph(false), 160);
+    setTimeout(() => toggleLanguageMorph(false), 180);
   });
-  $('#paletteGrid').addEventListener('click', event => {
-    const swatch = event.target.closest('.palette-swatch');
+
+  // Monet palette selection
+  $('#paletteGrid').addEventListener('click', e => {
+    const swatch = e.target.closest('.palette-swatch');
     if (swatch) setHue(swatch.dataset.hue);
   });
-  const themeButton = $('#btnTheme');
+
+  const themeBtn = $('#btnTheme');
   const themePopup = $('#monetPopup');
-  themeButton.addEventListener('click', event => {
-    event.stopPropagation();
-    const open = themePopup.classList.toggle('show');
-    themeButton.classList.toggle('active-btn', open);
-    themeButton.setAttribute('aria-expanded', String(open));
+  themeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = themePopup.classList.toggle('show');
+    themeBtn.classList.toggle('active-btn', isOpen);
+    themeBtn.setAttribute('aria-expanded', String(isOpen));
   });
-  document.addEventListener('click', event => {
-    if (!event.target.closest('#monetPopup') && !event.target.closest('#btnTheme')) {
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#monetPopup') && !e.target.closest('#btnTheme')) {
       themePopup.classList.remove('show');
-      themeButton.classList.remove('active-btn');
-      themeButton.setAttribute('aria-expanded', 'false');
-    }
-    if (!event.target.closest('#langMorphDeck') && !event.target.closest('#btnLanguage') && !$('#langMorphDeck').classList.contains('hidden')) toggleLanguageMorph(false);
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      themePopup.classList.remove('show');
-      themeButton.classList.remove('active-btn');
-      themeButton.setAttribute('aria-expanded', 'false');
-      toggleLanguageMorph(false);
+      themeBtn.classList.remove('active-btn');
+      themeBtn.setAttribute('aria-expanded', 'false');
     }
   });
-  $('#themeSwitch').addEventListener('click', () => setMode(mode === 'dark' ? 'light' : 'dark'));
-  $('#protectToggleBtn').addEventListener('click', () => {
-    const isOpen = $('#protectCard').classList.toggle('open');
-    $('#protectToggleBtn').setAttribute('aria-expanded', String(isOpen));
+
+  $('#themeSwitch').addEventListener('click', () => {
+    setMode(mode === 'dark' ? 'light' : 'dark');
   });
-  $('#dlReplicaAnchor').addEventListener('click', event => {
-    if (!APP_CONFIG.links.replicaApk || APP_CONFIG.links.replicaApk === '#') {
-      event.preventDefault();
+
+  // Play Protect Accordion + Interactive Step Completion
+  const protectCard = $('#protectCard');
+  const protectBtn = $('#protectToggleBtn');
+  protectBtn.addEventListener('click', () => {
+    const isOpen = protectCard.classList.toggle('open');
+    protectBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  $('#protectStepRows').addEventListener('click', e => {
+    const stepCard = e.target.closest('.sequence-item');
+    if (!stepCard) return;
+    stepCard.classList.toggle('done');
+  });
+
+  // Live Autopilot Interactive Simulator
+  $('#curlyCoreTrigger').addEventListener('click', pulseTaskSimulation);
+  $('#btnSimulateTask').addEventListener('click', pulseTaskSimulation);
+  $('#heroStatusBadge').addEventListener('click', pulseTaskSimulation);
+  $('#androidBadgeChip').addEventListener('click', () => {
+    showToast('Optimized for Android 11, 12, 13, 14, 15 & 16');
+  });
+
+  // Replica APK Download Toast
+  $('#dlReplicaAnchor').addEventListener('click', e => {
+    if (APP_CONFIG.links.replicaApk === '#' || !APP_CONFIG.links.replicaApk) {
+      e.preventDefault();
       showToast(TRANSLATIONS[lang].apkComingSoon);
     }
   });
-  document.addEventListener('pointerdown', event => {
-    const host = event.target.closest('.m3-rip');
-    if (!host || event.button > 0) return;
-    const rect = host.getBoundingClientRect();
-    const diameter = Math.max(rect.width, rect.height) * 1.65;
-    const ripple = document.createElement('span');
-    ripple.className = 'rip-drop';
-    ripple.style.width = ripple.style.height = `${diameter}px`;
-    ripple.style.left = `${event.clientX - rect.left - diameter / 2}px`;
-    ripple.style.top = `${event.clientY - rect.top - diameter / 2}px`;
-    host.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 650);
-  }, { passive: true });
+
   setHue(hue);
   setMode(mode);
   renderI18n();
-  initMotion();
 }
-function initMotion() {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const revealItems = $$('.reveal');
-  if ('IntersectionObserver' in window && !reduceMotion) {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: .12, rootMargin: '0px 0px -35px 0px' });
-    revealItems.forEach(item => observer.observe(item));
-  } else revealItems.forEach(item => item.classList.add('in-view'));
 
-  const progress = $('#scrollProgress');
-  const capsule = $('#capsuleBar');
-  let queued = false;
-  const updateScrollState = () => {
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
-    progress.style.width = `${Math.min(100, Math.max(0, pct))}%`;
-    capsule.classList.toggle('scrolled', window.scrollY > 12);
-    queued = false;
-  };
-  window.addEventListener('scroll', () => {
-    if (!queued) { window.requestAnimationFrame(updateScrollState); queued = true; }
-  }, { passive: true });
-  updateScrollState();
-
-  const navLinks = $$('[data-nav-target]');
-  if ('IntersectionObserver' in window) {
-    const sectionObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) navLinks.forEach(link => {
-          const active = link.dataset.navTarget === entry.target.id;
-          link.classList.toggle('active', active);
-          if (active) link.setAttribute('aria-current', 'location');
-          else link.removeAttribute('aria-current');
-        });
-      });
-    }, { rootMargin: '-35% 0px -48% 0px', threshold: 0 });
-    ['protect', 'downloads', 'pricing'].forEach(id => { const section = document.getElementById(id); if (section) sectionObserver.observe(section); });
-  }
-  // Pointer tilt is intentionally subtle and automatically disabled on touch/reduced-motion devices.
-  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    $$('.trilogy-card').forEach(card => {
-      card.addEventListener('pointermove', event => {
-        const rect = card.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - .5;
-        const y = (event.clientY - rect.top) / rect.height - .5;
-        card.style.transform = `perspective(850px) translateY(-5px) rotateX(${(-y * 2.2).toFixed(2)}deg) rotateY(${(x * 2.2).toFixed(2)}deg)`;
-      });
-      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-    });
-    const heroArt = $('.hero-art');
-    heroArt?.addEventListener('pointermove', event => {
-      const rect = heroArt.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - .5;
-      const y = (event.clientY - rect.top) / rect.height - .5;
-      const phone = $('.phone-shell');
-      if (phone) phone.style.transform = `translate(${(x * 7).toFixed(1)}px,${(y * 6).toFixed(1)}px) rotateY(${(-8 + x * 5).toFixed(1)}deg) rotateX(${(4 - y * 4).toFixed(1)}deg)`;
-    });
-    heroArt?.addEventListener('pointerleave', () => { const phone = $('.phone-shell'); if (phone) phone.style.transform = ''; });
-  }
-}
 window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
+```
