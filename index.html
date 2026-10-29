@@ -7,7 +7,7 @@
 <meta name="description" content="Automate Instagram tasks on Android 11+ with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 @property --h {
   syntax: '<number>';
@@ -17,87 +17,95 @@
 
 :root {
   --h: 154;
-  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --smooth: cubic-bezier(0.2, 0, 0, 1);
-  --bounce: cubic-bezier(0.18, 0.9, 0.3, 1.3);
+  --spring: cubic-bezier(0.2, 0.9, 0.28, 1);
+  --smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --motion-expressive: cubic-bezier(0.34, 1.4, 0.64, 1);
 
-  /* Light MD3E Dynamic Monet Palette */
-  --md-sys-color-primary: oklch(0.44 0.17 var(--h));
+  /* Light MD3E Palette */
+  --md-sys-color-primary: oklch(0.42 0.17 var(--h));
   --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
-  --md-sys-color-primary-container: oklch(0.91 0.08 var(--h));
-  --md-sys-color-on-primary-container: oklch(0.2 0.09 var(--h));
+  --md-sys-color-primary-container: oklch(0.92 0.08 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.18 0.09 var(--h));
 
-  --md-sys-color-secondary: oklch(0.48 0.1 calc(var(--h) + 28));
-  --md-sys-color-secondary-container: oklch(0.92 0.05 calc(var(--h) + 28));
-  --md-sys-color-on-secondary-container: oklch(0.22 0.07 calc(var(--h) + 28));
+  --md-sys-color-secondary: oklch(0.46 0.09 calc(var(--h) + 24));
+  --md-sys-color-secondary-container: oklch(0.92 0.05 calc(var(--h) + 24));
+  --md-sys-color-on-secondary-container: oklch(0.2 0.07 calc(var(--h) + 24));
 
-  --md-sys-color-tertiary: oklch(0.46 0.13 calc(var(--h) + 65));
-  --md-sys-color-tertiary-container: oklch(0.89 0.08 calc(var(--h) + 65));
-  --md-sys-color-on-tertiary-container: oklch(0.22 0.08 calc(var(--h) + 65));
+  --md-sys-color-tertiary: oklch(0.45 0.12 calc(var(--h) + 55));
+  --md-sys-color-tertiary-container: oklch(0.9 0.07 calc(var(--h) + 55));
+  --md-sys-color-on-tertiary-container: oklch(0.2 0.08 calc(var(--h) + 55));
 
-  --md-sys-color-surface: oklch(0.985 0.007 var(--h));
-  --md-sys-color-surface-dim: oklch(0.93 0.014 var(--h));
+  --md-sys-color-surface: oklch(0.985 0.006 var(--h));
+  --md-sys-color-surface-dim: oklch(0.94 0.012 var(--h));
   --md-sys-color-surface-container-lowest: oklch(1 0 var(--h));
-  --md-sys-color-surface-container-low: oklch(0.96 0.012 var(--h));
-  --md-sys-color-surface-container: oklch(0.935 0.018 var(--h));
-  --md-sys-color-surface-container-high: oklch(0.9 0.024 var(--h));
-  --md-sys-color-surface-container-highest: oklch(0.87 0.03 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.965 0.01 var(--h));
+  --md-sys-color-surface-container: oklch(0.94 0.015 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.915 0.02 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.885 0.025 var(--h));
 
-  --md-sys-color-on-surface: oklch(0.16 0.022 var(--h));
-  --md-sys-color-on-surface-variant: oklch(0.42 0.032 var(--h));
-  --md-sys-color-outline: oklch(0.78 0.025 var(--h));
-  --md-sys-color-outline-variant: oklch(0.88 0.018 var(--h));
+  --md-sys-color-on-surface: oklch(0.18 0.02 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.44 0.028 var(--h));
+  --md-sys-color-outline: oklch(0.76 0.02 var(--h));
+  --md-sys-color-outline-variant: oklch(0.88 0.014 var(--h));
 
-  --shape-corner-extra-large: 34px;
-  --shape-corner-large: 24px;
-  --shape-corner-medium: 16px;
-  --shape-corner-small: 12px;
+  --shape-corner-extra-large: 28px;
+  --shape-corner-large: 20px;
+  --shape-corner-medium: 14px;
+  --shape-corner-small: 10px;
   --shape-corner-full: 9999px;
 
-  --elevation-1: 0 4px 18px -4px oklch(0 0 0 / 0.05), 0 2px 6px -1px oklch(0 0 0 / 0.03);
-  --elevation-2: 0 12px 32px -8px oklch(0 0 0 / 0.09), 0 4px 12px -2px oklch(0 0 0 / 0.04);
-  --elevation-3: 0 22px 48px -10px oklch(0 0 0 / 0.16), 0 8px 18px -4px oklch(0 0 0 / 0.07);
+  --elevation-1: 0 2px 8px -2px oklch(0 0 0 / 0.06), 0 1px 3px -1px oklch(0 0 0 / 0.04);
+  --elevation-2: 0 8px 24px -6px oklch(0 0 0 / 0.08), 0 3px 8px -2px oklch(0 0 0 / 0.04);
 }
 
 :root[data-mode="dark"] {
-  /* Dark MD3E Dynamic Monet Palette */
-  --md-sys-color-primary: oklch(0.82 0.15 var(--h));
+  /* Dark MD3E Palette */
+  --md-sys-color-primary: oklch(0.82 0.14 var(--h));
   --md-sys-color-on-primary: oklch(0.2 0.08 var(--h));
-  --md-sys-color-primary-container: oklch(0.34 0.11 var(--h));
-  --md-sys-color-on-primary-container: oklch(0.93 0.05 var(--h));
+  --md-sys-color-primary-container: oklch(0.32 0.1 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.94 0.04 var(--h));
 
-  --md-sys-color-secondary: oklch(0.78 0.09 calc(var(--h) + 28));
-  --md-sys-color-secondary-container: oklch(0.3 0.07 calc(var(--h) + 28));
-  --md-sys-color-on-secondary-container: oklch(0.91 0.05 calc(var(--h) + 28));
+  --md-sys-color-secondary: oklch(0.79 0.08 calc(var(--h) + 24));
+  --md-sys-color-secondary-container: oklch(0.29 0.06 calc(var(--h) + 24));
+  --md-sys-color-on-secondary-container: oklch(0.92 0.04 calc(var(--h) + 24));
 
-  --md-sys-color-tertiary: oklch(0.82 0.12 calc(var(--h) + 65));
-  --md-sys-color-tertiary-container: oklch(0.32 0.09 calc(var(--h) + 65));
-  --md-sys-color-on-tertiary-container: oklch(0.92 0.05 calc(var(--h) + 65));
+  --md-sys-color-tertiary: oklch(0.81 0.1 calc(var(--h) + 55));
+  --md-sys-color-tertiary-container: oklch(0.3 0.08 calc(var(--h) + 55));
+  --md-sys-color-on-tertiary-container: oklch(0.93 0.04 calc(var(--h) + 55));
 
-  --md-sys-color-surface: oklch(0.12 0.016 var(--h));
-  --md-sys-color-surface-dim: oklch(0.09 0.012 var(--h));
-  --md-sys-color-surface-container-lowest: oklch(0.07 0.01 var(--h));
-  --md-sys-color-surface-container-low: oklch(0.16 0.02 var(--h));
-  --md-sys-color-surface-container: oklch(0.2 0.024 var(--h));
-  --md-sys-color-surface-container-high: oklch(0.24 0.028 var(--h));
-  --md-sys-color-surface-container-highest: oklch(0.28 0.032 var(--h));
+  --md-sys-color-surface: oklch(0.13 0.012 var(--h));
+  --md-sys-color-surface-dim: oklch(0.1 0.01 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(0.08 0.008 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.16 0.015 var(--h));
+  --md-sys-color-surface-container: oklch(0.19 0.018 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.23 0.022 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.27 0.026 var(--h));
 
-  --md-sys-color-on-surface: oklch(0.95 0.012 var(--h));
-  --md-sys-color-on-surface-variant: oklch(0.76 0.025 var(--h));
-  --md-sys-color-outline: oklch(0.44 0.028 var(--h));
-  --md-sys-color-outline-variant: oklch(0.26 0.022 var(--h));
+  --md-sys-color-on-surface: oklch(0.94 0.01 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.74 0.02 var(--h));
+  --md-sys-color-outline: oklch(0.42 0.02 var(--h));
+  --md-sys-color-outline-variant: oklch(0.25 0.016 var(--h));
 }
 
-* {
+/* =========================================================
+   GLOBAL RESET & TAP HIGHLIGHT ELIMINATION
+   ========================================================= */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 104px;
+  scroll-padding-top: 96px;
   color-scheme: light dark;
 }
 
@@ -107,62 +115,39 @@ body {
   color: var(--md-sys-color-on-surface);
   line-height: 1.55;
   font-size: 16px;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.012em;
   overflow-x: hidden;
-  transition: background-color 0.5s var(--smooth), color 0.5s var(--smooth);
-  position: relative;
+  transition: background-color 0.4s var(--smooth), color 0.4s var(--smooth);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* =========================================================
-   TOP DISSOLVE VIGNETTE (Soft gradient scrim behind bar)
-   ========================================================= */
-.top-scrim-vignette {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 110px;
-  pointer-events: none;
-  z-index: 80;
-  background: linear-gradient(
-    to bottom,
-    var(--md-sys-color-surface) 0%,
-    color-mix(in oklch, var(--md-sys-color-surface) 90%, transparent) 42%,
-    color-mix(in oklch, var(--md-sys-color-surface) 35%, transparent) 78%,
-    transparent 100%
-  );
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-  transition: background 0.4s var(--smooth);
-}
-
-/* Material 3 Expressive Ripple */
+/* Clean MD3 Ripple / State Layer */
 .m3-rip {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  cursor: pointer;
 }
-.m3-rip::after {
+.m3-rip::before {
   content: '';
   position: absolute;
   inset: 0;
   background: currentColor;
   opacity: 0;
-  transition: opacity 0.25s ease;
   pointer-events: none;
+  transition: opacity 0.2s var(--smooth);
 }
-.m3-rip:hover::after { opacity: 0.08; }
-.m3-rip:active::after { opacity: 0.16; }
+.m3-rip:hover::before { opacity: 0.08; }
+.m3-rip:active::before { opacity: 0.14; }
 
 .rip-drop {
   position: absolute;
   border-radius: 50%;
   background: currentColor;
-  opacity: 0.22;
+  opacity: 0.2;
   transform: scale(0);
-  animation: rip-anim 0.65s var(--smooth) forwards;
+  animation: rip-anim 0.55s var(--smooth) forwards;
   pointer-events: none;
 }
 @keyframes rip-anim {
@@ -171,22 +156,39 @@ body {
 
 .wrapper {
   width: 100%;
-  max-width: 860px;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 0 20px 90px;
+  padding: 0 20px 80px;
 }
 
 /* =========================================================
-   TOP HEADER (TITLE + ONLY 2 ICONS: LANGUAGE & THEME)
+   STATIC APP BAR (Clean aShell-styled capsule)
    ========================================================= */
+.top-scrim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  z-index: 90;
+  background: linear-gradient(
+    to bottom,
+    var(--md-sys-color-surface) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  transition: background 0.4s var(--smooth);
+}
+
 header.m3-app-bar {
-  position: sticky;
+  position: fixed;
   top: 14px;
+  left: 0;
+  right: 0;
   z-index: 100;
   display: flex;
   justify-content: center;
-  padding: 0 12px;
-  margin-bottom: 24px;
+  padding: 0 16px;
 }
 
 .m3-nav-capsule {
@@ -195,56 +197,46 @@ header.m3-app-bar {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 540px;
-  min-height: 58px;
-  padding: 6px 8px 6px 18px;
-  background: color-mix(in oklch, var(--md-sys-color-surface-container) 88%, transparent);
-  backdrop-filter: blur(28px) saturate(1.8);
-  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+  max-width: 520px;
+  height: 56px;
+  padding: 4px 6px 4px 18px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--shape-corner-full);
-  box-shadow: var(--elevation-2);
-  transition: all 0.45s var(--spring);
+  box-shadow: var(--elevation-1);
 }
 
 .brand-title {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-weight: 800;
-  font-size: 1.28rem;
-  letter-spacing: -0.035em;
+  font-size: 1.22rem;
+  letter-spacing: -0.025em;
   color: var(--md-sys-color-on-surface);
   text-decoration: none;
-  user-select: none;
 }
-.brand-icon-glyph {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
   display: grid;
   place-items: center;
-  transition: transform 0.45s var(--spring), border-radius 0.4s var(--spring);
+  transition: transform 0.3s var(--spring);
 }
-.brand-title:hover .brand-icon-glyph {
-  transform: rotate(20deg) scale(1.12);
-  border-radius: 16px;
+.brand-title:hover .brand-icon {
+  transform: rotate(15deg) scale(1.08);
 }
-.brand-icon-glyph svg { width: 19px; height: 19px; }
+.brand-icon svg { width: 18px; height: 18px; }
 
-/* 2 Action Icons Deck: [Language, Theme] */
 .actions-deck {
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: opacity 0.3s var(--smooth), transform 0.35s var(--spring);
-}
-.actions-deck.hidden {
-  display: none;
-  opacity: 0;
-  transform: scale(0.92);
+  gap: 6px;
 }
 
 .m3-icon-action {
@@ -252,86 +244,76 @@ header.m3-app-bar {
   height: 44px;
   border-radius: var(--shape-corner-full);
   border: 0;
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
   display: grid;
   place-items: center;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.32s var(--spring);
+  transition: all 0.25s var(--smooth);
 }
 .m3-icon-action:hover {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+.m3-icon-action.active-btn {
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
-  transform: translateY(-2px) scale(1.08);
-}
-.m3-icon-action:active { transform: scale(0.92); }
-.m3-icon-action.active-btn {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
 }
 .m3-icon-action svg { width: 20px; height: 20px; }
 
-/* Language Morph Deck */
+/* Language Switch Inline Flyout */
 .lang-morph-deck {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   width: 100%;
-  animation: deckAppear 0.35s var(--spring);
 }
 .lang-morph-deck.hidden { display: none; }
-@keyframes deckAppear {
-  from { opacity: 0; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1); }
-}
 
 .lang-pill-btn {
   border: 0;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
   font-family: inherit;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
   padding: 8px 14px;
   border-radius: var(--shape-corner-full);
-  cursor: pointer;
-  transition: all 0.28s var(--spring);
+  transition: all 0.2s var(--smooth);
 }
 .lang-pill-btn:hover {
-  background: var(--md-sys-color-surface-container-highest);
+  background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
 }
 .lang-pill-btn.active {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
 }
 
-/* Monet Palette Popup */
+/* Monet Palette Dropdown Menu */
 .monet-popup {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 10px);
   right: 0;
-  width: 294px;
-  background: var(--md-sys-color-surface-container);
+  width: 280px;
+  background: var(--md-sys-color-surface-container-high);
   border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--shape-corner-extra-large);
-  padding: 18px;
-  box-shadow: var(--elevation-3);
+  border-radius: var(--shape-corner-large);
+  padding: 16px;
+  box-shadow: var(--elevation-2);
   opacity: 0;
-  transform: translateY(-12px) scale(0.9);
+  transform: translateY(-8px) scale(0.96);
   visibility: hidden;
-  transition: opacity 0.25s var(--smooth), transform 0.35s var(--spring), visibility 0s 0.25s;
+  transition: opacity 0.2s var(--smooth), transform 0.25s var(--spring), visibility 0s 0.2s;
   z-index: 120;
 }
 .monet-popup.show {
   opacity: 1;
   transform: translateY(0) scale(1);
   visibility: visible;
-  transition: opacity 0.25s var(--smooth), transform 0.35s var(--spring), visibility 0s;
+  transition: opacity 0.2s var(--smooth), transform 0.25s var(--spring), visibility 0s;
 }
 .popup-label {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -341,167 +323,109 @@ header.m3-app-bar {
 .palette-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 .palette-swatch {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 14px;
+  border-radius: var(--shape-corner-small);
   border: 0;
   cursor: pointer;
-  transition: transform 0.3s var(--spring), border-radius 0.3s var(--spring);
-  box-shadow: var(--elevation-1);
+  transition: transform 0.2s var(--spring);
 }
-.palette-swatch:hover {
-  transform: scale(1.14);
-  border-radius: 10px;
-}
+.palette-swatch:hover { transform: scale(1.1); }
 .palette-swatch.active {
   outline: 3px solid var(--md-sys-color-on-surface);
   outline-offset: 2px;
-  border-radius: 8px;
 }
 
-/* Dark Mode Row */
 .mode-switch-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
-.m3-toggle-track {
-  width: 52px;
-  height: 32px;
+.m3-switch {
+  width: 48px;
+  height: 28px;
   border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-surface-container-highest);
   border: 2px solid var(--md-sys-color-outline);
   position: relative;
   cursor: pointer;
-  transition: all 0.3s var(--spring);
+  transition: background-color 0.25s, border-color 0.25s;
 }
-.m3-toggle-thumb {
+.m3-switch-thumb {
   position: absolute;
   top: 50%;
-  left: 4px;
-  width: 18px;
-  height: 18px;
-  margin-top: -9px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
   border-radius: 50%;
   background: var(--md-sys-color-outline);
-  transition: transform 0.35s var(--spring), width 0.25s, height 0.25s, background 0.25s, margin-top 0.25s;
+  transition: transform 0.3s var(--spring), background-color 0.2s;
 }
-.m3-toggle-track[aria-checked="true"] {
+.m3-switch[aria-checked="true"] {
   background: var(--md-sys-color-primary);
   border-color: var(--md-sys-color-primary);
 }
-.m3-toggle-track[aria-checked="true"] .m3-toggle-thumb {
+.m3-switch[aria-checked="true"] .m3-switch-thumb {
   transform: translateX(20px);
   background: var(--md-sys-color-on-primary);
-  width: 22px;
-  height: 22px;
-  margin-top: -11px;
 }
 
 /* =========================================================
-   HERO DISPLAY - REDESIGNED WITH DYNAMIC MD3E SHAPES
+   HERO SECTION (Pure MD3E Typography & Chips)
    ========================================================= */
 .hero-wrapper {
-  position: relative;
-  padding: 34px 0 20px;
+  padding-top: 110px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
-
-/* Ambient Floating MD3E Shapes */
-.hero-ambient-shape-1 {
-  position: absolute;
-  right: -20px;
-  top: 20px;
-  width: 210px;
-  height: 210px;
-  border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-  background: linear-gradient(135deg, color-mix(in oklch, var(--md-sys-color-primary) 22%, transparent), color-mix(in oklch, var(--md-sys-color-secondary) 14%, transparent));
-  filter: blur(28px);
-  pointer-events: none;
-  animation: floatMorph 16s ease-in-out infinite alternate;
-  z-index: -1;
-}
-.hero-ambient-shape-2 {
-  position: absolute;
-  right: 18px;
-  top: 48px;
-  width: 140px;
-  height: 140px;
-  opacity: 0.65;
-  pointer-events: none;
-  animation: spinSlow 34s linear infinite;
-  color: var(--md-sys-color-primary-container);
-  z-index: -1;
-}
-@media (max-width: 600px) {
-  .hero-ambient-shape-1 { width: 140px; height: 140px; right: -10px; }
-  .hero-ambient-shape-2 { width: 100px; height: 100px; right: 0; }
-}
-
-@keyframes floatMorph {
-  0% { transform: translateY(0) rotate(0deg) scale(1); border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
-  50% { transform: translateY(-18px) rotate(180deg) scale(1.12); border-radius: 58% 42% 38% 62% / 60% 38% 62% 40%; }
-  100% { transform: translateY(12px) rotate(360deg) scale(0.96); border-radius: 36% 64% 64% 36% / 40% 60% 40% 60%; }
-}
-@keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 .status-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 16px;
+  padding: 6px 14px;
   border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 700;
   width: fit-content;
-  letter-spacing: 0.02em;
-  border: 1px solid color-mix(in oklch, var(--md-sys-color-secondary) 25%, transparent);
 }
 .pulse-indicator {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: currentColor;
-  box-shadow: 0 0 0 0 currentColor;
-  animation: pulseDot 2.2s infinite;
+  animation: pulseDot 2s infinite ease-in-out;
 }
 @keyframes pulseDot {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 70%, transparent); }
-  70% { transform: scale(1); box-shadow: 0 0 0 7px transparent; }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 transparent; }
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 
 .hero-title {
-  font-size: clamp(2.7rem, 7.8vw, 4.4rem);
-  line-height: 1.04;
+  font-size: clamp(2.6rem, 7vw, 4.2rem);
+  line-height: 1.05;
   letter-spacing: -0.04em;
   font-weight: 800;
-  max-width: 14ch;
 }
-.accent-gradient-word {
+.accent-word {
   color: var(--md-sys-color-primary);
-  display: inline-block;
 }
 
 .hero-body {
-  font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+  font-size: clamp(1.05rem, 2.2vw, 1.2rem);
   color: var(--md-sys-color-on-surface-variant);
-  max-width: 46ch;
+  max-width: 48ch;
   line-height: 1.5;
 }
 
@@ -509,90 +433,74 @@ header.m3-app-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
-/* =========================================================
-   INTERACTIVE HERO CHIPS (SETUP, TUTORIAL VIDEO, ANDROID 11+)
-   ========================================================= */
 .hero-chips-deck {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 14px;
+  margin-top: 8px;
 }
-
 .interactive-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
+  padding: 8px 16px;
   background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface);
-  border-radius: var(--shape-corner-medium);
-  font-size: 0.88rem;
+  border-radius: var(--shape-corner-full);
+  font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
   border: 1px solid var(--md-sys-color-outline-variant);
-  cursor: pointer;
-  transition: all 0.3s var(--spring);
+  transition: all 0.25s var(--smooth);
 }
 .interactive-chip svg {
   color: var(--md-sys-color-primary);
-  width: 17px;
-  height: 17px;
-  transition: transform 0.3s var(--spring);
+  width: 16px;
+  height: 16px;
 }
 .interactive-chip:hover {
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
   border-color: var(--md-sys-color-primary);
-  transform: translateY(-3px) scale(1.03);
-  border-radius: 20px;
-}
-.interactive-chip:hover svg {
-  transform: rotate(-15deg) scale(1.15);
+  transform: translateY(-2px);
 }
 .interactive-chip.static-badge {
   cursor: default;
-  background: var(--md-sys-color-surface-container-high);
+  background: var(--md-sys-color-surface-container-low);
 }
 .interactive-chip.static-badge:hover {
   transform: none;
-  border-radius: var(--shape-corner-medium);
-  border-color: var(--md-sys-color-outline-variant);
-  background: var(--md-sys-color-surface-container-high);
+  background: var(--md-sys-color-surface-container-low);
   color: var(--md-sys-color-on-surface);
+  border-color: var(--md-sys-color-outline-variant);
 }
 
-/* =========================================================
-   BUTTON SYSTEM (MD3 EXPRESSIVE)
-   ========================================================= */
+/* Buttons */
 .m3-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  height: 52px;
-  padding: 0 28px;
+  height: 48px;
+  padding: 0 24px;
   border-radius: var(--shape-corner-full);
   font-family: inherit;
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   font-weight: 700;
   border: 0;
-  cursor: pointer;
   text-decoration: none;
-  transition: transform 0.32s var(--spring), border-radius 0.35s var(--spring), box-shadow 0.25s ease;
-  user-select: none;
+  transition: transform 0.25s var(--smooth), box-shadow 0.25s;
 }
-.m3-btn:active { transform: scale(0.95); }
+.m3-btn:active { transform: scale(0.97); }
 .m3-btn.filled {
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
   box-shadow: var(--elevation-1);
 }
 .m3-btn.filled:hover {
-  border-radius: 18px;
   box-shadow: var(--elevation-2);
   transform: translateY(-2px);
 }
@@ -601,52 +509,46 @@ header.m3-app-bar {
   color: var(--md-sys-color-on-secondary-container);
 }
 .m3-btn.tonal:hover {
-  border-radius: 18px;
   transform: translateY(-2px);
-}
-.m3-btn.hero-xl {
-  height: 58px;
-  padding: 0 32px;
-  font-size: 1.05rem;
 }
 
 /* =========================================================
-   SECTION HEADINGS & STEP TAGS
+   STEP HEADINGS
    ========================================================= */
 .step-heading {
-  margin: 54px 0 20px;
+  margin: 52px 0 18px;
 }
 .tag-step {
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--md-sys-color-primary);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .main-step-title {
-  font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
   letter-spacing: -0.03em;
   line-height: 1.15;
   font-weight: 800;
 }
 .step-desc {
   color: var(--md-sys-color-on-surface-variant);
-  margin-top: 6px;
-  font-size: 1.02rem;
+  margin-top: 4px;
+  font-size: 0.96rem;
   max-width: 52ch;
 }
 
 /* =========================================================
-   STEP 01: DISABLE PLAY PROTECT (EXPANDABLE CARD)
+   STEP 01: PLAY PROTECT EXPANDABLE CARD
    ========================================================= */
 .protect-card {
   background: var(--md-sys-color-surface-container);
-  border-radius: var(--shape-corner-extra-large);
+  border-radius: var(--shape-corner-large);
   border: 1px solid var(--md-sys-color-outline-variant);
   overflow: hidden;
-  transition: all 0.35s var(--spring);
+  transition: border-color 0.2s var(--smooth);
 }
 .protect-card:hover {
   border-color: var(--md-sys-color-outline);
@@ -657,54 +559,47 @@ header.m3-app-bar {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 24px;
+  padding: 20px;
   background: none;
   border: 0;
   color: inherit;
   font: inherit;
   text-align: left;
-  cursor: pointer;
 }
 .protect-lead {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 .protect-art {
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  background: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--shape-corner-medium);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
   display: grid;
   place-items: center;
   flex: none;
-  transition: transform 0.4s var(--spring);
 }
-.protect-btn-row:hover .protect-art {
-  transform: rotate(-10deg) scale(1.08);
-}
-.protect-art svg { width: 26px; height: 26px; }
+.protect-art svg { width: 24px; height: 24px; }
 .protect-chevron {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
   display: grid;
   place-items: center;
   flex: none;
-  transition: all 0.4s var(--spring);
+  transition: transform 0.35s var(--spring);
 }
 .protect-card.open .protect-chevron {
   transform: rotate(180deg);
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
 }
 .protect-body {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.45s var(--smooth);
+  transition: grid-template-rows 0.4s var(--smooth);
 }
 .protect-card.open .protect-body {
   grid-template-rows: 1fr;
@@ -713,45 +608,41 @@ header.m3-app-bar {
   overflow: hidden;
 }
 .step-sequence {
-  padding: 0 24px 28px 96px;
+  padding: 0 20px 24px 84px;
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 .sequence-item {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   align-items: flex-start;
-  font-size: 0.98rem;
+  font-size: 0.94rem;
   color: var(--md-sys-color-on-surface-variant);
 }
 .sequence-item b { color: var(--md-sys-color-on-surface); }
 .sequence-counter {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
   display: grid;
   place-items: center;
   flex: none;
-  margin-top: 1px;
 }
 @media (max-width: 600px) {
-  .protect-btn-row { padding: 18px; }
-  .step-sequence { padding: 0 18px 22px 18px; }
-  .protect-lead { gap: 14px; }
-  .protect-art { width: 44px; height: 44px; border-radius: 14px; }
+  .step-sequence { padding: 0 16px 20px 16px; }
 }
 
 /* =========================================================
-   STEP 02: 3 IDENTICAL DOWNLOAD TILES (EXACT DESIGN CONSISTENCY)
+   STEP 02: DOWNLOAD TILES (CLEAN MD3 CARDS)
    ========================================================= */
 .trilogy-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 14px;
 }
 @media (min-width: 768px) {
   .trilogy-grid { grid-template-columns: repeat(3, 1fr); }
@@ -759,178 +650,125 @@ header.m3-app-bar {
 
 .trilogy-card {
   background: var(--md-sys-color-surface-container);
-  border-radius: var(--shape-corner-extra-large);
+  border-radius: var(--shape-corner-large);
   border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 28px 24px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  overflow: hidden;
-  transition: transform 0.35s var(--spring), border-radius 0.35s var(--spring), background-color 0.3s;
+  transition: transform 0.25s var(--smooth), border-color 0.2s;
 }
 .trilogy-card:hover {
-  transform: translateY(-6px);
-  border-radius: 34px 16px 34px 16px;
-  background: var(--md-sys-color-surface-container-high);
+  transform: translateY(-4px);
   border-color: var(--md-sys-color-outline);
 }
 .card-badge {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 5px 12px;
+  top: 18px;
+  right: 18px;
+  padding: 4px 10px;
   border-radius: var(--shape-corner-full);
   font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
 }
-.card-icon-token {
-  width: 58px;
-  height: 58px;
-  border-radius: 20px;
+.card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--shape-corner-medium);
   display: grid;
   place-items: center;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
-  transition: transform 0.4s var(--spring), border-radius 0.35s var(--spring);
 }
-.trilogy-card:hover .card-icon-token {
-  transform: scale(1.12) rotate(10deg);
-  border-radius: 14px;
-}
-.card-icon-token svg { width: 28px; height: 28px; }
+.card-icon svg { width: 24px; height: 24px; }
 .card-heading {
-  font-size: 1.28rem;
+  font-size: 1.18rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .card-copy {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: var(--md-sys-color-on-surface-variant);
-  line-height: 1.5;
-  margin-bottom: 26px;
-  min-height: 66px;
+  line-height: 1.48;
+  margin-bottom: 22px;
+  min-height: 54px;
 }
 .card-action-link {
   width: 100%;
-  height: 50px;
+  height: 44px;
   border-radius: var(--shape-corner-full);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   font-weight: 700;
-  font-size: 0.94rem;
-  cursor: pointer;
-  border: 0;
+  font-size: 0.9rem;
   text-decoration: none;
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  transition: all 0.28s var(--spring);
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-primary);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  transition: all 0.2s var(--smooth);
 }
 .card-action-link:hover {
-  transform: translateY(-2px);
-  border-radius: 16px;
-}
-.card-action-link:active { transform: scale(0.96); }
-
-/* =========================================================
-   STEP 03: SETUP TUTORIAL VIDEO
-   ========================================================= */
-.tutorial-screen-card {
-  position: relative;
-  border-radius: var(--shape-corner-extra-large);
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--md-sys-color-surface-container-high), var(--md-sys-color-primary-container));
-  border: 1px solid var(--md-sys-color-outline-variant);
-  box-shadow: var(--elevation-2);
-}
-.screen-16-9 {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-.giant-play-disc {
-  width: 86px;
-  height: 86px;
-  border-radius: var(--shape-corner-full);
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
-  display: grid;
-  place-items: center;
-  border: 0;
-  box-shadow: var(--elevation-3);
-  transition: transform 0.4s var(--bounce), border-radius 0.35s var(--spring);
-}
-.screen-16-9:hover .giant-play-disc {
-  transform: scale(1.15);
-  border-radius: 26px;
-}
-.giant-play-disc svg { width: 38px; height: 38px; margin-left: 4px; }
-.bottom-media-chip {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: color-mix(in oklch, var(--md-sys-color-surface) 84%, transparent);
-  backdrop-filter: blur(14px);
-  padding: 8px 18px;
-  border-radius: var(--shape-corner-full);
-  font-size: 0.84rem;
-  font-weight: 800;
-  color: var(--md-sys-color-on-surface);
-  border: 1px solid var(--md-sys-color-outline-variant);
-}
-.screen-16-9 iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
+  border-color: transparent;
 }
 
 /* =========================================================
-   STEP 04: REDESIGNED HIGH-IMPACT LICENSE PRICING CARD
+   STEP 03: SETUP TUTORIAL TILE WITH CTA BUTTON (NO PLAYER)
    ========================================================= */
-.pricing-wrap {
-  margin-top: 42px;
+.tutorial-tile {
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--shape-corner-large);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
+@media (min-width: 640px) {
+  .tutorial-tile {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.tutorial-tile-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.tutorial-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--shape-corner-medium);
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.tutorial-icon svg { width: 26px; height: 26px; }
+
+/* =========================================================
+   STEP 04: PRICING CARD
+   ========================================================= */
 .expressive-price-card {
   position: relative;
   overflow: hidden;
   background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
   border-radius: var(--shape-corner-extra-large);
-  padding: clamp(28px, 6vw, 48px);
+  padding: clamp(24px, 5vw, 40px);
   display: grid;
-  gap: 28px;
+  gap: 24px;
   border: 1px solid var(--md-sys-color-outline-variant);
-  box-shadow: var(--elevation-3);
-  transition: all 0.35s var(--spring);
-}
-.expressive-price-card:hover {
-  border-color: var(--md-sys-color-primary);
-}
-
-/* Rotating Squircle Monet Accent inside Price Card */
-.price-card-shape {
-  position: absolute;
-  right: -50px;
-  bottom: -50px;
-  width: 280px;
-  height: 280px;
-  opacity: 0.16;
-  pointer-events: none;
-  animation: spinSlow 40s linear infinite;
-  color: var(--md-sys-color-primary);
 }
 
 .price-hero-row {
@@ -938,9 +776,7 @@ header.m3-app-bar {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  position: relative;
-  z-index: 2;
+  gap: 18px;
 }
 .cost-figure-group {
   display: flex;
@@ -948,40 +784,36 @@ header.m3-app-bar {
   gap: 4px;
 }
 .unit-currency {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: var(--md-sys-color-primary);
 }
 .numeric-amt {
-  font-size: clamp(4.4rem, 12vw, 6.4rem);
-  font-weight: 900;
+  font-size: clamp(3.8rem, 10vw, 5.6rem);
+  font-weight: 800;
   line-height: 0.9;
-  letter-spacing: -0.05em;
-  color: var(--md-sys-color-on-surface);
+  letter-spacing: -0.04em;
 }
 .recurrence-period {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--md-sys-color-on-surface-variant);
 }
 
 .privileges-list {
   display: grid;
-  gap: 14px;
-  position: relative;
-  z-index: 2;
+  gap: 12px;
 }
 .privilege-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   font-weight: 600;
-  color: var(--md-sys-color-on-surface);
 }
 .check-token {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
@@ -989,40 +821,39 @@ header.m3-app-bar {
   place-items: center;
   flex: none;
 }
-.check-token svg { width: 16px; height: 16px; stroke-width: 3; }
+.check-token svg { width: 15px; height: 15px; stroke-width: 3; }
 
-/* Multi-device strip */
 .multi-key-banner {
-  margin-top: 18px;
+  margin-top: 14px;
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-large);
   border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 24px 28px;
+  padding: 20px 24px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 16px;
 }
 .multi-key-banner h3 {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 .multi-key-banner p {
   color: var(--md-sys-color-on-surface-variant);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 /* =========================================================
    FOOTER & SNACKBAR
    ========================================================= */
 footer {
-  margin-top: 60px;
-  padding: 34px 0 24px;
+  margin-top: 48px;
+  padding: 28px 0;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   text-align: center;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--md-sys-color-on-surface-variant);
 }
 footer a {
@@ -1032,80 +863,43 @@ footer a {
 }
 footer a:hover { text-decoration: underline; }
 .disclaimer-line {
-  font-size: 0.82rem;
-  margin-top: 8px;
+  font-size: 0.8rem;
+  margin-top: 6px;
   opacity: 0.75;
 }
 
 .m3-snackbar {
   position: fixed;
   left: 50%;
-  bottom: 24px;
+  bottom: 20px;
   z-index: 200;
   transform: translate(-50%, 180%);
   background: var(--md-sys-color-on-surface);
   color: var(--md-sys-color-surface);
-  padding: 14px 24px;
+  padding: 12px 22px;
   border-radius: var(--shape-corner-full);
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  box-shadow: var(--elevation-3);
-  max-width: calc(100% - 32px);
-  transition: transform 0.4s var(--spring);
+  box-shadow: var(--elevation-2);
+  transition: transform 0.3s var(--spring);
   pointer-events: none;
 }
 .m3-snackbar.active { transform: translate(-50%, 0); }
-
-/* =========================================================
-   LOADING & STAGGERED REVEAL ANIMATIONS (ALL ELEMENTS)
-   ========================================================= */
-@keyframes md3eIn {
-  from {
-    opacity: 0;
-    transform: translateY(28px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.anim-entry {
-  animation: md3eIn 0.85s var(--spring) both;
-}
-
-.delay-1 { animation-delay: 0.08s; }
-.delay-2 { animation-delay: 0.16s; }
-.delay-3 { animation-delay: 0.24s; }
-.delay-4 { animation-delay: 0.32s; }
-.delay-5 { animation-delay: 0.40s; }
-
-.reveal-box {
-  opacity: 0;
-  transform: translateY(26px) scale(0.98);
-  transition: opacity 0.7s var(--smooth), transform 0.7s var(--spring);
-}
-.reveal-box.in-view {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
 </style>
 </head>
 <body>
 
-<!-- Dynamic Vignette to dissolve background text when scrolling behind the bar -->
-<div class="top-scrim-vignette" aria-hidden="true"></div>
+<!-- Dynamic Vignette to dissolve background content behind the static bar -->
+<div class="top-scrim" aria-hidden="true"></div>
 
-<!-- =========================================================
-     TOP HEADER (TITLE + ONLY 2 ICONS: LANGUAGE & THEME)
-     ========================================================= -->
-<header class="m3-app-bar anim-entry">
+<!-- STATIC APP BAR (Clean aShell-styled capsule) -->
+<header class="m3-app-bar">
   <div class="m3-nav-capsule" id="capsuleBar">
     
     <!-- Replica Brand Title -->
     <a href="#hero" class="brand-title" id="brandTitle">
-      <div class="brand-icon-glyph">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="9"/>
           <path d="M12 7v5l3 3"/>
         </svg>
@@ -1113,7 +907,7 @@ footer a:hover { text-decoration: underline; }
       <span>Replica</span>
     </a>
 
-    <!-- Action Icons Deck: Only [Language, Theme] -->
+    <!-- Action Icons Deck: [Language, Theme] -->
     <div class="actions-deck" id="actionsDeck">
       <!-- Icon 1: Language Switcher Trigger -->
       <button class="m3-icon-action m3-rip" id="btnLanguage" aria-label="Select Language" title="Select Language">
@@ -1125,7 +919,7 @@ footer a:hover { text-decoration: underline; }
       </button>
 
       <!-- Icon 2: Theme / Monet Palette Trigger -->
-      <button class="m3-icon-action m3-rip" id="btnTheme" aria-label="Customize Theme & Palette" title="Monet Palette" aria-haspopup="true" aria-expanded="false">
+      <button class="m3-icon-action m3-rip" id="btnTheme" aria-label="Customize Theme" title="Theme Palette" aria-haspopup="true" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"/>
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
@@ -1135,7 +929,7 @@ footer a:hover { text-decoration: underline; }
 
     <!-- Language Morph Deck (Back Button + Languages) -->
     <div class="lang-morph-deck hidden" id="langMorphDeck">
-      <button class="m3-icon-action m3-rip" id="btnLangBack" aria-label="Back to main navigation">
+      <button class="m3-icon-action m3-rip" id="btnLangBack" aria-label="Back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
@@ -1153,8 +947,8 @@ footer a:hover { text-decoration: underline; }
       
       <div class="mode-switch-row">
         <span data-i="darkThemeLabel">Dark Theme</span>
-        <button class="m3-toggle-track" id="themeSwitch" role="switch" aria-checked="true">
-          <span class="m3-toggle-thumb"></span>
+        <button class="m3-switch" id="themeSwitch" role="switch" aria-checked="true">
+          <span class="m3-switch-thumb"></span>
         </button>
       </div>
     </div>
@@ -1163,49 +957,33 @@ footer a:hover { text-decoration: underline; }
 </header>
 
 <main class="wrapper">
-  <!-- =========================================================
-       HERO (DYNAMIC MD3E SHAPES & NEW REPLACED CHIPS)
-       ========================================================= -->
+  <!-- HERO -->
   <section class="hero-wrapper" id="hero">
-    <!-- Ambient Floating MD3E Shapes -->
-    <div class="hero-ambient-shape-1" aria-hidden="true"></div>
-    <div class="hero-ambient-shape-2" aria-hidden="true">
-      <svg viewBox="0 0 100 100" fill="currentColor">
-        <path d="M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0 Z"/>
-      </svg>
-    </div>
-
-    <!-- Status Badge -->
-    <div class="status-pill anim-entry delay-1">
+    <div class="status-pill">
       <span class="pulse-indicator"></span>
       <span data-i="heroBadge">SMM Kingdom Tasks Automation</span>
     </div>
 
-    <!-- Headline -->
-    <h1 class="hero-title anim-entry delay-2" data-i="heroTitle">
-      Instagram tasks, <br><span class="accent-gradient-word">on autopilot.</span>
+    <h1 class="hero-title" data-i="heroTitle">
+      Instagram tasks, <br><span class="accent-word">on autopilot.</span>
     </h1>
 
-    <!-- Description -->
-    <p class="hero-body anim-entry delay-3" data-i="heroSubtitle">
+    <p class="hero-body" data-i="heroSubtitle">
       Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.
     </p>
 
-    <!-- CTAs -->
-    <div class="hero-actions anim-entry delay-4">
-      <a href="#protect" class="m3-btn filled hero-xl m3-rip" data-i="btnHeroGetStarted">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    <div class="hero-actions">
+      <a href="#protect" class="m3-btn filled m3-rip" data-i="btnHeroGetStarted">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
         Get Started
       </a>
-      <a href="#pricing" class="m3-btn tonal hero-xl m3-rip" data-i="btnHeroLicense">
+      <a href="#pricing" class="m3-btn tonal m3-rip" data-i="btnHeroLicense">
         Get a License
       </a>
     </div>
 
-    <!-- NEW INTERACTIVE CHIPS (SETUP, TUTORIAL VIDEO, ANDROID 11+) -->
-    <div class="hero-chips-deck anim-entry delay-5">
-      <!-- Interactive Setup Chip -->
-      <a href="#protect" class="interactive-chip m3-rip" id="chipSetup" title="Jump to Setup">
+    <div class="hero-chips-deck">
+      <a href="#protect" class="interactive-chip m3-rip" title="Jump to Setup">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -1213,15 +991,13 @@ footer a:hover { text-decoration: underline; }
         <span data-i="chipSetupText">Setup</span>
       </a>
 
-      <!-- Interactive Tutorial Video Chip -->
-      <a href="#tutorial" class="interactive-chip m3-rip" id="chipTutorial" title="Jump to Tutorial Video">
+      <a href="#tutorial" class="interactive-chip m3-rip" title="Jump to Tutorial Video">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="5 3 19 12 5 21 5 3"/>
         </svg>
         <span data-i="chipTutorialText">Tutorial Video</span>
       </a>
 
-      <!-- Android 11+ Static Chip -->
       <div class="interactive-chip static-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <rect x="5" y="2" width="14" height="20" rx="3"/>
@@ -1232,10 +1008,8 @@ footer a:hover { text-decoration: underline; }
     </div>
   </section>
 
-  <!-- =========================================================
-       STEP 01: DISABLE PLAY PROTECT
-       ========================================================= -->
-  <section id="protect" class="reveal-box">
+  <!-- STEP 01: DISABLE PLAY PROTECT -->
+  <section id="protect">
     <div class="step-heading">
       <span class="tag-step">Step 01</span>
       <h2 class="main-step-title" data-i="st1Head">Disable Play Protect</h2>
@@ -1243,7 +1017,7 @@ footer a:hover { text-decoration: underline; }
     </div>
 
     <div class="protect-card" id="protectCard">
-      <button class="protect-btn-row" id="protectToggleBtn" aria-expanded="false">
+      <button class="protect-btn-row m3-rip" id="protectToggleBtn" aria-expanded="false">
         <div class="protect-lead">
           <div class="protect-art">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -1252,12 +1026,12 @@ footer a:hover { text-decoration: underline; }
             </svg>
           </div>
           <div>
-            <h3 style="font-size: 1.25rem; font-weight: 800;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
-            <p style="font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant);" data-i="st1CardPrompt">Tap to see quick instructions</p>
+            <h3 style="font-size: 1.15rem; font-weight: 800;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
+            <p style="font-size: 0.88rem; color: var(--md-sys-color-on-surface-variant);" data-i="st1CardPrompt">Tap to see quick instructions</p>
           </div>
         </div>
         <div class="protect-chevron">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 9l6 6 6-6"/>
           </svg>
         </div>
@@ -1265,18 +1039,14 @@ footer a:hover { text-decoration: underline; }
 
       <div class="protect-body">
         <div class="protect-body-content">
-          <div class="step-sequence" id="protectStepRows">
-            <!-- Rendered by JavaScript -->
-          </div>
+          <div class="step-sequence" id="protectStepRows"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- =========================================================
-       STEP 02: 3 IDENTICAL DOWNLOAD TILES
-       ========================================================= -->
-  <section id="downloads" class="reveal-box">
+  <!-- STEP 02: 3 DOWNLOAD TILES -->
+  <section id="downloads">
     <div class="step-heading">
       <span class="tag-step">Step 02</span>
       <h2 class="main-step-title" data-i="st2Head">Download the Trilogy</h2>
@@ -1288,7 +1058,7 @@ footer a:hover { text-decoration: underline; }
       <article class="trilogy-card">
         <span class="card-badge">Automation</span>
         <div>
-          <div class="card-icon-token">
+          <div class="card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="3"/>
               <path d="M12 18h.01"/>
@@ -1298,7 +1068,7 @@ footer a:hover { text-decoration: underline; }
           <p class="card-copy" data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
         </div>
         <a class="card-action-link m3-rip" id="dlReplicaAnchor" href="#" download>
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
           <span data-i="btnDlReplica">Download Replica</span>
         </a>
       </article>
@@ -1307,7 +1077,7 @@ footer a:hover { text-decoration: underline; }
       <article class="trilogy-card">
         <span class="card-badge">Environment</span>
         <div>
-          <div class="card-icon-token">
+          <div class="card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="4 17 10 11 4 5"/>
               <line x1="12" y1="19" x2="20" y2="19"/>
@@ -1317,7 +1087,7 @@ footer a:hover { text-decoration: underline; }
           <p class="card-copy" data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
         </div>
         <a class="card-action-link m3-rip" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
           <span data-i="btnDlTermux">Download Termux</span>
         </a>
       </article>
@@ -1326,7 +1096,7 @@ footer a:hover { text-decoration: underline; }
       <article class="trilogy-card">
         <span class="card-badge">System Bridge</span>
         <div>
-          <div class="card-icon-token">
+          <div class="card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
@@ -1336,39 +1106,42 @@ footer a:hover { text-decoration: underline; }
           <p class="card-copy" data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
         </div>
         <a class="card-action-link m3-rip" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
           <span data-i="btnDlTermuxApi">Download Termux API</span>
         </a>
       </article>
     </div>
   </section>
 
-  <!-- =========================================================
-       STEP 03: SETUP TUTORIAL VIDEO
-       ========================================================= -->
-  <section id="tutorial" class="reveal-box">
+  <!-- STEP 03: SETUP TUTORIAL TILE (CTA DIRECTING TO TG) -->
+  <section id="tutorial">
     <div class="step-heading">
       <span class="tag-step">Step 03</span>
       <h2 class="main-step-title" data-i="st3Head">Setup Tutorial Video</h2>
       <p class="step-desc" data-i="st3Sub">Watch the step-by-step walkthrough to get everything set up in minutes.</p>
     </div>
 
-    <div class="tutorial-screen-card">
-      <div class="screen-16-9" id="screenVideo" aria-label="Tutorial Video Player">
-        <button class="giant-play-disc m3-rip" id="playBtn" aria-label="Play tutorial video">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7z"/>
+    <div class="tutorial-tile">
+      <div class="tutorial-tile-left">
+        <div class="tutorial-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"/>
           </svg>
-        </button>
-        <span class="bottom-media-chip" id="videoPill" data-i="videoLabel">Tutorial Video</span>
+        </div>
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 800;" data-i="videoTileTitle">Video Walkthrough</h3>
+          <p style="font-size: 0.88rem; color: var(--md-sys-color-on-surface-variant);" data-i="videoTileSub">Available directly inside our official Telegram channel</p>
+        </div>
       </div>
+      <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnWatchVideo">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Watch Video
+      </a>
     </div>
   </section>
 
-  <!-- =========================================================
-       STEP 04: REDESIGNED HIGH-IMPACT LICENSE PRICING CARD
-       ========================================================= -->
-  <section id="pricing" class="pricing-wrap reveal-box">
+  <!-- STEP 04: PRICING CARD -->
+  <section id="pricing" style="margin-top: 48px;">
     <div class="step-heading">
       <span class="tag-step">License</span>
       <h2 class="main-step-title" data-i="priceHead">License Pricing</h2>
@@ -1376,11 +1149,6 @@ footer a:hover { text-decoration: underline; }
     </div>
 
     <div class="expressive-price-card">
-      <!-- Decorative Rotating MD3 Squircle Shape -->
-      <svg class="price-card-shape" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
-        <path d="M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0 Z"/>
-      </svg>
-
       <div class="price-hero-row">
         <div>
           <div class="cost-figure-group">
@@ -1391,8 +1159,8 @@ footer a:hover { text-decoration: underline; }
           <p style="margin-top: 6px; font-weight: 700; color: var(--md-sys-color-primary);" data-i="priceDesc">Single device per license</p>
         </div>
 
-        <a class="m3-btn filled hero-xl m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnGetLicense">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnGetLicense">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           Get a License
         </a>
       </div>
@@ -1438,41 +1206,40 @@ footer a:hover { text-decoration: underline; }
 
 <script>
 /* =========================================================
-   CONFIG & 12 MONET PALETTE DEFINITIONS
+   CONFIG & PALETTE SYSTEM
    ========================================================= */
 const APP_CONFIG = {
   links: {
-    replicaApk: '#', // Direct URL to your APK
+    replicaApk: '#',
     termuxApk: 'https://github.com/termux/termux-app/releases',
     termuxApiApk: 'https://github.com/termux/termux-api/releases',
-    video: '',       // YouTube Video ID, e.g. 'dQw4w9WgXcQ'
     telegram: 'https://t.me/iamrajatroel'
   },
   monetHues: [
-    { hue: 154, name: 'Emerald Jade' },
-    { hue: 185, name: 'Ocean Cyan' },
-    { hue: 220, name: 'Cobalt Blue' },
-    { hue: 250, name: 'Indigo Night' },
+    { hue: 154, name: 'Emerald' },
+    { hue: 185, name: 'Cyan' },
+    { hue: 220, name: 'Cobalt' },
+    { hue: 250, name: 'Indigo' },
     { hue: 280, name: 'Amethyst' },
-    { hue: 310, name: 'Berry Magenta' },
-    { hue: 345, name: 'Sakura Rose' },
-    { hue: 18,  name: 'Sunset Coral' },
-    { hue: 45,  name: 'Warm Amber' },
-    { hue: 78,  name: 'Citrus Lime' },
-    { hue: 120, name: 'Forest Green' },
-    { hue: 205, name: 'Nord Slate' }
+    { hue: 310, name: 'Magenta' },
+    { hue: 345, name: 'Rose' },
+    { hue: 18,  name: 'Coral' },
+    { hue: 45,  name: 'Amber' },
+    { hue: 78,  name: 'Lime' },
+    { hue: 120, name: 'Green' },
+    { hue: 205, name: 'Slate' }
   ]
 };
 
 /* =========================================================
-   I18N MULTILINGUAL TEXT
+   MULTILINGUAL TRANSLATION ENGINE
    ========================================================= */
 const TRANSLATIONS = {
   en: {
     monetPaletteTitle: "Monet Color Hues",
     darkThemeLabel: "Dark Theme",
     heroBadge: "SMM Kingdom Tasks Automation",
-    heroTitle: "Instagram tasks, <br><span class=\"accent-gradient-word\">on autopilot.</span>",
+    heroTitle: "Instagram tasks, <br><span class=\"accent-word\">on autopilot.</span>",
     heroSubtitle: "Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.",
     btnHeroGetStarted: "Get Started",
     btnHeroLicense: "Get a License",
@@ -1498,8 +1265,9 @@ const TRANSLATIONS = {
     btnDlTermuxApi: "Download Termux API",
     st3Head: "Setup Tutorial Video",
     st3Sub: "Watch the step-by-step walkthrough to get everything set up in minutes.",
-    videoLabel: "Tutorial Video",
-    videoComingSoon: "Tutorial video coming soon",
+    videoTileTitle: "Video Walkthrough",
+    videoTileSub: "Available directly inside our official Telegram channel",
+    btnWatchVideo: "Watch Video",
     apkComingSoon: "Replica APK download link coming soon",
     priceHead: "License Pricing",
     priceSub: "Simple, affordable monthly license per device with continuous feature updates.",
@@ -1517,17 +1285,17 @@ const TRANSLATIONS = {
     ftLegal: "Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom."
   },
   uk: {
-    monetPaletteTitle: "Палітра Monet",
+    monetPaletteTitle: "Палітра кольорів",
     darkThemeLabel: "Темна тема",
     heroBadge: "Автоматизація завдань SMM Kingdom",
-    heroTitle: "Завдання Instagram, <br><span class=\"accent-gradient-word\">на автопілоті.</span>",
-    heroSubtitle: "Replica бере завдання з бота SMM Kingdom Tasks, виконує їх на вашому телефоні та звітує назад.",
+    heroTitle: "Завдання Instagram, <br><span class=\"accent-word\">на автопілоті.</span>",
+    heroSubtitle: "Replica автоматично бере завдання з бота SMM Kingdom, виконує їх на телефоні та надсилає звіт.",
     btnHeroGetStarted: "Почати",
     btnHeroLicense: "Отримати ліцензію",
     chipSetupText: "Налаштування",
     chipTutorialText: "Відеоінструкція",
     st1Head: "Вимкніть Play Захист",
-    st1Sub: "Android може блокувати додатки не з Play Маркету. Спочатку вимкніть сканування.",
+    st1Sub: "Android може блокувати додатки не з маркету. Спочатку вимкніть сканування.",
     st1CardTitle: "Інструкція Play Захисту",
     st1CardPrompt: "Торкніться, щоб переглянути інструкцію",
     st1Steps: [
@@ -1537,7 +1305,7 @@ const TRANSLATIONS = {
       "Підтвердьте вимкнення, якщо з'явиться запит Android."
     ],
     st2Head: "Завантажте три додатки",
-    st2Sub: "Встановіть три основні компоненти для запуску середовища, взаємодії з ботом та емуляції кліків.",
+    st2Sub: "Встановіть три основні компоненти для середовища, взаємодії з ботом та емуляції кліків.",
     descReplica: "Основний клієнт, що отримує та виконує завдання бота SMM Kingdom.",
     descTermux: "Швидке термінальне середовище для запуску скриптів та процесів.",
     descTermuxApi: "Системний плагін для зв'язку зі службами клікера, буфера та подій.",
@@ -1546,8 +1314,9 @@ const TRANSLATIONS = {
     btnDlTermuxApi: "Завантажити Termux API",
     st3Head: "Відеоурок з налаштування",
     st3Sub: "Перегляньте покроковий відеоролик і налаштуйте все за кілька хвилин.",
-    videoLabel: "Відеоінструкція",
-    videoComingSoon: "Відеоурок незабаром з'явиться",
+    videoTileTitle: "Відеоінструкція",
+    videoTileSub: "Доступна у нашому офіційному каналі Telegram",
+    btnWatchVideo: "Дивитися відео",
     apkComingSoon: "Посилання на Replica APK незабаром з'явиться",
     priceHead: "Вартість ліцензії",
     priceSub: "Простий щомісячний тариф для одного пристрою з регулярними оновленнями.",
@@ -1565,10 +1334,10 @@ const TRANSLATIONS = {
     ftLegal: "Replica є незалежним інструментом і не пов'язана з Telegram, Instagram чи SMM Kingdom."
   },
   ru: {
-    monetPaletteTitle: "Палитра Monet",
+    monetPaletteTitle: "Палитра цветов",
     darkThemeLabel: "Тёмная тема",
     heroBadge: "Автоматизация заданий SMM Kingdom",
-    heroTitle: "Задания Instagram, <br><span class=\"accent-gradient-word\">на автопилоте.</span>",
+    heroTitle: "Задания Instagram, <br><span class=\"accent-word\">на автопилоте.</span>",
     heroSubtitle: "Replica берёт задания из бота SMM Kingdom Tasks, выполняет их на вашем телефоне и отправляет результат.",
     btnHeroGetStarted: "Начать",
     btnHeroLicense: "Получить лицензию",
@@ -1594,8 +1363,9 @@ const TRANSLATIONS = {
     btnDlTermuxApi: "Скачать Termux API",
     st3Head: "Видеоурок по настройке",
     st3Sub: "Пошаговое руководство: от авторизации до полностью автономной работы.",
-    videoLabel: "Обучающее видео",
-    videoComingSoon: "Видео скоро появится",
+    videoTileTitle: "Обучающее видео",
+    videoTileSub: "Доступно в нашем официальном канале Telegram",
+    btnWatchVideo: "Смотреть видео",
     apkComingSoon: "Ссылка на Replica APK скоро появится",
     priceHead: "Стоимость лицензии",
     priceSub: "Доступная ежемесячная лицензия на одно устройство с постоянной поддержкой.",
@@ -1626,7 +1396,6 @@ if (!TRANSLATIONS[lang]) lang = 'en';
 let hue = +(localStorage.getItem('replica_hue') || 154);
 let mode = localStorage.getItem('replica_mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-// Toast notifier
 let toastTimer;
 function showToast(text) {
   const box = $('#toastBox');
@@ -1636,7 +1405,7 @@ function showToast(text) {
   toastTimer = setTimeout(() => box.classList.remove('active'), 3200);
 }
 
-// MD3 Ripple effect
+// Authentic Material Ripple
 document.addEventListener('pointerdown', e => {
   const host = e.target.closest('.m3-rip');
   if (!host) return;
@@ -1648,10 +1417,9 @@ document.addEventListener('pointerdown', e => {
   ripple.style.left = `${e.clientX - rect.left - radius}px`;
   ripple.style.top = `${e.clientY - rect.top - radius}px`;
   host.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 700);
+  setTimeout(() => ripple.remove(), 600);
 });
 
-// Set Monet Hue
 function setHue(newHue) {
   hue = +newHue;
   document.documentElement.style.setProperty('--h', hue);
@@ -1661,7 +1429,6 @@ function setHue(newHue) {
   });
 }
 
-// Set Dark/Light Mode
 function setMode(newMode) {
   mode = newMode;
   document.documentElement.setAttribute('data-mode', mode);
@@ -1669,7 +1436,6 @@ function setMode(newMode) {
   $('#themeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
 }
 
-// Render dynamic i18n
 function renderI18n() {
   const dict = TRANSLATIONS[lang];
   document.documentElement.lang = lang;
@@ -1679,7 +1445,6 @@ function renderI18n() {
     if (dict[k]) el.innerHTML = dict[k];
   });
 
-  // Render Play Protect Steps list
   $('#protectStepRows').innerHTML = dict.st1Steps.map((txt, i) => `
     <div class="sequence-item">
       <div class="sequence-counter">${i + 1}</div>
@@ -1687,13 +1452,11 @@ function renderI18n() {
     </div>
   `).join('');
 
-  // Update active pill button inside language deck
   $$('#langMorphDeck [data-lang]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
 }
 
-// Morph Navigation Bar between [Title + 2 Icons] and [Back + 3 Language Pills]
 function toggleLanguageMorph(showLang) {
   const brandTitle = $('#brandTitle');
   const actionsDeck = $('#actionsDeck');
@@ -1710,68 +1473,44 @@ function toggleLanguageMorph(showLang) {
   }
 }
 
-// Number Count-Up Animation
-function animateNumericAmt() {
-  const amtEl = $('#numericAmt');
-  if (!amtEl) return;
-  let start = 0;
-  const target = 10;
-  const duration = 900;
-  const startTime = performance.now();
-  function update(time) {
-    const elapsed = time - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    amtEl.textContent = Math.round(start + (target - start) * ease);
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-
-// Initialize Application Events
 function init() {
   $$('[data-tg]').forEach(a => a.href = APP_CONFIG.links.telegram);
   $('#dlTermuxAnchor').href = APP_CONFIG.links.termuxApk;
   $('#dlTermuxApiAnchor').href = APP_CONFIG.links.termuxApiApk;
 
-  // Build Monet Swatches
+  // Swatches
   $('#paletteGrid').innerHTML = APP_CONFIG.monetHues.map(item => `
     <button class="palette-swatch ${item.hue === hue ? 'active' : ''}" 
             data-hue="${item.hue}" 
             title="${item.name}" 
-            style="background: oklch(0.65 0.17 ${item.hue})"
+            style="background: oklch(0.68 0.16 ${item.hue})"
             aria-label="${item.name}"></button>
   `).join('');
 
-  // Language Trigger Click -> Morph Navigation
   $('#btnLanguage').addEventListener('click', e => {
     e.stopPropagation();
     toggleLanguageMorph(true);
   });
 
-  // Language Back Button -> Restore Title & 2 Icons
   $('#btnLangBack').addEventListener('click', e => {
     e.stopPropagation();
     toggleLanguageMorph(false);
   });
 
-  // Language Select
   $('#langMorphDeck').addEventListener('click', e => {
     const btn = e.target.closest('[data-lang]');
     if (!btn) return;
     lang = btn.dataset.lang;
     localStorage.setItem('replica_lang', lang);
     renderI18n();
-    setTimeout(() => toggleLanguageMorph(false), 240);
+    setTimeout(() => toggleLanguageMorph(false), 200);
   });
 
-  // Palette Click
   $('#paletteGrid').addEventListener('click', e => {
     const swatch = e.target.closest('.palette-swatch');
     if (swatch) setHue(swatch.dataset.hue);
   });
 
-  // Theme Dropdown Toggle
   const themeBtn = $('#btnTheme');
   const themePopup = $('#monetPopup');
   themeBtn.addEventListener('click', e => {
@@ -1781,7 +1520,6 @@ function init() {
     themeBtn.setAttribute('aria-expanded', String(isOpen));
   });
 
-  // Dismiss Theme Dropdown
   document.addEventListener('click', e => {
     if (!e.target.closest('#monetPopup') && !e.target.closest('#btnTheme')) {
       themePopup.classList.remove('show');
@@ -1790,12 +1528,10 @@ function init() {
     }
   });
 
-  // Dark/Light Mode Switch
   $('#themeSwitch').addEventListener('click', () => {
     setMode(mode === 'dark' ? 'light' : 'dark');
   });
 
-  // Play Protect Drawer Toggle
   const protectCard = $('#protectCard');
   const protectBtn = $('#protectToggleBtn');
   protectBtn.addEventListener('click', () => {
@@ -1803,7 +1539,6 @@ function init() {
     protectBtn.setAttribute('aria-expanded', String(isOpen));
   });
 
-  // Download Replica Fallback Guard
   $('#dlReplicaAnchor').addEventListener('click', e => {
     if (APP_CONFIG.links.replicaApk === '#' || !APP_CONFIG.links.replicaApk) {
       e.preventDefault();
@@ -1811,40 +1546,9 @@ function init() {
     }
   });
 
-  // Tutorial Video Embed Trigger
-  $('#screenVideo').addEventListener('click', () => {
-    if (!APP_CONFIG.links.video) {
-      showToast(TRANSLATIONS[lang].videoComingSoon);
-      return;
-    }
-    const screen = $('#screenVideo');
-    screen.innerHTML = `<iframe src="https://www.youtube.com/embed/${APP_CONFIG.links.video}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
-  });
-
-  // Apply Theme & Render Language
   setHue(hue);
   setMode(mode);
   renderI18n();
-  initObserver();
-}
-
-/* =========================================================
-   SCROLL REVEAL OBSERVER WITH TRIGGERED NUMBER ANIMATION
-   ========================================================= */
-function initObserver() {
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
-        if (entry.target.id === 'pricing') {
-          animateNumericAmt();
-        }
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.08 });
-
-  $$('.reveal-box').forEach(el => observer.observe(el));
 }
 
 window.addEventListener('DOMContentLoaded', init);
