@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-mode="dark">
+<html lang="en" data-mode="dark" data-motion="on">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1512">
 <title>Replica – Instagram Automation</title>
 <meta name="description" content="Automate Instagram tasks on Android 11+ with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @property --h {
   syntax: '<number>';
@@ -17,9 +18,6 @@
 
 :root {
   --h: 154;
-  --spring: cubic-bezier(0.2, 0.9, 0.28, 1);
-  --smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --motion-expressive: cubic-bezier(0.34, 1.4, 0.64, 1);
 
   /* Light MD3E Palette */
   --md-sys-color-primary: oklch(0.42 0.17 var(--h));
@@ -87,1127 +85,478 @@
   --md-sys-color-outline-variant: oklch(0.25 0.016 var(--h));
 }
 
-/* =========================================================
-   GLOBAL RESET & TAP HIGHLIGHT ELIMINATION
-   ========================================================= */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent !important;
-  outline: none;
+/* ============ MD3E TOKENS ============ */
+:root {
+  --rs: 1;                                   /* corner scale (customisable) */
+  --spring: cubic-bezier(.34, 1.5, .64, 1);
+  --emph: cubic-bezier(.2, 0, 0, 1);
+  --on-secondary: oklch(.99 .01 var(--h));
+  --on-tertiary: oklch(.99 .01 var(--h));
 }
-
-*:focus-visible {
-  outline: 2px solid var(--md-sys-color-primary);
-  outline-offset: 2px;
+@supports (transition-timing-function: linear(0, 1)) {
+  :root { --spring: linear(0, .009, .035 2.1%, .141, .281 6.7%, .723 12.9%, .938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, .991, .977 51%, .974 53.8%, .975 57.1%, .997 69.8%, 1.003 76.9%, 1); }
 }
+:root[data-mode="dark"] { --on-secondary: oklch(.2 .06 var(--h)); --on-tertiary: oklch(.2 .06 var(--h)); }
 
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 96px;
-  color-scheme: light dark;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+*:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 3px; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; color-scheme: light dark; }
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  background-color: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-  line-height: 1.55;
-  font-size: 16px;
-  letter-spacing: -0.012em;
-  overflow-x: hidden;
-  transition: background-color 0.4s var(--smooth), color 0.4s var(--smooth);
-  user-select: none;
-  -webkit-user-select: none;
+  background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface);
+  line-height: 1.5; letter-spacing: -.012em; overflow-x: hidden;
+  -webkit-user-select: none; user-select: none; transition: background-color .5s var(--emph), color .5s var(--emph);
 }
+svg { display: block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-/* Clean MD3 Ripple / State Layer */
-.m3-rip {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  cursor: pointer;
-}
-.m3-rip::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: currentColor;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s var(--smooth);
-}
-.m3-rip:hover::before { opacity: 0.08; }
-.m3-rip:active::before { opacity: 0.14; }
+/* ambient living background */
+.ambient { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.ambient i { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(80px); opacity: .35; animation: drift 24s ease-in-out infinite alternate; }
+.ambient i:nth-child(1) { background: var(--md-sys-color-primary-container); top: -25vmax; left: -15vmax; }
+.ambient i:nth-child(2) { background: var(--md-sys-color-tertiary-container); bottom: -30vmax; right: -20vmax; animation-delay: -9s; }
+@keyframes drift { to { transform: translate(8vmax, 6vmax) scale(1.15); } }
 
-.rip-drop {
-  position: absolute;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.2;
-  transform: scale(0);
-  animation: rip-anim 0.55s var(--smooth) forwards;
-  pointer-events: none;
-}
-@keyframes rip-anim {
-  to { transform: scale(3.5); opacity: 0; }
-}
+/* ============ STATE LAYER + RIPPLE ============ */
+.rip { position: relative; overflow: hidden; isolation: isolate; }
+.rip::before { content: ''; position: absolute; inset: 0; background: currentColor; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: -1; }
+@media (hover: hover) { .rip:hover::before { opacity: .08; } }
+.rip:active::before { opacity: .12; }
+.drop { position: absolute; border-radius: 50%; background: currentColor; opacity: .22; transform: scale(0); animation: drop .65s var(--emph) forwards; pointer-events: none; z-index: -1; }
+@keyframes drop { to { transform: scale(1); opacity: 0; } }
 
-.wrapper {
-  width: 100%;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 0 20px 80px;
-}
+/* native press feel */
+.press { transition: transform .55s var(--spring), border-radius .45s var(--spring), background-color .3s; touch-action: manipulation; }
+.press:active { transform: scale(.94); transition-duration: .12s; }
 
-/* =========================================================
-   STATIC APP BAR (Clean aShell-styled capsule)
-   ========================================================= */
-.top-scrim {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 90px;
-  z-index: 90;
-  background: linear-gradient(
-    to bottom,
-    var(--md-sys-color-surface) 60%,
-    transparent 100%
-  );
-  pointer-events: none;
-  transition: background 0.4s var(--smooth);
-}
+/* ============ MORPHING SHAPES ============ */
+.shp { width: 100%; height: 100%; overflow: visible; animation: spin var(--spd, 40s) linear infinite var(--dir, normal); }
+.shp path { fill: var(--sf, var(--md-sys-color-primary)); }
+@keyframes spin { to { transform: rotate(360deg); } }
+[data-motion="off"] *, [data-motion="off"] *::before, [data-motion="off"] *::after { animation: none !important; }
 
-header.m3-app-bar {
-  position: fixed;
-  top: 14px;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  padding: 0 16px;
-}
+/* ============ APP BAR (blurred) ============ */
+.appbar { position: fixed; inset: 0 0 auto; z-index: 100; padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in oklch, var(--md-sys-color-surface) 55%, transparent);
+  backdrop-filter: blur(26px) saturate(1.7); -webkit-backdrop-filter: blur(26px) saturate(1.7);
+  border-bottom: 1px solid transparent; transition: background-color .4s, border-color .4s, box-shadow .4s; }
+.appbar.scrolled { background: color-mix(in oklch, var(--md-sys-color-surface-container) 74%, transparent); border-color: var(--md-sys-color-outline-variant); box-shadow: 0 8px 30px -14px oklch(0 0 0 / .35); }
+.appbar-in { max-width: 880px; margin: 0 auto; height: 64px; padding: 0 14px 0 18px; display: flex; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 1.28rem; letter-spacing: -.03em; }
+.brand-mark { position: relative; width: 38px; height: 38px; color: var(--md-sys-color-on-primary); display: grid; place-items: center; }
+.brand-mark .shp { position: absolute; inset: 0; --spd: 18s; }
+.brand-mark .ic { position: relative; width: 19px; height: 19px; stroke-width: 2.6; }
+.bar-actions { display: flex; gap: 6px; }
+.icon-btn { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--md-sys-color-surface-container-highest); color: var(--md-sys-color-on-surface-variant); position: relative; }
+.icon-btn:active { border-radius: 15px; }
+.icon-btn.is-open { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border-radius: 15px; }
+.theme-ic .ic { position: absolute; transition: transform .6s var(--spring), opacity .3s; }
+:root[data-mode="dark"] .theme-ic .moon { transform: rotate(-90deg) scale(0); opacity: 0; }
+:root[data-mode="light"] .theme-ic .sun { transform: rotate(90deg) scale(0); opacity: 0; }
 
-.m3-nav-capsule {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 520px;
-  height: 56px;
-  padding: 4px 6px 4px 18px;
-  background: color-mix(in oklch, var(--md-sys-color-surface-container) 85%, transparent);
-  backdrop-filter: blur(20px) saturate(1.8);
-  -webkit-backdrop-filter: blur(20px) saturate(1.8);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--shape-corner-full);
-  box-shadow: var(--elevation-1);
-}
+/* ============ LAYOUT ============ */
+.wrap { max-width: 880px; margin: 0 auto; padding: 84px 16px 130px; }
+section { margin-bottom: 44px; scroll-margin-top: 84px; }
+.reveal { opacity: 0; transform: translateY(34px) scale(.95); transition: opacity .6s var(--emph), transform .9s var(--spring); transition-delay: calc(var(--d, 0) * 80ms); }
+.reveal.in { opacity: 1; transform: none; }
 
-.brand-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  font-size: 1.22rem;
-  letter-spacing: -0.025em;
-  color: var(--md-sys-color-on-surface);
-  text-decoration: none;
-}
-.brand-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  display: grid;
-  place-items: center;
-  transition: transform 0.3s var(--spring);
-}
-.brand-title:hover .brand-icon {
-  transform: rotate(15deg) scale(1.08);
-}
-.brand-icon svg { width: 18px; height: 18px; }
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 54px; padding: 0 26px; border-radius: 999px; font-weight: 700; font-size: .98rem; white-space: nowrap; }
+.btn:active { border-radius: calc(16px * var(--rs)); }
+.btn .ic { width: 20px; height: 20px; transition: transform .5s var(--spring); }
+.btn:hover .ic.go { transform: translateX(4px); } .btn:hover .ic.dn { transform: translateY(3px); }
+.btn.filled { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+.btn.tonal { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.btn.inv { background: var(--md-sys-color-on-primary); color: var(--md-sys-color-primary); }
+.btn.block { width: 100%; }
 
-.actions-deck {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+/* ============ HERO ============ */
+.hero { position: relative; overflow: hidden; border-radius: calc(48px * var(--rs)) calc(20px * var(--rs)) calc(48px * var(--rs)) calc(20px * var(--rs));
+  background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+  padding: 30px 26px; display: grid; grid-template-columns: 1.2fr .8fr; gap: 10px; align-items: center; margin-bottom: 20px; }
+.pill { display: inline-flex; align-items: center; gap: 9px; padding: 8px 15px 8px 12px; border-radius: 999px; font-size: .8rem; font-weight: 700; background: color-mix(in oklch, var(--md-sys-color-on-primary-container) 11%, transparent); }
+.pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--md-sys-color-primary); box-shadow: 0 0 0 0 var(--md-sys-color-primary); animation: pulse 2s infinite; }
+@keyframes pulse { 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.hero h1 { font-size: clamp(2.3rem, 8vw, 3.7rem); line-height: 1.02; font-weight: 800; letter-spacing: -.045em; margin: 18px 0 14px; }
+.accent-word { background: linear-gradient(100deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary), var(--md-sys-color-primary)); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear infinite; }
+@keyframes shine { to { background-position: -220% 0; } }
+.hero p { font-size: 1.02rem; opacity: .82; max-width: 46ch; font-weight: 500; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 18px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px 0 11px; border-radius: calc(13px * var(--rs)); font-weight: 700; font-size: .85rem; background: color-mix(in oklch, var(--md-sys-color-on-primary-container) 10%, transparent); }
+.chip .ic { width: 18px; height: 18px; }
 
-.m3-icon-action {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--shape-corner-full);
-  border: 0;
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  display: grid;
-  place-items: center;
-  transition: all 0.25s var(--smooth);
-}
-.m3-icon-action:hover {
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
-}
-.m3-icon-action.active-btn {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-}
-.m3-icon-action svg { width: 20px; height: 20px; }
+.hero-art { position: relative; aspect-ratio: 1; width: 100%; max-width: 300px; justify-self: center; cursor: pointer; }
+.layer { position: absolute; transition: transform .5s var(--emph); }
+.l1 { inset: 0; transform: translate(calc(var(--px, 0) * 8px), calc(var(--py, 0) * 8px)); }
+.l2 { inset: 21%; transform: translate(calc(var(--px, 0) * -14px), calc(var(--py, 0) * -14px)); }
+.l3 { width: 30%; height: 30%; top: -2%; right: -2%; transform: translate(calc(var(--px, 0) * 22px), calc(var(--py, 0) * 22px)); }
+.l4 { width: 17%; height: 17%; bottom: 4%; left: 0; transform: translate(calc(var(--px, 0) * -26px), calc(var(--py, 0) * 20px)); }
+.l5 { inset: 0; display: grid; place-items: center; color: var(--md-sys-color-on-primary); pointer-events: none; }
+.l5 .ic { width: 22%; height: 22%; stroke-width: 2.3; }
+.hero-art.pop .l5 .ic { animation: pop .8s var(--spring); }
+@keyframes pop { 0% { transform: scale(.4) rotate(-40deg); } 100% { transform: none; } }
 
-/* Language Switch Inline Flyout */
-.lang-morph-deck {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  width: 100%;
-}
-.lang-morph-deck.hidden { display: none; }
+/* ============ SECTION HEADINGS ============ */
+.sh { display: flex; align-items: center; gap: 15px; margin: 0 6px 18px; }
+.num { position: relative; width: 52px; height: 52px; display: grid; place-items: center; font-weight: 800; color: var(--md-sys-color-on-tertiary); flex: none; }
+.num .shp { position: absolute; inset: 0; --sf: var(--md-sys-color-tertiary); --spd: 22s; }
+.num span { position: relative; font-size: 1.05rem; }
+.sh small { font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--md-sys-color-primary); }
+.sh h2 { font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: -.035em; line-height: 1.1; font-weight: 800; }
+.sh p { font-size: .93rem; color: var(--md-sys-color-on-surface-variant); margin-top: 4px; max-width: 54ch; }
 
-.lang-pill-btn {
-  border: 0;
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 8px 14px;
-  border-radius: var(--shape-corner-full);
-  transition: all 0.2s var(--smooth);
-}
-.lang-pill-btn:hover {
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
-}
-.lang-pill-btn.active {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-}
+/* ============ PROTECT ACCORDION ============ */
+.acc { border-radius: calc(36px * var(--rs)); background: var(--md-sys-color-surface-container-high); overflow: hidden; transition: border-radius .6s var(--spring), background-color .4s; }
+.acc.open { background: var(--md-sys-color-surface-container-highest); border-radius: calc(28px * var(--rs)); }
+.acc-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px; text-align: left; }
+.acc-lead { display: flex; align-items: center; gap: 16px; }
+.acc-art { position: relative; width: 62px; height: 62px; display: grid; place-items: center; color: var(--md-sys-color-on-tertiary-container); flex: none; }
+.acc-art .shp { position: absolute; inset: 0; --sf: var(--md-sys-color-tertiary-container); --spd: 28s; }
+.acc-art .ic { position: relative; width: 28px; height: 28px; }
+.acc-head h3 { font-size: 1.12rem; font-weight: 800; letter-spacing: -.02em; }
+.acc-head p { font-size: .87rem; color: var(--md-sys-color-on-surface-variant); }
+.chev { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--md-sys-color-surface-container); transition: transform .6s var(--spring), background-color .3s, color .3s; flex: none; }
+.acc.open .chev { transform: rotate(180deg); background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+.acc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s var(--emph); }
+.acc.open .acc-body { grid-template-rows: 1fr; }
+.acc-body > div { overflow: hidden; }
+.steps { padding: 4px 20px 22px; display: grid; gap: 10px; }
+.step { display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: calc(22px * var(--rs)); background: var(--md-sys-color-surface-container-low); font-size: .95rem; font-weight: 500; opacity: 0; transform: translateY(14px); transition: opacity .4s, transform .6s var(--spring); }
+.acc.open .step { opacity: 1; transform: none; transition-delay: calc(var(--i) * 70ms + 150ms); }
+.step b { font-weight: 800; color: var(--md-sys-color-primary); }
+.step-n { width: 34px; height: 34px; flex: none; display: grid; place-items: center; font-weight: 800; font-size: .9rem; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border-radius: 50%; }
+.step:nth-child(2n) .step-n { border-radius: 12px; transform: rotate(45deg); } .step:nth-child(2n) .step-n i { transform: rotate(-45deg); }
+.step-n i { font-style: normal; }
 
-/* Monet Palette Dropdown Menu */
-.monet-popup {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 280px;
-  background: var(--md-sys-color-surface-container-high);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--shape-corner-large);
-  padding: 16px;
-  box-shadow: var(--elevation-2);
-  opacity: 0;
-  transform: translateY(-8px) scale(0.96);
-  visibility: hidden;
-  transition: opacity 0.2s var(--smooth), transform 0.25s var(--spring), visibility 0s 0.2s;
-  z-index: 120;
-}
-.monet-popup.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  visibility: visible;
-  transition: opacity 0.2s var(--smooth), transform 0.25s var(--spring), visibility 0s;
-}
-.popup-label {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--md-sys-color-on-surface-variant);
-  margin-bottom: 12px;
-}
-.palette-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.palette-swatch {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: var(--shape-corner-small);
-  border: 0;
-  cursor: pointer;
-  transition: transform 0.2s var(--spring);
-}
-.palette-swatch:hover { transform: scale(1.1); }
-.palette-swatch.active {
-  outline: 3px solid var(--md-sys-color-on-surface);
-  outline-offset: 2px;
-}
+/* ============ DOWNLOAD TILES ============ */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.card { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; gap: 22px; min-height: 330px; padding: 22px; background: var(--c); color: var(--oc); isolation: isolate; transition: transform .6s var(--spring), border-radius .6s var(--spring); }
+.card:nth-child(1) { --c: var(--md-sys-color-primary-container); --oc: var(--md-sys-color-on-primary-container); --a: var(--md-sys-color-primary); --oa: var(--md-sys-color-on-primary); border-radius: calc(44px * var(--rs)) calc(16px * var(--rs)) calc(44px * var(--rs)) calc(16px * var(--rs)); }
+.card:nth-child(2) { --c: var(--md-sys-color-secondary-container); --oc: var(--md-sys-color-on-secondary-container); --a: var(--md-sys-color-secondary); --oa: var(--on-secondary); border-radius: calc(16px * var(--rs)) calc(44px * var(--rs)) calc(16px * var(--rs)) calc(44px * var(--rs)); }
+.card:nth-child(3) { --c: var(--md-sys-color-tertiary-container); --oc: var(--md-sys-color-on-tertiary-container); --a: var(--md-sys-color-tertiary); --oa: var(--on-tertiary); border-radius: calc(44px * var(--rs)) calc(16px * var(--rs)) calc(44px * var(--rs)) calc(16px * var(--rs)); }
+@media (hover: hover) { .card:hover { transform: translateY(-6px); } }
+.card:active { transform: scale(.97); }
+.card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), color-mix(in oklch, var(--a) 22%, transparent), transparent 70%); opacity: 0; transition: opacity .3s; }
+.card:hover::after { opacity: 1; }
+.bg-shape { position: absolute; width: 230px; height: 230px; right: -80px; bottom: -70px; z-index: -1; opacity: .5; --sf: color-mix(in oklch, var(--a) 16%, transparent); --spd: 60s; }
+.card:nth-child(2) .bg-shape { --dir: reverse; right: auto; left: -90px; top: -90px; bottom: auto; }
+.badge { align-self: flex-start; padding: 6px 13px; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: color-mix(in oklch, var(--oc) 12%, transparent); }
+.card-ico { position: relative; width: 84px; height: 84px; display: grid; place-items: center; color: var(--oa); margin-bottom: 16px; }
+.card-ico .shp { position: absolute; inset: 0; --sf: var(--a); --spd: 26s; }
+.card-ico .ic { position: relative; width: 34px; height: 34px; transition: transform .6s var(--spring); }
+.card:hover .card-ico .ic { transform: scale(1.15) rotate(-8deg); }
+.card h3 { font-size: 1.3rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.15; margin-bottom: 7px; }
+.card p { font-size: .9rem; opacity: .8; font-weight: 500; }
+.card .btn { background: var(--a); color: var(--oa); height: 50px; }
 
-.mode-switch-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  font-weight: 700;
-  font-size: 0.88rem;
-}
-.m3-switch {
-  width: 48px;
-  height: 28px;
-  border-radius: var(--shape-corner-full);
-  background: var(--md-sys-color-surface-container-highest);
-  border: 2px solid var(--md-sys-color-outline);
-  position: relative;
-  cursor: pointer;
-  transition: background-color 0.25s, border-color 0.25s;
-}
-.m3-switch-thumb {
-  position: absolute;
-  top: 50%;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  margin-top: -8px;
-  border-radius: 50%;
-  background: var(--md-sys-color-outline);
-  transition: transform 0.3s var(--spring), background-color 0.2s;
-}
-.m3-switch[aria-checked="true"] {
-  background: var(--md-sys-color-primary);
-  border-color: var(--md-sys-color-primary);
-}
-.m3-switch[aria-checked="true"] .m3-switch-thumb {
-  transform: translateX(20px);
-  background: var(--md-sys-color-on-primary);
-}
+/* ============ TUTORIAL ============ */
+.tut { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; padding: 22px 22px 22px 24px; border-radius: calc(56px * var(--rs)); background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.tut-lead { display: flex; align-items: center; gap: 18px; }
+.tut-art { position: relative; width: 88px; height: 88px; display: grid; place-items: center; color: var(--on-secondary); flex: none; }
+.tut-art .shp { position: absolute; inset: 0; --sf: var(--md-sys-color-secondary); --spd: 20s; }
+.tut-art .ic { position: relative; width: 34px; height: 34px; fill: currentColor; margin-left: 4px; }
+.tut h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -.025em; }
+.tut p { font-size: .9rem; opacity: .8; font-weight: 500; max-width: 34ch; }
+.tut .btn { background: var(--md-sys-color-secondary); color: var(--on-secondary); }
 
-/* =========================================================
-   HERO SECTION (Pure MD3E Typography & Chips)
-   ========================================================= */
-.hero-wrapper {
-  padding-top: 110px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: var(--shape-corner-full);
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-  font-size: 0.82rem;
-  font-weight: 700;
-  width: fit-content;
-}
-.pulse-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: pulseDot 2s infinite ease-in-out;
-}
-@keyframes pulseDot {
-  0%, 100% { opacity: 0.4; transform: scale(0.85); }
-  50% { opacity: 1; transform: scale(1.1); }
-}
+/* ============ PRICING ============ */
+.price { position: relative; overflow: hidden; padding: 30px 26px; border-radius: calc(48px * var(--rs)) calc(18px * var(--rs)) calc(48px * var(--rs)) calc(18px * var(--rs)); background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); isolation: isolate; }
+.price .bg-shape { width: 340px; height: 340px; right: -110px; top: -110px; bottom: auto; opacity: 1; --sf: color-mix(in oklch, var(--md-sys-color-on-primary) 12%, transparent); --spd: 50s; }
+.price .bg-shape.b { width: 200px; height: 200px; left: -80px; right: auto; top: auto; bottom: -90px; --dir: reverse; --spd: 36s; }
+.price-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.amt { display: flex; align-items: baseline; gap: 6px; line-height: 1; }
+.amt .cur { font-size: 2rem; font-weight: 800; opacity: .8; }
+.amt .num-big { font-size: clamp(4.5rem, 20vw, 6.6rem); font-weight: 800; letter-spacing: -.07em; font-variant-numeric: tabular-nums; }
+.amt .per { font-size: 1.05rem; font-weight: 700; opacity: .75; }
+.price .sub { margin-top: 10px; font-weight: 700; opacity: .9; }
+.perks { display: grid; gap: 10px; margin-top: 26px; }
+.perk { display: flex; align-items: center; gap: 13px; font-weight: 600; padding: 12px 14px; border-radius: calc(20px * var(--rs)); background: color-mix(in oklch, var(--md-sys-color-on-primary) 12%, transparent); }
+.tick { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--md-sys-color-on-primary); color: var(--md-sys-color-primary); flex: none; transform: scale(0); transition: transform .7s var(--spring); transition-delay: calc(var(--i) * 120ms + 300ms); }
+.tick .ic { width: 17px; height: 17px; stroke-width: 3; }
+.in .tick, .price.in .tick { transform: scale(1); }
+.perk:nth-child(2) .tick { border-radius: 10px; }
+.bulk { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 22px 24px; border-radius: calc(32px * var(--rs)); background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
+.bulk h3 { font-size: 1.1rem; font-weight: 800; letter-spacing: -.02em; }
+.bulk p { font-size: .9rem; opacity: .8; max-width: 38ch; }
+.bulk .btn { background: var(--md-sys-color-tertiary); color: var(--on-tertiary); }
 
-.hero-title {
-  font-size: clamp(2.6rem, 7vw, 4.2rem);
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  font-weight: 800;
-}
-.accent-word {
-  color: var(--md-sys-color-primary);
-}
+footer { text-align: center; padding: 10px 24px 0; font-size: .88rem; color: var(--md-sys-color-on-surface-variant); }
+footer a { color: var(--md-sys-color-primary); font-weight: 700; }
+footer .legal { margin-top: 8px; font-size: .78rem; opacity: .7; }
 
-.hero-body {
-  font-size: clamp(1.05rem, 2.2vw, 1.2rem);
-  color: var(--md-sys-color-on-surface-variant);
-  max-width: 48ch;
-  line-height: 1.5;
-}
+/* ============ BOTTOM NAVIGATION ============ */
+.bnav { position: fixed; z-index: 90; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(440px, calc(100% - 24px));
+  display: flex; padding: 6px; border-radius: 999px; background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 78%, transparent);
+  backdrop-filter: blur(24px) saturate(1.7); -webkit-backdrop-filter: blur(24px) saturate(1.7); border: 1px solid var(--md-sys-color-outline-variant); box-shadow: 0 14px 40px -12px oklch(0 0 0 / .4); transition: transform .5s var(--emph); }
+.bn-ind { position: absolute; top: 6px; bottom: 6px; left: 6px; border-radius: 999px; background: var(--md-sys-color-secondary-container); transition: transform .6s var(--spring), width .6s var(--spring); }
+.bn { position: relative; flex: 1; height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 999px; font-size: .68rem; font-weight: 700; color: var(--md-sys-color-on-surface-variant); transition: color .3s; }
+.bn .ic { width: 23px; height: 23px; transition: transform .6s var(--spring); }
+.bn.active { color: var(--md-sys-color-on-secondary-container); } .bn.active .ic { transform: translateY(-1px) scale(1.12); }
+.bn:active .ic { transform: scale(.8); }
 
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 6px;
-}
+/* ============ CUSTOMISE SHEET ============ */
+.scrim { position: fixed; inset: 0; z-index: 200; background: oklch(0 0 0 / .45); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); opacity: 0; pointer-events: none; transition: opacity .4s; }
+.sheet { position: fixed; z-index: 210; left: 50%; bottom: 0; width: min(580px, 100%); max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; padding: 10px 20px calc(24px + env(safe-area-inset-bottom, 0px)); border-radius: calc(34px * var(--rs)) calc(34px * var(--rs)) 0 0;
+  background: var(--md-sys-color-surface-container-low); transform: translate(-50%, 108%); transition: transform .65s var(--spring); }
+.sheet.dragging { transition: none; }
+body.sheet-open .scrim { opacity: 1; pointer-events: auto; }
+body.sheet-open .sheet { transform: translate(-50%, 0); }
+body.sheet-open .bnav { transform: translate(-50%, 140%); }
+.grab { height: 26px; display: grid; place-items: center; touch-action: none; cursor: grab; }
+.grab i { width: 38px; height: 5px; border-radius: 9px; background: var(--md-sys-color-outline); opacity: .7; }
+.sheet h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -.035em; margin: 2px 4px 16px; }
+.grp { margin-bottom: 20px; }
+.grp > label, .grp > .lbl { display: block; font-size: .76rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--md-sys-color-on-surface-variant); margin: 0 6px 10px; }
+.swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.sw { aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; color: oklch(.2 .05 var(--sh)); background: oklch(.74 .15 var(--sh)); transition: border-radius .6s var(--spring), transform .5s var(--spring); }
+.sw .ic { width: 55%; height: 55%; stroke-width: 3; transform: scale(0) rotate(-90deg); transition: transform .6s var(--spring); }
+.sw.active { border-radius: 34%; transform: rotate(45deg) scale(1.02); } .sw.active .ic { transform: rotate(-45deg) scale(1); }
+.sw:active { transform: scale(.86); }
+.seg { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--md-sys-color-surface-container-highest); position: relative; }
+.seg button { flex: 1; height: 42px; border-radius: 999px; font-weight: 700; font-size: .88rem; color: var(--md-sys-color-on-surface-variant); transition: background-color .3s, color .3s, transform .5s var(--spring); }
+.seg button.active { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+.seg button:active { transform: scale(.94); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border-radius: calc(22px * var(--rs)); background: var(--md-sys-color-surface-container-highest); }
+.row b { display: block; font-weight: 700; } .row small { color: var(--md-sys-color-on-surface-variant); font-size: .8rem; }
+.sw-track { position: relative; width: 56px; height: 34px; border-radius: 999px; flex: none; background: var(--md-sys-color-surface-container-high); border: 2px solid var(--md-sys-color-outline); transition: background-color .3s, border-color .3s; }
+.sw-track i { position: absolute; top: 50%; left: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--md-sys-color-outline); transform: translateY(-50%); transition: left .55s var(--spring), width .3s var(--spring), height .3s var(--spring), background-color .3s; }
+.sw-track[aria-checked="true"] { background: var(--md-sys-color-primary); border-color: var(--md-sys-color-primary); }
+.sw-track[aria-checked="true"] i { left: 24px; width: 24px; height: 24px; background: var(--md-sys-color-on-primary); }
+.sw-track:active i { width: 30px; height: 30px; }
+.sw-track[aria-checked="true"]:active i { left: 18px; }
+.sheet .btn { margin-top: 6px; }
 
-.hero-chips-deck {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 8px;
-}
-.interactive-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--md-sys-color-surface-container);
-  color: var(--md-sys-color-on-surface);
-  border-radius: var(--shape-corner-full);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-decoration: none;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  transition: all 0.25s var(--smooth);
-}
-.interactive-chip svg {
-  color: var(--md-sys-color-primary);
-  width: 16px;
-  height: 16px;
-}
-.interactive-chip:hover {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  border-color: var(--md-sys-color-primary);
-  transform: translateY(-2px);
-}
-.interactive-chip.static-badge {
-  cursor: default;
-  background: var(--md-sys-color-surface-container-low);
-}
-.interactive-chip.static-badge:hover {
-  transform: none;
-  background: var(--md-sys-color-surface-container-low);
-  color: var(--md-sys-color-on-surface);
-  border-color: var(--md-sys-color-outline-variant);
-}
+/* snackbar */
+.snack { position: fixed; z-index: 300; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 30px) scale(.9); opacity: 0; pointer-events: none; padding: 15px 22px; border-radius: calc(18px * var(--rs)); font-weight: 600; font-size: .92rem; background: var(--md-sys-color-on-surface); color: var(--md-sys-color-surface); box-shadow: 0 12px 30px -8px oklch(0 0 0 / .5); transition: transform .6s var(--spring), opacity .3s; max-width: calc(100% - 32px); text-align: center; }
+.snack.show { transform: translate(-50%, 0) scale(1); opacity: 1; }
 
-/* Buttons */
-.m3-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 48px;
-  padding: 0 24px;
-  border-radius: var(--shape-corner-full);
-  font-family: inherit;
-  font-size: 0.94rem;
-  font-weight: 700;
-  border: 0;
-  text-decoration: none;
-  transition: transform 0.25s var(--smooth), box-shadow 0.25s;
+@media (max-width: 640px) {
+  .hero { grid-template-columns: 1fr; padding: 24px 20px 28px; } .hero-art { order: -1; max-width: 230px; margin-bottom: 4px; }
+  .hero-actions .btn { flex: 1 1 auto; }
+  .card { min-height: 0; }
+  .tut .btn, .bulk .btn { width: 100%; }
+  .price-row .btn { width: 100%; }
 }
-.m3-btn:active { transform: scale(0.97); }
-.m3-btn.filled {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  box-shadow: var(--elevation-1);
-}
-.m3-btn.filled:hover {
-  box-shadow: var(--elevation-2);
-  transform: translateY(-2px);
-}
-.m3-btn.tonal {
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-}
-.m3-btn.tonal:hover {
-  transform: translateY(-2px);
-}
-
-/* =========================================================
-   STEP HEADINGS
-   ========================================================= */
-.step-heading {
-  margin: 52px 0 18px;
-}
-.tag-step {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--md-sys-color-primary);
-  margin-bottom: 4px;
-}
-.main-step-title {
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-  font-weight: 800;
-}
-.step-desc {
-  color: var(--md-sys-color-on-surface-variant);
-  margin-top: 4px;
-  font-size: 0.96rem;
-  max-width: 52ch;
-}
-
-/* =========================================================
-   STEP 01: PLAY PROTECT EXPANDABLE CARD
-   ========================================================= */
-.protect-card {
-  background: var(--md-sys-color-surface-container);
-  border-radius: var(--shape-corner-large);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  overflow: hidden;
-  transition: border-color 0.2s var(--smooth);
-}
-.protect-card:hover {
-  border-color: var(--md-sys-color-outline);
-}
-.protect-btn-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px;
-  background: none;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-}
-.protect-lead {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.protect-art {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--shape-corner-medium);
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-.protect-art svg { width: 24px; height: 24px; }
-.protect-chevron {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--shape-corner-full);
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
-  display: grid;
-  place-items: center;
-  flex: none;
-  transition: transform 0.35s var(--spring);
-}
-.protect-card.open .protect-chevron {
-  transform: rotate(180deg);
-}
-.protect-body {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s var(--smooth);
-}
-.protect-card.open .protect-body {
-  grid-template-rows: 1fr;
-}
-.protect-body-content {
-  overflow: hidden;
-}
-.step-sequence {
-  padding: 0 20px 24px 84px;
-  display: grid;
-  gap: 12px;
-}
-.sequence-item {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  font-size: 0.94rem;
-  color: var(--md-sys-color-on-surface-variant);
-}
-.sequence-item b { color: var(--md-sys-color-on-surface); }
-.sequence-counter {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  font-size: 0.78rem;
-  font-weight: 800;
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-@media (max-width: 600px) {
-  .step-sequence { padding: 0 16px 20px 16px; }
-}
-
-/* =========================================================
-   STEP 02: DOWNLOAD TILES (CLEAN MD3 CARDS)
-   ========================================================= */
-.trilogy-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-@media (min-width: 768px) {
-  .trilogy-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-.trilogy-card {
-  background: var(--md-sys-color-surface-container);
-  border-radius: var(--shape-corner-large);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 24px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  transition: transform 0.25s var(--smooth), border-color 0.2s;
-}
-.trilogy-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--md-sys-color-outline);
-}
-.card-badge {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  padding: 4px 10px;
-  border-radius: var(--shape-corner-full);
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface-variant);
-}
-.card-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: var(--shape-corner-medium);
-  display: grid;
-  place-items: center;
-  margin-bottom: 18px;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-}
-.card-icon svg { width: 24px; height: 24px; }
-.card-heading {
-  font-size: 1.18rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 6px;
-}
-.card-copy {
-  font-size: 0.88rem;
-  color: var(--md-sys-color-on-surface-variant);
-  line-height: 1.48;
-  margin-bottom: 22px;
-  min-height: 54px;
-}
-.card-action-link {
-  width: 100%;
-  height: 44px;
-  border-radius: var(--shape-corner-full);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  text-decoration: none;
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-primary);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  transition: all 0.2s var(--smooth);
-}
-.card-action-link:hover {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  border-color: transparent;
-}
-
-/* =========================================================
-   STEP 03: SETUP TUTORIAL TILE WITH CTA BUTTON (NO PLAYER)
-   ========================================================= */
-.tutorial-tile {
-  background: var(--md-sys-color-surface-container);
-  border-radius: var(--shape-corner-large);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-@media (min-width: 640px) {
-  .tutorial-tile {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-.tutorial-tile-left {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-.tutorial-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--shape-corner-medium);
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-.tutorial-icon svg { width: 26px; height: 26px; }
-
-/* =========================================================
-   STEP 04: PRICING CARD
-   ========================================================= */
-.expressive-price-card {
-  position: relative;
-  overflow: hidden;
-  background: var(--md-sys-color-surface-container-high);
-  border-radius: var(--shape-corner-extra-large);
-  padding: clamp(24px, 5vw, 40px);
-  display: grid;
-  gap: 24px;
-  border: 1px solid var(--md-sys-color-outline-variant);
-}
-
-.price-hero-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-}
-.cost-figure-group {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-.unit-currency {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: var(--md-sys-color-primary);
-}
-.numeric-amt {
-  font-size: clamp(3.8rem, 10vw, 5.6rem);
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-}
-.recurrence-period {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.privileges-list {
-  display: grid;
-  gap: 12px;
-}
-.privilege-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.98rem;
-  font-weight: 600;
-}
-.check-token {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-.check-token svg { width: 15px; height: 15px; stroke-width: 3; }
-
-.multi-key-banner {
-  margin-top: 14px;
-  background: var(--md-sys-color-surface-container);
-  border-radius: var(--shape-corner-large);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  padding: 20px 24px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-.multi-key-banner h3 {
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin-bottom: 2px;
-}
-.multi-key-banner p {
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: 0.92rem;
-}
-
-/* =========================================================
-   FOOTER & SNACKBAR
-   ========================================================= */
-footer {
-  margin-top: 48px;
-  padding: 28px 0;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--md-sys-color-on-surface-variant);
-}
-footer a {
-  color: var(--md-sys-color-primary);
-  font-weight: 700;
-  text-decoration: none;
-}
-footer a:hover { text-decoration: underline; }
-.disclaimer-line {
-  font-size: 0.8rem;
-  margin-top: 6px;
-  opacity: 0.75;
-}
-
-.m3-snackbar {
-  position: fixed;
-  left: 50%;
-  bottom: 20px;
-  z-index: 200;
-  transform: translate(-50%, 180%);
-  background: var(--md-sys-color-on-surface);
-  color: var(--md-sys-color-surface);
-  padding: 12px 22px;
-  border-radius: var(--shape-corner-full);
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: var(--elevation-2);
-  transition: transform 0.3s var(--spring);
-  pointer-events: none;
-}
-.m3-snackbar.active { transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
 
-<!-- Dynamic Vignette to dissolve background content behind the static bar -->
-<div class="top-scrim" aria-hidden="true"></div>
+<!-- ICON SPRITE -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11 12 3.5 20.5 11M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4.5 6v6c0 4.7 3.2 7.9 7.5 9 4.3-1.1 7.5-4.3 7.5-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></symbol>
+  <symbol id="i-apps" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 4.8v14.4a1 1 0 0 0 1.5.9l11-7.2a1 1 0 0 0 0-1.7L9 3.9a1 1 0 0 0-1.5.9z" style="fill:currentColor"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.2V5a1.5 1.5 0 0 1 1.5-1.5h7.2a1.5 1.5 0 0 1 1 .44l7.4 7.4a1.5 1.5 0 0 1 0 2.12l-7.2 7.2a1.5 1.5 0 0 1-2.12 0L3.94 13.2a1.5 1.5 0 0 1-.44-1z"/><circle cx="8" cy="8.2" r="1.3"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14m0 0-6-6m6 6 6-6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="3.2"/><path d="M10.5 18h3"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m5 7 5 5-5 5M12.5 18H19"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-tune" viewBox="0 0 24 24"><path d="M4 7h8m5 0h3M4 17h3m5 0h8"/><circle cx="14.5" cy="7" r="2.3"/><circle cx="9.5" cy="17" r="2.3"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.5 12h2M19.5 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.2 8.2 0 1 0 20 14.2z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3.5 3.5 10.6l6.2 2.4 2.4 6.2zM9.7 13l4.6-4.3"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5a14.5 14.5 0 0 1 0 19 14.5 14.5 0 0 1 0-19z"/></symbol>
+</defs></svg>
 
-<!-- STATIC APP BAR (Clean aShell-styled capsule) -->
-<header class="m3-app-bar">
-  <div class="m3-nav-capsule" id="capsuleBar">
-    
-    <!-- Replica Brand Title -->
-    <a href="#hero" class="brand-title" id="brandTitle">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M12 7v5l3 3"/>
-        </svg>
-      </div>
+<div class="ambient" aria-hidden="true"><i></i><i></i></div>
+
+<!-- TOP APP BAR (blurred) -->
+<header class="appbar" id="appbar">
+  <div class="appbar-in">
+    <a href="#hero" class="brand press">
+      <span class="brand-mark">
+        <svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="cookie,flower,burst,clover" data-auto="3200" style="--sf:var(--md-sys-color-primary)"><path/></svg>
+        <svg class="ic"><use href="#i-bolt"/></svg>
+      </span>
       <span>Replica</span>
     </a>
-
-    <!-- Action Icons Deck: [Language, Theme] -->
-    <div class="actions-deck" id="actionsDeck">
-      <!-- Icon 1: Language Switcher Trigger -->
-      <button class="m3-icon-action m3-rip" id="btnLanguage" aria-label="Select Language" title="Select Language">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="2" y1="12" x2="22" y2="12"/>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
+    <div class="bar-actions">
+      <button class="icon-btn rip press theme-ic" id="btnMode" aria-label="Toggle theme">
+        <svg class="ic sun"><use href="#i-sun"/></svg><svg class="ic moon"><use href="#i-moon"/></svg>
       </button>
-
-      <!-- Icon 2: Theme / Monet Palette Trigger -->
-      <button class="m3-icon-action m3-rip" id="btnTheme" aria-label="Customize Theme" title="Theme Palette" aria-haspopup="true" aria-expanded="false">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="4"/>
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-        </svg>
+      <button class="icon-btn rip press" id="btnTune" aria-label="Customize" aria-haspopup="dialog">
+        <svg class="ic"><use href="#i-tune"/></svg>
       </button>
     </div>
-
-    <!-- Language Morph Deck (Back Button + Languages) -->
-    <div class="lang-morph-deck hidden" id="langMorphDeck">
-      <button class="m3-icon-action m3-rip" id="btnLangBack" aria-label="Back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-      </button>
-
-      <button class="lang-pill-btn m3-rip" data-lang="en">English</button>
-      <button class="lang-pill-btn m3-rip" data-lang="uk">Українська</button>
-      <button class="lang-pill-btn m3-rip" data-lang="ru">Русский</button>
-    </div>
-
-    <!-- Monet Palette & Mode Dropdown Menu -->
-    <div class="monet-popup" id="monetPopup">
-      <div class="popup-label" data-i="monetPaletteTitle">Dynamic Monet Hues</div>
-      <div class="palette-grid" id="paletteGrid"></div>
-      
-      <div class="mode-switch-row">
-        <span data-i="darkThemeLabel">Dark Theme</span>
-        <button class="m3-switch" id="themeSwitch" role="switch" aria-checked="true">
-          <span class="m3-switch-thumb"></span>
-        </button>
-      </div>
-    </div>
-
   </div>
 </header>
 
-<main class="wrapper">
+<main class="wrap">
+
   <!-- HERO -->
-  <section class="hero-wrapper" id="hero">
-    <div class="status-pill">
-      <span class="pulse-indicator"></span>
-      <span data-i="heroBadge">SMM Kingdom Tasks Automation</span>
-    </div>
-
-    <h1 class="hero-title" data-i="heroTitle">
-      Instagram tasks, <br><span class="accent-word">on autopilot.</span>
-    </h1>
-
-    <p class="hero-body" data-i="heroSubtitle">
-      Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.
-    </p>
-
-    <div class="hero-actions">
-      <a href="#protect" class="m3-btn filled m3-rip" data-i="btnHeroGetStarted">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-        Get Started
-      </a>
-      <a href="#pricing" class="m3-btn tonal m3-rip" data-i="btnHeroLicense">
-        Get a License
-      </a>
-    </div>
-
-    <div class="hero-chips-deck">
-      <a href="#protect" class="interactive-chip m3-rip" title="Jump to Setup">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-        <span data-i="chipSetupText">Setup</span>
-      </a>
-
-      <a href="#tutorial" class="interactive-chip m3-rip" title="Jump to Tutorial Video">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
-        <span data-i="chipTutorialText">Tutorial Video</span>
-      </a>
-
-      <div class="interactive-chip static-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="3"/>
-          <path d="M12 18h.01"/>
-        </svg>
-        <span>Android 11+</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEP 01: DISABLE PLAY PROTECT -->
-  <section id="protect">
-    <div class="step-heading">
-      <span class="tag-step">Step 01</span>
-      <h2 class="main-step-title" data-i="st1Head">Disable Play Protect</h2>
-      <p class="step-desc" data-i="st1Sub">Android can prevent sideloading background automation apps. Turn off scanning first.</p>
-    </div>
-
-    <div class="protect-card" id="protectCard">
-      <button class="protect-btn-row m3-rip" id="protectToggleBtn" aria-expanded="false">
-        <div class="protect-lead">
-          <div class="protect-art">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <path d="m9 12 2 2 4-4"/>
-            </svg>
-          </div>
-          <div>
-            <h3 style="font-size: 1.15rem; font-weight: 800;" data-i="st1CardTitle">Play Protect Walkthrough</h3>
-            <p style="font-size: 0.88rem; color: var(--md-sys-color-on-surface-variant);" data-i="st1CardPrompt">Tap to see quick instructions</p>
-          </div>
-        </div>
-        <div class="protect-chevron">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
-        </div>
-      </button>
-
-      <div class="protect-body">
-        <div class="protect-body-content">
-          <div class="step-sequence" id="protectStepRows"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEP 02: 3 DOWNLOAD TILES -->
-  <section id="downloads">
-    <div class="step-heading">
-      <span class="tag-step">Step 02</span>
-      <h2 class="main-step-title" data-i="st2Head">Download the Trilogy</h2>
-      <p class="step-desc" data-i="st2Sub">Install these three apps to establish automation, background terminal sessions, and system hooks.</p>
-    </div>
-
-    <div class="trilogy-grid">
-      <!-- Tile 1: Replica -->
-      <article class="trilogy-card">
-        <span class="card-badge">Automation</span>
-        <div>
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="5" y="2" width="14" height="20" rx="3"/>
-              <path d="M12 18h.01"/>
-            </svg>
-          </div>
-          <h3 class="card-heading">Download Replica</h3>
-          <p class="card-copy" data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
-        </div>
-        <a class="card-action-link m3-rip" id="dlReplicaAnchor" href="#" download>
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="btnDlReplica">Download Replica</span>
-        </a>
-      </article>
-
-      <!-- Tile 2: Termux -->
-      <article class="trilogy-card">
-        <span class="card-badge">Environment</span>
-        <div>
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="4 17 10 11 4 5"/>
-              <line x1="12" y1="19" x2="20" y2="19"/>
-            </svg>
-          </div>
-          <h3 class="card-heading">Download Termux</h3>
-          <p class="card-copy" data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
-        </div>
-        <a class="card-action-link m3-rip" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="btnDlTermux">Download Termux</span>
-        </a>
-      </article>
-
-      <!-- Tile 3: Termux API -->
-      <article class="trilogy-card">
-        <span class="card-badge">System Bridge</span>
-        <div>
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-            </svg>
-          </div>
-          <h3 class="card-heading">Download Termux API</h3>
-          <p class="card-copy" data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
-        </div>
-        <a class="card-action-link m3-rip" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-          <span data-i="btnDlTermuxApi">Download Termux API</span>
-        </a>
-      </article>
-    </div>
-  </section>
-
-  <!-- STEP 03: SETUP TUTORIAL TILE (CTA DIRECTING TO TG) -->
-  <section id="tutorial">
-    <div class="step-heading">
-      <span class="tag-step">Step 03</span>
-      <h2 class="main-step-title" data-i="st3Head">Setup Tutorial Video</h2>
-      <p class="step-desc" data-i="st3Sub">Watch the step-by-step walkthrough to get everything set up in minutes.</p>
-    </div>
-
-    <div class="tutorial-tile">
-      <div class="tutorial-tile-left">
-        <div class="tutorial-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="5 3 19 12 5 21 5 3"/>
-          </svg>
-        </div>
-        <div>
-          <h3 style="font-size: 1.15rem; font-weight: 800;" data-i="videoTileTitle">Video Walkthrough</h3>
-          <p style="font-size: 0.88rem; color: var(--md-sys-color-on-surface-variant);" data-i="videoTileSub">Available directly inside our official Telegram channel</p>
-        </div>
-      </div>
-      <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnWatchVideo">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Watch Video
-      </a>
-    </div>
-  </section>
-
-  <!-- STEP 04: PRICING CARD -->
-  <section id="pricing" style="margin-top: 48px;">
-    <div class="step-heading">
-      <span class="tag-step">License</span>
-      <h2 class="main-step-title" data-i="priceHead">License Pricing</h2>
-      <p class="step-desc" data-i="priceSub">Simple, affordable monthly license per device with continuous feature updates.</p>
-    </div>
-
-    <div class="expressive-price-card">
-      <div class="price-hero-row">
-        <div>
-          <div class="cost-figure-group">
-            <span class="unit-currency">$</span>
-            <span class="numeric-amt" id="numericAmt">10</span>
-            <span class="recurrence-period" data-i="priceCadence">/ month</span>
-          </div>
-          <p style="margin-top: 6px; font-weight: 700; color: var(--md-sys-color-primary);" data-i="priceDesc">Single device per license</p>
-        </div>
-
-        <a class="m3-btn filled m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnGetLicense">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          Get a License
-        </a>
-      </div>
-
-      <div class="privileges-list">
-        <div class="privilege-item">
-          <span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span>
-        </div>
-        <div class="privilege-item">
-          <span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span data-i="feature2">Runs smoothly on Android 11+</span>
-        </div>
-        <div class="privilege-item">
-          <span class="check-token"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span data-i="feature3">Direct support & script updates</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Multi-Device Inquiry Banner -->
-    <div class="multi-key-banner">
+  <section id="hero" style="margin-bottom:0">
+    <div class="hero reveal" id="heroTile">
       <div>
-        <h3 data-i="bulkTitle">Need More Than One Device?</h3>
-        <p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p>
+        <span class="pill"><span class="pulse"></span><span data-i="heroBadge">SMM Kingdom Tasks Automation</span></span>
+        <h1 data-i="heroTitle">Instagram tasks, <br><span class="accent-word">on autopilot.</span></h1>
+        <p data-i="heroSubtitle">Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.</p>
+        <div class="hero-actions">
+          <a href="#protect" class="btn filled rip press"><span data-i="btnHeroGetStarted">Get Started</span><svg class="ic dn"><use href="#i-arrow-down"/></svg></a>
+          <a href="#pricing" class="btn tonal rip press"><span data-i="btnHeroLicense">Get a License</span></a>
+        </div>
+        <div class="chips">
+          <a href="#protect" class="chip rip press"><svg class="ic"><use href="#i-shield"/></svg><span data-i="chipSetupText">Setup</span></a>
+          <a href="#tutorial" class="chip rip press"><svg class="ic"><use href="#i-play"/></svg><span data-i="chipTutorialText">Tutorial Video</span></a>
+          <span class="chip"><svg class="ic"><use href="#i-phone"/></svg>Android 11+</span>
+        </div>
       </div>
-      <a class="m3-btn tonal m3-rip" data-tg target="_blank" rel="noopener noreferrer" data-i="btnBulk">
-        Contact Developer
-      </a>
+      <div class="hero-art" id="heroArt" aria-hidden="true">
+        <div class="layer l1"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="cookie,flower,burst,clover,penta" data-auto="3600" style="--sf:var(--md-sys-color-primary);--spd:60s"><path/></svg></div>
+        <div class="layer l2"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="flower,clover,cookie,sunny" data-auto="3000" style="--sf:var(--md-sys-color-tertiary-container);--spd:34s;--dir:reverse"><path/></svg></div>
+        <div class="layer l3"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="burst,circle,penta" data-auto="2600" style="--sf:var(--md-sys-color-secondary);--spd:14s"><path/></svg></div>
+        <div class="layer l4"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="clover,cookie,flower" data-auto="2300" style="--sf:var(--md-sys-color-tertiary);--spd:10s;--dir:reverse"><path/></svg></div>
+        <div class="layer l5"><svg class="ic"><use href="#i-bolt"/></svg></div>
+      </div>
     </div>
   </section>
+
+  <!-- STEP 01 -->
+  <section id="protect">
+    <div class="sh reveal">
+      <div class="num"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="burst,cookie"><path/></svg><span>01</span></div>
+      <div><small>Step 01</small><h2 data-i="st1Head">Disable Play Protect</h2><p data-i="st1Sub">Android can prevent sideloading background automation apps. Turn off scanning first.</p></div>
+    </div>
+    <div class="acc reveal" id="acc" style="--d:1">
+      <button class="acc-head rip press" id="accBtn" aria-expanded="false">
+        <span class="acc-lead">
+          <span class="acc-art"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="cookie,flower,clover"><path/></svg><svg class="ic"><use href="#i-shield"/></svg></span>
+          <span><h3 data-i="st1CardTitle">Play Protect Walkthrough</h3><p data-i="st1CardPrompt">Tap to view step-by-step instructions</p></span>
+        </span>
+        <span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span>
+      </button>
+      <div class="acc-body"><div><div class="steps" id="steps"></div></div></div>
+    </div>
+  </section>
+
+  <!-- STEP 02 -->
+  <section id="downloads">
+    <div class="sh reveal">
+      <div class="num"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="flower,burst"><path/></svg><span>02</span></div>
+      <div><small>Step 02</small><h2 data-i="st2Head">Download the Trilogy</h2><p data-i="st2Sub">Install these three apps to establish automation, background terminal sessions, and system hooks.</p></div>
+    </div>
+    <div class="grid">
+      <article class="card rip reveal" style="--d:0" data-host>
+        <svg class="shp bg-shape" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="cookie,flower"><path/></svg>
+        <span class="badge">Automation</span>
+        <div>
+          <div class="card-ico"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="cookie,flower,burst,clover"><path/></svg><svg class="ic"><use href="#i-phone"/></svg></div>
+          <h3 data-i="btnDlReplica">Download Replica</h3>
+          <p data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
+        </div>
+        <a class="btn rip press block" id="dlReplica" href="#" download><svg class="ic"><use href="#i-down"/></svg><span data-i="btnDlReplica">Download Replica</span></a>
+      </article>
+      <article class="card rip reveal" style="--d:1" data-host>
+        <svg class="shp bg-shape" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="flower,clover"><path/></svg>
+        <span class="badge">Environment</span>
+        <div>
+          <div class="card-ico"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="flower,clover,cookie,sunny"><path/></svg><svg class="ic"><use href="#i-terminal"/></svg></div>
+          <h3 data-i="btnDlTermux">Download Termux</h3>
+          <p data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
+        </div>
+        <a class="btn rip press block" id="dlTermux" href="#" target="_blank" rel="noopener noreferrer"><svg class="ic"><use href="#i-down"/></svg><span data-i="btnDlTermux">Download Termux</span></a>
+      </article>
+      <article class="card rip reveal" style="--d:2" data-host>
+        <svg class="shp bg-shape" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="burst,cookie"><path/></svg>
+        <span class="badge">System Bridge</span>
+        <div>
+          <div class="card-ico"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="burst,penta,flower,cookie"><path/></svg><svg class="ic"><use href="#i-link"/></svg></div>
+          <h3 data-i="btnDlTermuxApi">Download Termux API</h3>
+          <p data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
+        </div>
+        <a class="btn rip press block" id="dlTermuxApi" href="#" target="_blank" rel="noopener noreferrer"><svg class="ic"><use href="#i-down"/></svg><span data-i="btnDlTermuxApi">Download Termux API</span></a>
+      </article>
+    </div>
+  </section>
+
+  <!-- STEP 03 -->
+  <section id="tutorial">
+    <div class="sh reveal">
+      <div class="num"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="clover,cookie"><path/></svg><span>03</span></div>
+      <div><small>Step 03</small><h2 data-i="st3Head">Setup Tutorial Video</h2><p data-i="st3Sub">Watch the step-by-step walkthrough to get everything set up in minutes.</p></div>
+    </div>
+    <div class="tut reveal" data-host style="--d:1">
+      <div class="tut-lead">
+        <div class="tut-art"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="sunny,cookie,flower,burst" data-auto="3400"><path/></svg><svg class="ic"><use href="#i-play"/></svg></div>
+        <div><h3 data-i="videoTileTitle">Video Walkthrough</h3><p data-i="videoTileSub">Available directly inside our official Telegram channel</p></div>
+      </div>
+      <a class="btn rip press" data-tg target="_blank" rel="noopener noreferrer"><svg class="ic" style="fill:currentColor"><use href="#i-play"/></svg><span data-i="btnWatchVideo">Watch Video</span></a>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="sh reveal">
+      <div class="num"><svg class="shp" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="cookie,sunny"><path/></svg><span>$</span></div>
+      <div><small>License</small><h2 data-i="priceHead">License Pricing</h2><p data-i="priceSub">Simple, affordable monthly license per device with continuous feature updates.</p></div>
+    </div>
+    <div class="price reveal" id="priceCard" style="--d:1">
+      <svg class="shp bg-shape" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="cookie,flower,burst" data-auto="4200"><path/></svg>
+      <svg class="shp bg-shape b" viewBox="-1.1 -1.1 2.2 2.2" data-shapes="clover,cookie" data-auto="3600"><path/></svg>
+      <div class="price-row">
+        <div>
+          <div class="amt"><span class="cur">$</span><span class="num-big" id="amt">10</span><span class="per" data-i="priceCadence">/ month</span></div>
+          <p class="sub" data-i="priceDesc">Single device per license</p>
+        </div>
+        <a class="btn inv rip press" data-tg target="_blank" rel="noopener noreferrer"><span data-i="btnGetLicense">Get a License</span><svg class="ic go"><use href="#i-arrow"/></svg></a>
+      </div>
+      <div class="perks">
+        <div class="perk" style="--i:0"><span class="tick" style="--i:0"><svg class="ic"><use href="#i-check"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></div>
+        <div class="perk"><span class="tick" style="--i:1"><svg class="ic"><use href="#i-check"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></div>
+        <div class="perk"><span class="tick" style="--i:2"><svg class="ic"><use href="#i-check"/></svg></span><span data-i="feature3">Direct support &amp; script updates</span></div>
+      </div>
+    </div>
+    <div class="bulk reveal" style="--d:2">
+      <div><h3 data-i="bulkTitle">Need More Than One Device?</h3><p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p></div>
+      <a class="btn rip press" data-tg target="_blank" rel="noopener noreferrer"><svg class="ic"><use href="#i-send"/></svg><span data-i="btnBulk">Contact Developer</span></a>
+    </div>
+  </section>
+
+  <footer class="reveal">
+    <p><span data-i="ftHelp">Need help? Message</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftTg">on Telegram</span>.</p>
+    <p class="legal" data-i="ftLegal">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p>
+  </footer>
 </main>
 
-<footer>
-  <div class="wrapper" style="padding-bottom: 0;">
-    <p><span data-i="ftHelp">Need help? Message</span> <a data-tg target="_blank" rel="noopener noreferrer">@iamrajatroel</a> <span data-i="ftTg">on Telegram</span>.</p>
-    <p class="disclaimer-line" data-i="ftLegal">Replica is an independent tool and is not affiliated with Telegram, Instagram, or SMM Kingdom.</p>
-  </div>
-</footer>
+<!-- BOTTOM NAVIGATION -->
+<nav class="bnav" id="bnav" aria-label="Sections">
+  <span class="bn-ind" id="bnInd"></span>
+  <a class="bn rip active" href="#hero" data-t="hero"><svg class="ic"><use href="#i-home"/></svg><span data-i="navHome">Home</span></a>
+  <a class="bn rip" href="#protect" data-t="protect"><svg class="ic"><use href="#i-shield"/></svg><span data-i="navSetup">Setup</span></a>
+  <a class="bn rip" href="#downloads" data-t="downloads"><svg class="ic"><use href="#i-apps"/></svg><span data-i="navApps">Apps</span></a>
+  <a class="bn rip" href="#tutorial" data-t="tutorial"><svg class="ic"><use href="#i-play"/></svg><span data-i="navVideo">Video</span></a>
+  <a class="bn rip" href="#pricing" data-t="pricing"><svg class="ic"><use href="#i-tag"/></svg><span data-i="navPrice">Price</span></a>
+</nav>
 
-<!-- Toast Feedback -->
-<div class="m3-snackbar" id="toastBox" role="status" aria-live="polite"></div>
+<!-- CUSTOMISE SHEET -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Customize">
+  <div class="grab" id="grab"><i></i></div>
+  <h3 data-i="customize">Customize</h3>
+  <div class="grp"><span class="lbl" data-i="colorLabel">Color</span><div class="swatches" id="swatches"></div></div>
+  <div class="grp"><span class="lbl" data-i="themeLabel">Theme</span>
+    <div class="seg" data-set="mode"><button data-v="light" data-i="light">Light</button><button data-v="auto" data-i="auto">Auto</button><button data-v="dark" data-i="dark">Dark</button></div></div>
+  <div class="grp"><span class="lbl" data-i="shapeLabel">Corner shape</span>
+    <div class="seg" data-set="rs"><button data-v="0.35" data-i="sharp">Sharp</button><button data-v="1" data-i="round">Round</button><button data-v="1.45" data-i="extra">Extra</button></div></div>
+  <div class="grp"><span class="lbl" data-i="languageLabel">Language</span>
+    <div class="seg" data-set="lang"><button data-v="en">English</button><button data-v="uk">Українська</button><button data-v="ru">Русский</button></div></div>
+  <div class="grp"><div class="row"><div><b data-i="motionLabel">Animations</b><small data-i="motionSub">Rotating &amp; morphing shapes</small></div>
+    <button class="sw-track" id="motionSw" role="switch" aria-checked="true"><i></i></button></div></div>
+  <button class="btn filled rip press block" id="sheetDone" data-i="done">Done</button>
+</div>
+
+<div class="snack" id="snack" role="status" aria-live="polite"></div>
 
 <script>
-/* =========================================================
-   CONFIG & PALETTE SYSTEM
-   ========================================================= */
 const APP_CONFIG = {
   links: {
     replicaApk: '#',
@@ -1384,174 +733,206 @@ const TRANSLATIONS = {
   }
 };
 
-/* =========================================================
-   APPLICATION CONTROLLER
-   ========================================================= */
-const $ = sel => document.querySelector(sel);
-const $$ = sel => document.querySelectorAll(sel);
+/* extra strings for the new UI */
+const EXTRA = {
+  en: { navHome:"Home", navSetup:"Setup", navApps:"Apps", navVideo:"Video", navPrice:"Price", customize:"Customize", colorLabel:"Color", themeLabel:"Theme", light:"Light", dark:"Dark", auto:"Auto", shapeLabel:"Corner shape", sharp:"Sharp", round:"Round", extra:"Extra", languageLabel:"Language", motionLabel:"Animations", motionSub:"Rotating & morphing shapes", done:"Done" },
+  uk: { navHome:"Головна", navSetup:"Налашт.", navApps:"Додатки", navVideo:"Відео", navPrice:"Ціна", customize:"Персоналізація", colorLabel:"Колір", themeLabel:"Тема", light:"Світла", dark:"Темна", auto:"Авто", shapeLabel:"Форма кутів", sharp:"Гострі", round:"Круглі", extra:"Дуже", languageLabel:"Мова", motionLabel:"Анімації", motionSub:"Рухомі та змінні форми", done:"Готово" },
+  ru: { navHome:"Главная", navSetup:"Настр.", navApps:"Приложения", navVideo:"Видео", navPrice:"Цена", customize:"Персонализация", colorLabel:"Цвет", themeLabel:"Тема", light:"Светлая", dark:"Тёмная", auto:"Авто", shapeLabel:"Форма углов", sharp:"Острые", round:"Круглые", extra:"Очень", languageLabel:"Язык", motionLabel:"Анимации", motionSub:"Движущиеся и меняющиеся формы", done:"Готово" }
+};
+Object.keys(EXTRA).forEach(l => Object.assign(TRANSLATIONS[l], EXTRA[l]));
 
-let lang = localStorage.getItem('replica_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
-if (!TRANSLATIONS[lang]) lang = 'en';
+/* ============ HELPERS ============ */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+const root = document.documentElement;
+const motionOn = () => root.dataset.motion !== 'off';
+const buzz = () => { try { navigator.vibrate && navigator.vibrate(8); } catch {} };
 
-let hue = +(localStorage.getItem('replica_hue') || 154);
-let mode = localStorage.getItem('replica_mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-let toastTimer;
-function showToast(text) {
-  const box = $('#toastBox');
-  box.textContent = text;
-  box.classList.add('active');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => box.classList.remove('active'), 3200);
+/* ============ MD3E SHAPE MORPH ENGINE ============ */
+const N = 140, TAU = Math.PI * 2;
+const SH = { circle:[0,0,0], cookie:[9,.075,0], flower:[6,.21,0], clover:[4,.25,0], penta:[5,.1,0], oval:[2,.2,0], burst:[10,.17,1], sunny:[14,.12,1] };
+const cache = {};
+function pts(name) {
+  if (cache[name]) return cache[name];
+  const [k, a, sharp] = SH[name], o = new Float32Array(N * 2);
+  for (let i = 0; i < N; i++) {
+    const t = i / N * TAU;
+    const r = sharp ? 1 - a * Math.pow(Math.abs(Math.sin(k * t / 2)), .6) : (1 + a * Math.cos(k * t)) / (1 + a);
+    o[i * 2] = r * Math.cos(t); o[i * 2 + 1] = r * Math.sin(t);
+  }
+  return cache[name] = o;
 }
-
-// Authentic Material Ripple
-document.addEventListener('pointerdown', e => {
-  const host = e.target.closest('.m3-rip');
-  if (!host) return;
-  const rect = host.getBoundingClientRect();
-  const radius = Math.max(rect.width, rect.height);
-  const ripple = document.createElement('span');
-  ripple.className = 'rip-drop';
-  ripple.style.width = ripple.style.height = `${radius * 2}px`;
-  ripple.style.left = `${e.clientX - rect.left - radius}px`;
-  ripple.style.top = `${e.clientY - rect.top - radius}px`;
-  host.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 600);
-});
-
-function setHue(newHue) {
-  hue = +newHue;
-  document.documentElement.style.setProperty('--h', hue);
-  localStorage.setItem('replica_hue', hue);
-  $$('#paletteGrid .palette-swatch').forEach(sw => {
-    sw.classList.toggle('active', +sw.dataset.hue === hue);
-  });
+function toD(p) {
+  const n = p.length / 2, f = v => v.toFixed(3);
+  const g = (i, j) => p[(i % n) * 2 + j];
+  let d = `M${f((g(0,0)+g(1,0))/2)} ${f((g(0,1)+g(1,1))/2)}`;
+  for (let i = 1; i <= n; i++) d += `Q${f(g(i,0))} ${f(g(i,1))} ${f((g(i,0)+g(i+1,0))/2)} ${f((g(i,1)+g(i+1,1))/2)}`;
+  return d + 'Z';
 }
+const backOut = t => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
 
-function setMode(newMode) {
-  mode = newMode;
-  document.documentElement.setAttribute('data-mode', mode);
-  localStorage.setItem('replica_mode', mode);
-  $('#themeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
-}
-
-function renderI18n() {
-  const dict = TRANSLATIONS[lang];
-  document.documentElement.lang = lang;
-
-  $$('[data-i]').forEach(el => {
-    const k = el.dataset.i;
-    if (dict[k]) el.innerHTML = dict[k];
-  });
-
-  $('#protectStepRows').innerHTML = dict.st1Steps.map((txt, i) => `
-    <div class="sequence-item">
-      <div class="sequence-counter">${i + 1}</div>
-      <div>${txt}</div>
-    </div>
-  `).join('');
-
-  $$('#langMorphDeck [data-lang]').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-  });
-}
-
-function toggleLanguageMorph(showLang) {
-  const brandTitle = $('#brandTitle');
-  const actionsDeck = $('#actionsDeck');
-  const langDeck = $('#langMorphDeck');
-
-  if (showLang) {
-    brandTitle.style.display = 'none';
-    actionsDeck.classList.add('hidden');
-    langDeck.classList.remove('hidden');
-  } else {
-    langDeck.classList.add('hidden');
-    brandTitle.style.display = 'flex';
-    actionsDeck.classList.remove('hidden');
+function initShape(svg) {
+  const path = svg.querySelector('path'), list = svg.dataset.shapes.split(',');
+  let idx = 0, raf = 0; const cur = Float32Array.from(pts(list[0]));
+  path.setAttribute('d', toD(cur));
+  svg._to = (name, dur = 800) => {
+    cancelAnimationFrame(raf);
+    const from = Float32Array.from(cur), to = pts(name), t0 = performance.now();
+    if (!motionOn()) { cur.set(to); path.setAttribute('d', toD(cur)); return; }
+    const step = now => {
+      const t = Math.min(1, (now - t0) / dur), e = backOut(t);
+      for (let i = 0; i < cur.length; i++) cur[i] = from[i] + (to[i] - from[i]) * e;
+      path.setAttribute('d', toD(cur));
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  };
+  svg._next = () => { idx = (idx + 1) % list.length; svg._to(list[idx]); };
+  const host = svg.closest('[data-host]') || svg.parentElement;
+  if (list.length > 1 && !svg.dataset.auto) {
+    host.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') svg._next(); });
+    host.addEventListener('pointerdown', () => svg._next());
+  }
+  if (svg.dataset.auto) {
+    setInterval(() => { if (!document.hidden && motionOn()) svg._next(); }, +svg.dataset.auto + Math.random() * 400);
   }
 }
+$$('svg.shp').forEach(initShape);
 
-function init() {
-  $$('[data-tg]').forEach(a => a.href = APP_CONFIG.links.telegram);
-  $('#dlTermuxAnchor').href = APP_CONFIG.links.termuxApk;
-  $('#dlTermuxApiAnchor').href = APP_CONFIG.links.termuxApiApk;
+/* hero: parallax + tap burst */
+const heroTile = $('#heroTile'), heroArt = $('#heroArt');
+heroTile.addEventListener('pointermove', e => {
+  if (!motionOn()) return;
+  const r = heroTile.getBoundingClientRect();
+  heroArt.style.setProperty('--px', ((e.clientX - r.left) / r.width - .5) * 2);
+  heroArt.style.setProperty('--py', ((e.clientY - r.top) / r.height - .5) * 2);
+});
+heroTile.addEventListener('pointerleave', () => { heroArt.style.setProperty('--px', 0); heroArt.style.setProperty('--py', 0); });
+heroArt.addEventListener('pointerdown', () => {
+  buzz(); $$('#heroArt svg.shp').forEach(s => s._next && s._next());
+  heroArt.classList.remove('pop'); void heroArt.offsetWidth; heroArt.classList.add('pop');
+});
 
-  // Swatches
-  $('#paletteGrid').innerHTML = APP_CONFIG.monetHues.map(item => `
-    <button class="palette-swatch ${item.hue === hue ? 'active' : ''}" 
-            data-hue="${item.hue}" 
-            title="${item.name}" 
-            style="background: oklch(0.68 0.16 ${item.hue})"
-            aria-label="${item.name}"></button>
-  `).join('');
+/* card spotlight */
+$$('.card').forEach(c => c.addEventListener('pointermove', e => {
+  const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+}));
 
-  $('#btnLanguage').addEventListener('click', e => {
-    e.stopPropagation();
-    toggleLanguageMorph(true);
-  });
+/* ============ RIPPLE + HAPTIC ============ */
+document.addEventListener('pointerdown', e => {
+  const host = e.target.closest('.rip'); if (!host) return;
+  if (host.matches('.btn,.icon-btn,.bn,.chip,.acc-head,.seg button')) buzz();
+  const r = host.getBoundingClientRect(), d = Math.hypot(Math.max(e.clientX - r.left, r.right - e.clientX), Math.max(e.clientY - r.top, r.bottom - e.clientY)) * 2;
+  const s = document.createElement('span'); s.className = 'drop';
+  s.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - r.left - d / 2}px;top:${e.clientY - r.top - d / 2}px`;
+  host.appendChild(s); setTimeout(() => s.remove(), 700);
+});
 
-  $('#btnLangBack').addEventListener('click', e => {
-    e.stopPropagation();
-    toggleLanguageMorph(false);
-  });
+/* ============ SETTINGS ============ */
+let lang = store.get('replica_lang', /^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
+if (!TRANSLATIONS[lang]) lang = 'en';
+let hue = +store.get('replica_hue', 154);
+let modePref = store.get('replica_mode2', 'auto');
+let rs = +store.get('replica_rs', 1);
+let motion = store.get('replica_motion', matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
+const mq = matchMedia('(prefers-color-scheme: dark)');
 
-  $('#langMorphDeck').addEventListener('click', e => {
-    const btn = e.target.closest('[data-lang]');
-    if (!btn) return;
-    lang = btn.dataset.lang;
-    localStorage.setItem('replica_lang', lang);
-    renderI18n();
-    setTimeout(() => toggleLanguageMorph(false), 200);
-  });
+function applyHue() {
+  root.style.setProperty('--h', hue);
+  $$('.sw').forEach(s => { const a = +s.dataset.hue === hue; s.classList.toggle('active', a); s.setAttribute('aria-pressed', a); });
+  const m = $('meta[name=theme-color]'); if (m) m.content = getComputedStyle(document.body).backgroundColor;
+}
+function applyMode() {
+  const dark = modePref === 'auto' ? mq.matches : modePref === 'dark';
+  root.dataset.mode = dark ? 'dark' : 'light';
+  requestAnimationFrame(() => { const m = $('meta[name=theme-color]'); if (m) m.content = getComputedStyle(document.body).backgroundColor; });
+}
+function applyRs() { root.style.setProperty('--rs', rs); }
+function applyMotion() { root.dataset.motion = motion; $('#motionSw').setAttribute('aria-checked', motion === 'on'); }
+function markSegs() {
+  const cur = { mode: modePref, rs: String(rs), lang };
+  $$('.seg').forEach(g => g.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.v === cur[g.dataset.set])));
+}
+mq.addEventListener('change', () => modePref === 'auto' && applyMode());
 
-  $('#paletteGrid').addEventListener('click', e => {
-    const swatch = e.target.closest('.palette-swatch');
-    if (swatch) setHue(swatch.dataset.hue);
-  });
-
-  const themeBtn = $('#btnTheme');
-  const themePopup = $('#monetPopup');
-  themeBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    const isOpen = themePopup.classList.toggle('show');
-    themeBtn.classList.toggle('active-btn', isOpen);
-    themeBtn.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#monetPopup') && !e.target.closest('#btnTheme')) {
-      themePopup.classList.remove('show');
-      themeBtn.classList.remove('active-btn');
-      themeBtn.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  $('#themeSwitch').addEventListener('click', () => {
-    setMode(mode === 'dark' ? 'light' : 'dark');
-  });
-
-  const protectCard = $('#protectCard');
-  const protectBtn = $('#protectToggleBtn');
-  protectBtn.addEventListener('click', () => {
-    const isOpen = protectCard.classList.toggle('open');
-    protectBtn.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  $('#dlReplicaAnchor').addEventListener('click', e => {
-    if (APP_CONFIG.links.replicaApk === '#' || !APP_CONFIG.links.replicaApk) {
-      e.preventDefault();
-      showToast(TRANSLATIONS[lang].apkComingSoon);
-    }
-  });
-
-  setHue(hue);
-  setMode(mode);
-  renderI18n();
+function renderI18n() {
+  const dict = TRANSLATIONS[lang]; root.lang = lang;
+  $$('[data-i]').forEach(el => { const v = dict[el.dataset.i]; if (v != null) el.innerHTML = v; });
+  $('#steps').innerHTML = dict.st1Steps.map((t, i) => `<div class="step" style="--i:${i}"><span class="step-n"><i>${i + 1}</i></span><div>${t}</div></div>`).join('');
+  markSegs(); requestAnimationFrame(placeInd);
 }
 
-window.addEventListener('DOMContentLoaded', init);
+/* swatches */
+$('#swatches').innerHTML = APP_CONFIG.monetHues.map(m => `<button class="sw rip" data-hue="${m.hue}" style="--sh:${m.hue}" aria-label="${m.name}" title="${m.name}"><svg class="ic"><use href="#i-check"/></svg></button>`).join('');
+$('#swatches').addEventListener('click', e => { const s = e.target.closest('.sw'); if (!s) return; hue = +s.dataset.hue; store.set('replica_hue', hue); applyHue(); });
+
+$$('.seg').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return; const k = g.dataset.set, v = b.dataset.v;
+  if (k === 'mode') { modePref = v; store.set('replica_mode2', v); applyMode(); }
+  if (k === 'rs') { rs = +v; store.set('replica_rs', v); applyRs(); }
+  if (k === 'lang') { lang = v; store.set('replica_lang', v); renderI18n(); }
+  markSegs();
+}));
+$('#motionSw').addEventListener('click', () => { motion = motion === 'on' ? 'off' : 'on'; store.set('replica_motion', motion); applyMotion(); buzz(); });
+$('#btnMode').addEventListener('click', () => { modePref = root.dataset.mode === 'dark' ? 'light' : 'dark'; store.set('replica_mode2', modePref); applyMode(); markSegs(); });
+
+/* ============ SHEET (swipe to dismiss) ============ */
+const sheet = $('#sheet');
+const openSheet = () => { document.body.classList.add('sheet-open'); $('#btnTune').classList.add('is-open'); };
+const closeSheet = () => { document.body.classList.remove('sheet-open'); $('#btnTune').classList.remove('is-open'); sheet.style.transform = ''; };
+$('#btnTune').addEventListener('click', () => document.body.classList.contains('sheet-open') ? closeSheet() : openSheet());
+$('#scrim').addEventListener('click', closeSheet); $('#sheetDone').addEventListener('click', closeSheet);
+document.addEventListener('keydown', e => e.key === 'Escape' && closeSheet());
+(() => {
+  let y0 = null, dy = 0; const grab = $('#grab');
+  grab.addEventListener('pointerdown', e => { y0 = e.clientY; dy = 0; sheet.classList.add('dragging'); grab.setPointerCapture(e.pointerId); });
+  grab.addEventListener('pointermove', e => { if (y0 == null) return; dy = Math.max(0, e.clientY - y0); sheet.style.transform = `translate(-50%, ${dy}px)`; });
+  const end = () => { if (y0 == null) return; y0 = null; sheet.classList.remove('dragging'); dy > 90 ? closeSheet() : sheet.style.transform = ''; };
+  grab.addEventListener('pointerup', end); grab.addEventListener('pointercancel', end);
+})();
+
+/* ============ ACCORDION ============ */
+$('#accBtn').addEventListener('click', () => { const o = $('#acc').classList.toggle('open'); $('#accBtn').setAttribute('aria-expanded', o); });
+
+/* ============ SCROLL: header, reveal, spy, count-up ============ */
+const bar = $('#appbar');
+addEventListener('scroll', () => bar.classList.toggle('scrolled', scrollY > 8), { passive: true });
+
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return; e.target.classList.add('in'); io.unobserve(e.target);
+  if (e.target.id === 'priceCard') countUp();
+}), { threshold: .12 });
+$$('.reveal').forEach(el => io.observe(el));
+
+function countUp() {
+  const el = $('#amt'), end = 10, t0 = performance.now();
+  if (!motionOn()) return;
+  const step = now => { const t = Math.min(1, (now - t0) / 1100); el.textContent = Math.round(end * backOut(t)); if (t < 1) requestAnimationFrame(step); else el.textContent = end; };
+  el.textContent = 0; requestAnimationFrame(step);
+}
+
+const navItems = $$('.bn'), ind = $('#bnInd');
+function placeInd() { const a = $('.bn.active'); if (!a) return; ind.style.width = a.offsetWidth + 'px'; ind.style.transform = `translateX(${a.offsetLeft - 6}px)`; }
+const spy = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  navItems.forEach(n => n.classList.toggle('active', n.dataset.t === e.target.id)); placeInd();
+}), { rootMargin: '-45% 0px -50% 0px' });
+$$('main section').forEach(s => spy.observe(s));
+addEventListener('resize', placeInd);
+
+/* ============ INIT ============ */
+$$('[data-tg]').forEach(a => a.href = APP_CONFIG.links.telegram);
+$('#dlTermux').href = APP_CONFIG.links.termuxApk;
+$('#dlTermuxApi').href = APP_CONFIG.links.termuxApiApk;
+let snackT;
+$('#dlReplica').addEventListener('click', e => {
+  if (!APP_CONFIG.links.replicaApk || APP_CONFIG.links.replicaApk === '#') {
+    e.preventDefault(); const s = $('#snack'); s.textContent = TRANSLATIONS[lang].apkComingSoon; s.classList.add('show');
+    clearTimeout(snackT); snackT = setTimeout(() => s.classList.remove('show'), 3200);
+  } else e.currentTarget.href = APP_CONFIG.links.replicaApk;
+});
+applyHue(); applyMode(); applyRs(); applyMotion(); renderI18n();
+addEventListener('load', placeInd);
 </script>
 </body>
 </html>
