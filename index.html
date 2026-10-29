@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en" data-mode="dark">
 <head>
@@ -152,6 +151,7 @@ body {
   filter: none !important;
 }
 
+/* Subtle state layer: hover only on real pointers, pressed on touch */
 .m3e-state::before {
   content: '';
   position: absolute;
@@ -163,24 +163,23 @@ body {
   transition: opacity 0.2s var(--ease-expressive-standard);
 }
 
-.m3e-state:hover::before { opacity: 0.08; }
-.m3e-state:active::before { opacity: 0.16; }
+@media (hover: hover) and (pointer: fine) {
+  .m3e-state:hover::before { opacity: 0.06; }
+}
+.m3e-state:active::before { opacity: 0.08; }
 
 .m3e-rip {
   position: absolute;
   border-radius: 50%;
   background: currentColor;
-  opacity: 0.14;
+  opacity: 0.1;
   transform: scale(0);
-  animation: m3e-ripple-spread 0.55s var(--ease-expressive-emphasized) forwards;
+  animation: m3e-ripple-spread 0.5s var(--ease-expressive-emphasized) forwards;
   pointer-events: none;
 }
 
 @keyframes m3e-ripple-spread {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
+  to { transform: scale(4); opacity: 0; }
 }
 
 /* =========================================================
@@ -222,7 +221,7 @@ body {
 .curly-svg-loader {
   width: 100%;
   height: 100%;
-  animation: m3eCurlySpin 12s linear infinite;
+  animation: m3eCurlySpin 6s linear infinite;
   transform-origin: center;
 }
 
@@ -328,14 +327,14 @@ header.m3e-app-bar {
   inset: 0;
   width: 100%;
   height: 100%;
-  animation: m3eCurlySpin 12s linear infinite;
+  animation: m3eCurlySpin 8s linear infinite;
   transform-origin: center;
 }
 
 .nav-curly-bot {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   color: var(--md-sys-color-on-primary-container);
   z-index: 2;
 }
@@ -361,16 +360,6 @@ header.m3e-app-bar {
   color: var(--md-sys-color-on-surface-variant);
   display: grid;
   place-items: center;
-  transition: transform 0.25s var(--ease-expressive-spring), background-color 0.2s, color 0.2s;
-}
-
-.m3e-action-btn:hover {
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
-}
-
-.m3e-action-btn:active {
-  transform: scale(0.92);
 }
 
 .m3e-action-btn.active-btn {
@@ -383,55 +372,88 @@ header.m3e-app-bar {
   height: 20px;
 }
 
+/* Nav layers animate out when the language tray opens */
+.brand-deck, .actions-cluster {
+  transition: opacity 0.22s var(--ease-expressive-standard),
+              translate 0.4s var(--ease-expressive-emphasized),
+              scale 0.4s var(--ease-expressive-emphasized),
+              visibility 0s;
+}
+.m3e-capsule-nav.lang-open .brand-deck,
+.m3e-capsule-nav.lang-open .actions-cluster {
+  opacity: 0;
+  scale: 0.92;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.18s var(--ease-expressive-standard),
+              translate 0.3s var(--ease-expressive-standard),
+              scale 0.3s var(--ease-expressive-standard),
+              visibility 0s 0.2s;
+}
+.m3e-capsule-nav.lang-open .brand-deck { translate: -10px 0; }
+.m3e-capsule-nav.lang-open .actions-cluster { translate: 10px 0; }
+
 /* =========================================================
-   LANGUAGE SELECTOR (JUST 3 LANGUAGES, NO BACK BUTTON)
+   LANGUAGE SELECTOR (3 LANGUAGES, NO BACK BUTTON, ANIMATED)
    ========================================================= */
 .lang-morph-tray {
+  position: absolute;
+  inset: 6px 10px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  gap: 8px;
-  padding: 2px 4px;
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 0.28s var(--ease-expressive-standard), transform 0.28s var(--ease-expressive-spring);
+  gap: 6px;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s 0.25s;
 }
 
-.lang-morph-tray.hidden {
-  display: none;
-  opacity: 0;
-  transform: scale(0.94);
+.m3e-capsule-nav.lang-open .lang-morph-tray {
+  visibility: visible;
+  pointer-events: auto;
+  transition: visibility 0s;
 }
 
 .lang-chip-btn {
   flex: 1;
+  height: 100%;
+  min-width: 0;
   border: 0;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  padding: 8px 12px;
+  padding: 0 6px;
   border-radius: var(--shape-corner-full);
   text-align: center;
-  transition: background-color 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth), transform 0.2s var(--ease-expressive-spring);
-  box-shadow: none !important;
+  white-space: nowrap;
+  /* entrance animation (individual transform props so press-morph still works) */
+  opacity: 0;
+  translate: 0 10px;
+  scale: 0.88;
+  transition: opacity 0.18s var(--ease-expressive-standard),
+              translate 0.25s var(--ease-expressive-standard),
+              scale 0.25s var(--ease-expressive-standard),
+              background-color 0.25s var(--ease-smooth),
+              color 0.25s var(--ease-smooth),
+              border-radius 0.3s var(--ease-expressive-spring);
 }
 
-.lang-chip-btn:hover {
-  background: var(--md-sys-color-surface-container-highest);
-  color: var(--md-sys-color-on-surface);
-}
-
-.lang-chip-btn:active {
-  transform: scale(0.95);
+.m3e-capsule-nav.lang-open .lang-chip-btn {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  transition: opacity 0.3s var(--ease-expressive-standard) calc(var(--i) * 55ms + 90ms),
+              translate 0.5s var(--ease-expressive-spring) calc(var(--i) * 55ms + 90ms),
+              scale 0.5s var(--ease-expressive-spring) calc(var(--i) * 55ms + 90ms),
+              background-color 0.25s var(--ease-smooth),
+              color 0.25s var(--ease-smooth),
+              border-radius 0.3s var(--ease-expressive-spring);
 }
 
 .lang-chip-btn.active {
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
-  box-shadow: none !important; /* No glow */
 }
 
 /* Monet Palette Dropdown Menu */
@@ -486,9 +508,10 @@ header.m3e-app-bar {
   transition: transform 0.28s var(--ease-expressive-spring);
 }
 
-.monet-swatch:hover {
-  transform: scale(1.12);
+@media (hover: hover) and (pointer: fine) {
+  .monet-swatch:hover { transform: scale(1.08); }
 }
+.monet-swatch:active { transform: scale(0.92); }
 
 .monet-swatch.active {
   outline: 3px solid var(--md-sys-color-primary);
@@ -549,25 +572,6 @@ header.m3e-app-bar {
   gap: 20px;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 18px;
-  border-radius: var(--shape-corner-full);
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-  font-size: 0.85rem;
-  font-weight: 700;
-  width: fit-content;
-  border: 1px solid color-mix(in oklch, var(--md-sys-color-outline-variant) 40%, transparent);
-}
-
-.status-rotator {
-  width: 14px;
-  height: 14px;
-}
-
 .hero-heading {
   font-size: clamp(2.8rem, 7.5vw, 4.4rem);
   line-height: 1.05;
@@ -610,13 +614,6 @@ header.m3e-app-bar {
   transition: transform 0.2s var(--ease-expressive-spring), background-color 0.2s ease;
 }
 
-.m3e-btn:hover {
-  transform: translateY(-1px);
-}
-
-.m3e-btn:active {
-  transform: scale(0.96);
-}
 
 .m3e-btn.filled {
   background: var(--md-sys-color-primary);
@@ -657,11 +654,12 @@ header.m3e-app-bar {
   height: 18px;
 }
 
-.m3e-chip:hover {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  border-color: var(--md-sys-color-primary);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .m3e-chip:hover {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border-color: var(--md-sys-color-primary);
+  }
 }
 
 /* =========================================================
@@ -727,18 +725,18 @@ header.m3e-app-bar {
 }
 
 /* =========================================================
-   STEP 01: EXPANDABLE PLAY PROTECT (SEAMLESS SMOOTH)
+   STEP 01: EXPANDABLE PLAY PROTECT (SMOOTH, NO GREY OVERLAY)
    ========================================================= */
 .m3e-expandable {
   background: var(--md-sys-color-surface-container);
   border-radius: var(--shape-corner-large);
   border: 1px solid var(--md-sys-color-outline-variant);
   overflow: hidden;
-  transition: border-color 0.25s var(--ease-expressive-standard), box-shadow 0.25s var(--ease-expressive-standard);
+  transition: border-color 0.3s var(--ease-expressive-standard);
 }
 
-.m3e-expandable:hover {
-  border-color: var(--md-sys-color-outline);
+.m3e-expandable.open {
+  border-color: color-mix(in oklch, var(--md-sys-color-primary) 55%, var(--md-sys-color-outline-variant));
 }
 
 .expandable-trigger {
@@ -753,8 +751,8 @@ header.m3e-app-bar {
   color: inherit;
   font: inherit;
   text-align: left;
+  cursor: pointer;
   user-select: none;
-  transition: background-color 0.25s ease;
 }
 
 .expandable-left {
@@ -772,8 +770,12 @@ header.m3e-app-bar {
   display: grid;
   place-items: center;
   flex: none;
-  transition: transform 0.4s var(--ease-expressive-emphasized), background-color 0.25s ease, color 0.25s ease;
+  transition: transform 0.5s var(--ease-expressive-emphasized),
+              background-color 0.3s var(--ease-expressive-standard),
+              color 0.3s var(--ease-expressive-standard);
 }
+
+.expandable-trigger:active .expand-chevron { scale: 0.9; }
 
 .m3e-expandable.open .expand-chevron {
   transform: rotate(180deg);
@@ -781,19 +783,25 @@ header.m3e-app-bar {
   color: var(--md-sys-color-on-primary-container);
 }
 
-/* Single unified background without greyish disjoint overlay */
+/* Height animates via grid rows: no jumps, transparent background throughout */
 .expandable-panel {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.38s var(--ease-expressive-emphasized);
+  visibility: hidden;
   background: transparent;
+  transition: grid-template-rows 0.5s var(--ease-expressive-emphasized),
+              visibility 0s 0.5s;
 }
 
 .m3e-expandable.open .expandable-panel {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.5s var(--ease-expressive-emphasized),
+              visibility 0s;
 }
 
 .expandable-content {
+  min-height: 0;
   overflow: hidden;
   background: transparent;
 }
@@ -811,6 +819,17 @@ header.m3e-app-bar {
   align-items: flex-start;
   font-size: 0.96rem;
   color: var(--md-sys-color-on-surface-variant);
+  opacity: 0;
+  translate: 0 -8px;
+  transition: opacity 0.2s var(--ease-expressive-standard),
+              translate 0.3s var(--ease-expressive-standard);
+}
+
+.m3e-expandable.open .step-point {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity 0.35s var(--ease-expressive-standard) calc(var(--i) * 60ms + 120ms),
+              translate 0.55s var(--ease-expressive-emphasized) calc(var(--i) * 60ms + 120ms);
 }
 
 .step-point b {
@@ -860,13 +879,11 @@ header.m3e-app-bar {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  transition: transform 0.3s var(--ease-expressive-spring), border-color 0.25s, box-shadow 0.25s;
+  transition: border-color 0.25s var(--ease-expressive-standard);
 }
 
-.trilogy-tile:hover {
-  transform: translateY(-4px);
-  border-color: var(--md-sys-color-primary);
-  box-shadow: var(--elevation-1);
+@media (hover: hover) and (pointer: fine) {
+  .trilogy-tile:hover { border-color: var(--md-sys-color-primary); }
 }
 
 .tile-badge {
@@ -916,10 +933,12 @@ header.m3e-app-bar {
   transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s var(--ease-expressive-spring);
 }
 
-.tile-action-btn:hover {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  border-color: transparent;
+@media (hover: hover) and (pointer: fine) {
+  .tile-action-btn:hover {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border-color: transparent;
+  }
 }
 
 /* =========================================================
@@ -933,7 +952,7 @@ header.m3e-app-bar {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  transition: transform 0.3s var(--ease-expressive-spring), border-color 0.25s, box-shadow 0.25s;
+  transition: border-color 0.25s var(--ease-expressive-standard);
 }
 
 @media (min-width: 640px) {
@@ -944,9 +963,8 @@ header.m3e-app-bar {
   }
 }
 
-.tutorial-card:hover {
-  border-color: var(--md-sys-color-outline);
-  box-shadow: var(--elevation-1);
+@media (hover: hover) and (pointer: fine) {
+  .tutorial-card:hover { border-color: var(--md-sys-color-outline); }
 }
 
 .tutorial-left {
@@ -1105,6 +1123,100 @@ footer a:hover {
 .m3e-snackbar.active {
   transform: translate(-50%, 0);
 }
+
+/* =========================================================
+   MD3E PRESS EFFECT: shape morph + subtle ripple (no glow)
+   ========================================================= */
+.m3e-btn, .tile-action-btn, .m3e-chip, .m3e-action-btn, .lang-chip-btn {
+  transition-property: border-radius, transform, background-color, color, border-color, opacity, translate, scale;
+}
+.m3e-btn, .tile-action-btn {
+  transition-duration: 0.45s, 0.45s, 0.2s, 0.2s, 0.2s;
+  transition-timing-function: var(--ease-expressive-spring), var(--ease-expressive-spring), ease, ease, ease;
+}
+.m3e-chip {
+  transition-duration: 0.45s, 0.45s, 0.2s, 0.2s, 0.2s;
+  transition-timing-function: var(--ease-expressive-spring), var(--ease-expressive-spring), ease, ease, ease;
+}
+.m3e-action-btn {
+  transition-duration: 0.4s, 0.4s, 0.2s, 0.2s;
+  transition-timing-function: var(--ease-expressive-spring), var(--ease-expressive-spring), ease, ease;
+}
+.m3e-btn:active, .tile-action-btn:active { border-radius: 16px; transform: scale(0.97); }
+.m3e-chip.m3e-state:active { border-radius: 12px; transform: scale(0.96); }
+.m3e-action-btn:active { border-radius: 14px; transform: scale(0.94); }
+.lang-chip-btn:active { border-radius: 14px; scale: 0.95; }
+
+@media (prefers-reduced-motion: reduce) {
+  .curly-svg-loader, .nav-curly-rotator { animation-duration: 30s; }
+  * { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+}
+
+/* =========================================================
+   MD3E MOTION: reveal choreography, spring physics, shape morphs
+   ========================================================= */
+:root { transition: --h 0.6s var(--ease-expressive-standard); }
+
+.reveal:not(.in) { opacity: 0; }
+.reveal.in {
+  animation: m3e-fade 0.5s var(--ease-expressive-standard) var(--d, 0ms) both,
+             m3e-rise 0.9s var(--ease-expressive-spring) var(--d, 0ms) both;
+}
+@keyframes m3e-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes m3e-rise {
+  from { translate: 0 var(--ty, 30px); scale: 0.95; }
+  to   { translate: 0 0; scale: 1; }
+}
+
+/* Loader exit: curly circle swells and dissolves */
+.curly-loader-container {
+  transition: scale 0.5s var(--ease-expressive-emphasized), opacity 0.4s var(--ease-expressive-standard);
+}
+#m3eLoader.vanish .curly-loader-container { scale: 1.25; opacity: 0; }
+
+/* Capsule reacts to scroll */
+.m3e-capsule-nav {
+  transition: background-color 0.35s var(--ease-expressive-standard),
+              box-shadow 0.35s var(--ease-expressive-standard),
+              max-width 0.5s var(--ease-expressive-emphasized);
+}
+.m3e-capsule-nav.scrolled {
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 92%, transparent);
+  box-shadow: var(--elevation-3);
+  max-width: 560px;
+}
+
+/* Swatches: selected one morphs from squircle to circle */
+.monet-swatch {
+  transition: transform 0.35s var(--ease-expressive-spring), border-radius 0.4s var(--ease-expressive-spring), outline-offset 0.3s var(--ease-expressive-spring);
+}
+.monet-swatch.active { border-radius: 50%; }
+
+/* Switch: thumb stretches while pressed */
+.m3e-switch-thumb {
+  transition: transform 0.4s var(--ease-expressive-spring), width 0.3s var(--ease-expressive-spring),
+              height 0.3s var(--ease-expressive-spring), margin-top 0.3s var(--ease-expressive-spring),
+              background-color 0.2s;
+}
+.m3e-switch:active .m3e-switch-thumb { width: 28px; }
+.m3e-switch[aria-checked="true"]:active .m3e-switch-thumb { transform: translateX(12px); }
+
+/* Tiles and cards: gentle press response */
+.trilogy-tile, .tutorial-card, .bulk-inquiry-box, .pricing-expressive-card {
+  transition: border-color 0.3s var(--ease-expressive-standard), scale 0.4s var(--ease-expressive-spring);
+}
+.trilogy-tile:active, .tutorial-card:active { scale: 0.985; }
+
+/* Smooth theme / language cross-fade via View Transitions */
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: var(--ease-expressive-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal:not(.in) { opacity: 1; }
+  .reveal.in { animation: none; }
+}
 </style>
 </head>
 <body>
@@ -1112,25 +1224,19 @@ footer a:hover {
 <!-- SVG Definition for Scalloped Curly Squircle Shape -->
 <svg width="0" height="0" style="position: absolute;">
   <defs>
-    <path id="scallopShape" d="M50 0 C53.5 0 56.5 3.5 59.5 4.8 C62.8 6.2 66.8 5.6 69.8 7.7 C72.8 9.9 74.3 13.9 76.9 16.6 C79.4 19.3 83.4 20.8 85.5 23.9 C87.5 27 86.8 31 88.2 34.3 C89.5 37.4 93 40.4 93.5 43.9 C94 47.4 91.5 50.7 91.2 54.2 C90.8 57.7 92.5 61.5 91.3 64.9 C90.1 68.2 86.3 70.3 84.4 73.3 C82.4 76.4 82.5 80.6 79.9 83.2 C77.2 85.7 73 85.6 70 87.7 C66.9 89.6 64.7 93.3 61.4 94.6 C58 95.8 54.3 94 50.8 94.4 C47.3 94.8 43.9 97.4 40.4 96.9 C36.9 96.4 33.9 92.9 30.8 91.6 C27.5 90.2 23.5 90.8 20.5 88.7 C17.5 86.5 16 82.5 13.4 79.8 C10.9 77.1 6.9 75.6 4.8 72.5 C2.8 69.4 3.5 65.4 2.1 62.1 C0.8 59 -2.7 56 -3.2 52.5 C-3.7 49 -1.2 45.7 -0.9 42.2 C-0.5 38.7 -2.2 34.9 -1 31.5 C0.2 28.2 4 26.1 5.9 23.1 C7.9 20 7.8 15.8 10.4 13.2 C13.1 10.7 17.3 10.8 20.3 8.7 C23.4 6.8 25.6 3.1 28.9 1.8 C32.3 0.6 36 2.4 39.5 2 C43 1.6 46.5 -0.1 50 0 Z" transform="translate(4, 3) scale(1.05)"/>
+    <path id="scallopShape" d="M99.20 50.00 L98.98 51.28 L98.33 52.53 L97.32 53.72 L96.04 54.84 L94.62 55.87 L93.16 56.84 L91.82 57.75 L90.69 58.65 L89.87 59.57 L89.41 60.56 L89.32 61.65 L89.57 62.86 L90.09 64.20 L90.80 65.66 L91.57 67.22 L92.30 68.83 L92.84 70.44 L93.12 71.97 L93.06 73.38 L92.61 74.60 L91.77 75.60 L90.59 76.36 L89.12 76.89 L87.46 77.21 L85.70 77.39 L83.96 77.50 L82.34 77.62 L80.92 77.84 L79.74 78.23 L78.85 78.85 L78.23 79.74 L77.84 80.92 L77.62 82.34 L77.50 83.96 L77.39 85.70 L77.21 87.46 L76.89 89.12 L76.36 90.59 L75.60 91.77 L74.60 92.61 L73.38 93.06 L71.97 93.12 L70.44 92.84 L68.83 92.30 L67.22 91.57 L65.66 90.80 L64.20 90.09 L62.86 89.57 L61.65 89.32 L60.56 89.41 L59.57 89.87 L58.65 90.69 L57.75 91.82 L56.84 93.16 L55.87 94.62 L54.84 96.04 L53.72 97.32 L52.53 98.33 L51.28 98.98 L50.00 99.20 L48.72 98.98 L47.47 98.33 L46.28 97.32 L45.16 96.04 L44.13 94.62 L43.16 93.16 L42.25 91.82 L41.35 90.69 L40.43 89.87 L39.44 89.41 L38.35 89.32 L37.14 89.57 L35.80 90.09 L34.34 90.80 L32.78 91.57 L31.17 92.30 L29.56 92.84 L28.03 93.12 L26.62 93.06 L25.40 92.61 L24.40 91.77 L23.64 90.59 L23.11 89.12 L22.79 87.46 L22.61 85.70 L22.50 83.96 L22.38 82.34 L22.16 80.92 L21.77 79.74 L21.15 78.85 L20.26 78.23 L19.08 77.84 L17.66 77.62 L16.04 77.50 L14.30 77.39 L12.54 77.21 L10.88 76.89 L9.41 76.36 L8.23 75.60 L7.39 74.60 L6.94 73.38 L6.88 71.97 L7.16 70.44 L7.70 68.83 L8.43 67.22 L9.20 65.66 L9.91 64.20 L10.43 62.86 L10.68 61.65 L10.59 60.56 L10.13 59.57 L9.31 58.65 L8.18 57.75 L6.84 56.84 L5.38 55.87 L3.96 54.84 L2.68 53.72 L1.67 52.53 L1.02 51.28 L0.80 50.00 L1.02 48.72 L1.67 47.47 L2.68 46.28 L3.96 45.16 L5.38 44.13 L6.84 43.16 L8.18 42.25 L9.31 41.35 L10.13 40.43 L10.59 39.44 L10.68 38.35 L10.43 37.14 L9.91 35.80 L9.20 34.34 L8.43 32.78 L7.70 31.17 L7.16 29.56 L6.88 28.03 L6.94 26.62 L7.39 25.40 L8.23 24.40 L9.41 23.64 L10.88 23.11 L12.54 22.79 L14.30 22.61 L16.04 22.50 L17.66 22.38 L19.08 22.16 L20.26 21.77 L21.15 21.15 L21.77 20.26 L22.16 19.08 L22.38 17.66 L22.50 16.04 L22.61 14.30 L22.79 12.54 L23.11 10.88 L23.64 9.41 L24.40 8.23 L25.40 7.39 L26.62 6.94 L28.03 6.88 L29.56 7.16 L31.17 7.70 L32.78 8.43 L34.34 9.20 L35.80 9.91 L37.14 10.43 L38.35 10.68 L39.44 10.59 L40.43 10.13 L41.35 9.31 L42.25 8.18 L43.16 6.84 L44.13 5.38 L45.16 3.96 L46.28 2.68 L47.47 1.67 L48.72 1.02 L50.00 0.80 L51.28 1.02 L52.53 1.67 L53.72 2.68 L54.84 3.96 L55.87 5.38 L56.84 6.84 L57.75 8.18 L58.65 9.31 L59.57 10.13 L60.56 10.59 L61.65 10.68 L62.86 10.43 L64.20 9.91 L65.66 9.20 L67.22 8.43 L68.83 7.70 L70.44 7.16 L71.97 6.88 L73.38 6.94 L74.60 7.39 L75.60 8.23 L76.36 9.41 L76.89 10.88 L77.21 12.54 L77.39 14.30 L77.50 16.04 L77.62 17.66 L77.84 19.08 L78.23 20.26 L78.85 21.15 L79.74 21.77 L80.92 22.16 L82.34 22.38 L83.96 22.50 L85.70 22.61 L87.46 22.79 L89.12 23.11 L90.59 23.64 L91.77 24.40 L92.61 25.40 L93.06 26.62 L93.12 28.03 L92.84 29.56 L92.30 31.17 L91.57 32.78 L90.80 34.34 L90.09 35.80 L89.57 37.14 L89.32 38.35 L89.41 39.44 L89.87 40.43 L90.69 41.35 L91.82 42.25 L93.16 43.16 L94.62 44.13 L96.04 45.16 L97.32 46.28 L98.33 47.47 L98.98 48.72 Z"/>
   </defs>
 </svg>
 
-<!-- 1. MD3E Brown Scalloped Curly Loader Screen (Bot Icon Inside, No Text) -->
+<!-- 1. MD3E Brown Scalloped Curly Loader Screen (Android Icon Inside, No Text) -->
 <div id="m3eLoader" role="status" aria-live="polite">
   <div class="curly-loader-container">
-    <svg class="curly-svg-loader" viewBox="0 0 115 115">
+    <svg class="curly-svg-loader" viewBox="0 0 100 100">
       <use href="#scallopShape" fill="#59433b"/>
     </svg>
     <div class="curly-loader-icon">
-      <!-- Bot Icon Inside -->
-      <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="10" rx="3"></rect>
-        <circle cx="12" cy="5" r="2"></circle>
-        <path d="M12 7v4"></path>
-        <line x1="8" y1="16" x2="8" y2="16.01"></line>
-        <line x1="16" y1="16" x2="16" y2="16.01"></line>
-      </svg>
+      <!-- Android Icon Inside -->
+      <svg viewBox="0 0 24 24" width="46" height="46" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
     </div>
   </div>
 </div>
@@ -1142,19 +1248,13 @@ footer a:hover {
 <header class="m3e-app-bar">
   <div class="m3e-capsule-nav" id="capsuleNav">
     
-    <!-- Brand Title with Scalloped Rotating Curly Circle & Bot Icon -->
+    <!-- Brand Title with Scalloped Rotating Curly Circle & Android Icon -->
     <a href="#hero" class="brand-deck" id="navBrand">
       <div class="nav-curly-badge">
-        <svg class="nav-curly-rotator" viewBox="0 0 115 115">
+        <svg class="nav-curly-rotator" viewBox="0 0 100 100">
           <use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/>
         </svg>
-        <svg class="nav-curly-bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="10" rx="3"></rect>
-          <circle cx="12" cy="5" r="2"></circle>
-          <path d="M12 7v4"></path>
-          <line x1="8" y1="16" x2="8" y2="16.01"></line>
-          <line x1="16" y1="16" x2="16" y2="16.01"></line>
-        </svg>
+        <svg class="nav-curly-bot" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
       </div>
       <span class="brand-label">Replica</span>
     </a>
@@ -1180,10 +1280,10 @@ footer a:hover {
     </div>
 
     <!-- 3. Inline Smooth Language Tray (Only 3 languages, no back button, smooth animated transition) -->
-    <div class="lang-morph-tray hidden" id="langTray">
-      <button class="lang-chip-btn m3e-state" data-lang="en">English</button>
-      <button class="lang-chip-btn m3e-state" data-lang="uk">Українська</button>
-      <button class="lang-chip-btn m3e-state" data-lang="ru">Русский</button>
+    <div class="lang-morph-tray" id="langTray" aria-hidden="true">
+      <button class="lang-chip-btn m3e-state" data-lang="en" style="--i:0">English</button>
+      <button class="lang-chip-btn m3e-state" data-lang="uk" style="--i:1">Українська</button>
+      <button class="lang-chip-btn m3e-state" data-lang="ru" style="--i:2">Русский</button>
     </div>
 
     <!-- MD3E Dynamic Monet Hue Picker -->
@@ -1205,12 +1305,6 @@ footer a:hover {
 <main class="wrapper">
   <!-- HERO SECTION -->
   <section class="hero-box" id="hero">
-    <div class="status-badge">
-      <svg class="status-rotator" viewBox="0 0 24 24" fill="currentColor">
-        <polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/>
-      </svg>
-      <span data-i="heroBadge">SMM Kingdom Tasks Automation</span>
-    </div>
 
     <h1 class="hero-heading" data-i="heroTitle">
       Instagram tasks, <br><span class="hero-highlight">on autopilot.</span>
@@ -1265,7 +1359,7 @@ footer a:hover {
     </div>
 
     <div class="m3e-expandable" id="protectExpandable">
-      <button class="expandable-trigger m3e-state" id="protectToggleBtn" aria-expanded="false" aria-controls="protectPanel">
+      <button class="expandable-trigger" id="protectToggleBtn" aria-expanded="false" aria-controls="protectPanel">
         <div class="expandable-left">
           <div class="sym-shape-frame">
             <svg class="sym-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1680,6 +1774,12 @@ function applyHue(newHue) {
   });
 }
 
+function withTransition(fn) {
+  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.startViewTransition(fn);
+  } else fn();
+}
+
 function applyMode(newMode) {
   mode = newMode;
   document.documentElement.setAttribute('data-mode', mode);
@@ -1697,7 +1797,7 @@ function applyI18n() {
   });
 
   $('#protectStepRows').innerHTML = dict.st1Steps.map((txt, i) => `
-    <div class="step-point">
+    <div class="step-point" style="--i:${i}">
       <div class="point-number">${i + 1}</div>
       <div>${txt}</div>
     </div>
@@ -1709,19 +1809,68 @@ function applyI18n() {
 }
 
 function setLangTrayVisible(show) {
-  const brand = $('#navBrand');
-  const actions = $('#navActions');
-  const tray = $('#langTray');
+  const nav = $('#capsuleNav');
+  if (nav.classList.contains('lang-open') === show) return;
+  nav.classList.toggle('lang-open', show);
+  $('#langTray').setAttribute('aria-hidden', String(!show));
+  $('#btnLangToggle').setAttribute('aria-expanded', String(show));
+}
 
-  if (show) {
-    brand.style.display = 'none';
-    actions.style.display = 'none';
-    tray.classList.remove('hidden');
-  } else {
-    tray.classList.add('hidden');
-    brand.style.display = 'flex';
-    actions.style.display = 'flex';
-  }
+
+/* =========================================================
+   REVEAL CHOREOGRAPHY + SCROLL-AWARE NAV
+   ========================================================= */
+function setupMotion() {
+  const nav = $('#capsuleNav');
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      nav.classList.toggle('scrolled', window.scrollY > 24);
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const groups = [
+    ['#capsuleNav', 0, '-26px'],
+    ['.hero-heading', 120], ['.hero-text', 220], ['.hero-button-group', 320], ['.chips-row', 420],
+    ['.step-section-header'], ['.m3e-expandable'], ['.trilogy-tile'],
+    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box'], ['footer']
+  ];
+  const targets = [];
+  groups.forEach(([sel, delay, ty]) => {
+    $$(sel).forEach((el, i) => {
+      el.classList.add('reveal');
+      el.dataset.d = (delay !== undefined ? delay : 0) + (sel === '.trilogy-tile' ? i * 90 : 0);
+      if (ty) el.style.setProperty('--ty', ty);
+      targets.push(el);
+    });
+  });
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target;
+      io.unobserve(el);
+      el.style.setProperty('--d', el.dataset.d + 'ms');
+      el.classList.add('in');
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+  document.addEventListener('animationend', e => {
+    if (e.animationName === 'm3e-rise' && e.target.classList.contains('reveal')) {
+      e.target.classList.remove('reveal', 'in');
+      e.target.style.removeProperty('--d');
+    }
+  });
+
+  // start once the loader begins leaving
+  setTimeout(() => targets.forEach(el => io.observe(el)), 1000);
 }
 
 function init() {
@@ -1742,6 +1891,8 @@ function init() {
   // Language selectors
   $('#btnLangToggle').addEventListener('click', e => {
     e.stopPropagation();
+    $('#monetSheet').classList.remove('show');
+    $('#btnThemeToggle').classList.remove('active-btn');
     setLangTrayVisible(true);
   });
 
@@ -1751,8 +1902,8 @@ function init() {
     if (!btn) return;
     lang = btn.dataset.lang;
     localStorage.setItem('replica_lang', lang);
-    applyI18n();
-    setTimeout(() => setLangTrayVisible(false), 220);
+    withTransition(applyI18n);
+    setTimeout(() => setLangTrayVisible(false), 320);
   });
 
   // Close language tray if tapping outside capsule nav
@@ -1773,6 +1924,7 @@ function init() {
 
   themeBtn.addEventListener('click', e => {
     e.stopPropagation();
+    setLangTrayVisible(false);
     const isOpen = themeSheet.classList.toggle('show');
     themeBtn.classList.toggle('active-btn', isOpen);
     themeBtn.setAttribute('aria-expanded', String(isOpen));
@@ -1787,7 +1939,7 @@ function init() {
   });
 
   $('#modeSwitch').addEventListener('click', () => {
-    applyMode(mode === 'dark' ? 'light' : 'dark');
+    withTransition(() => applyMode(mode === 'dark' ? 'light' : 'dark'));
   });
 
   // Smooth Expandable Play Protect Interaction
@@ -1809,6 +1961,7 @@ function init() {
   applyHue(hue);
   applyMode(mode);
   applyI18n();
+  setupMotion();
 
   // Dismiss loader with high-refresh smooth timing
   setTimeout(() => {
@@ -1817,11 +1970,10 @@ function init() {
       loader.classList.add('vanish');
       setTimeout(() => loader.remove(), 550);
     }
-  }, 500);
+  }, 900);
 }
 
 window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
-```
