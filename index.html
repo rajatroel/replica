@@ -2040,6 +2040,279 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   .vb:has(.vb-player.portrait) .vb-info:hover { border-radius: var(--r-hover) var(--r-xl) var(--r-hover) var(--r-hover); }
   .vb:has(.vb-player.portrait) .vb-help:hover { border-radius: var(--r-hover) var(--r-hover) var(--r-xl) var(--r-hover); }
 }
+
+
+/* =====================================================================
+   LICENSE + FOOTER REDESIGN — Material Design 3 Expressive
+   Scoped to #pricing and .site-footer; all other page components remain intact.
+   ===================================================================== */
+#pricing .lic { display: grid; gap: 6px; }
+#pricing .lic-price {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+  align-items: stretch;
+  gap: clamp(22px, 4vw, 36px);
+  padding: clamp(22px, 4.5vw, 42px);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 40px;
+  color: var(--md-sys-color-on-surface);
+  background:
+    radial-gradient(95% 115% at 0% 0%, color-mix(in oklch, var(--md-sys-color-primary-container) 78%, transparent), transparent 68%),
+    var(--md-sys-color-surface-container-low);
+  box-shadow: var(--edge-hi), var(--card-shadow);
+  transition: border-radius .55s var(--spring-fast-spatial), box-shadow .35s var(--ease-expressive-standard), border-color .25s ease;
+}
+#pricing .lic-price::after {
+  width: 270px; height: 270px; right: -112px; top: -126px;
+  background: var(--md-sys-color-primary-container); opacity: .45;
+}
+#pricing .license-main,
+#pricing .license-action-panel { position: relative; z-index: 1; min-width: 0; }
+#pricing .license-main { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
+#pricing .lic-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  min-height: 34px; padding: 4px 13px 4px 7px;
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-primary) 22%, transparent);
+  border-radius: 18px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-size: .74rem; line-height: 1.2; font-weight: 800; letter-spacing: .065em;
+}
+#pricing .lic-eyebrow-icon {
+  width: 24px; height: 24px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+}
+#pricing .lic-eyebrow-icon .ic { width: 14px; height: 14px; }
+#pricing .lic-card-title {
+  max-width: 16ch;
+  font-size: clamp(1.65rem, 3.8vw, 2.35rem);
+  line-height: 1.12; letter-spacing: -.04em; font-weight: 800;
+  text-wrap: balance;
+}
+#pricing .lic-card-copy {
+  max-width: 54ch; color: var(--md-sys-color-on-surface-variant);
+  font-size: .98rem; line-height: 1.65;
+}
+#pricing .lic-price-summary {
+  width: 100%; max-width: 470px; display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 3px; padding: 16px 18px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 24px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 90%, transparent);
+}
+#pricing .lic .pricing-sum { display: flex; align-items: baseline; flex-wrap: nowrap; gap: 3px; min-width: 0; }
+#pricing .lic .currency-sym { color: var(--md-sys-color-primary); font-size: 1.55rem; line-height: 1; font-weight: 800; margin: 0; }
+#pricing .lic .cost-num { color: var(--md-sys-color-on-surface); font-size: clamp(3.2rem, 7vw, 4.45rem); line-height: .9; letter-spacing: -.06em; font-weight: 800; }
+#pricing .lic .cadence-str { color: var(--md-sys-color-on-surface-variant); font-size: .95rem; font-weight: 700; opacity: 1; margin: 0 0 3px 3px; }
+#pricing .lic-chip {
+  min-height: 34px; height: auto; max-width: 100%; display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px; border-radius: 17px; border: 0;
+  background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);
+  font-size: .78rem; font-weight: 800; line-height: 1.3;
+}
+#pricing .lic-chip .ic { width: 16px; height: 16px; }
+#pricing .lic-feature-list {
+  width: 100%; display: grid; gap: 10px; list-style: none; padding: 2px 0 0; margin: 0;
+}
+#pricing .lic-feature-list li { display: flex; align-items: flex-start; gap: 10px; min-width: 0; font-size: .89rem; line-height: 1.45; font-weight: 650; color: var(--md-sys-color-on-surface-variant); }
+#pricing .lic-feature-icon {
+  width: 21px; height: 21px; flex: none; display: grid; place-items: center;
+  margin-top: -1px; border-radius: 8px;
+  color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container);
+}
+#pricing .lic-feature-icon .ic { width: 14px; height: 14px; stroke-width: 2.8; }
+#pricing .license-action-panel {
+  display: flex; flex-direction: column; justify-content: center; align-items: stretch;
+  gap: 15px; padding: clamp(16px, 2.6vw, 24px);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 30px;
+  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 92%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklch, white 5%, transparent);
+}
+#pricing .trial-callout {
+  display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: start; gap: 12px;
+  position: relative; padding: 16px 15px;
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-tertiary) 25%, transparent);
+  border-radius: 22px;
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+#pricing .trial-icon {
+  width: 46px; height: 46px; display: grid; place-items: center; border-radius: 17px;
+  background: var(--md-sys-color-tertiary); color: var(--md-sys-color-surface);
+}
+#pricing .trial-icon .ic { width: 23px; height: 23px; }
+#pricing .trial-copy { min-width: 0; padding-right: 2px; }
+#pricing .trial-copy h4 { margin: 1px 0 5px; font-size: 1rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.3; }
+#pricing .trial-copy p { font-size: .86rem; line-height: 1.55; opacity: .9; }
+#pricing .trial-badge {
+  grid-column: 2; justify-self: start; display: inline-flex; align-items: center; min-height: 25px;
+  padding: 3px 10px; margin-top: 1px; border-radius: 13px;
+  background: color-mix(in oklch, var(--md-sys-color-tertiary) 15%, transparent);
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-on-tertiary-container) 18%, transparent);
+  font-size: .69rem; font-weight: 850; letter-spacing: .06em;
+}
+#pricing .lic-cta {
+  width: 100%; min-height: 62px; height: auto; padding: 13px 18px;
+  display: flex; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 10px;
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-on-primary) 26%, var(--md-sys-color-primary));
+  border-radius: 24px; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+  font-size: .95rem; font-weight: 800; line-height: 1.35; text-align: center;
+  box-shadow: var(--edge-hi), var(--elevation-1);
+  transition: border-radius .38s var(--spring-fast-spatial), box-shadow .3s var(--spring-fast-effects), background-color .2s ease, translate .3s var(--ease-expressive-standard);
+}
+#pricing .lic-cta > span { min-width: 0; }
+#pricing .lic-cta .ic { width: 19px; height: 19px; flex: none; }
+#pricing .lic-cta .lic-cta-arrow { margin-left: auto; transition: translate .35s var(--spring-fast-spatial); }
+#pricing .license-action-note { color: var(--md-sys-color-on-surface-variant); font-size: .76rem; line-height: 1.45; text-align: center; }
+@media (hover: hover) and (pointer: fine) {
+  #pricing .lic-price:hover { border-color: color-mix(in oklch, var(--md-sys-color-primary) 42%, var(--line)); box-shadow: var(--edge-hi), var(--card-shadow-hover); }
+  #pricing .lic-cta:hover { border-radius: 18px; box-shadow: var(--edge-hi), var(--elevation-2); translate: 0 -1px; }
+  #pricing .lic-cta:hover .lic-cta-arrow { translate: 4px 0; }
+}
+#pricing .lic-cta:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 4px; }
+#pricing .multi {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 20px;
+  min-width: 0; margin: 0; padding: 18px 24px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 12px 12px 36px 36px;
+  background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface);
+  transition: border-radius .5s var(--spring-fast-spatial), background-color .25s ease;
+}
+#pricing .multi::after { width: 150px; height: 150px; left: -65px; bottom: -84px; opacity: .14; background: var(--md-sys-color-primary-container); }
+#pricing .multi-art { height: 58px; padding-right: 19px; }
+#pricing .dev { width: 51px; height: 51px; color: var(--md-sys-color-on-primary-container); }
+#pricing .dev svg:first-child { fill: var(--md-sys-color-primary-container); stroke: var(--md-sys-color-primary-container); }
+#pricing .dev .ic { width: 21px; height: 21px; }
+#pricing .pct { top: -4px; width: 27px; height: 27px; border-radius: 10px; font-size: .77rem; }
+#pricing .multi-text { min-width: 0; }
+#pricing .multi-text h3 { margin: 0 0 3px; font-size: 1rem; letter-spacing: -.02em; }
+#pricing .multi-text p { color: var(--md-sys-color-on-surface-variant); font-size: .85rem; line-height: 1.45; opacity: 1; }
+#pricing .multi-badge {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 6px 12px;
+  border-radius: 17px; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);
+  font-size: .74rem; font-weight: 800; line-height: 1.25; text-align: center;
+}
+@media (hover: hover) and (pointer: fine) {
+  #pricing .multi:hover { border-radius: 24px 24px 40px 40px; background: var(--md-sys-color-surface-container); }
+  #pricing .multi:hover .dev:nth-child(1) { rotate: -6deg; }
+  #pricing .multi:hover .dev:nth-child(3) { rotate: 6deg; }
+}
+@media (max-width: 720px) {
+  #pricing .lic-price { grid-template-columns: 1fr; gap: 22px; }
+  #pricing .lic-card-title { max-width: 22ch; }
+  #pricing .license-action-panel { padding: 16px; }
+  #pricing .multi { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: 17px 18px; }
+  #pricing .multi-badge { grid-column: 2; justify-self: start; }
+}
+@media (max-width: 420px) {
+  #pricing .lic-price { padding: 21px 17px; border-radius: 30px; }
+  #pricing .lic-price-summary { align-items: flex-start; flex-direction: column; }
+  #pricing .lic .cost-num { font-size: 3.7rem; }
+  #pricing .trial-callout { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; padding: 14px 12px; }
+  #pricing .trial-icon { width: 40px; height: 40px; border-radius: 14px; }
+  #pricing .lic-cta { min-height: 60px; padding: 12px 13px; gap: 8px; font-size: .88rem; }
+  #pricing .multi { grid-template-columns: 1fr; justify-items: start; }
+  #pricing .multi-art { margin-left: 3px; }
+  #pricing .multi-badge { grid-column: 1; }
+}
+
+/* Footer: three calm areas, clear contact routes, compact project metadata. */
+.site-footer {
+  position: relative; isolation: isolate; overflow: hidden;
+  margin-top: var(--sec-gap); padding: 38px 0 calc(24px + env(safe-area-inset-bottom, 0px));
+  border: 0; border-top: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 40px 40px 0 0;
+  background:
+    radial-gradient(80% 100% at 100% 0%, color-mix(in oklch, var(--md-sys-color-primary-container) 48%, transparent), transparent 74%),
+    var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+  text-align: left; font-weight: 600;
+}
+.site-footer::after {
+  content: ''; position: absolute; z-index: -1; width: 210px; height: 210px; right: -94px; top: -116px;
+  pointer-events: none; opacity: .16; background: var(--md-sys-color-primary);
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+  animation: m3eCurlySpin 70s linear infinite;
+}
+.site-footer .wrapper { display: block; }
+.ft-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr) minmax(0, .95fr); gap: clamp(18px, 3vw, 30px); align-items: start; }
+.ft-brand-block { display: grid; gap: 16px; align-content: start; }
+.ft-brand {
+  width: fit-content; max-width: 100%; display: inline-flex; align-items: center; gap: 12px;
+  color: inherit; text-decoration: none; border-radius: 20px;
+}
+.ft-brand .nav-curly-badge { width: 48px; height: 48px; }
+.ft-brand .nav-curly-bot { width: 26px; height: 26px; }
+.ft-brand-copy { min-width: 0; display: grid; gap: 2px; }
+.ft-name { font-size: 1.5rem; font-weight: 850; letter-spacing: -.04em; line-height: 1.1; }
+.ft-tagline { color: var(--md-sys-color-on-surface-variant); font-size: .78rem; line-height: 1.4; font-weight: 600; }
+.ft-group { min-width: 0; display: grid; align-content: start; gap: 10px; }
+.ft-heading { color: var(--md-sys-color-on-surface); font-size: .88rem; font-weight: 850; letter-spacing: .015em; }
+.ft-group-copy { max-width: 34ch; color: var(--md-sys-color-on-surface-variant); font-size: .8rem; line-height: 1.5; }
+.ft-social-links { display: grid; gap: 8px; }
+.ft-social-link {
+  min-width: 0; min-height: 58px; display: flex; align-items: center; gap: 11px; padding: 8px 11px;
+  border: 1px solid var(--md-sys-color-outline-variant); border-radius: 18px;
+  background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface);
+  text-decoration: none; transition: border-radius .38s var(--spring-fast-spatial), background-color .2s ease, border-color .2s ease, translate .25s var(--ease-expressive-standard);
+}
+.ft-social-icon { width: 36px; height: 36px; display: grid; place-items: center; flex: none; border-radius: 13px; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.ft-social-icon .ic { width: 18px; height: 18px; }
+.ft-social-copy { min-width: 0; display: grid; gap: 1px; }
+.ft-social-copy strong { font-size: .83rem; line-height: 1.2; font-weight: 800; }
+.ft-social-copy small { color: var(--md-sys-color-on-surface-variant); font-size: .7rem; line-height: 1.3; font-weight: 600; }
+.ft-social-arrow { width: 17px; height: 17px; margin-left: auto; flex: none; color: var(--md-sys-color-on-surface-variant); transition: translate .3s var(--spring-fast-spatial); }
+@media (hover: hover) and (pointer: fine) {
+  .ft-social-link:hover { border-color: var(--md-sys-color-primary); border-radius: 14px; background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); translate: 0 -1px; }
+  .ft-social-link:hover .ft-social-icon { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+  .ft-social-link:hover .ft-social-arrow { translate: 3px 0; color: currentColor; }
+}
+.ft-social-link:focus-visible, .ft-brand:focus-visible, .ft-links a:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 3px; }
+.ft-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ft-links .m3e-chip { width: 100%; min-width: 0; justify-content: flex-start; gap: 7px; padding-inline: 10px; height: 38px; border-radius: 15px; font-size: .76rem; }
+.ft-links .m3e-chip .ic { width: 17px; height: 17px; }
+.ft-bottom {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+  margin-top: 26px; padding-top: 17px; border-top: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface-variant); font-size: .78rem; line-height: 1.45;
+}
+.ft-meta { display: flex; flex-wrap: wrap; gap: 7px; }
+.ft-meta-chip {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 5px 11px;
+  border: 1px solid var(--md-sys-color-outline-variant); border-radius: 15px;
+  background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface-variant);
+  font-size: .72rem; font-weight: 750; white-space: nowrap;
+}
+.ft-meta-chip .ic { width: 15px; height: 15px; color: var(--md-sys-color-primary); }
+@media (max-width: 760px) {
+  .ft-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 18px; }
+  .ft-brand-block { grid-column: 1 / -1; }
+  .ft-contact { grid-column: 1; }
+  .ft-nav { grid-column: 2; }
+}
+@media (max-width: 520px) {
+  .site-footer { margin-top: 48px; padding-top: 30px; border-radius: 30px 30px 0 0; }
+  .ft-grid { grid-template-columns: 1fr; gap: 22px; }
+  .ft-brand-block, .ft-contact, .ft-nav { grid-column: 1; }
+  .ft-social-links { grid-template-columns: 1fr 1fr; }
+  .ft-social-link { padding: 8px; gap: 8px; }
+  .ft-social-icon { width: 32px; height: 32px; }
+  .ft-social-arrow { display: none; }
+  .ft-bottom { align-items: flex-start; flex-direction: column; margin-top: 22px; }
+}
+@media (max-width: 360px) {
+  .ft-social-links { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #pricing .lic-price, #pricing .multi, #pricing .lic-cta, .ft-social-link, .ft-social-arrow { transition: none !important; }
+  #pricing .lic-price::after, #pricing .multi::after, .site-footer::after { animation: none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -2138,6 +2411,9 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
     </symbol>
     <symbol id="icSend" viewBox="0 0 24 24">
       <path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6a.7.7 0 0 0-1 .64L2.4 9.5c0 .35.25.65.6.7L14 12 3 13.8a.72.72 0 0 0-.6.7l-.01 5.26a.7.7 0 0 0 1 .64Z"/>
+    </symbol>
+    <symbol id="icGithub" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.08c-3.1.68-3.76-1.31-3.76-1.31-.5-1.28-1.24-1.62-1.24-1.62-1.02-.7.08-.69.08-.69 1.12.08 1.71 1.15 1.71 1.15 1 .1.77 2.47 3.43 1.86.1-.72.4-1.21.72-1.49-2.48-.28-5.09-1.24-5.09-5.52 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.54.23 2.68.11 2.96.72.78 1.15 1.77 1.15 2.99 0 4.29-2.61 5.23-5.1 5.5.4.35.76 1.02.76 2.06V22c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/>
     </symbol>
   </defs>
 </svg>
@@ -2311,35 +2587,63 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
     </div>
 
     <div class="lic">
-      <div class="lic-price">
-        <div class="lic-top">
-          <span class="lic-chip"><svg class="ic"><use href="#icKey"/></svg><span data-i="priceDesc">One device per license</span></span>
-          <div class="pricing-sum">
-            <span class="currency-sym">$</span>
-            <span class="cost-num" id="costAmount">10</span>
-            <span class="cadence-str" data-i="priceCadence">/ month</span>
+      <article class="lic-price" aria-labelledby="licenseCardTitle">
+        <div class="license-main">
+          <div class="lic-eyebrow">
+            <span class="lic-eyebrow-icon" aria-hidden="true"><svg class="ic"><use href="#icKey"/></svg></span>
+            <span data-i="licenseKicker">DIRECT DEVELOPER LICENSING</span>
           </div>
-        </div>
-        <a class="m3e-btn filled m3e-state lic-cta" data-tg target="_blank" rel="noopener noreferrer">
-          <span data-i="btnGetLicense">Get a License</span><svg class="ic"><use href="#icArrowRight"/></svg>
-        </a>
-      </div>
-    </div>
+          <h3 class="lic-card-title" id="licenseCardTitle" data-i="licenseCardTitleText">A simple license, issued personally.</h3>
+          <p class="lic-card-copy" data-i="licenseDirectText">Licenses are issued directly by the developer. Get in touch to request your license and receive your activation details.</p>
 
-    <div class="multi">
-      <div class="multi-art" aria-hidden="true">
-        <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
-        <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
-        <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
-        <span class="pct">%</span>
-      </div>
-      <div class="multi-text">
-        <h3 data-i="bulkTitle">Need More Than One Device?</h3>
-        <p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p>
-      </div>
-      <a class="m3e-btn m3e-state multi-btn" data-tg target="_blank" rel="noopener noreferrer">
-        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
-      </a>
+          <div class="lic-price-summary">
+            <div class="pricing-sum" aria-label="$10 per month">
+              <span class="currency-sym">$</span>
+              <span class="cost-num" id="costAmount">10</span>
+              <span class="cadence-str" data-i="priceCadence">/ month</span>
+            </div>
+            <span class="lic-chip"><svg class="ic"><use href="#icPhone"/></svg><span data-i="priceDesc">One device per license</span></span>
+          </div>
+
+          <ul class="lic-feature-list" aria-label="License includes">
+            <li><span class="lic-feature-icon" aria-hidden="true"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></li>
+            <li><span class="lic-feature-icon" aria-hidden="true"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></li>
+            <li><span class="lic-feature-icon" aria-hidden="true"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature3">Direct support &amp; regular updates</span></li>
+          </ul>
+        </div>
+
+        <div class="license-action-panel">
+          <aside class="trial-callout" role="note" aria-labelledby="trialTitle">
+            <span class="trial-icon" aria-hidden="true"><svg class="ic"><use href="#icPlayCircle"/></svg></span>
+            <div class="trial-copy">
+              <h4 id="trialTitle" data-i="trialTitle">Try it before you pay</h4>
+              <p data-i="trialText">Request a free trial first. Test the features and make sure the workflow suits you before deciding to purchase a license.</p>
+            </div>
+            <span class="trial-badge" data-i="trialBadge">FREE TRIAL</span>
+          </aside>
+
+          <a class="m3e-btn filled m3e-state lic-cta" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer">
+            <svg class="ic" aria-hidden="true"><use href="#icSend"/></svg>
+            <span data-i="licenseCta">Contact Developer for Trial / License</span>
+            <svg class="ic lic-cta-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
+          </a>
+          <p class="license-action-note" data-i="licenseCtaNote">Opens a Telegram conversation with the developer. No payment is collected on this page.</p>
+        </div>
+      </article>
+
+      <aside class="multi" aria-label="Multi-device licensing">
+        <div class="multi-art" aria-hidden="true">
+          <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
+          <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
+          <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
+          <span class="pct">%</span>
+        </div>
+        <div class="multi-text">
+          <h3 data-i="bulkTitle">Need More Than One Device?</h3>
+          <p data-i="bulkSub">Ask the developer about multiple-device pricing and available discounts.</p>
+        </div>
+        <span class="multi-badge" data-i="multiBadge">Multi-device enquiries welcome</span>
+      </aside>
     </div>
   </section>
 
@@ -2371,29 +2675,56 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   </section>
 </main>
 
-<footer>
+<footer class="site-footer">
   <div class="wrapper">
-    <div class="ft-top">
-      <div class="ft-brand">
-        <div class="nav-curly-badge">
-          <svg class="nav-curly-rotator" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/></svg>
-          <svg class="nav-curly-bot"><use href="#icAndroid"/></svg>
-        </div>
-        <span class="ft-name">Replica</span>
+    <div class="ft-grid">
+      <div class="ft-brand-block">
+        <a class="ft-brand" href="#hero" aria-label="Replica — back to top">
+          <span class="nav-curly-badge" aria-hidden="true">
+            <svg class="nav-curly-rotator" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/></svg>
+            <svg class="nav-curly-bot"><use href="#icAndroid"/></svg>
+          </span>
+          <span class="ft-brand-copy">
+            <span class="ft-name">Replica</span>
+            <span class="ft-tagline" data-i="ftTagline">Automation tools for Android</span>
+          </span>
+        </a>
       </div>
-      <a class="m3e-btn filled m3e-state ft-cta" data-tg target="_blank" rel="noopener noreferrer">
-        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
-      </a>
+
+      <section class="ft-group" aria-labelledby="ftConnectHeading">
+        <h2 class="ft-heading" id="ftConnectHeading" data-i="ftConnectTitle">Connect</h2>
+        <p class="ft-group-copy" data-i="ftConnectText">Questions, trial requests and license enquiries go directly to the developer.</p>
+        <div class="ft-social-links">
+          <a class="ft-social-link m3e-state" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a free trial or license from the developer on Telegram">
+            <span class="ft-social-icon"><svg class="ic"><use href="#icSend"/></svg></span>
+            <span class="ft-social-copy"><strong>Telegram</strong><small data-i="ftTelegramSub">Developer contact</small></span>
+            <svg class="ic ft-social-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
+          </a>
+          <a class="ft-social-link m3e-state" href="https://github.com/rajatroel/replica" target="_blank" rel="noopener noreferrer" aria-label="Open the Replica project on GitHub">
+            <span class="ft-social-icon"><svg class="ic"><use href="#icGithub"/></svg></span>
+            <span class="ft-social-copy"><strong>GitHub</strong><small data-i="ftProjectSub">Project and releases</small></span>
+            <svg class="ic ft-social-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
+          </a>
+        </div>
+      </section>
+
+      <nav class="ft-group ft-nav" aria-label="Footer navigation">
+        <h2 class="ft-heading" data-i="ftNavTitle">Explore</h2>
+        <div class="ft-links">
+          <a href="#guide" class="m3e-chip m3e-state"><svg class="ic"><use href="#icTune"/></svg><span data-i="guideLbl">Setup Guide</span></a>
+          <a href="#video" class="m3e-chip m3e-state"><svg class="ic"><use href="#icPlayCircle"/></svg><span data-i="videoLbl">Video</span></a>
+          <a href="#pricing" class="m3e-chip m3e-state"><svg class="ic"><use href="#icKey"/></svg><span data-i="lblLicense">License</span></a>
+          <a href="#bugs" class="m3e-chip m3e-state"><svg class="ic"><use href="#icBug"/></svg><span data-i="lblSupport">Support</span></a>
+        </div>
+      </nav>
     </div>
-    <nav class="ft-links" aria-label="Footer">
-      <a href="#guide" class="m3e-chip m3e-state"><svg class="ic"><use href="#icTune"/></svg><span data-i="guideLbl">Setup Guide</span></a>
-      <a href="#video" class="m3e-chip m3e-state"><svg class="ic"><use href="#icPlayCircle"/></svg><span data-i="videoLbl">Video</span></a>
-      <a href="#pricing" class="m3e-chip m3e-state"><svg class="ic"><use href="#icKey"/></svg><span data-i="lblLicense">License</span></a>
-      <a href="#bugs" class="m3e-chip m3e-state"><svg class="ic"><use href="#icBug"/></svg><span data-i="lblSupport">Support</span></a>
-    </nav>
+
     <div class="ft-bottom">
       <p data-i="ftCopy">© Replica. All rights reserved.</p>
-      <span class="ft-badge"><svg class="ic"><use href="#icAndroid"/></svg>Android 11+</span>
+      <div class="ft-meta">
+        <span class="ft-meta-chip"><svg class="ic"><use href="#icAndroid"/></svg>Android 11+</span>
+        <span class="ft-meta-chip"><svg class="ic"><use href="#icKey"/></svg><span data-i="ftReleaseLabel">APK release v1.0</span></span>
+      </div>
     </div>
   </div>
 </footer>
@@ -2516,9 +2847,18 @@ const I18N = {
     btnWatchVideo: "Watch Video",
     apkComingSoon: "The Replica APK download link is coming soon",
     priceHead: "License Pricing",
-    priceSub: "A simple, affordable monthly license per device with continuous feature updates.",
+    priceSub: "A per-device license issued directly by the developer. Ask for a free trial and test Replica before you pay.",
     priceCadence: "/ month",
     priceDesc: "One device per license",
+    licenseKicker: "DIRECT DEVELOPER LICENSING",
+    licenseCardTitleText: "A simple license, issued personally.",
+    licenseDirectText: "Licenses are issued directly by the developer. Get in touch to request your license and receive your activation details.",
+    trialTitle: "Try it before you pay",
+    trialText: "Request a free trial first. Test the features and make sure the workflow suits you before deciding to purchase a license.",
+    trialBadge: "FREE TRIAL",
+    licenseCta: "Contact Developer for Trial / License",
+    licenseCtaNote: "Opens a Telegram conversation with the developer. No payment is collected on this page.",
+    multiBadge: "Multi-device enquiries welcome",
     btnGetLicense: "Get a License",
     feature1: "Automated Instagram tasks for SMM Kingdom",
     feature2: "Runs smoothly on Android 11+",
@@ -2533,7 +2873,14 @@ const I18N = {
     bug2Title: "Bug while running",
     bug2Desc: "If you face a bug while the automation is running, stop the automation, tap the Share button in the log window of the main automation screen, and send the log to the developer with a short description of what actually happened.",
     bugThanksTitle: "Thanks for visiting!", bugThanksSub: "Bugs are resolved promptly and efficiently.",
-    ftCopy: "© {y} Replica. All rights reserved."
+    ftCopy: "© {y} Replica. All rights reserved.",
+    ftTagline: "Automation tools for Android",
+    ftConnectTitle: "Connect",
+    ftConnectText: "Questions, trial requests and license enquiries go directly to the developer.",
+    ftTelegramSub: "Developer contact",
+    ftProjectSub: "Project and releases",
+    ftNavTitle: "Explore",
+    ftReleaseLabel: "APK release v1.0"
   },
   uk: {
     monetPaletteTitle: "Палітра кольорів",
@@ -2633,9 +2980,18 @@ const I18N = {
     btnWatchVideo: "Дивитися відео",
     apkComingSoon: "Посилання на Replica APK незабаром з'явиться",
     priceHead: "Вартість ліцензії",
-    priceSub: "Простий щомісячний тариф для одного пристрою з регулярними оновленнями.",
+    priceSub: "Ліцензію на один пристрій видає безпосередньо розробник. Спочатку попросіть пробний період і перевірте Replica.",
     priceCadence: "/ місяць",
     priceDesc: "Один пристрій на одну ліцензію",
+    licenseKicker: "ЛІЦЕНЗІЯ БЕЗПОСЕРЕДНЬО ВІД РОЗРОБНИКА",
+    licenseCardTitleText: "Проста ліцензія від розробника особисто.",
+    licenseDirectText: "Ліцензії видаються безпосередньо розробником. Напишіть, щоб запросити ліцензію та отримати дані для активації.",
+    trialTitle: "Спробуйте перед оплатою",
+    trialText: "Спочатку попросіть безкоштовний пробний період. Перевірте функції та переконайтеся, що автоматизація вам підходить, перш ніж купувати ліцензію.",
+    trialBadge: "БЕЗКОШТОВНО",
+    licenseCta: "Написати розробнику: пробний період / ліцензія",
+    licenseCtaNote: "Відкриється чат із розробником у Telegram. Оплата на цій сторінці не приймається.",
+    multiBadge: "Запити щодо кількох пристроїв вітаються",
     btnGetLicense: "Отримати ліцензію",
     feature1: "Автоматизація завдань Instagram для SMM Kingdom",
     feature2: "Працює плавно на Android 11+",
@@ -2650,7 +3006,14 @@ const I18N = {
     bug2Title: "Помилка під час роботи",
     bug2Desc: "Якщо під час роботи автоматизації виникла помилка, зупиніть її, натисніть кнопку «Поділитися» у вікні журналу на головному екрані автоматизації та надішліть журнал розробнику з коротким описом того, що сталося.",
     bugThanksTitle: "Дякуємо за візит!", bugThanksSub: "Помилки виправляються швидко та ефективно.",
-    ftCopy: "© {y} Replica. Усі права захищено."
+    ftCopy: "© {y} Replica. Усі права захищено.",
+    ftTagline: "Інструменти автоматизації для Android",
+    ftConnectTitle: "Зв’язок",
+    ftConnectText: "Запитання, пробний період і ліцензії можна обговорити безпосередньо з розробником.",
+    ftTelegramSub: "Зв’язок із розробником",
+    ftProjectSub: "Проєкт і релізи",
+    ftNavTitle: "Навігація",
+    ftReleaseLabel: "Реліз APK v1.0"
   },
   ru: {
     monetPaletteTitle: "Палитра цветов",
@@ -2750,9 +3113,18 @@ const I18N = {
     btnWatchVideo: "Смотреть видео",
     apkComingSoon: "Ссылка на Replica APK скоро появится",
     priceHead: "Стоимость лицензии",
-    priceSub: "Доступная ежемесячная лицензия на одно устройство с постоянной поддержкой.",
+    priceSub: "Лицензию на одно устройство выдает напрямую разработчик. Сначала запросите пробный период и проверьте Replica.",
     priceCadence: "/ месяц",
     priceDesc: "Одно устройство на лицензию",
+    licenseKicker: "ЛИЦЕНЗИЯ НАПРЯМУЮ ОТ РАЗРАБОТЧИКА",
+    licenseCardTitleText: "Простая лицензия лично от разработчика.",
+    licenseDirectText: "Лицензии выдаются напрямую разработчиком. Напишите ему, чтобы запросить лицензию и получить данные для активации.",
+    trialTitle: "Сначала попробуйте",
+    trialText: "Сначала запросите бесплатный пробный период. Проверьте функции и убедитесь, что автоматизация вам подходит, прежде чем покупать лицензию.",
+    trialBadge: "БЕСПЛАТНО",
+    licenseCta: "Связаться с разработчиком: пробный период / лицензия",
+    licenseCtaNote: "Откроется чат с разработчиком в Telegram. Оплата на этой странице не принимается.",
+    multiBadge: "Можно обсудить несколько устройств",
     btnGetLicense: "Получить лицензию",
     feature1: "Автоматизация Instagram для бота SMM Kingdom",
     feature2: "Плавная работа на Android 11+",
@@ -2767,7 +3139,14 @@ const I18N = {
     bug2Title: "Ошибка во время работы",
     bug2Desc: "Если во время работы автоматизации возникла ошибка, остановите её, нажмите кнопку «Поделиться» в окне журнала на главном экране автоматизации и отправьте журнал разработчику с кратким описанием того, что произошло.",
     bugThanksTitle: "Спасибо за визит!", bugThanksSub: "Ошибки исправляются быстро и эффективно.",
-    ftCopy: "© {y} Replica. Все права защищены."
+    ftCopy: "© {y} Replica. Все права защищены.",
+    ftTagline: "Инструменты автоматизации для Android",
+    ftConnectTitle: "Связаться",
+    ftConnectText: "Вопросы, пробный период и получение лицензии можно обсудить напрямую с разработчиком.",
+    ftTelegramSub: "Связь с разработчиком",
+    ftProjectSub: "Проект и релизы",
+    ftNavTitle: "Разделы",
+    ftReleaseLabel: "Релиз APK v1.0"
   }
 };
 
