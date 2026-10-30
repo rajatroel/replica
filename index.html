@@ -31,13 +31,13 @@
   --md-sys-color-primary-container: oklch(0.92 0.08 var(--h));
   --md-sys-color-on-primary-container: oklch(0.18 0.09 var(--h));
 
-  --md-sys-color-secondary: oklch(0.48 0.1 calc(var(--h) + 24));
-  --md-sys-color-secondary-container: oklch(0.92 0.06 calc(var(--h) + 24));
-  --md-sys-color-on-secondary-container: oklch(0.2 0.08 calc(var(--h) + 24));
+  --md-sys-color-secondary: oklch(0.48 0.1 var(--h));
+  --md-sys-color-secondary-container: oklch(0.92 0.06 var(--h));
+  --md-sys-color-on-secondary-container: oklch(0.2 0.08 var(--h));
 
-  --md-sys-color-tertiary: oklch(0.46 0.13 calc(var(--h) + 55));
-  --md-sys-color-tertiary-container: oklch(0.9 0.08 calc(var(--h) + 55));
-  --md-sys-color-on-tertiary-container: oklch(0.2 0.09 calc(var(--h) + 55));
+  --md-sys-color-tertiary: oklch(0.46 0.13 calc(var(--h) + 15));
+  --md-sys-color-tertiary-container: oklch(0.9 0.08 calc(var(--h) + 15));
+  --md-sys-color-on-tertiary-container: oklch(0.2 0.09 calc(var(--h) + 15));
 
   --md-sys-color-surface: oklch(0.985 0.005 var(--h));
   --md-sys-color-surface-dim: oklch(0.94 0.012 var(--h));
@@ -70,13 +70,13 @@
   --md-sys-color-primary-container: oklch(0.3 0.1 var(--h));
   --md-sys-color-on-primary-container: oklch(0.94 0.04 var(--h));
 
-  --md-sys-color-secondary: oklch(0.81 0.09 calc(var(--h) + 24));
-  --md-sys-color-secondary-container: oklch(0.28 0.06 calc(var(--h) + 24));
-  --md-sys-color-on-secondary-container: oklch(0.92 0.04 calc(var(--h) + 24));
+  --md-sys-color-secondary: oklch(0.81 0.09 var(--h));
+  --md-sys-color-secondary-container: oklch(0.28 0.06 var(--h));
+  --md-sys-color-on-secondary-container: oklch(0.92 0.04 var(--h));
 
-  --md-sys-color-tertiary: oklch(0.83 0.1 calc(var(--h) + 55));
-  --md-sys-color-tertiary-container: oklch(0.29 0.08 calc(var(--h) + 55));
-  --md-sys-color-on-tertiary-container: oklch(0.93 0.04 calc(var(--h) + 55));
+  --md-sys-color-tertiary: oklch(0.83 0.1 calc(var(--h) + 15));
+  --md-sys-color-tertiary-container: oklch(0.29 0.08 calc(var(--h) + 15));
+  --md-sys-color-on-tertiary-container: oklch(0.93 0.04 calc(var(--h) + 15));
 
   --md-sys-color-surface: oklch(0.12 0.01 var(--h));
   --md-sys-color-surface-dim: oklch(0.09 0.008 var(--h));
@@ -1089,8 +1089,8 @@ html[lang="ru"] .hero-heading { font-size: clamp(2rem, 8.2vw, 4.2rem); line-heig
 }
 :root[data-mode="dark"] {
   --md-sys-color-primary-container: oklch(0.32 0.1 var(--h));
-  --md-sys-color-secondary-container: oklch(0.31 0.065 calc(var(--h) + 24));
-  --md-sys-color-tertiary-container: oklch(0.31 0.075 calc(var(--h) + 55));
+  --md-sys-color-secondary-container: oklch(0.31 0.065 var(--h));
+  --md-sys-color-tertiary-container: oklch(0.31 0.075 calc(var(--h) + 15));
   --md-sys-color-surface: oklch(0.14 0.014 var(--h));
   --md-sys-color-surface-dim: oklch(0.11 0.012 var(--h));
   --md-sys-color-surface-container-lowest: oklch(0.1 0.01 var(--h));
@@ -1169,6 +1169,205 @@ header.m3e-app-bar { view-transition-name: appbar; }
               translate 0.6s cubic-bezier(0.2, 0, 0, 1) calc(var(--i) * 55ms + 140ms);
 }
 .expand-chevron { transition: transform 0.55s cubic-bezier(0.2, 0, 0, 1), scale 0.4s var(--spring-fast-spatial), border-radius 0.4s var(--spring-fast-spatial), background-color 0.3s, color 0.3s; }
+
+/* ===== MD3 EXPRESSIVE COLOR ROLES (consistent tonal palettes) =====
+   primary: hue h | secondary: same hue, low chroma | tertiary: hue + 60
+   neutral surfaces: same hue, very low chroma */
+:root {
+  --md-sys-color-primary: oklch(0.5 0.17 var(--h));
+  --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
+  --md-sys-color-primary-container: oklch(0.92 0.07 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.25 0.1 var(--h));
+
+  --md-sys-color-secondary: oklch(0.5 0.06 var(--h));
+  --md-sys-color-on-secondary: oklch(0.99 0.005 var(--h));
+  --md-sys-color-secondary-container: oklch(0.92 0.04 var(--h));
+  --md-sys-color-on-secondary-container: oklch(0.27 0.05 var(--h));
+
+  --md-sys-color-tertiary: oklch(0.5 0.09 calc(var(--h) + 15));
+  --md-sys-color-tertiary-container: oklch(0.91 0.07 calc(var(--h) + 15));
+  --md-sys-color-on-tertiary-container: oklch(0.27 0.07 calc(var(--h) + 15));
+
+  --md-sys-color-surface: oklch(0.985 0.006 var(--h));
+  --md-sys-color-surface-dim: oklch(0.9 0.01 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(1 0 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.97 0.008 var(--h));
+  --md-sys-color-surface-container: oklch(0.955 0.01 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.94 0.012 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.925 0.014 var(--h));
+  --md-sys-color-on-surface: oklch(0.2 0.015 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.45 0.02 var(--h));
+  --md-sys-color-outline: oklch(0.6 0.02 var(--h));
+  --md-sys-color-outline-variant: oklch(0.82 0.02 var(--h));
+}
+:root[data-mode="dark"] {
+  --md-sys-color-primary: oklch(0.82 0.12 var(--h));
+  --md-sys-color-on-primary: oklch(0.28 0.1 var(--h));
+  --md-sys-color-primary-container: oklch(0.4 0.12 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.92 0.05 var(--h));
+
+  --md-sys-color-secondary: oklch(0.82 0.05 var(--h));
+  --md-sys-color-on-secondary: oklch(0.3 0.04 var(--h));
+  --md-sys-color-secondary-container: oklch(0.38 0.05 var(--h));
+  --md-sys-color-on-secondary-container: oklch(0.9 0.04 var(--h));
+
+  --md-sys-color-tertiary: oklch(0.82 0.07 calc(var(--h) + 15));
+  --md-sys-color-tertiary-container: oklch(0.4 0.08 calc(var(--h) + 15));
+  --md-sys-color-on-tertiary-container: oklch(0.9 0.045 calc(var(--h) + 15));
+
+  --md-sys-color-surface: oklch(0.16 0.008 var(--h));
+  --md-sys-color-surface-dim: oklch(0.13 0.008 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(0.12 0.006 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.19 0.01 var(--h));
+  --md-sys-color-surface-container: oklch(0.215 0.012 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.25 0.014 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.285 0.016 var(--h));
+  --md-sys-color-on-surface: oklch(0.92 0.01 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.78 0.02 var(--h));
+  --md-sys-color-outline: oklch(0.6 0.02 var(--h));
+  --md-sys-color-outline-variant: oklch(0.4 0.02 var(--h));
+}
+.hero-highlight, .step-label { color: var(--md-sys-color-primary); }
+.step-label { color: var(--md-sys-color-on-secondary-container); }
+.price-note { color: var(--md-sys-color-primary); }
+.m3e-chip .ic { color: var(--md-sys-color-primary); }
+.tile-action-btn { color: var(--md-sys-color-on-secondary-container); }
+
+/* ===== ROTATING MD3E SHAPE BUTTON ===== */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.shape-fab {
+  position: relative; flex: none; width: 84px; height: 84px; display: grid; place-items: center;
+  color: var(--md-sys-color-on-primary); text-decoration: none; cursor: pointer;
+  transition: scale 0.45s var(--spring-fast-spatial);
+}
+.shape-fab-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  fill: var(--md-sys-color-primary);
+  stroke: color-mix(in oklch, var(--md-sys-color-on-primary) 35%, var(--md-sys-color-primary)); stroke-width: 0.8;
+  filter: drop-shadow(0 2px 6px rgb(0 0 0 / 0.25));
+  animation: m3eCurlySpin 14s linear infinite;
+  transition: fill 0.3s;
+}
+.shape-fab .ic { position: relative; width: 30px; height: 30px; transition: rotate 0.45s var(--spring-fast-spatial); }
+@media (hover: hover) and (pointer: fine) {
+  .shape-fab:hover { scale: 1.06; }
+  .shape-fab:hover .shape-fab-bg { animation-duration: 5s; }
+  .shape-fab:hover .ic { rotate: -12deg; }
+}
+.shape-fab.is-pressed { scale: 0.9; }
+.shape-fab.is-pressed .shape-fab-bg { animation-duration: 3s; }
+.bulk-inquiry-box, .bug-thanks { flex-wrap: nowrap; }
+.bulk-inquiry-box > div:first-child { min-width: 0; }
+@media (prefers-reduced-motion: reduce) { .shape-fab-bg { animation-duration: 60s; } }
+
+/* ===== SMOOTH LANGUAGE SWITCH: crossfade content, then fade the nav back ===== */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.6s; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+.m3e-capsule-nav:not(.lang-open) .lang-morph-tray { transition: opacity 0.25s ease, visibility 0s 0.25s; }
+.m3e-capsule-nav:not(.lang-open) .brand-deck,
+.m3e-capsule-nav:not(.lang-open) .actions-cluster { transition: opacity 0.4s ease 0.2s, visibility 0s; }
+.m3e-capsule-nav.lang-open .lang-morph-tray { transition: opacity 0.35s ease 0.2s, visibility 0s; }
+
+/* ===== SINGLE-HUE PALETTE: every role is the same hue, so nothing clashes ===== */
+:root {
+  --md-sys-color-primary: oklch(0.5 0.15 var(--h));
+  --md-sys-color-on-primary: oklch(0.99 0.01 var(--h));
+  /* one container tint shared by primary / secondary / tertiary */
+  --md-sys-color-primary-container: oklch(0.92 0.06 var(--h));
+  --md-sys-color-secondary-container: oklch(0.92 0.06 var(--h));
+  --md-sys-color-tertiary-container: oklch(0.92 0.06 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.26 0.08 var(--h));
+  --md-sys-color-on-secondary-container: oklch(0.26 0.08 var(--h));
+  --md-sys-color-on-tertiary-container: oklch(0.26 0.08 var(--h));
+  --md-sys-color-secondary: var(--md-sys-color-primary);
+  --md-sys-color-tertiary: var(--md-sys-color-primary);
+
+  /* neutrals carry the same hue visibly */
+  --md-sys-color-surface: oklch(0.985 0.012 var(--h));
+  --md-sys-color-surface-dim: oklch(0.9 0.02 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(0.995 0.006 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.97 0.018 var(--h));
+  --md-sys-color-surface-container: oklch(0.955 0.024 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.94 0.028 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.925 0.032 var(--h));
+  --md-sys-color-on-surface: oklch(0.2 0.02 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.45 0.035 var(--h));
+  --md-sys-color-outline: oklch(0.6 0.045 var(--h));
+  --md-sys-color-outline-variant: oklch(0.82 0.04 var(--h));
+
+  --elevation-1: 0 1px 2px oklch(0.25 0.05 var(--h) / 0.16), 0 1px 3px 1px oklch(0.25 0.05 var(--h) / 0.1);
+  --elevation-2: 0 2px 6px 2px oklch(0.25 0.05 var(--h) / 0.12), 0 1px 2px oklch(0.25 0.05 var(--h) / 0.16);
+  --elevation-3: 0 4px 8px 3px oklch(0.25 0.05 var(--h) / 0.12), 0 1px 3px oklch(0.25 0.05 var(--h) / 0.2);
+  --card-shadow: 0 1px 2px oklch(0.25 0.05 var(--h) / 0.1), 0 3px 10px oklch(0.25 0.05 var(--h) / 0.08);
+  --card-shadow-hover: 0 2px 4px oklch(0.25 0.05 var(--h) / 0.12), 0 10px 24px oklch(0.25 0.05 var(--h) / 0.14);
+}
+:root[data-mode="dark"] {
+  --md-sys-color-primary: oklch(0.82 0.12 var(--h));
+  --md-sys-color-on-primary: oklch(0.28 0.08 var(--h));
+  --md-sys-color-primary-container: oklch(0.38 0.08 var(--h));
+  --md-sys-color-secondary-container: oklch(0.38 0.08 var(--h));
+  --md-sys-color-tertiary-container: oklch(0.38 0.08 var(--h));
+  --md-sys-color-on-primary-container: oklch(0.92 0.05 var(--h));
+  --md-sys-color-on-secondary-container: oklch(0.92 0.05 var(--h));
+  --md-sys-color-on-tertiary-container: oklch(0.92 0.05 var(--h));
+
+  --md-sys-color-surface: oklch(0.16 0.016 var(--h));
+  --md-sys-color-surface-dim: oklch(0.13 0.014 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(0.12 0.012 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.19 0.02 var(--h));
+  --md-sys-color-surface-container: oklch(0.215 0.026 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.25 0.03 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.285 0.034 var(--h));
+  --md-sys-color-on-surface: oklch(0.93 0.015 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.78 0.035 var(--h));
+  --md-sys-color-outline: oklch(0.6 0.045 var(--h));
+  --md-sys-color-outline-variant: oklch(0.4 0.04 var(--h));
+
+  --elevation-1: 0 1px 2px oklch(0.05 0.02 var(--h) / 0.6), 0 1px 3px 1px oklch(0.05 0.02 var(--h) / 0.4);
+  --elevation-2: 0 2px 6px 2px oklch(0.05 0.02 var(--h) / 0.45), 0 1px 2px oklch(0.05 0.02 var(--h) / 0.6);
+  --elevation-3: 0 4px 8px 3px oklch(0.05 0.02 var(--h) / 0.5), 0 1px 3px oklch(0.05 0.02 var(--h) / 0.6);
+  --card-shadow: 0 1px 2px oklch(0.05 0.02 var(--h) / 0.55), 0 4px 14px oklch(0.05 0.02 var(--h) / 0.4);
+  --card-shadow-hover: 0 2px 4px oklch(0.05 0.02 var(--h) / 0.6), 0 12px 28px oklch(0.05 0.02 var(--h) / 0.5);
+}
+/* make every container-type element read from the same tokens */
+.tile-badge, .step-label, .sym-shape-frame, .sym-shape-frame.alt, .sym-shape-frame.tertiary {
+  --fr-bg: var(--md-sys-color-primary-container);
+}
+.tile-badge, .step-label { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+.m3e-btn.tonal, .tile-action-btn { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); border-color: color-mix(in oklch, var(--md-sys-color-primary) 40%, var(--md-sys-color-primary-container)); }
+.m3e-chip, .m3e-action-btn.active-btn { background: var(--md-sys-color-surface-container-high); }
+.m3e-action-btn.active-btn { background: var(--md-sys-color-primary-container); }
+
+/* ===== INLINE LANGUAGE SWITCH (in the main bar, before the theme button) ===== */
+.m3e-capsule-nav, .m3e-capsule-nav.scrolled { padding-right: 8px; }
+.actions-cluster { gap: 6px; }
+.m3e-action-btn { width: 40px; height: 40px; border-radius: 20px; }
+.lang-seg {
+  --idx: 0;
+  position: relative; display: flex; height: 40px; padding: 3px; border-radius: 20px;
+  background: var(--md-sys-color-surface-container-highest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+.lang-seg-ind {
+  position: absolute; top: 3px; bottom: 3px; left: 3px; width: 32px; border-radius: 17px;
+  background: var(--md-sys-color-primary); box-shadow: var(--elevation-1);
+  translate: calc(var(--idx) * 100%) 0;
+  transition: translate 0.55s var(--spring-default-spatial);
+}
+.lang-seg-btn {
+  position: relative; z-index: 1; width: 32px; border: 0; background: transparent; cursor: pointer;
+  font: inherit; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.02em;
+  color: var(--md-sys-color-on-surface-variant); border-radius: 17px;
+  transition: color 0.3s var(--ease-smooth), scale 0.4s var(--spring-fast-spatial);
+}
+.lang-seg-btn.active { color: var(--md-sys-color-on-primary); }
+.lang-seg-btn.is-pressed { scale: 0.88; }
+@media (hover: hover) and (pointer: fine) {
+  .lang-seg-btn:not(.active):hover { color: var(--md-sys-color-on-surface); }
+}
+@media (max-width: 360px) {
+  .brand-label { font-size: 1.1rem; }
+  .brand-deck { gap: 8px; }
+}
 </style>
 </head>
 <body>
@@ -1287,23 +1486,17 @@ header.m3e-app-bar { view-transition-name: appbar; }
       </a>
 
       <div class="actions-cluster" id="navActions">
-        <button class="m3e-action-btn m3e-state" id="btnLangToggle" aria-label="Language" aria-expanded="false">
-          <svg class="ic"><use href="#icTranslate"/></svg>
-        </button>
+        <div class="lang-seg" id="langSeg" role="radiogroup" aria-label="Language">
+          <span class="lang-seg-ind" aria-hidden="true"></span>
+          <button class="lang-seg-btn" role="radio" data-lang="en" aria-label="English" title="English">EN</button>
+          <button class="lang-seg-btn" role="radio" data-lang="uk" aria-label="Українська" title="Українська">UA</button>
+          <button class="lang-seg-btn" role="radio" data-lang="ru" aria-label="Русский" title="Русский">RU</button>
+        </div>
         <button class="m3e-action-btn m3e-state" id="btnThemeToggle" aria-label="Theme colors" aria-haspopup="true" aria-expanded="false">
           <svg class="ic"><use href="#icPalette"/></svg>
         </button>
       </div>
 
-      <!-- Language slider -->
-      <div class="lang-morph-tray" id="langTray" aria-hidden="true">
-        <div class="lang-track" id="langTrack" role="radiogroup" aria-label="Language">
-          <span class="lang-indicator" aria-hidden="true"></span>
-          <button class="lang-chip-btn" role="radio" data-lang="en">English</button>
-          <button class="lang-chip-btn" role="radio" data-lang="uk">Українська</button>
-          <button class="lang-chip-btn" role="radio" data-lang="ru">Русский</button>
-        </div>
-      </div>
     </div>
 
     <div class="monet-sheet" id="monetSheet">
@@ -1472,8 +1665,10 @@ header.m3e-app-bar { view-transition-name: appbar; }
         <h3 data-i="bulkTitle">Need More Than One Device?</h3>
         <p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p>
       </div>
-      <a class="m3e-btn tonal m3e-state" data-tg target="_blank" rel="noopener noreferrer">
-        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+      <a class="shape-fab" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="shape-fab-bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#scallopShape"/></svg>
+        <svg class="ic"><use href="#icSend"/></svg>
+        <span class="sr-only" data-i="btnBulk">Contact Developer</span>
       </a>
     </div>
   </section>
@@ -1503,8 +1698,10 @@ header.m3e-app-bar { view-transition-name: appbar; }
         <h3 data-i="bugThanksTitle">Thanks for visiting!</h3>
         <p data-i="bugThanksSub">Bugs are resolved promptly and efficiently.</p>
       </div>
-      <a class="m3e-btn tonal m3e-state" data-tg target="_blank" rel="noopener noreferrer">
-        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+      <a class="shape-fab" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="shape-fab-bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#scallopShape"/></svg>
+        <svg class="ic"><use href="#icSend"/></svg>
+        <span class="sr-only" data-i="btnBulk">Contact Developer</span>
       </a>
     </div>
   </section>
@@ -1750,7 +1947,7 @@ function haptic(kind = 'tap') {
 
 /* PRESS EFFECT: touch presses show only after a short hold and are cancelled
    as soon as the finger moves (scrolling) or the browser takes over the gesture */
-const PRESS_SEL = '.m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
+const PRESS_SEL = '.lang-seg-btn, .shape-fab, .m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
 const MIN_PRESS_MS = 160;
 let pend = null;
 
@@ -1837,8 +2034,8 @@ function applyMode(newMode) {
 
 /* LANGUAGE */
 function markActiveLang() {
-  $('#langTrack').style.setProperty('--idx', LANGS.indexOf(lang));
-  $$('#langTrack [data-lang]').forEach(btn => {
+  $('#langSeg').style.setProperty('--idx', LANGS.indexOf(lang));
+  $$('#langSeg [data-lang]').forEach(btn => {
     const on = btn.dataset.lang === lang;
     btn.classList.toggle('active', on);
     btn.setAttribute('aria-checked', String(on));
@@ -1876,14 +2073,6 @@ async function slideSwap() {
   blocks.forEach(el => el.animate([{ opacity: 0 }, { opacity: 1 }],
     { duration: 260, easing: 'ease-in', fill: 'backwards' }));
   outs.forEach(a => a.cancel());
-}
-
-function setLangTrayVisible(show) {
-  const nav = $('#capsuleNav');
-  if (nav.classList.contains('lang-open') === show) return;
-  nav.classList.toggle('lang-open', show);
-  $('#langTray').setAttribute('aria-hidden', String(!show));
-  $('#btnLangToggle').setAttribute('aria-expanded', String(show));
 }
 
 function closeThemeSheet() {
@@ -1948,75 +2137,21 @@ function setupMotion() {
 let langBusy = false;
 
 async function selectLang(next) {
-  if (langBusy) return;
-  if (next === lang) {
-    haptic('tick');
-    markActiveLang();
-    await sleep(160);
-    setLangTrayVisible(false);
-    return;
-  }
+  if (langBusy || next === lang) return;
   langBusy = true;
   haptic('select');
   lang = next;
   store.set('replica_lang', lang);
-  markActiveLang();
-  await sleep(120);
-  await slideSwap();
-  await sleep(140);
-  setLangTrayVisible(false);
-  haptic('close');
+  markActiveLang();              // indicator springs to the new language
+  await sleep(200);
+  await slideSwap();             // page crossfades to the new text
   langBusy = false;
 }
 
-function setupLangSlider() {
-  const track = $('#langTrack');
-  let dragging = false, lastIdx = -1;
-
-  const geom = () => {
-    const r = track.getBoundingClientRect();
-    return { left: r.left + 4, w: (r.width - 8) / 3 };
-  };
-  const posAt = x => {
-    const g = geom();
-    return Math.max(0, Math.min(2, (x - g.left) / g.w - 0.5));
-  };
-
-  track.addEventListener('pointerdown', e => {
-    if (langBusy) return;
-    dragging = true;
-    try { track.setPointerCapture(e.pointerId); } catch (_) {}
-    track.classList.add('dragging');
-    const p = posAt(e.clientX);
-    lastIdx = Math.round(p);
-    track.style.setProperty('--idx', p);
-  });
-  track.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    const p = posAt(e.clientX);
-    track.style.setProperty('--idx', p);
-    const idx = Math.round(p);
-    if (idx !== lastIdx) { lastIdx = idx; haptic('tick'); }
-  });
-  const finish = e => {
-    if (!dragging) return;
-    dragging = false;
-    track.classList.remove('dragging');
-    const idx = Math.round(posAt(e.clientX));
-    track.style.setProperty('--idx', idx);
-    selectLang(LANGS[idx]);
-  };
-  track.addEventListener('pointerup', finish);
-  track.addEventListener('pointercancel', () => {
-    dragging = false;
-    track.classList.remove('dragging');
-    markActiveLang();
-  });
-
-  /* keyboard access */
-  track.addEventListener('click', e => {
+function setupLangSwitch() {
+  $('#langSeg').addEventListener('click', e => {
     const btn = e.target.closest('[data-lang]');
-    if (btn && e.detail === 0) selectLang(btn.dataset.lang);
+    if (btn) selectLang(btn.dataset.lang);
   });
 }
 
@@ -2031,21 +2166,13 @@ function init() {
             style="background: oklch(0.68 0.16 ${item.hue})"></button>
   `).join('');
 
-  $('#btnLangToggle').addEventListener('click', e => {
-    e.stopPropagation();
-    haptic('open');
-    closeThemeSheet();
-    setLangTrayVisible(true);
-  });
-
-  setupLangSlider();
+  setupLangSwitch();
 
   document.addEventListener('click', e => {
-    if (!e.target.closest('#capsuleNav') && !langBusy) setLangTrayVisible(false);
     if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) closeThemeSheet();
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { setLangTrayVisible(false); closeThemeSheet(); }
+    if (e.key === 'Escape') closeThemeSheet();
   });
 
   $('#swatchGrid').addEventListener('click', e => {
@@ -2059,7 +2186,6 @@ function init() {
   themeBtn.addEventListener('click', e => {
     e.stopPropagation();
     haptic('open');
-    setLangTrayVisible(false);
     const isOpen = $('#monetSheet').classList.toggle('show');
     themeBtn.classList.toggle('active-btn', isOpen);
     themeBtn.setAttribute('aria-expanded', String(isOpen));
