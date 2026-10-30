@@ -1047,6 +1047,29 @@ html[lang="ru"] .hero-heading { font-size: clamp(2rem, 8.2vw, 4.2rem); line-heig
 .pricing-expressive-card .currency-sym { color: var(--md-sys-color-on-primary-container); }
 .pricing-expressive-card .perk-check { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
 .pricing-expressive-card .m3e-btn.filled { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+
+/* ===== FADE-ONLY LANGUAGE TRAY ===== */
+.brand-deck, .actions-cluster { transition: opacity 0.2s ease, visibility 0s; }
+.m3e-capsule-nav.lang-open .brand-deck,
+.m3e-capsule-nav.lang-open .actions-cluster {
+  opacity: 0; translate: none; scale: none; visibility: hidden; pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0s 0.2s;
+}
+.lang-morph-tray { translate: none; scale: none; transition: opacity 0.2s ease, visibility 0s 0.2s; }
+.m3e-capsule-nav.lang-open .lang-morph-tray {
+  translate: none; scale: none; transition: opacity 0.25s ease 0.12s, visibility 0s;
+}
+
+/* ===== REPORT BUGS ===== */
+.bug-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 768px) { .bug-grid { grid-template-columns: repeat(2, 1fr); } }
+.bug-card {
+  background: var(--md-sys-color-surface-container-low); border-radius: 32px; padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.bug-card h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.025em; margin-top: 6px; }
+.bug-card p { color: var(--md-sys-color-on-surface-variant); font-size: 0.95rem; line-height: 1.55; }
+.bug-thanks { margin-top: 18px; }
 </style>
 </head>
 <body>
@@ -1115,6 +1138,12 @@ html[lang="ru"] .hero-heading { font-size: clamp(2rem, 8.2vw, 4.2rem); line-heig
     <symbol id="icMoon" viewBox="0 0 24 24">
       <path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8C12.92 3.04 12.46 3 12 3Z"/>
     </symbol>
+    <symbol id="icBug" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="7.5" y="8" width="9" height="12" rx="4.5"/>
+        <path d="M9.5 8a2.5 2.5 0 0 1 5 0M7.5 13H4M16.5 13H20M8 17l-3 2M16 17l3 2M8 10 5 8M16 10l3-2M12 11v5"/>
+      </g>
+    </symbol>
     <symbol id="icSend" viewBox="0 0 24 24">
       <path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6a.7.7 0 0 0-1 .64L2.4 9.5c0 .35.25.65.6.7L14 12 3 13.8a.72.72 0 0 0-.6.7l-.01 5.26a.7.7 0 0 0 1 .64Z"/>
     </symbol>
@@ -1181,12 +1210,6 @@ html[lang="ru"] .hero-heading { font-size: clamp(2rem, 8.2vw, 4.2rem); line-heig
     <div class="monet-sheet" id="monetSheet">
       <div class="sheet-title" data-i="monetPaletteTitle">Monet Color Hues</div>
       <div class="swatch-grid" id="swatchGrid"></div>
-      <div class="dark-mode-row">
-        <span><svg class="ic"><use href="#icMoon"/></svg><span data-i="darkThemeLabel">Dark Theme</span></span>
-        <button class="m3e-switch" id="modeSwitch" role="switch" aria-checked="true" aria-label="Toggle dark mode">
-          <span class="m3e-switch-thumb"><svg class="ic"><use href="#icCheck"/></svg></span>
-        </button>
-      </div>
     </div>
   </div>
 </header>
@@ -1355,6 +1378,37 @@ html[lang="ru"] .hero-heading { font-size: clamp(2rem, 8.2vw, 4.2rem); line-heig
       </a>
     </div>
   </section>
+  <!-- REPORT BUGS -->
+  <section id="bugs">
+    <div class="step-section-header">
+      <span class="step-label" data-i="lblSupport">Support</span>
+      <h2 class="step-headline" data-i="bugHead">Report Bugs</h2>
+      <p class="step-summary" data-i="bugSub">Found a problem? Send it to the developer and it will be fixed promptly.</p>
+    </div>
+
+    <div class="bug-grid">
+      <article class="bug-card">
+        <div class="sym-shape-frame tertiary"><svg class="ic"><use href="#icTune"/></svg></div>
+        <h3 data-i="bug1Title">Problem during setup</h3>
+        <p data-i="bug1Desc">If you encounter any problem while setting up the automation, report it directly to the developer with a short description.</p>
+      </article>
+      <article class="bug-card">
+        <div class="sym-shape-frame alt"><svg class="ic"><use href="#icBug"/></svg></div>
+        <h3 data-i="bug2Title">Bug while running</h3>
+        <p data-i="bug2Desc">If you face a bug while the automation is running, stop the automation, tap the Share button in the log window of the main automation screen, and send the log to the developer with a short description of what actually happened.</p>
+      </article>
+    </div>
+
+    <div class="bulk-inquiry-box bug-thanks">
+      <div>
+        <h3 data-i="bugThanksTitle">Thanks for visiting!</h3>
+        <p data-i="bugThanksSub">Bugs are resolved promptly and efficiently.</p>
+      </div>
+      <a class="m3e-btn tonal m3e-state" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+      </a>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -1428,6 +1482,13 @@ const I18N = {
     bulkTitle: "Need More Than One Device?",
     bulkSub: "Contact the developer for a discount on multiple-device licenses.",
     btnBulk: "Contact Developer",
+    lblSupport: "Support", bugHead: "Report Bugs",
+    bugSub: "Found a problem? Send it to the developer and it will be fixed promptly.",
+    bug1Title: "Problem during setup",
+    bug1Desc: "If you encounter any problem while setting up the automation, report it directly to the developer with a short description.",
+    bug2Title: "Bug while running",
+    bug2Desc: "If you face a bug while the automation is running, stop the automation, tap the Share button in the log window of the main automation screen, and send the log to the developer with a short description of what actually happened.",
+    bugThanksTitle: "Thanks for visiting!", bugThanksSub: "Bugs are resolved promptly and efficiently.",
     ftCopy: "© {y} Replica. All rights reserved."
   },
   uk: {
@@ -1477,6 +1538,13 @@ const I18N = {
     bulkTitle: "Потрібно кілька пристроїв?",
     bulkSub: "Напишіть розробнику, щоб отримати знижку на ліцензії для кількох пристроїв.",
     btnBulk: "Написати автору",
+    lblSupport: "Підтримка", bugHead: "Повідомити про помилку",
+    bugSub: "Знайшли проблему? Надішліть її розробнику, і її буде швидко виправлено.",
+    bug1Title: "Проблема під час налаштування",
+    bug1Desc: "Якщо під час налаштування автоматизації виникла проблема, повідомте про неї безпосередньо розробнику з коротким описом.",
+    bug2Title: "Помилка під час роботи",
+    bug2Desc: "Якщо під час роботи автоматизації виникла помилка, зупиніть її, натисніть кнопку «Поділитися» у вікні журналу на головному екрані автоматизації та надішліть журнал розробнику з коротким описом того, що сталося.",
+    bugThanksTitle: "Дякуємо за візит!", bugThanksSub: "Помилки виправляються швидко та ефективно.",
     ftCopy: "© {y} Replica. Усі права захищено."
   },
   ru: {
@@ -1526,6 +1594,13 @@ const I18N = {
     bulkTitle: "Нужно несколько устройств?",
     bulkSub: "Свяжитесь с автором для скидки на лицензии для нескольких устройств.",
     btnBulk: "Написать автору",
+    lblSupport: "Поддержка", bugHead: "Сообщить об ошибке",
+    bugSub: "Нашли проблему? Отправьте её разработчику, и она будет быстро исправлена.",
+    bug1Title: "Проблема при настройке",
+    bug1Desc: "Если при настройке автоматизации возникла проблема, сообщите о ней напрямую разработчику с кратким описанием.",
+    bug2Title: "Ошибка во время работы",
+    bug2Desc: "Если во время работы автоматизации возникла ошибка, остановите её, нажмите кнопку «Поделиться» в окне журнала на главном экране автоматизации и отправьте журнал разработчику с кратким описанием того, что произошло.",
+    bugThanksTitle: "Спасибо за визит!", bugThanksSub: "Ошибки исправляются быстро и эффективно.",
     ftCopy: "© {y} Replica. Все права защищены."
   }
 };
@@ -1544,7 +1619,8 @@ const LANGS = ['en', 'uk', 'ru'];
 let lang = store.get('replica_lang') || (/^uk/.test(navigator.language) ? 'uk' : /^ru/.test(navigator.language) ? 'ru' : 'en');
 if (!I18N[lang]) lang = 'en';
 let hue = +(store.get('replica_hue_v2') || 120);   // default: light green
-let mode = store.get('replica_mode') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const sysDark = matchMedia('(prefers-color-scheme: dark)');
+let mode = sysDark.matches ? 'dark' : 'light';
 
 /* HAPTICS: only fired on real taps (click), never on touch-start / scroll */
 const canVibrate = typeof navigator.vibrate === 'function';
@@ -1658,8 +1734,6 @@ function withTransition(fn) {
 function applyMode(newMode) {
   mode = newMode;
   document.documentElement.setAttribute('data-mode', mode);
-  store.set('replica_mode', mode);
-  $('#modeSwitch').setAttribute('aria-checked', String(mode === 'dark'));
 }
 
 /* LANGUAGE */
@@ -1688,20 +1762,15 @@ function applyI18n() {
   `).join('');
 }
 
-async function slideSwap(dir) {
-  const blocks = [...$$('main > section'), $('footer')];
+async function slideSwap() {
+  const blocks = [$('main'), $('footer')];
   if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
-  const dist = 28 * dir;
-  const outs = blocks.map((el, i) => el.animate(
-    [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: `translateX(${-dist}px)` }],
-    { duration: 180, delay: i * 22, easing: 'cubic-bezier(0.3, 0, 0.8, 0.15)', fill: 'forwards' }
-  ));
+  const outs = blocks.map(el => el.animate([{ opacity: 1 }, { opacity: 0 }],
+    { duration: 160, easing: 'ease-out', fill: 'forwards' }));
   await Promise.all(outs.map(a => a.finished.catch(() => {})));
   applyI18n();
-  blocks.forEach((el, i) => el.animate(
-    [{ opacity: 0, transform: `translateX(${dist}px)` }, { opacity: 1, transform: 'translateX(0)' }],
-    { duration: 520, delay: i * 38, easing: 'cubic-bezier(0.38, 1.21, 0.22, 1)', fill: 'backwards' }
-  ));
+  blocks.forEach(el => el.animate([{ opacity: 0 }, { opacity: 1 }],
+    { duration: 260, easing: 'ease-in', fill: 'backwards' }));
   outs.forEach(a => a.cancel());
 }
 
@@ -1740,7 +1809,7 @@ function setupMotion() {
   const groups = [
     ['.hero-heading', 120], ['.hero-text', 220], ['.hero-button-group', 320], ['.chips-row', 420],
     ['.step-section-header'], ['.m3e-expandable'], ['.trilogy-tile'],
-    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box']
+    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box'], ['.bug-card']
   ];
   const targets = [];
   groups.forEach(([sel, delay]) => {
@@ -1785,13 +1854,12 @@ async function selectLang(next) {
   }
   langBusy = true;
   haptic('select');
-  const dir = LANGS.indexOf(next) > LANGS.indexOf(lang) ? 1 : -1;
   lang = next;
   store.set('replica_lang', lang);
   markActiveLang();
   await sleep(120);
-  await slideSwap(dir);
-  await sleep(260);
+  await slideSwap();
+  await sleep(140);
   setLangTrayVisible(false);
   haptic('close');
   langBusy = false;
@@ -1893,10 +1961,8 @@ function init() {
     themeBtn.setAttribute('aria-expanded', String(isOpen));
   });
 
-  $('#modeSwitch').addEventListener('click', () => {
-    haptic('toggle');
-    withTransition(() => applyMode(mode === 'dark' ? 'light' : 'dark'));
-  });
+  const onSys = e => withTransition(() => applyMode(e.matches ? 'dark' : 'light'));
+  if (sysDark.addEventListener) sysDark.addEventListener('change', onSys); else sysDark.addListener(onSys);
 
   const protectWrap = $('#protectExpandable');
   const protectBtn = $('#protectToggleBtn');
