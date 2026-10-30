@@ -1070,6 +1070,105 @@ html[lang="ru"] .hero-heading { font-size: clamp(2rem, 8.2vw, 4.2rem); line-heig
 .bug-card h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.025em; margin-top: 6px; }
 .bug-card p { color: var(--md-sys-color-on-surface-variant); font-size: 0.95rem; line-height: 1.55; }
 .bug-thanks { margin-top: 18px; }
+
+/* ===== MONET TONAL SYSTEM (hue-tinted surfaces, true MD3 levels) ===== */
+:root {
+  --md-sys-color-surface: oklch(0.985 0.008 var(--h));
+  --md-sys-color-surface-dim: oklch(0.92 0.02 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(1 0.004 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.968 0.014 var(--h));
+  --md-sys-color-surface-container: oklch(0.95 0.02 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.93 0.026 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.91 0.03 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.42 0.04 var(--h));
+  --md-sys-color-outline: oklch(0.6 0.05 var(--h));
+  --md-sys-color-outline-variant: oklch(0.82 0.035 var(--h));
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.07), 0 3px 10px rgb(0 0 0 / 0.06);
+  --card-shadow-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 10px 24px rgb(0 0 0 / 0.10);
+  --edge-hi: inset 0 1px 0 rgb(255 255 255 / 0.55);
+}
+:root[data-mode="dark"] {
+  --md-sys-color-primary-container: oklch(0.32 0.1 var(--h));
+  --md-sys-color-secondary-container: oklch(0.31 0.065 calc(var(--h) + 24));
+  --md-sys-color-tertiary-container: oklch(0.31 0.075 calc(var(--h) + 55));
+  --md-sys-color-surface: oklch(0.14 0.014 var(--h));
+  --md-sys-color-surface-dim: oklch(0.11 0.012 var(--h));
+  --md-sys-color-surface-container-lowest: oklch(0.1 0.01 var(--h));
+  --md-sys-color-surface-container-low: oklch(0.175 0.018 var(--h));
+  --md-sys-color-surface-container: oklch(0.205 0.022 var(--h));
+  --md-sys-color-surface-container-high: oklch(0.24 0.026 var(--h));
+  --md-sys-color-surface-container-highest: oklch(0.28 0.03 var(--h));
+  --md-sys-color-on-surface-variant: oklch(0.76 0.03 var(--h));
+  --md-sys-color-outline: oklch(0.56 0.04 var(--h));
+  --md-sys-color-outline-variant: oklch(0.38 0.035 var(--h));
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 4px 14px rgb(0 0 0 / 0.35);
+  --card-shadow-hover: 0 2px 4px rgb(0 0 0 / 0.55), 0 12px 28px rgb(0 0 0 / 0.5);
+  --edge-hi: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+/* ===== THIN BORDERS + DEPTH ===== */
+.trilogy-tile, .tutorial-card, .m3e-expandable, .bug-card, .bulk-inquiry-box {
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--edge-hi), var(--card-shadow);
+}
+@media (hover: hover) and (pointer: fine) {
+  .trilogy-tile:hover, .bug-card:hover, .tutorial-card:hover {
+    border-color: var(--md-sys-color-outline);
+    box-shadow: var(--edge-hi), var(--card-shadow-hover);
+  }
+}
+.bug-card { transition: translate 0.5s var(--spring-default-spatial), box-shadow 0.35s var(--ease-expressive-standard), border-color 0.3s; }
+.m3e-expandable.open { border-color: var(--md-sys-color-primary); }
+.pricing-expressive-card {
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-primary) 45%, var(--md-sys-color-outline-variant));
+  box-shadow: var(--edge-hi), var(--card-shadow);
+}
+.m3e-capsule-nav { border: 1px solid var(--md-sys-color-outline-variant); box-shadow: var(--edge-hi), var(--card-shadow); }
+.m3e-capsule-nav, .m3e-capsule-nav.scrolled { background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 78%, transparent); }
+.monet-sheet { border: 1px solid var(--md-sys-color-outline-variant); background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 88%, transparent); }
+
+.m3e-btn.filled {
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-on-primary) 30%, var(--md-sys-color-primary));
+  box-shadow: var(--edge-hi), var(--elevation-1);
+}
+.m3e-btn.tonal, .tile-action-btn {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-on-secondary-container) 28%, var(--md-sys-color-secondary-container));
+}
+@media (hover: hover) and (pointer: fine) {
+  .tile-action-btn:hover { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border-color: var(--md-sys-color-primary); }
+}
+.m3e-chip { border: 1px solid var(--md-sys-color-outline-variant); background: var(--md-sys-color-surface-container-high); }
+.m3e-action-btn { border: 1px solid var(--md-sys-color-outline-variant); }
+.m3e-action-btn.active-btn { border-color: var(--md-sys-color-primary); }
+.step-label, .tile-badge { border: 1px solid color-mix(in oklch, currentColor 25%, transparent); }
+.lang-track { border: 1px solid var(--md-sys-color-outline-variant); }
+
+/* ===== SMOOTHER MOTION ===== */
+.lang-morph-tray { transition: opacity 0.3s ease, visibility 0s 0.3s; }
+.m3e-capsule-nav.lang-open .lang-morph-tray { transition: opacity 0.35s ease 0.12s, visibility 0s; }
+.brand-deck, .actions-cluster { transition: opacity 0.3s ease, visibility 0s; }
+.m3e-capsule-nav.lang-open .brand-deck, .m3e-capsule-nav.lang-open .actions-cluster { transition: opacity 0.25s ease, visibility 0s 0.25s; }
+header.m3e-app-bar { view-transition-name: appbar; }
+::view-transition-group(appbar) { animation: none; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.5s; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+
+.expandable-panel {
+  transition: grid-template-rows 0.55s cubic-bezier(0.2, 0, 0, 1), visibility 0s 0.55s;
+}
+.m3e-expandable.open .expandable-panel {
+  transition: grid-template-rows 0.6s cubic-bezier(0.2, 0, 0, 1), visibility 0s;
+}
+.expandable-content { opacity: 0; transition: opacity 0.25s ease; will-change: opacity; }
+.m3e-expandable.open .expandable-content { opacity: 1; transition: opacity 0.45s ease 0.1s; }
+.step-point { translate: 0 -6px; transition: opacity 0.25s ease, translate 0.3s ease; }
+.m3e-expandable.open .step-point {
+  transition: opacity 0.45s ease calc(var(--i) * 55ms + 140ms),
+              translate 0.6s cubic-bezier(0.2, 0, 0, 1) calc(var(--i) * 55ms + 140ms);
+}
+.expand-chevron { transition: transform 0.55s cubic-bezier(0.2, 0, 0, 1), scale 0.4s var(--spring-fast-spatial), border-radius 0.4s var(--spring-fast-spatial), background-color 0.3s, color 0.3s; }
 </style>
 </head>
 <body>
@@ -1763,6 +1862,11 @@ function applyI18n() {
 }
 
 async function slideSwap() {
+  if (document.startViewTransition && !reduceMotion) {
+    const vt = document.startViewTransition(() => applyI18n());
+    await vt.finished.catch(() => {});
+    return;
+  }
   const blocks = [$('main'), $('footer')];
   if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
   const outs = blocks.map(el => el.animate([{ opacity: 1 }, { opacity: 0 }],
