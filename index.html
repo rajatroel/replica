@@ -2263,4 +2263,176 @@ async function slideSwap() {
     await vt.finished.catch(() => {});
     return;
   }
-  const blocks = [$('main'), 
+  const blocks = [$('main'), $('footer')];
+  if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
+  const outs = blocks.map(el => el.animate([{ opacity: 1 }, { opacity: 0 }],
+    { duration: 160, easing: 'ease-out', fill: 'forwards' }));
+  await Promise.all(outs.map(a => a.finished.catch(() => {})));
+  applyI18n();
+  blocks.forEach(el => el.animate([{ opacity: 0 }, { opacity: 1 }],
+    { duration: 260, easing: 'ease-in', fill: 'backwards' }));
+  outs.forEach(a => a.cancel());
+}
+
+function closeThemeSheet() {
+  const btn = $('#btnThemeToggle');
+  $('#monetSheet').classList.remove('show');
+  btn.classList.remove('active-btn');
+  btn.setAttribute('aria-expanded', 'false');
+}
+
+/* SCROLL: nav only changes colour, never size; reveal is fade + slight slide */
+function setupMotion() {
+  const nav = $('#capsuleNav');
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      nav.classList.toggle('scrolled', window.scrollY > 24);
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  if (reduceMotion) return;
+
+  const groups = [
+    ['.hero-heading', 120], ['.hero-text', 220], ['.hero-button-group', 320], ['.chips-row', 420],
+    ['.step-section-header'], ['.m3e-expandable'], ['.trilogy-tile'],
+    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box'], ['.bug-card']
+  ];
+  const targets = [];
+  groups.forEach(([sel, delay]) => {
+    $$(sel).forEach((el, i) => {
+      el.classList.add('reveal');
+      el.dataset.d = (delay !== undefined ? delay : 0) + (sel === '.trilogy-tile' ? i * 90 : 0);
+      targets.push(el);
+    });
+  });
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target;
+      io.unobserve(el);
+      el.style.setProperty('--d', el.dataset.d + 'ms');
+      el.classList.add('in');
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+  document.addEventListener('animationend', e => {
+    if (e.animationName === 'm3e-rise' && e.target.classList.contains('reveal')) {
+      e.target.classList.remove('reveal', 'in');
+      e.target.style.removeProperty('--d');
+    }
+  });
+
+  setTimeout(() => targets.forEach(el => io.observe(el)), 900);
+}
+
+/* INIT */
+let langBusy = false;
+
+async function selectLang(next) {
+  if (langBusy || next === lang) return;
+  langBusy = true;
+  haptic('select');
+  lang = next;
+  store.set('replica_lang', lang);
+  markActiveLang();              // indicator springs to the new language
+  await sleep(200);
+  await slideSwap();             // page crossfades to the new text
+  langBusy = false;
+}
+
+function setupLangSwitch() {
+  $('#langSeg').addEventListener('click', e => {
+    const btn = e.target.closest('[data-lang]');
+    if (btn) selectLang(btn.dataset.lang);
+  });
+}
+
+function init() {
+  $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
+  $('#dlTermuxAnchor').href = CONFIG.links.termuxApk;
+  $('#dlTermuxApiAnchor').href = CONFIG.links.termuxApiApk;
+  $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
+
+  $('#swatchGrid').innerHTML = CONFIG.monetHues.map(item => `
+    <button class="monet-swatch ${item.hue === hue ? 'active' : ''}" data-hue="${item.hue}"
+            title="${item.name}" aria-label="${item.name}"
+            style="background: oklch(0.68 0.16 ${item.hue})"></button>
+  `).join('');
+
+  setupLangSwitch();
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) closeThemeSheet();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeThemeSheet();
+  });
+
+  $('#swatchGrid').addEventListener('click', e => {
+    const swatch = e.target.closest('.monet-swatch');
+    if (!swatch) return;
+    haptic('select');
+    applyHue(swatch.dataset.hue);
+  });
+
+  const themeBtn = $('#btnThemeToggle');
+  themeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    haptic('open');
+    const isOpen = $('#monetSheet').classList.toggle('show');
+    themeBtn.classList.toggle('active-btn', isOpen);
+    themeBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  const onSys = e => withTransition(() => applyMode(e.matches ? 'dark' : 'light'));
+  if (sysDark.addEventListener) sysDark.addEventListener('change', onSys); else sysDark.addListener(onSys);
+
+  $$('.m3e-expandable').forEach(wrap => {
+    const btn = wrap.querySelector('.expandable-trigger');
+    btn.addEventListener('click', () => {
+      const isOpen = wrap.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+      haptic(isOpen ? 'open' : 'close');
+    });
+  });
+
+  $('#dlReplicaAnchor').addEventListener('click', e => {
+    if (CONFIG.links.replicaApk === '#' || !CONFIG.links.replicaApk) {
+      e.preventDefault();
+      haptic('warn');
+      showToast(I18N[lang].apkComingSoon);
+    } else {
+      $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
+    }
+  });
+
+  if (document.fonts && document.fonts.load) {
+    Object.values(FONT_SAMPLE).forEach(t => ['400', '600', '800'].forEach(w => document.fonts.load(`${w} 1em "Plus Jakarta Sans"`, t).catch(() => {})));
+  }
+  applyHue(hue);
+  applyMode(mode);
+  applyI18n();
+  markActiveLang();
+  setupMotion();
+
+  const ready = Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), sleep(2000)]);
+  Promise.all([ready, sleep(700)]).then(() => {
+    const loader = $('#m3eLoader');
+    if (loader) {
+      loader.classList.add('vanish');
+      setTimeout(() => loader.remove(), 550);
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
