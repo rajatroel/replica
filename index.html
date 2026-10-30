@@ -1430,6 +1430,56 @@ main > section, footer { backface-visibility: hidden; }
   content: ''; position: absolute; left: 2px; top: 0.62em; width: 6px; height: 6px; border-radius: 50%;
   background: var(--md-sys-color-primary);
 }
+
+/* ===== SETUP GUIDE (sequential expanding tiles) ===== */
+.guide-progress { display: flex; align-items: center; gap: 14px; margin: 0 0 18px; }
+.progress-track { flex: 1; height: 10px; border-radius: 6px; background: var(--md-sys-color-surface-container-highest); border: 1px solid var(--md-sys-color-outline-variant); overflow: hidden; }
+.progress-fill { display: block; height: 100%; width: 0; border-radius: 6px; background: var(--md-sys-color-primary); transition: width 0.7s cubic-bezier(0.2, 0, 0, 1); }
+.progress-text { font-weight: 800; font-size: 0.85rem; color: var(--md-sys-color-primary); white-space: nowrap; }
+
+.guide-list { position: relative; display: grid; gap: 12px; }
+.guide-list::before {
+  content: ''; position: absolute; left: 44px; top: 36px; bottom: 36px; width: 2px; border-radius: 2px;
+  background: var(--md-sys-color-outline-variant);
+}
+.guide-step { position: relative; z-index: 1; scroll-margin-top: 104px; }
+.guide-step .expandable-trigger.guide-head { justify-content: flex-start; gap: 14px; padding: 16px 18px; }
+.guide-titles { flex: 1; min-width: 0; display: grid; gap: 2px; text-align: left; }
+.guide-titles h3 { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; }
+.guide-titles p { font-size: 0.86rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.35; }
+
+.guide-badge { position: relative; width: 52px; height: 52px; flex: none; display: grid; place-items: center; }
+.badge-shape {
+  position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--md-sys-color-primary-container);
+  stroke: color-mix(in oklch, var(--md-sys-color-primary) 35%, var(--md-sys-color-primary-container)); stroke-width: 0.8;
+  transition: fill 0.35s var(--ease-expressive-standard), rotate 0.9s var(--spring-default-spatial);
+}
+.badge-num { position: relative; font-weight: 800; font-size: 1.05rem; color: var(--md-sys-color-on-primary-container); transition: color 0.3s, opacity 0.2s; }
+.badge-check { position: absolute; width: 24px; height: 24px; color: var(--md-sys-color-on-primary); opacity: 0; scale: 0.4; transition: opacity 0.25s, scale 0.45s var(--spring-fast-spatial); }
+.guide-step.open .badge-shape { fill: var(--md-sys-color-primary); rotate: 30deg; }
+.guide-step.open .badge-num { color: var(--md-sys-color-on-primary); }
+.guide-step.done .badge-shape { fill: var(--md-sys-color-primary); }
+.guide-step.done .badge-num { opacity: 0; }
+.guide-step.done .badge-check { opacity: 1; scale: 1; }
+
+.guide-body { padding: 2px 18px 20px; display: grid; gap: 14px; }
+.guide-next { height: 52px; width: 100%; margin-top: 4px; }
+.guide-next .ic { width: 20px; height: 20px; }
+
+.brand-area { width: 100%; display: grid; gap: 12px; }
+.brand-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.brand-chip { font-family: inherit; cursor: pointer; height: 38px; font-size: 0.82rem; padding: 0 14px; }
+.brand-chip.active { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); border-color: var(--md-sys-color-primary); }
+
+.dl-row { display: grid; gap: 12px; padding: 14px; border-radius: 22px; background: var(--md-sys-color-surface-container-high); border: 1px solid var(--md-sys-color-outline-variant); }
+.dl-info { display: flex; align-items: center; gap: 14px; }
+.dl-info .sym-shape-frame { width: 52px; height: 52px; }
+.dl-info .sym-shape-frame .ic { width: 24px; height: 24px; }
+.dl-text { display: grid; gap: 2px; min-width: 0; }
+.dl-text span { font-size: 0.86rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.4; }
+.dl-row .tile-action-btn { height: 48px; }
+
+@media (max-width: 380px) { .guide-badge { width: 46px; height: 46px; } .guide-list::before { left: 41px; } }
 </style>
 </head>
 <body>
@@ -1591,7 +1641,7 @@ main > section, footer { backface-visibility: hidden; }
     <p class="hero-text" data-i="heroSubtitle">Replica performs tasks automatically on your phone like you do, helping you save time and earn more.</p>
 
     <div class="hero-button-group">
-      <a href="#protect" class="m3e-btn filled m3e-state">
+      <a href="#guide" class="m3e-btn filled m3e-state">
         <svg class="ic"><use href="#icArrowDown"/></svg><span data-i="btnHeroGetStarted">Get Started</span>
       </a>
       <a href="#pricing" class="m3e-btn tonal m3e-state">
@@ -1600,7 +1650,7 @@ main > section, footer { backface-visibility: hidden; }
     </div>
 
     <div class="chips-row">
-      <a href="#protect" class="m3e-chip m3e-state">
+      <a href="#guide" class="m3e-chip m3e-state">
         <svg class="ic"><use href="#icTune"/></svg><span data-i="chipSetupText">Setup</span>
       </a>
       <a href="#tutorial" class="m3e-chip m3e-state">
@@ -1612,194 +1662,23 @@ main > section, footer { backface-visibility: hidden; }
     </div>
   </section>
 
-  <!-- STEP 01 -->
-  <section id="protect">
+  <!-- SETUP GUIDE -->
+  <section id="guide">
     <div class="step-section-header">
-      <span class="step-label" data-i="lbl1">Step 01</span>
-      <h2 class="step-headline" data-i="st1Head">Disable Play Protect</h2>
-      <p class="step-summary" data-i="st1Sub">Android may block sideloaded automation apps. Turn off scanning first.</p>
+      <span class="step-label" data-i="guideLbl">Setup Guide</span>
+      <h2 class="step-headline" data-i="guideHead">Set up in 10 simple steps</h2>
+      <p class="step-summary" data-i="guideSub">Follow the steps in order. Tap a step to open it, then mark it done.</p>
     </div>
 
-    <div class="m3e-expandable" id="protectExpandable">
-      <button class="expandable-trigger" id="protectToggleBtn" aria-expanded="false" aria-controls="protectPanel">
-        <div class="expandable-left">
-          <div class="sym-shape-frame"><svg class="ic"><use href="#icShield"/></svg></div>
-          <div>
-            <h3 data-i="st1CardTitle">Play Protect Walkthrough</h3>
-            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
-          </div>
-        </div>
-        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
-      </button>
-
-      <div class="expandable-panel" id="protectPanel">
-        <div class="expandable-content">
-          <div class="walkthrough-steps" id="protectStepRows"></div>
-        </div>
-      </div>
+    <div class="guide-progress" aria-live="polite">
+      <div class="progress-track"><span class="progress-fill" id="guideFill"></span></div>
+      <span class="progress-text" id="guideProgressText"></span>
     </div>
+
+    <div class="guide-list" id="guideList"></div>
   </section>
 
-  <!-- STEP 02: DEVELOPER OPTIONS -->
-  <section id="devopts">
-    <div class="step-section-header">
-      <span class="step-label" data-i="lblDev">Step 02</span>
-      <h2 class="step-headline" data-i="devHead">Enable Developer Options</h2>
-      <p class="step-summary" data-i="devSub">A hidden Android setting that Replica needs. Follow the steps for your phone.</p>
-    </div>
-
-    <div class="m3e-expandable" id="devExpandable">
-      <button class="expandable-trigger" id="devToggleBtn" aria-expanded="false" aria-controls="devPanel">
-        <div class="expandable-left">
-          <div class="sym-shape-frame"><svg class="ic"><use href="#icCode"/></svg></div>
-          <div>
-            <h3 data-i="devCardTitle">Developer Options Walkthrough</h3>
-            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
-          </div>
-        </div>
-        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
-      </button>
-
-      <div class="expandable-panel" id="devPanel">
-        <div class="expandable-content">
-          <div class="walkthrough-steps" id="devStepRows"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEP 03 -->
-  <section id="downloads">
-    <div class="step-section-header">
-      <span class="step-label" data-i="lbl2">Step 02</span>
-      <h2 class="step-headline" data-i="st2Head">Install Apps</h2>
-      <p class="step-summary" data-i="st2Sub">These are required to run Replica on your phone seamlessly.</p>
-    </div>
-
-    <div class="trilogy-layout">
-      <article class="trilogy-tile">
-        <span class="tile-badge" data-i="badgeAuto">Automation</span>
-        <div>
-          <div class="sym-shape-frame"><svg class="ic"><use href="#icAndroid"/></svg></div>
-          <h3 class="tile-title" data-i="titleReplica">Replica App</h3>
-          <p class="tile-desc" data-i="descReplica">A companion app that lets you configure your information and add or remove VIP accounts seamlessly.</p>
-        </div>
-        <a class="tile-action-btn m3e-state" id="dlReplicaAnchor" href="https://github.com/rajatroel/replica/releases/download/v1.0/replica.apk" download="replica.apk" rel="noopener noreferrer">
-          <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlReplica">Download Replica</span>
-        </a>
-      </article>
-
-      <article class="trilogy-tile">
-        <span class="tile-badge" data-i="badgeEnv">Environment</span>
-        <div>
-          <div class="sym-shape-frame alt"><svg class="ic"><use href="#icTerminal"/></svg></div>
-          <h3 class="tile-title" data-i="titleTermux">Termux App</h3>
-          <p class="tile-desc" data-i="descTermux">An app needed to run the actual Replica workflow on your device. It comes with a preconfigured environment so everything works smoothly.</p>
-        </div>
-        <a class="tile-action-btn m3e-state" id="dlTermuxAnchor" href="https://github.com/rajatroel/replica/releases/download/v1.0/termux.apk" download="termux.apk" rel="noopener noreferrer">
-          <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermux">Download Termux</span>
-        </a>
-      </article>
-
-      <article class="trilogy-tile">
-        <span class="tile-badge" data-i="badgeBridge">System Bridge</span>
-        <div>
-          <div class="sym-shape-frame tertiary"><svg class="ic"><use href="#icExtension"/></svg></div>
-          <h3 class="tile-title" data-i="titleTermuxApi">Termux API App</h3>
-          <p class="tile-desc" data-i="descTermuxApi">A simple companion app for Termux to use normal device features, such as sending notifications.</p>
-        </div>
-        <a class="tile-action-btn m3e-state" id="dlTermuxApiAnchor" href="https://github.com/rajatroel/replica/releases/download/v1.0/termux-api.apk" download="termux-api.apk" rel="noopener noreferrer">
-          <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermuxApi">Download Termux API</span>
-        </a>
-      </article>
-    </div>
-  </section>
-
-  <!-- STEP 03: API ID & HASH -->
-  <section id="apikeys">
-    <div class="step-section-header">
-      <span class="step-label" data-i="lblApi">Step 03</span>
-      <h2 class="step-headline" data-i="apiHead">Get your API ID &amp; Hash</h2>
-      <p class="step-summary" data-i="apiSub">You need these to connect Replica to your Telegram account. It takes about two minutes.</p>
-    </div>
-
-    <div class="m3e-expandable" id="apiExpandable">
-      <button class="expandable-trigger" id="apiToggleBtn" aria-expanded="false" aria-controls="apiPanel">
-        <div class="expandable-left">
-          <div class="sym-shape-frame"><svg class="ic"><use href="#icKey"/></svg></div>
-          <div>
-            <h3 data-i="apiCardTitle">API ID &amp; Hash Walkthrough</h3>
-            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
-          </div>
-        </div>
-        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
-      </button>
-
-      <div class="expandable-panel" id="apiPanel">
-        <div class="expandable-content">
-          <div class="walkthrough-steps" id="apiStepRows"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEP 04: SECOND PHONE -->
-  <section id="phone2">
-    <div class="step-section-header">
-      <span class="step-label" data-i="lblPhone">Step 04</span>
-      <h2 class="step-headline" data-i="phoneHead">Prepare your second phone</h2>
-      <p class="step-summary" data-i="phoneSub">Get a second phone ready so you can confirm your Telegram login with its scanner.</p>
-    </div>
-
-    <div class="m3e-expandable" id="phoneExpandable">
-      <button class="expandable-trigger" id="phoneToggleBtn" aria-expanded="false" aria-controls="phonePanel">
-        <div class="expandable-left">
-          <div class="sym-shape-frame alt"><svg class="ic"><use href="#icPhone"/></svg></div>
-          <div>
-            <h3 data-i="phoneCardTitle">Second Phone Walkthrough</h3>
-            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
-          </div>
-        </div>
-        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
-      </button>
-
-      <div class="expandable-panel" id="phonePanel">
-        <div class="expandable-content">
-          <div class="walkthrough-steps" id="phoneStepRows"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEP 06: SETUP & AUTOMATION -->
-  <section id="setup">
-    <div class="step-section-header">
-      <span class="step-label" data-i="lblSetup">Step 06</span>
-      <h2 class="step-headline" data-i="setupHead">Setup &amp; Automation Configuration Guide</h2>
-      <p class="step-summary" data-i="setupSub">A step-by-step tutorial on configuring Replica.</p>
-    </div>
-
-    <div class="m3e-expandable" id="setupExpandable">
-      <button class="expandable-trigger" id="setupToggleBtn" aria-expanded="false" aria-controls="setupPanel">
-        <div class="expandable-left">
-          <div class="sym-shape-frame tertiary"><svg class="ic"><use href="#icTerminal"/></svg></div>
-          <div>
-            <h3 data-i="setupCardTitle">Setup Walkthrough</h3>
-            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
-          </div>
-        </div>
-        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
-      </button>
-
-      <div class="expandable-panel" id="setupPanel">
-        <div class="expandable-content">
-          <div class="walkthrough-steps" id="setupRows"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEP 07 -->
+  <!-- VIDEO -->
   <section id="tutorial">
     <div class="step-section-header">
       <span class="step-label" data-i="lbl3">Step 03</span>
@@ -1931,7 +1810,7 @@ const I18N = {
     btnHeroLicense: "Get a License",
     chipSetupText: "Setup",
     chipTutorialText: "Tutorial Video",
-    lbl1: "Step 01", lblDev: "Step 02", lbl2: "Step 03", lblApi: "Step 04", lblPhone: "Step 05", lblSetup: "Step 06", lbl3: "Step 07", lblLicense: "License",
+    lbl1: "Step 01", lblDev: "Step 02", lbl2: "Step 03", lblApi: "Step 04", lblPhone: "Step 05", lblSetup: "Step 06", lbl3: "Video", lblLicense: "License",
     st1Head: "Disable Play Protect",
     st1Sub: "Android may block sideloaded automation apps. Turn off scanning first.",
     st1CardTitle: "Play Protect Walkthrough",
@@ -1964,10 +1843,10 @@ const I18N = {
       "You will now see your <b>App api_id</b> (numbers) and <b>App api_hash</b> (letters and numbers).",
       "Copy both and save them in your <b>Notes</b> app so you can use them later."
     ],
-    setupHead: "Setup & Automation Configuration Guide",
-    setupSub: "A step-by-step tutorial on configuring Replica, setting up permissions, pairing ADB over Wi-Fi in Termux, and linking your Telegram account to launch the Automation Dashboard.",
-    setupCardTitle: "Setup Walkthrough",
-    setupPhases: [{"t": "Prerequisites", "intro": "Make sure these apps are installed on your phone:", "chips": ["Replica", "Termux", "Termux:API"], "steps": []}, {"t": "Phase 1: Configure the Replica app", "steps": [["Launch Replica", ["Open the Replica app from your home screen."]], ["Grant storage permission", ["Tap <b>Continue</b> on the permission prompt.", "Turn <b>ON</b> the switch for <b>Allow access to manage all files</b>.", "Go back to the Replica app."]], ["Enter your credentials", ["On the <b>Credentials</b> tab, fill in these fields:", "<b>API ID</b>: your API ID.", "<b>API Hash</b>: your API Hash.", "<b>License Key</b>: your license key."]], ["Add accounts", ["Open the <b>Accounts</b> tab at the bottom right.", "Type the target account username and tap <b>+ Add</b>.", "Repeat to add more accounts.", "Tap <b>Save</b> in the top-right corner.", "Go back to your home screen."]]]}, {"t": "Phase 2: Set up Termux:API permissions", "steps": [["Open Termux:API", ["Open <b>Termux:API</b> from your app drawer."]], ["Disable battery optimization", ["Scroll down and tap <b>DISABLE BATTERY OPTIMIZATIONS</b>.", "When asked <b>Let app always run in background?</b>, tap <b>Allow</b>.", "Go back to the home screen."]]]}, {"t": "Phase 3: Start Termux and grant core permissions", "steps": [["Open Termux", ["Launch <b>Termux</b> and wait for the first setup packages to install."]], ["Allow notifications and background activity", ["Tap <b>Allow</b> on the notification prompt.", "When asked to let the app run in the background, tap <b>Allow</b>."]], ["Continue the in-app setup", ["In the terminal, tap the green <b>CONTINUE</b> button.", "On the <b>All files access</b> screen for Termux, turn <b>ON</b> <b>Allow access to manage all files</b>, then go back to the app.", "The terminal confirms storage permission and starts the ADB setup."]]]}, {"t": "Phase 4: Turn on Wireless debugging and pair ADB", "steps": [["Enable Developer options and debugging", ["Open <b>Settings</b> and go to <b>Developer options</b>.", "Scroll down to the <b>Debugging</b> section.", "Turn <b>ON</b> <b>USB debugging</b> and tap <b>OK</b> to confirm.", "Turn <b>ON</b> <b>Wireless debugging</b>.", "Tick <b>Always allow on this network</b> and tap <b>Allow</b>."]], ["Get the pairing code", ["Tap <b>Wireless debugging</b> to open its menu.", "Tap <b>Pair device with pairing code</b>.", "A box shows a 6-digit Wi-Fi pairing code with an IP address and port."]], ["Enter the pairing code", ["Pull down the notification shade and find the <b>Termux:API (ADB pairing)</b> notification.", "Tap <b>Enter</b>, type the 6-digit code from your screen and tap the send arrow.", "Go back to Termux. It should show <b>PAIRED SUCCESSFULLY</b> and <b>ADB CONNECTED</b>."]]]}, {"t": "Phase 5: Link Telegram and start automation", "steps": [["Scan the Telegram QR code", ["In Termux, read the instructions under <b>TELEGRAM LOGIN</b>.", "On the phone where Telegram is logged in (your second phone from Step 05), open <b>Settings → Devices → Link Desktop Device</b>.", "In Termux, tap <b>CONTINUE</b> to show a QR code.", "Point the second phone's scanner at the QR code. It is valid for 30 seconds."]], ["Enter your 2FA password", ["After scanning, the terminal asks <b>ENTER 2FA PASSWORD:</b>.", "Type your Telegram two-factor (cloud) password and press Enter.", "Termux confirms <b>LOGGED IN: [your account name]</b>."]], ["Start automation", ["The Automation Dashboard opens and shows your account name, license status and validity, device information, CashCoins and system logs.", "Tap <b>START AUTOMATION</b> to begin."]]]}],
+    guideLbl: "Setup Guide", guideHead: "Set up in 10 simple steps", guideSub: "Follow the steps in order. Tap a step to open it, then mark it done.",
+    guideDone: "{n} of {m} done", guideNext: "Done, next step", guideFinish: "Done, finish",
+    devChips: ["Pixel / Stock", "Samsung", "Xiaomi / Redmi", "OnePlus", "Oppo / Realme", "Vivo / iQOO", "Tecno / Infinix", "Huawei / Honor", "Other"],
+    guideSteps: [{"t": "Disable Play Protect", "s": "So Android lets you install the apps", "steps": ["Open <b>Play Store</b> and tap your profile picture.", "Tap <b>Play Protect</b>, then the <b>gear icon</b>.", "Turn off <b>Scan apps with Play Protect</b> and confirm."]}, {"t": "Enable Developer options", "s": "Needed for wireless debugging", "steps": ["Open <b>Settings → About phone</b>.", "Pick your phone below, then tap the item shown <b>7 times</b>. Enter your PIN if asked.", "You will see <b>You are now a developer!</b>"]}, {"t": "Install the apps", "s": "Replica, Termux and Termux:API", "steps": []}, {"t": "Get your API ID & Hash", "s": "From Telegram, takes 2 minutes", "steps": ["Open this <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">website</a> and log in with the number of the Telegram account <b>you want to automate</b>.", "Enter the code Telegram sends you.", "Tap <b>API development tools</b>, fill in any title and short name, then tap <b>Create application</b>.", "Copy your <b>api_id</b> and <b>api_hash</b> and save them in your <b>Notes</b> app."]}, {"t": "Prepare your second phone", "s": "Used to scan the Telegram QR code", "steps": ["Log in to the official <b>Telegram</b> app with the <b>same account</b> you used for the API ID.", "Open <b>Settings → Devices</b> and check that the scanner works.", "Black screen? Allow Telegram the <b>Camera</b> permission."]}, {"t": "Set up Replica", "s": "Credentials and accounts", "steps": ["Open <b>Replica</b>, tap <b>Continue</b> and turn on <b>Allow access to manage all files</b>.", "On the <b>Credentials</b> tab, enter your <b>API ID</b>, <b>API Hash</b> and <b>License Key</b>.", "On the <b>Accounts</b> tab, add each username with <b>+ Add</b>, then tap <b>Save</b>."]}, {"t": "Allow Termux:API to run", "s": "Keeps it alive in the background", "steps": ["Open <b>Termux:API</b>.", "Tap <b>DISABLE BATTERY OPTIMIZATIONS</b> and choose <b>Allow</b>."]}, {"t": "Start Termux", "s": "Grant the basic permissions", "steps": ["Open <b>Termux</b> and wait for the setup to finish.", "Tap <b>Allow</b> for notifications and background activity.", "Tap <b>CONTINUE</b>, turn on <b>Allow access to manage all files</b>, then go back."]}, {"t": "Pair wireless debugging", "s": "Connect ADB to Termux", "steps": ["Open <b>Settings → Developer options</b> and turn on <b>USB debugging</b> and <b>Wireless debugging</b> (tick <b>Always allow on this network</b>).", "Tap <b>Wireless debugging → Pair device with pairing code</b>.", "Pull down the notifications, tap <b>Enter</b> on <b>Termux:API (ADB pairing)</b> and type the 6-digit code.", "Termux shows <b>PAIRED SUCCESSFULLY</b> and <b>ADB CONNECTED</b>."]}, {"t": "Link Telegram & start", "s": "Scan, log in, go", "steps": ["In Termux, tap <b>CONTINUE</b> to show a QR code.", "On your second phone, open <b>Telegram → Settings → Devices → Link Desktop Device</b> and scan it within 30 seconds.", "If asked, enter your Telegram <b>2FA password</b>.", "When you see <b>LOGGED IN</b>, tap <b>START AUTOMATION</b>."]}],
     devHead: "Enable Developer Options",
     devSub: "A hidden Android setting that Replica needs. Follow the steps for your phone.",
     devCardTitle: "Developer Options Walkthrough",
@@ -2041,7 +1920,7 @@ const I18N = {
     btnHeroLicense: "Отримати ліцензію",
     chipSetupText: "Налаштування",
     chipTutorialText: "Відеоінструкція",
-    lbl1: "Крок 01", lblDev: "Крок 02", lbl2: "Крок 03", lblApi: "Крок 04", lblPhone: "Крок 05", lblSetup: "Крок 06", lbl3: "Крок 07", lblLicense: "Ліцензія",
+    lbl1: "Крок 01", lblDev: "Крок 02", lbl2: "Крок 03", lblApi: "Крок 04", lblPhone: "Крок 05", lblSetup: "Крок 06", lbl3: "Відео", lblLicense: "Ліцензія",
     st1Head: "Вимкніть Play Захист",
     st1Sub: "Android може блокувати додатки не з маркету. Спочатку вимкніть сканування.",
     st1CardTitle: "Інструкція Play Захисту",
@@ -2074,10 +1953,10 @@ const I18N = {
       "З'являться ваші <b>App api_id</b> (цифри) та <b>App api_hash</b> (літери й цифри).",
       "Скопіюйте обидва значення та збережіть у додатку <b>Нотатки</b>, щоб скористатися ними пізніше."
     ],
-    setupHead: "Посібник з налаштування та автоматизації",
-    setupSub: "Покроковий посібник з налаштування Replica, дозволів, сполучення ADB через Wi-Fi у Termux та входу в акаунт Telegram для запуску панелі автоматизації.",
-    setupCardTitle: "Інструкція з налаштування",
-    setupPhases: [{"t": "Передумови", "intro": "Переконайтеся, що на телефоні встановлено ці додатки:", "chips": ["Replica", "Termux", "Termux:API"], "steps": []}, {"t": "Етап 1: Налаштуйте додаток Replica", "steps": [["Запустіть Replica", ["Відкрийте додаток Replica на головному екрані."]], ["Надайте доступ до сховища", ["Натисніть <b>Continue</b> у запиті дозволу.", "Увімкніть перемикач <b>Allow access to manage all files</b>.", "Поверніться в додаток Replica."]], ["Введіть облікові дані", ["На вкладці <b>Credentials</b> заповніть поля:", "<b>API ID</b>: ваш API ID.", "<b>API Hash</b>: ваш API Hash.", "<b>License Key</b>: ваш ліцензійний ключ."]], ["Додайте акаунти", ["Відкрийте вкладку <b>Accounts</b> внизу праворуч.", "Введіть ім'я користувача цільового акаунта та натисніть <b>+ Add</b>.", "Повторіть, щоб додати інші акаунти.", "Натисніть <b>Save</b> у правому верхньому куті.", "Поверніться на головний екран."]]]}, {"t": "Етап 2: Дозволи для Termux:API", "steps": [["Відкрийте Termux:API", ["Відкрийте <b>Termux:API</b> зі списку додатків."]], ["Вимкніть оптимізацію батареї", ["Прокрутіть вниз і натисніть <b>DISABLE BATTERY OPTIMIZATIONS</b>.", "На запит <b>Let app always run in background?</b> натисніть <b>Allow</b>.", "Поверніться на головний екран."]]]}, {"t": "Етап 3: Запустіть Termux і надайте основні дозволи", "steps": [["Відкрийте Termux", ["Запустіть <b>Termux</b> і дочекайтеся встановлення початкових пакетів."]], ["Дозвольте сповіщення та роботу у фоні", ["Натисніть <b>Allow</b> у запиті про сповіщення.", "На запит про роботу додатка у фоні натисніть <b>Allow</b>."]], ["Продовжте налаштування в додатку", ["У терміналі натисніть зелену кнопку <b>CONTINUE</b>.", "На екрані <b>All files access</b> для Termux увімкніть <b>Allow access to manage all files</b> і поверніться в додаток.", "Термінал підтвердить доступ до сховища та почне налаштування ADB."]]]}, {"t": "Етап 4: Бездротове налагодження та сполучення ADB", "steps": [["Увімкніть режим розробника та налагодження", ["Відкрийте <b>Налаштування</b> і перейдіть до пункту <b>Для розробників</b>.", "Прокрутіть до розділу <b>Налагодження</b>.", "Увімкніть <b>Налагодження USB</b> і натисніть <b>OK</b>.", "Увімкніть <b>Бездротове налагодження</b>.", "Позначте <b>Завжди дозволяти в цій мережі</b> і натисніть <b>Дозволити</b>."]], ["Отримайте код сполучення", ["Натисніть <b>Бездротове налагодження</b>, щоб відкрити меню.", "Виберіть <b>Спарити пристрій за кодом</b>.", "З'явиться вікно з 6-значним кодом Wi-Fi, IP-адресою та портом."]], ["Введіть код сполучення", ["Потягніть вниз шторку сповіщень і знайдіть сповіщення <b>Termux:API (ADB pairing)</b>.", "Натисніть <b>Enter</b>, введіть 6-значний код з екрана та натисніть стрілку надсилання.", "Поверніться в Termux. Він покаже <b>PAIRED SUCCESSFULLY</b> і <b>ADB CONNECTED</b>."]]]}, {"t": "Етап 5: Підключіть Telegram і запустіть автоматизацію", "steps": [["Скануйте QR-код Telegram", ["У Termux прочитайте інструкцію під <b>TELEGRAM LOGIN</b>.", "На телефоні, де ви ввійшли в Telegram (другий телефон із Кроку 05), відкрийте <b>Налаштування → Пристрої → Підключити настільний пристрій (Link Desktop Device)</b>.", "У Termux натисніть <b>CONTINUE</b>, щоб показати QR-код.", "Наведіть сканер другого телефону на QR-код. Він дійсний 30 секунд."]], ["Введіть пароль 2FA", ["Після сканування термінал запитає <b>ENTER 2FA PASSWORD:</b>.", "Введіть хмарний пароль двоетапної перевірки Telegram і натисніть Enter.", "Termux підтвердить <b>LOGGED IN: [ім'я вашого акаунта]</b>."]], ["Запустіть автоматизацію", ["Відкриється панель автоматизації з ім'ям акаунта, статусом і терміном дії ліцензії, даними пристрою, CashCoins і системними журналами.", "Натисніть <b>START AUTOMATION</b>, щоб почати."]]]}],
+    guideLbl: "Інструкція", guideHead: "Налаштування за 10 простих кроків", guideSub: "Виконуйте кроки по черзі. Торкніться кроку, щоб відкрити його, потім позначте виконаним.",
+    guideDone: "{n} з {m} виконано", guideNext: "Готово, наступний крок", guideFinish: "Готово, завершити",
+    devChips: ["Pixel / Stock", "Samsung", "Xiaomi / Redmi", "OnePlus", "Oppo / Realme", "Vivo / iQOO", "Tecno / Infinix", "Huawei / Honor", "Інші"],
+    guideSteps: [{"t": "Вимкніть Play Захист", "s": "Щоб Android дозволив встановити додатки", "steps": ["Відкрийте <b>Play Маркет</b> і торкніться фото профілю.", "Торкніться <b>Play Захист</b>, потім <b>значка налаштувань</b>.", "Вимкніть <b>Сканувати додатки за допомогою Play Захисту</b> і підтвердьте."]}, {"t": "Увімкніть режим розробника", "s": "Потрібен для бездротового налагодження", "steps": ["Відкрийте <b>Налаштування → Про телефон</b>.", "Оберіть свій телефон нижче та натисніть на вказаний пункт <b>7 разів</b>. Введіть PIN-код, якщо попросить.", "З'явиться повідомлення <b>Тепер ви розробник!</b>"]}, {"t": "Встановіть додатки", "s": "Replica, Termux та Termux:API", "steps": []}, {"t": "Отримайте API ID та Hash", "s": "З Telegram, займає 2 хвилини", "steps": ["Відкрийте цей <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">сайт</a> і увійдіть за номером Telegram-акаунта, <b>який хочете автоматизувати</b>.", "Введіть код, який надішле Telegram.", "Натисніть <b>API development tools</b>, введіть будь-яку назву й коротке ім'я та натисніть <b>Create application</b>.", "Скопіюйте <b>api_id</b> та <b>api_hash</b> і збережіть у додатку <b>Нотатки</b>."]}, {"t": "Підготуйте другий телефон", "s": "Для сканування QR-коду Telegram", "steps": ["Увійдіть в офіційний додаток <b>Telegram</b> у <b>той самий акаунт</b>, який ви використали для API ID.", "Відкрийте <b>Налаштування → Пристрої</b> і перевірте, що сканер працює.", "Чорний екран? Дозвольте Telegram доступ до <b>камери</b>."]}, {"t": "Налаштуйте Replica", "s": "Облікові дані та акаунти", "steps": ["Відкрийте <b>Replica</b>, натисніть <b>Continue</b> і увімкніть <b>Allow access to manage all files</b>.", "На вкладці <b>Credentials</b> введіть <b>API ID</b>, <b>API Hash</b> і <b>License Key</b>.", "На вкладці <b>Accounts</b> додайте кожне ім'я користувача через <b>+ Add</b>, потім натисніть <b>Save</b>."]}, {"t": "Дозвольте Termux:API працювати", "s": "Щоб він працював у фоні", "steps": ["Відкрийте <b>Termux:API</b>.", "Натисніть <b>DISABLE BATTERY OPTIMIZATIONS</b> і виберіть <b>Allow</b>."]}, {"t": "Запустіть Termux", "s": "Надайте базові дозволи", "steps": ["Відкрийте <b>Termux</b> і дочекайтеся завершення налаштування.", "Натисніть <b>Allow</b> для сповіщень і роботи у фоні.", "Натисніть <b>CONTINUE</b>, увімкніть <b>Allow access to manage all files</b> і поверніться."]}, {"t": "Сполучіть бездротове налагодження", "s": "Підключіть ADB до Termux", "steps": ["Відкрийте <b>Налаштування → Для розробників</b> і увімкніть <b>Налагодження USB</b> та <b>Бездротове налагодження</b> (позначте <b>Завжди дозволяти в цій мережі</b>).", "Торкніться <b>Бездротове налагодження → Спарити пристрій за кодом</b>.", "Потягніть вниз сповіщення, натисніть <b>Enter</b> у <b>Termux:API (ADB pairing)</b> і введіть 6-значний код.", "Termux покаже <b>PAIRED SUCCESSFULLY</b> та <b>ADB CONNECTED</b>."]}, {"t": "Підключіть Telegram і запустіть", "s": "Скануйте, увійдіть, готово", "steps": ["У Termux натисніть <b>CONTINUE</b>, щоб показати QR-код.", "На другому телефоні відкрийте <b>Telegram → Налаштування → Пристрої → Підключити настільний пристрій</b> і скануйте протягом 30 секунд.", "Якщо попросить, введіть <b>пароль 2FA</b> Telegram.", "Коли побачите <b>LOGGED IN</b>, натисніть <b>START AUTOMATION</b>."]}],
     devHead: "Увімкніть режим розробника",
     devSub: "Прихований параметр Android, потрібний для Replica. Виконайте кроки для вашого телефону.",
     devCardTitle: "Інструкція з режиму розробника",
@@ -2151,7 +2030,7 @@ const I18N = {
     btnHeroLicense: "Получить лицензию",
     chipSetupText: "Настройка",
     chipTutorialText: "Видеоурок",
-    lbl1: "Шаг 01", lblDev: "Шаг 02", lbl2: "Шаг 03", lblApi: "Шаг 04", lblPhone: "Шаг 05", lblSetup: "Шаг 06", lbl3: "Шаг 07", lblLicense: "Лицензия",
+    lbl1: "Шаг 01", lblDev: "Шаг 02", lbl2: "Шаг 03", lblApi: "Шаг 04", lblPhone: "Шаг 05", lblSetup: "Шаг 06", lbl3: "Видео", lblLicense: "Лицензия",
     st1Head: "Отключите Play Защиту",
     st1Sub: "Android может блокировать внешние скрипты. Сначала отключите сканирование.",
     st1CardTitle: "Инструкция Play Защиты",
@@ -2184,10 +2063,10 @@ const I18N = {
       "Появятся ваши <b>App api_id</b> (цифры) и <b>App api_hash</b> (буквы и цифры).",
       "Скопируйте оба значения и сохраните в приложении <b>Заметки</b>, чтобы воспользоваться ими позже."
     ],
-    setupHead: "Руководство по настройке и автоматизации",
-    setupSub: "Пошаговое руководство по настройке Replica, разрешениям, сопряжению ADB по Wi-Fi в Termux и входу в аккаунт Telegram для запуска панели автоматизации.",
-    setupCardTitle: "Инструкция по настройке",
-    setupPhases: [{"t": "Требования", "intro": "Убедитесь, что на телефоне установлены эти приложения:", "chips": ["Replica", "Termux", "Termux:API"], "steps": []}, {"t": "Этап 1: Настройте приложение Replica", "steps": [["Запустите Replica", ["Откройте приложение Replica на главном экране."]], ["Выдайте доступ к хранилищу", ["Нажмите <b>Continue</b> в запросе разрешения.", "Включите переключатель <b>Allow access to manage all files</b>.", "Вернитесь в приложение Replica."]], ["Введите учётные данные", ["На вкладке <b>Credentials</b> заполните поля:", "<b>API ID</b>: ваш API ID.", "<b>API Hash</b>: ваш API Hash.", "<b>License Key</b>: ваш лицензионный ключ."]], ["Добавьте аккаунты", ["Откройте вкладку <b>Accounts</b> внизу справа.", "Введите имя пользователя целевого аккаунта и нажмите <b>+ Add</b>.", "Повторите, чтобы добавить другие аккаунты.", "Нажмите <b>Save</b> в правом верхнем углу.", "Вернитесь на главный экран."]]]}, {"t": "Этап 2: Разрешения для Termux:API", "steps": [["Откройте Termux:API", ["Откройте <b>Termux:API</b> из списка приложений."]], ["Отключите оптимизацию батареи", ["Прокрутите вниз и нажмите <b>DISABLE BATTERY OPTIMIZATIONS</b>.", "На запрос <b>Let app always run in background?</b> нажмите <b>Allow</b>.", "Вернитесь на главный экран."]]]}, {"t": "Этап 3: Запустите Termux и выдайте основные разрешения", "steps": [["Откройте Termux", ["Запустите <b>Termux</b> и дождитесь установки начальных пакетов."]], ["Разрешите уведомления и работу в фоне", ["Нажмите <b>Allow</b> в запросе об уведомлениях.", "На запрос о работе приложения в фоне нажмите <b>Allow</b>."]], ["Продолжите настройку в приложении", ["В терминале нажмите зелёную кнопку <b>CONTINUE</b>.", "На экране <b>All files access</b> для Termux включите <b>Allow access to manage all files</b> и вернитесь в приложение.", "Терминал подтвердит доступ к хранилищу и начнёт настройку ADB."]]]}, {"t": "Этап 4: Беспроводная отладка и сопряжение ADB", "steps": [["Включите режим разработчика и отладку", ["Откройте <b>Настройки</b> и перейдите в <b>Для разработчиков</b>.", "Прокрутите до раздела <b>Отладка</b>.", "Включите <b>Отладка по USB</b> и нажмите <b>OK</b>.", "Включите <b>Беспроводная отладка</b>.", "Отметьте <b>Всегда разрешать в этой сети</b> и нажмите <b>Разрешить</b>."]], ["Получите код сопряжения", ["Нажмите <b>Беспроводная отладка</b>, чтобы открыть меню.", "Выберите <b>Подключить устройство с помощью кода</b>.", "Появится окно с 6-значным кодом Wi-Fi, IP-адресом и портом."]], ["Введите код сопряжения", ["Потяните вниз шторку уведомлений и найдите уведомление <b>Termux:API (ADB pairing)</b>.", "Нажмите <b>Enter</b>, введите 6-значный код с экрана и нажмите стрелку отправки.", "Вернитесь в Termux. Он покажет <b>PAIRED SUCCESSFULLY</b> и <b>ADB CONNECTED</b>."]]]}, {"t": "Этап 5: Подключите Telegram и запустите автоматизацию", "steps": [["Отсканируйте QR-код Telegram", ["В Termux прочитайте инструкцию под <b>TELEGRAM LOGIN</b>.", "На телефоне, где выполнен вход в Telegram (второй телефон из Шага 05), откройте <b>Настройки → Устройства → Подключить устройство (Link Desktop Device)</b>.", "В Termux нажмите <b>CONTINUE</b>, чтобы показать QR-код.", "Наведите сканер второго телефона на QR-код. Он действует 30 секунд."]], ["Введите пароль 2FA", ["После сканирования терминал спросит <b>ENTER 2FA PASSWORD:</b>.", "Введите облачный пароль двухэтапной проверки Telegram и нажмите Enter.", "Termux подтвердит <b>LOGGED IN: [имя вашего аккаунта]</b>."]], ["Запустите автоматизацию", ["Откроется панель автоматизации с именем аккаунта, статусом и сроком действия лицензии, данными устройства, CashCoins и системными журналами.", "Нажмите <b>START AUTOMATION</b>, чтобы начать."]]]}],
+    guideLbl: "Инструкция", guideHead: "Настройка за 10 простых шагов", guideSub: "Выполняйте шаги по порядку. Нажмите на шаг, чтобы открыть его, затем отметьте выполненным.",
+    guideDone: "{n} из {m} выполнено", guideNext: "Готово, следующий шаг", guideFinish: "Готово, завершить",
+    devChips: ["Pixel / Stock", "Samsung", "Xiaomi / Redmi", "OnePlus", "Oppo / Realme", "Vivo / iQOO", "Tecno / Infinix", "Huawei / Honor", "Другие"],
+    guideSteps: [{"t": "Отключите Play Защиту", "s": "Чтобы Android разрешил установку приложений", "steps": ["Откройте <b>Play Маркет</b> и нажмите на фото профиля.", "Нажмите <b>Play Защита</b>, затем <b>значок настроек</b>.", "Отключите <b>Сканировать приложения с помощью Play Защиты</b> и подтвердите."]}, {"t": "Включите режим разработчика", "s": "Нужен для беспроводной отладки", "steps": ["Откройте <b>Настройки → О телефоне</b>.", "Выберите свой телефон ниже и нажмите на указанный пункт <b>7 раз</b>. Введите PIN-код, если попросит.", "Появится сообщение <b>Вы стали разработчиком!</b>"]}, {"t": "Установите приложения", "s": "Replica, Termux и Termux:API", "steps": []}, {"t": "Получите API ID и Hash", "s": "Из Telegram, займёт 2 минуты", "steps": ["Откройте этот <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">сайт</a> и войдите по номеру Telegram-аккаунта, <b>который хотите автоматизировать</b>.", "Введите код, который пришлёт Telegram.", "Нажмите <b>API development tools</b>, введите любое название и короткое имя, затем нажмите <b>Create application</b>.", "Скопируйте <b>api_id</b> и <b>api_hash</b> и сохраните в приложении <b>Заметки</b>."]}, {"t": "Подготовьте второй телефон", "s": "Для сканирования QR-кода Telegram", "steps": ["Войдите в официальное приложение <b>Telegram</b> в <b>тот же аккаунт</b>, который вы использовали для API ID.", "Откройте <b>Настройки → Устройства</b> и проверьте, что сканер работает.", "Чёрный экран? Разрешите Telegram доступ к <b>камере</b>."]}, {"t": "Настройте Replica", "s": "Учётные данные и аккаунты", "steps": ["Откройте <b>Replica</b>, нажмите <b>Continue</b> и включите <b>Allow access to manage all files</b>.", "На вкладке <b>Credentials</b> введите <b>API ID</b>, <b>API Hash</b> и <b>License Key</b>.", "На вкладке <b>Accounts</b> добавьте каждое имя пользователя через <b>+ Add</b>, затем нажмите <b>Save</b>."]}, {"t": "Разрешите Termux:API работать", "s": "Чтобы он работал в фоне", "steps": ["Откройте <b>Termux:API</b>.", "Нажмите <b>DISABLE BATTERY OPTIMIZATIONS</b> и выберите <b>Allow</b>."]}, {"t": "Запустите Termux", "s": "Выдайте базовые разрешения", "steps": ["Откройте <b>Termux</b> и дождитесь завершения настройки.", "Нажмите <b>Allow</b> для уведомлений и работы в фоне.", "Нажмите <b>CONTINUE</b>, включите <b>Allow access to manage all files</b> и вернитесь."]}, {"t": "Сопрягите беспроводную отладку", "s": "Подключите ADB к Termux", "steps": ["Откройте <b>Настройки → Для разработчиков</b> и включите <b>Отладка по USB</b> и <b>Беспроводная отладка</b> (отметьте <b>Всегда разрешать в этой сети</b>).", "Нажмите <b>Беспроводная отладка → Подключить устройство с помощью кода</b>.", "Потяните вниз уведомления, нажмите <b>Enter</b> в <b>Termux:API (ADB pairing)</b> и введите 6-значный код.", "Termux покажет <b>PAIRED SUCCESSFULLY</b> и <b>ADB CONNECTED</b>."]}, {"t": "Подключите Telegram и запустите", "s": "Сканируйте, войдите, готово", "steps": ["В Termux нажмите <b>CONTINUE</b>, чтобы показать QR-код.", "На втором телефоне откройте <b>Telegram → Настройки → Устройства → Подключить устройство</b> и отсканируйте за 30 секунд.", "Если попросит, введите <b>пароль 2FA</b> Telegram.", "Когда увидите <b>LOGGED IN</b>, нажмите <b>START AUTOMATION</b>."]}],
     devHead: "Включите режим разработчика",
     devSub: "Скрытая настройка Android, необходимая для Replica. Выполните шаги для вашего телефона.",
     devCardTitle: "Инструкция по режиму разработчика",
@@ -2403,55 +2282,140 @@ function applyI18n() {
     const k = el.dataset.i;
     if (dict[k] !== undefined) el.innerHTML = dict[k].replace('{y}', year);
   });
-  $('#protectStepRows').innerHTML = dict.st1Steps.map((txt, i) => `
-    <div class="step-point" style="--i:${i}">
-      <div class="point-number">${i + 1}</div>
-      <div>${txt}</div>
-    </div>
-  `).join('');
-  const steps = dict.apiSteps;
-  const brands = dict.devBrands.map(([n, tap, find]) => `
-    <div class="brand-item">
-      <div class="brand-name">${n}</div>
-      <div class="brand-line"><span>${dict.devBrandTap}</span> ${tap}</div>
-      <div class="brand-line"><span>${dict.devBrandFind}</span> ${find}</div>
-    </div>`).join('') + `<p class="brand-note">${dict.devBrandNote}</p>`;
-  $('#devStepRows').innerHTML = dict.devSteps.map((txt, i) => `
-    <div class="step-point" style="--i:${i}">
-      <div class="point-number">${i + 1}</div>
-      <div>${txt}</div>
-    </div>
-    ${i === 2 ? `<div class="step-point brand-wrap" style="--i:${i}"><div class="brand-list">${brands}</div></div>` : ''}
-  `).join('');
-  $('#phoneStepRows').innerHTML = dict.phoneSteps.map((txt, i) => `
-    <div class="step-point" style="--i:${i}">
-      <div class="point-number">${i + 1}</div>
-      <div>${txt}</div>
-    </div>
-  `).join('');
-  let gi = 0;
-  const nextI = () => Math.min(gi++, 10);
-  $('#setupRows').innerHTML = dict.setupPhases.map(ph => {
-    let out = `<div class="step-point phase-head" style="--i:${nextI()}"><div class="phase-title">${ph.t}</div></div>`;
-    if (ph.intro) out += `<div class="step-point" style="--i:${nextI()}"><div>${ph.intro}</div></div>`;
-    if (ph.chips) out += `<div class="step-point" style="--i:${nextI()}"><div class="chip-list">${ph.chips.map(c => `<span class="app-chip">${c}</span>`).join('')}</div></div>`;
-    out += ph.steps.map(([t, d], i) => `
-      <div class="step-point" style="--i:${nextI()}">
-        <div class="point-number">${i + 1}</div>
-        <div><b class="step-title">${t}</b><ul class="sub-list">${d.map(x => `<li>${x}</li>`).join('')}</ul></div>
+  renderGuide(dict);
+}
+
+
+/* ===== SETUP GUIDE ===== */
+const GUIDE_TYPES = ['list', 'dev', 'install', 'list', 'list', 'list', 'list', 'list', 'list', 'list'];
+let doneSteps = new Set();
+try { doneSteps = new Set(JSON.parse(store.get('replica_done') || '[]')); } catch (_) {}
+let openStep = -2;     // -2 = not decided yet, -1 = all closed
+let devIdx = 0;
+
+function saveDone() { store.set('replica_done', JSON.stringify([...doneSteps])); }
+
+function brandHtml(dict) {
+  const b = dict.devBrands[devIdx];
+  return `<div class="brand-name">${b[0]}</div>
+    <div class="brand-line"><span>${dict.devBrandTap}</span> ${b[1]}</div>
+    <div class="brand-line"><span>${dict.devBrandFind}</span> ${b[2]}</div>
+    <p class="brand-note">${dict.devBrandNote}</p>`;
+}
+
+function renderGuide(dict) {
+  const list = $('#guideList');
+  if (!list) return;
+  const total = dict.guideSteps.length;
+  if (openStep === -2) {
+    const first = dict.guideSteps.findIndex((_, i) => !doneSteps.has(i));
+    openStep = first;
+  }
+  const DL = [
+    ['icAndroid', '', 'dlReplicaAnchor', 'titleReplica', 'descReplica', 'btnDlReplica', CONFIG.links.replicaApk, 'replica.apk'],
+    ['icTerminal', 'alt', 'dlTermuxAnchor', 'titleTermux', 'descTermux', 'btnDlTermux', CONFIG.links.termuxApk, 'termux.apk'],
+    ['icExtension', 'tertiary', 'dlTermuxApiAnchor', 'titleTermuxApi', 'descTermuxApi', 'btnDlTermuxApi', CONFIG.links.termuxApiApk, 'termux-api.apk']
+  ];
+  list.innerHTML = dict.guideSteps.map((g, i) => {
+    const type = GUIDE_TYPES[i];
+    let k = 0;
+    let body = g.steps.map((txt, n) => `
+      <div class="step-point" style="--i:${k++}"><div class="point-number">${n + 1}</div><div>${txt}</div></div>`).join('');
+    if (type === 'dev') {
+      body += `<div class="step-point" style="--i:${k++}"><div class="brand-area">
+        <div class="brand-chips" role="tablist">${dict.devChips.map((c, n) =>
+          `<button class="m3e-chip m3e-state brand-chip${n === devIdx ? ' active' : ''}" data-b="${n}">${c}</button>`).join('')}</div>
+        <div class="brand-item" id="brandBox">${brandHtml(dict)}</div></div></div>`;
+    }
+    if (type === 'install') {
+      body += DL.map(([ic, cls, id, tt, dd, bb, href, file]) => `
+      <div class="step-point dl-row" style="--i:${k++}">
+        <div class="dl-info">
+          <div class="sym-shape-frame ${cls}"><svg class="ic"><use href="#${ic}"/></svg></div>
+          <div class="dl-text"><b class="step-title">${dict[tt]}</b><span>${dict[dd]}</span></div>
+        </div>
+        <a class="tile-action-btn m3e-state" id="${id}" href="${href}" download="${file}" rel="noopener noreferrer">
+          <svg class="ic"><use href="#icDownload"/></svg><span>${dict[bb]}</span></a>
       </div>`).join('');
-    return out;
+    }
+    if (i === 3) {
+      body += `<div class="step-point step-note" style="--i:${k++}"><svg class="ic"><use href="#icShield"/></svg>
+        <div><b>${dict.apiNoteTitle}</b><br>${dict.apiNoteText}</div></div>`;
+    }
+    body += `<div class="step-point" style="--i:${k++}"><button class="m3e-btn tonal m3e-state guide-next" data-next="${i}">
+        <span>${i === total - 1 ? dict.guideFinish : dict.guideNext}</span><svg class="ic"><use href="#icArrowRight"/></svg></button></div>`;
+    const cls = 'm3e-expandable guide-step' + (i === openStep ? ' open' : '') + (doneSteps.has(i) ? ' done' : '');
+    return `
+    <article class="${cls}" data-idx="${i}" id="gs-${i}">
+      <button class="expandable-trigger guide-head" aria-expanded="${i === openStep}" aria-controls="gp-${i}">
+        <span class="guide-badge" aria-hidden="true">
+          <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+          <span class="badge-num">${i + 1}</span>
+          <svg class="ic badge-check"><use href="#icCheck"/></svg>
+        </span>
+        <span class="guide-titles"><h3>${g.t}</h3><p>${g.s}</p></span>
+        <span class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></span>
+      </button>
+      <div class="expandable-panel" id="gp-${i}"><div class="expandable-content"><div class="guide-body">${body}</div></div></div>
+    </article>`;
   }).join('');
-  $('#apiStepRows').innerHTML = steps.map((txt, i) => `
-    <div class="step-point" style="--i:${i}">
-      <div class="point-number">${i + 1}</div>
-      <div>${txt}</div>
-    </div>
-  `).join('') + `
-    <div class="step-point step-note" style="--i:${steps.length}">
-      <svg class="ic"><use href="#icShield"/></svg>
-      <div><b>${dict.apiNoteTitle}</b><br>${dict.apiNoteText}</div>
-    </div>`;
+  updateProgress(dict);
+}
+
+function updateProgress(dict = I18N[lang]) {
+  const total = dict.guideSteps.length, n = doneSteps.size;
+  $('#guideFill').style.width = (n / total * 100) + '%';
+  $('#guideProgressText').textContent = dict.guideDone.replace('{n}', n).replace('{m}', total);
+}
+
+function setOpen(i) {
+  openStep = i;
+  $$('#guideList .guide-step').forEach((el, k) => {
+    const on = k === i;
+    el.classList.toggle('open', on);
+    el.querySelector('.guide-head').setAttribute('aria-expanded', String(on));
+  });
+}
+
+function scrollToStep(i) {
+  setTimeout(() => {
+    const el = $('#gs-' + i);
+    if (el) el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }, 620);
+}
+
+function setupGuide() {
+  const list = $('#guideList');
+  list.addEventListener('click', e => {
+    const chip = e.target.closest('.brand-chip');
+    if (chip) {
+      devIdx = +chip.dataset.b;
+      $$('#guideList .brand-chip').forEach(c => c.classList.toggle('active', +c.dataset.b === devIdx));
+      const box = $('#brandBox');
+      box.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: 'ease-out' });
+      box.innerHTML = brandHtml(I18N[lang]);
+      return;
+    }
+    const next = e.target.closest('.guide-next');
+    if (next) {
+      const i = +next.dataset.next, total = I18N[lang].guideSteps.length;
+      doneSteps.add(i); saveDone();
+      $('#gs-' + i).classList.add('done');
+      updateProgress();
+      haptic('toggle');
+      if (i + 1 < total) { setOpen(i + 1); scrollToStep(i + 1); }
+      else { setOpen(-1); setTimeout(() => $('#tutorial').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }), 620); }
+      return;
+    }
+    const head = e.target.closest('.guide-head');
+    if (head) {
+      const i = +head.closest('.guide-step').dataset.idx;
+      const willOpen = openStep !== i;
+      setOpen(willOpen ? i : -1);
+      haptic(willOpen ? 'open' : 'close');
+      if (willOpen) scrollToStep(i);
+    }
+  });
 }
 
 const FONT_SAMPLE = { en: 'Aa', uk: 'Привіт Ґґ Єє Її Іі', ru: 'Привет Ёё Ъъ Ыы' };
@@ -2563,9 +2527,6 @@ function setupLangSwitch() {
 
 function init() {
   $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
-  $('#dlTermuxAnchor').href = CONFIG.links.termuxApk;
-  $('#dlTermuxApiAnchor').href = CONFIG.links.termuxApiApk;
-  $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
 
   $('#swatchGrid').innerHTML = CONFIG.monetHues.map(item => `
     <button class="monet-swatch ${item.hue === hue ? 'active' : ''}" data-hue="${item.hue}"
@@ -2601,28 +2562,10 @@ function init() {
   const onSys = e => withTransition(() => applyMode(e.matches ? 'dark' : 'light'));
   if (sysDark.addEventListener) sysDark.addEventListener('change', onSys); else sysDark.addListener(onSys);
 
-  $$('.m3e-expandable').forEach(wrap => {
-    const btn = wrap.querySelector('.expandable-trigger');
-    btn.addEventListener('click', () => {
-      const isOpen = wrap.classList.toggle('open');
-      btn.setAttribute('aria-expanded', String(isOpen));
-      haptic(isOpen ? 'open' : 'close');
-    });
-  });
-
-  $('#dlReplicaAnchor').addEventListener('click', e => {
-    if (CONFIG.links.replicaApk === '#' || !CONFIG.links.replicaApk) {
-      e.preventDefault();
-      haptic('warn');
-      showToast(I18N[lang].apkComingSoon);
-    } else {
-      $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
-    }
-  });
-
   if (document.fonts && document.fonts.load) {
     Object.values(FONT_SAMPLE).forEach(t => ['400', '600', '800'].forEach(w => document.fonts.load(`${w} 1em "Plus Jakarta Sans"`, t).catch(() => {})));
   }
+  setupGuide();
   applyHue(hue);
   applyMode(mode);
   applyI18n();
