@@ -1387,6 +1387,16 @@ main > section, footer { backface-visibility: hidden; }
 ::view-transition-new(root) { animation: vt-in 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
 @keyframes vt-out { from { opacity: 1; } to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== API STEP: links + privacy note ===== */
+.step-point a { color: var(--md-sys-color-primary); font-weight: 800; text-decoration: none; }
+.step-note {
+  align-items: flex-start; padding: 14px 16px; border-radius: 20px; margin-top: 4px;
+  background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+  border: 1px solid color-mix(in oklch, var(--md-sys-color-primary) 40%, var(--md-sys-color-primary-container));
+}
+.step-note b { color: inherit; }
+.step-note .ic { margin-top: 2px; width: 22px; height: 22px; }
 </style>
 </head>
 <body>
@@ -1454,6 +1464,18 @@ main > section, footer { backface-visibility: hidden; }
     </symbol>
     <symbol id="icMoon" viewBox="0 0 24 24">
       <path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8C12.92 3.04 12.46 3 12 3Z"/>
+    </symbol>
+    <symbol id="icPhone" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="6.5" y="2.8" width="11" height="18.4" rx="3"/>
+        <path d="M10.5 18h3"/>
+      </g>
+    </symbol>
+    <symbol id="icKey" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="15.5" r="4.5"/>
+        <path d="M11.3 12.2 20 3.5M16.5 7l3 3M13.8 9.7l2.2 2.2"/>
+      </g>
     </symbol>
     <symbol id="icBug" viewBox="0 0 24 24">
       <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
@@ -1627,7 +1649,63 @@ main > section, footer { backface-visibility: hidden; }
     </div>
   </section>
 
-  <!-- STEP 03 -->
+  <!-- STEP 03: API ID & HASH -->
+  <section id="apikeys">
+    <div class="step-section-header">
+      <span class="step-label" data-i="lblApi">Step 03</span>
+      <h2 class="step-headline" data-i="apiHead">Get your API ID &amp; Hash</h2>
+      <p class="step-summary" data-i="apiSub">You need these to connect Replica to your Telegram account. It takes about two minutes.</p>
+    </div>
+
+    <div class="m3e-expandable" id="apiExpandable">
+      <button class="expandable-trigger" id="apiToggleBtn" aria-expanded="false" aria-controls="apiPanel">
+        <div class="expandable-left">
+          <div class="sym-shape-frame"><svg class="ic"><use href="#icKey"/></svg></div>
+          <div>
+            <h3 data-i="apiCardTitle">API ID &amp; Hash Walkthrough</h3>
+            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
+          </div>
+        </div>
+        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
+      </button>
+
+      <div class="expandable-panel" id="apiPanel">
+        <div class="expandable-content">
+          <div class="walkthrough-steps" id="apiStepRows"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 04: SECOND PHONE -->
+  <section id="phone2">
+    <div class="step-section-header">
+      <span class="step-label" data-i="lblPhone">Step 04</span>
+      <h2 class="step-headline" data-i="phoneHead">Prepare your second phone</h2>
+      <p class="step-summary" data-i="phoneSub">Get a second phone ready so you can confirm your Telegram login with its scanner.</p>
+    </div>
+
+    <div class="m3e-expandable" id="phoneExpandable">
+      <button class="expandable-trigger" id="phoneToggleBtn" aria-expanded="false" aria-controls="phonePanel">
+        <div class="expandable-left">
+          <div class="sym-shape-frame alt"><svg class="ic"><use href="#icPhone"/></svg></div>
+          <div>
+            <h3 data-i="phoneCardTitle">Second Phone Walkthrough</h3>
+            <p data-i="st1CardPrompt">Tap to view step-by-step instructions</p>
+          </div>
+        </div>
+        <div class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></div>
+      </button>
+
+      <div class="expandable-panel" id="phonePanel">
+        <div class="expandable-content">
+          <div class="walkthrough-steps" id="phoneStepRows"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 05 -->
   <section id="tutorial">
     <div class="step-section-header">
       <span class="step-label" data-i="lbl3">Step 03</span>
@@ -1759,7 +1837,7 @@ const I18N = {
     btnHeroLicense: "Get a License",
     chipSetupText: "Setup",
     chipTutorialText: "Tutorial Video",
-    lbl1: "Step 01", lbl2: "Step 02", lbl3: "Step 03", lblLicense: "License",
+    lbl1: "Step 01", lbl2: "Step 02", lblApi: "Step 03", lblPhone: "Step 04", lbl3: "Step 05", lblLicense: "License",
     st1Head: "Disable Play Protect",
     st1Sub: "Android may block sideloaded automation apps. Turn off scanning first.",
     st1CardTitle: "Play Protect Walkthrough",
@@ -1780,6 +1858,31 @@ const I18N = {
     btnDlTermux: "Download Termux",
     btnDlTermuxApi: "Download Termux API",
     titleReplica: "Replica App", titleTermux: "Termux App", titleTermuxApi: "Termux API App",
+    apiHead: "Get your API ID & Hash",
+    apiSub: "You need these to connect Replica to your Telegram account. It takes about two minutes.",
+    apiCardTitle: "API ID & Hash Walkthrough",
+    apiSteps: [
+      "Open this <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">website</a> in your phone's browser.",
+      "Enter the phone number of the Telegram account <b>you want to automate tasks for</b>, with the country code, and tap <b>Next</b>.",
+      "Telegram sends a login code to your Telegram app. Type it on the website and tap <b>Sign In</b>.",
+      "Tap <b>API development tools</b>.",
+      "Fill in <b>App title</b> and <b>Short name</b> with anything you like, then tap <b>Create application</b>.",
+      "You will now see your <b>App api_id</b> (numbers) and <b>App api_hash</b> (letters and numbers).",
+      "Copy both and save them in your <b>Notes</b> app so you can use them later."
+    ],
+    phoneHead: "Prepare your second phone",
+    phoneSub: "Get a second phone ready so you can confirm your Telegram login with its scanner.",
+    phoneCardTitle: "Second Phone Walkthrough",
+    phoneSteps: [
+      "Take your second phone.",
+      "Open the official <b>Telegram</b> app on it and log in with the <b>same account</b> you used in Step 03.",
+      "Open <b>Settings</b>, then tap <b>Devices</b>.",
+      "Check that the scanner opens and works.",
+      "If you see a black screen, allow Telegram the <b>Camera</b> permission in your phone's settings, then check again.",
+      "Once the scanner works, continue to the video guide below."
+    ],
+    apiNoteTitle: "Keep them private",
+    apiNoteText: "Never share your API ID and hash with anyone. They give access to your Telegram account, so treat them like a password and keep them only in your Notes.",
     st3Head: "Setup Tutorial Video",
     st3Sub: "Watch the step-by-step walkthrough to get everything set up in minutes.",
     videoTileTitle: "Video Walkthrough",
@@ -1815,7 +1918,7 @@ const I18N = {
     btnHeroLicense: "Отримати ліцензію",
     chipSetupText: "Налаштування",
     chipTutorialText: "Відеоінструкція",
-    lbl1: "Крок 01", lbl2: "Крок 02", lbl3: "Крок 03", lblLicense: "Ліцензія",
+    lbl1: "Крок 01", lbl2: "Крок 02", lblApi: "Крок 03", lblPhone: "Крок 04", lbl3: "Крок 05", lblLicense: "Ліцензія",
     st1Head: "Вимкніть Play Захист",
     st1Sub: "Android може блокувати додатки не з маркету. Спочатку вимкніть сканування.",
     st1CardTitle: "Інструкція Play Захисту",
@@ -1836,6 +1939,31 @@ const I18N = {
     btnDlTermux: "Завантажити Termux",
     btnDlTermuxApi: "Завантажити Termux API",
     titleReplica: "Додаток Replica", titleTermux: "Додаток Termux", titleTermuxApi: "Додаток Termux API",
+    apiHead: "Отримайте API ID та Hash",
+    apiSub: "Вони потрібні, щоб підключити Replica до вашого акаунта Telegram. Це займе близько двох хвилин.",
+    apiCardTitle: "Інструкція з API ID та Hash",
+    apiSteps: [
+      "Відкрийте цей <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">сайт</a> у браузері телефону.",
+      "Введіть номер телефону Telegram-акаунта, <b>для якого ви хочете автоматизувати завдання</b>, з кодом країни та натисніть <b>Next</b>.",
+      "Telegram надішле код входу у ваш додаток Telegram. Введіть його на сайті та натисніть <b>Sign In</b>.",
+      "Натисніть <b>API development tools</b>.",
+      "У полях <b>App title</b> і <b>Short name</b> напишіть будь-що та натисніть <b>Create application</b>.",
+      "З'являться ваші <b>App api_id</b> (цифри) та <b>App api_hash</b> (літери й цифри).",
+      "Скопіюйте обидва значення та збережіть у додатку <b>Нотатки</b>, щоб скористатися ними пізніше."
+    ],
+    phoneHead: "Підготуйте другий телефон",
+    phoneSub: "Підготуйте другий телефон, щоб підтвердити вхід у Telegram за допомогою його сканера.",
+    phoneCardTitle: "Інструкція для другого телефону",
+    phoneSteps: [
+      "Візьміть другий телефон.",
+      "Відкрийте на ньому офіційний додаток <b>Telegram</b> і увійдіть у <b>той самий акаунт</b>, який ви використовували в Кроці 03.",
+      "Відкрийте <b>Налаштування</b>, потім натисніть <b>Пристрої</b>.",
+      "Переконайтеся, що сканер відкривається і працює.",
+      "Якщо ви бачите чорний екран, дозвольте Telegram доступ до <b>камери</b> в налаштуваннях телефону, а потім перевірте ще раз.",
+      "Коли сканер працює, переходьте до відеоінструкції нижче."
+    ],
+    apiNoteTitle: "Зберігайте в таємниці",
+    apiNoteText: "Нікому не передавайте свої API ID і hash. Вони дають доступ до вашого акаунта Telegram, тому ставтеся до них як до пароля й зберігайте лише у своїх нотатках.",
     st3Head: "Відеоурок з налаштування",
     st3Sub: "Перегляньте покроковий відеоролик і налаштуйте все за кілька хвилин.",
     videoTileTitle: "Відеоінструкція",
@@ -1871,7 +1999,7 @@ const I18N = {
     btnHeroLicense: "Получить лицензию",
     chipSetupText: "Настройка",
     chipTutorialText: "Видеоурок",
-    lbl1: "Шаг 01", lbl2: "Шаг 02", lbl3: "Шаг 03", lblLicense: "Лицензия",
+    lbl1: "Шаг 01", lbl2: "Шаг 02", lblApi: "Шаг 03", lblPhone: "Шаг 04", lbl3: "Шаг 05", lblLicense: "Лицензия",
     st1Head: "Отключите Play Защиту",
     st1Sub: "Android может блокировать внешние скрипты. Сначала отключите сканирование.",
     st1CardTitle: "Инструкция Play Защиты",
@@ -1892,6 +2020,31 @@ const I18N = {
     btnDlTermux: "Скачать Termux",
     btnDlTermuxApi: "Скачать Termux API",
     titleReplica: "Приложение Replica", titleTermux: "Приложение Termux", titleTermuxApi: "Приложение Termux API",
+    apiHead: "Получите API ID и Hash",
+    apiSub: "Они нужны, чтобы подключить Replica к вашему аккаунту Telegram. Это займёт около двух минут.",
+    apiCardTitle: "Инструкция по API ID и Hash",
+    apiSteps: [
+      "Откройте этот <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">сайт</a> в браузере телефона.",
+      "Введите номер телефона Telegram-аккаунта, <b>для которого вы хотите автоматизировать задания</b>, с кодом страны и нажмите <b>Next</b>.",
+      "Telegram отправит код входа в ваше приложение Telegram. Введите его на сайте и нажмите <b>Sign In</b>.",
+      "Нажмите <b>API development tools</b>.",
+      "В полях <b>App title</b> и <b>Short name</b> напишите что угодно и нажмите <b>Create application</b>.",
+      "Появятся ваши <b>App api_id</b> (цифры) и <b>App api_hash</b> (буквы и цифры).",
+      "Скопируйте оба значения и сохраните в приложении <b>Заметки</b>, чтобы воспользоваться ими позже."
+    ],
+    phoneHead: "Подготовьте второй телефон",
+    phoneSub: "Подготовьте второй телефон, чтобы подтвердить вход в Telegram с помощью его сканера.",
+    phoneCardTitle: "Инструкция для второго телефона",
+    phoneSteps: [
+      "Возьмите второй телефон.",
+      "Откройте на нём официальное приложение <b>Telegram</b> и войдите в <b>тот же аккаунт</b>, который вы использовали в Шаге 03.",
+      "Откройте <b>Настройки</b>, затем нажмите <b>Устройства</b>.",
+      "Убедитесь, что сканер открывается и работает.",
+      "Если вы видите чёрный экран, разрешите Telegram доступ к <b>камере</b> в настройках телефона, а затем проверьте ещё раз.",
+      "Когда сканер работает, переходите к видеоинструкции ниже."
+    ],
+    apiNoteTitle: "Храните в тайне",
+    apiNoteText: "Никому не передавайте свои API ID и hash. Они дают доступ к вашему аккаунту Telegram, поэтому относитесь к ним как к паролю и храните только в своих заметках.",
     st3Head: "Видеоурок по настройке",
     st3Sub: "Пошаговое руководство: от авторизации до полностью автономной работы.",
     videoTileTitle: "Обучающее видео",
@@ -2075,6 +2228,23 @@ function applyI18n() {
       <div>${txt}</div>
     </div>
   `).join('');
+  const steps = dict.apiSteps;
+  $('#phoneStepRows').innerHTML = dict.phoneSteps.map((txt, i) => `
+    <div class="step-point" style="--i:${i}">
+      <div class="point-number">${i + 1}</div>
+      <div>${txt}</div>
+    </div>
+  `).join('');
+  $('#apiStepRows').innerHTML = steps.map((txt, i) => `
+    <div class="step-point" style="--i:${i}">
+      <div class="point-number">${i + 1}</div>
+      <div>${txt}</div>
+    </div>
+  `).join('') + `
+    <div class="step-point step-note" style="--i:${steps.length}">
+      <svg class="ic"><use href="#icShield"/></svg>
+      <div><b>${dict.apiNoteTitle}</b><br>${dict.apiNoteText}</div>
+    </div>`;
 }
 
 const FONT_SAMPLE = { en: 'Aa', uk: 'Привіт Ґґ Єє Її Іі', ru: 'Привет Ёё Ъъ Ыы' };
@@ -2093,175 +2263,4 @@ async function slideSwap() {
     await vt.finished.catch(() => {});
     return;
   }
-  const blocks = [$('main'), $('footer')];
-  if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
-  const outs = blocks.map(el => el.animate([{ opacity: 1 }, { opacity: 0 }],
-    { duration: 160, easing: 'ease-out', fill: 'forwards' }));
-  await Promise.all(outs.map(a => a.finished.catch(() => {})));
-  applyI18n();
-  blocks.forEach(el => el.animate([{ opacity: 0 }, { opacity: 1 }],
-    { duration: 260, easing: 'ease-in', fill: 'backwards' }));
-  outs.forEach(a => a.cancel());
-}
-
-function closeThemeSheet() {
-  const btn = $('#btnThemeToggle');
-  $('#monetSheet').classList.remove('show');
-  btn.classList.remove('active-btn');
-  btn.setAttribute('aria-expanded', 'false');
-}
-
-/* SCROLL: nav only changes colour, never size; reveal is fade + slight slide */
-function setupMotion() {
-  const nav = $('#capsuleNav');
-  let ticking = false;
-  const onScroll = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      nav.classList.toggle('scrolled', window.scrollY > 24);
-      ticking = false;
-    });
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  if (reduceMotion) return;
-
-  const groups = [
-    ['.hero-heading', 120], ['.hero-text', 220], ['.hero-button-group', 320], ['.chips-row', 420],
-    ['.step-section-header'], ['.m3e-expandable'], ['.trilogy-tile'],
-    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box'], ['.bug-card']
-  ];
-  const targets = [];
-  groups.forEach(([sel, delay]) => {
-    $$(sel).forEach((el, i) => {
-      el.classList.add('reveal');
-      el.dataset.d = (delay !== undefined ? delay : 0) + (sel === '.trilogy-tile' ? i * 90 : 0);
-      targets.push(el);
-    });
-  });
-
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(en => {
-      if (!en.isIntersecting) return;
-      const el = en.target;
-      io.unobserve(el);
-      el.style.setProperty('--d', el.dataset.d + 'ms');
-      el.classList.add('in');
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-
-  document.addEventListener('animationend', e => {
-    if (e.animationName === 'm3e-rise' && e.target.classList.contains('reveal')) {
-      e.target.classList.remove('reveal', 'in');
-      e.target.style.removeProperty('--d');
-    }
-  });
-
-  setTimeout(() => targets.forEach(el => io.observe(el)), 900);
-}
-
-/* INIT */
-let langBusy = false;
-
-async function selectLang(next) {
-  if (langBusy || next === lang) return;
-  langBusy = true;
-  haptic('select');
-  lang = next;
-  store.set('replica_lang', lang);
-  markActiveLang();              // indicator springs to the new language
-  await sleep(200);
-  await slideSwap();             // page crossfades to the new text
-  langBusy = false;
-}
-
-function setupLangSwitch() {
-  $('#langSeg').addEventListener('click', e => {
-    const btn = e.target.closest('[data-lang]');
-    if (btn) selectLang(btn.dataset.lang);
-  });
-}
-
-function init() {
-  $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
-  $('#dlTermuxAnchor').href = CONFIG.links.termuxApk;
-  $('#dlTermuxApiAnchor').href = CONFIG.links.termuxApiApk;
-  $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
-
-  $('#swatchGrid').innerHTML = CONFIG.monetHues.map(item => `
-    <button class="monet-swatch ${item.hue === hue ? 'active' : ''}" data-hue="${item.hue}"
-            title="${item.name}" aria-label="${item.name}"
-            style="background: oklch(0.68 0.16 ${item.hue})"></button>
-  `).join('');
-
-  setupLangSwitch();
-
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) closeThemeSheet();
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeThemeSheet();
-  });
-
-  $('#swatchGrid').addEventListener('click', e => {
-    const swatch = e.target.closest('.monet-swatch');
-    if (!swatch) return;
-    haptic('select');
-    applyHue(swatch.dataset.hue);
-  });
-
-  const themeBtn = $('#btnThemeToggle');
-  themeBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    haptic('open');
-    const isOpen = $('#monetSheet').classList.toggle('show');
-    themeBtn.classList.toggle('active-btn', isOpen);
-    themeBtn.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  const onSys = e => withTransition(() => applyMode(e.matches ? 'dark' : 'light'));
-  if (sysDark.addEventListener) sysDark.addEventListener('change', onSys); else sysDark.addListener(onSys);
-
-  const protectWrap = $('#protectExpandable');
-  const protectBtn = $('#protectToggleBtn');
-  protectBtn.addEventListener('click', () => {
-    const isOpen = protectWrap.classList.toggle('open');
-    protectBtn.setAttribute('aria-expanded', String(isOpen));
-    haptic(isOpen ? 'open' : 'close');
-  });
-
-  $('#dlReplicaAnchor').addEventListener('click', e => {
-    if (CONFIG.links.replicaApk === '#' || !CONFIG.links.replicaApk) {
-      e.preventDefault();
-      haptic('warn');
-      showToast(I18N[lang].apkComingSoon);
-    } else {
-      $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
-    }
-  });
-
-  if (document.fonts && document.fonts.load) {
-    Object.values(FONT_SAMPLE).forEach(t => ['400', '600', '800'].forEach(w => document.fonts.load(`${w} 1em "Plus Jakarta Sans"`, t).catch(() => {})));
-  }
-  applyHue(hue);
-  applyMode(mode);
-  applyI18n();
-  markActiveLang();
-  setupMotion();
-
-  const ready = Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), sleep(2000)]);
-  Promise.all([ready, sleep(700)]).then(() => {
-    const loader = $('#m3eLoader');
-    if (loader) {
-      loader.classList.add('vanish');
-      setTimeout(() => loader.remove(), 550);
-    }
-  });
-}
-
-window.addEventListener('DOMContentLoaded', init);
-</script>
-</body>
-</html>
+  const blocks = [$('main'), 
