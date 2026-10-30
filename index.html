@@ -349,24 +349,57 @@ header.m3e-app-bar {
 .m3e-action-btn.is-pressed { border-radius: 14px; scale: 0.92; }
 .m3e-action-btn .ic { width: 22px; height: 22px; }
 
+.brand-deck, .actions-cluster {
+  transition: opacity 0.25s var(--spring-default-effects),
+              translate 0.5s var(--spring-default-spatial),
+              scale 0.5s var(--spring-default-spatial),
+              visibility 0s;
+}
 .m3e-capsule-nav.lang-open .brand-deck,
 .m3e-capsule-nav.lang-open .actions-cluster {
-  display: none;
+  opacity: 0;
+  scale: 0.94;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.18s var(--ease-expressive-standard),
+              translate 0.35s var(--ease-expressive-standard),
+              scale 0.35s var(--ease-expressive-standard),
+              visibility 0s 0.35s;
 }
+.m3e-capsule-nav.lang-open .brand-deck { translate: -28px 0; }
+.m3e-capsule-nav.lang-open .actions-cluster { translate: 28px 0; }
 
-/* LANGUAGE SLIDER: instant show/hide, no morph */
+/* LANGUAGE SLIDER: one unified track, draggable thumb */
 .lang-morph-tray {
   position: absolute;
   inset: 6px 8px;
-  display: none;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  translate: 40px 0;
+  scale: 0.96;
+  transition: opacity 0.2s var(--ease-expressive-standard),
+              translate 0.3s var(--ease-expressive-standard),
+              scale 0.3s var(--ease-expressive-standard),
+              visibility 0s 0.3s;
 }
-.m3e-capsule-nav.lang-open .lang-morph-tray { display: block; }
+.m3e-capsule-nav.lang-open .lang-morph-tray {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  transition: opacity 0.3s var(--spring-default-effects) 0.06s,
+              translate 0.55s var(--spring-default-spatial),
+              scale 0.55s var(--spring-default-spatial),
+              visibility 0s;
+}
 
 .lang-track {
   position: relative;
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   padding: 4px;
   border-radius: 24px;
   background: var(--md-sys-color-surface-container-highest);
@@ -386,6 +419,7 @@ header.m3e-app-bar {
   background: var(--md-sys-color-primary);
   box-shadow: var(--elevation-1);
   translate: calc(var(--idx, 0) * 100%) 0;
+  transition: translate 0.55s var(--spring-default-spatial);
   pointer-events: none;
 }
 .lang-track.dragging .lang-indicator { transition: none; }
@@ -399,13 +433,14 @@ header.m3e-app-bar {
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
   font-family: inherit;
-  font-size: 0.88rem;
+  font-size: clamp(0.72rem, 3.3vw, 0.88rem);
   font-weight: 700;
-  padding: 0 6px;
+  padding: 0 2px;
   border-radius: 20px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: color 0.3s var(--ease-smooth);
-  overflow: visible;
 }
 .lang-chip-btn::before { display: none; }
 .lang-chip-btn.active { color: var(--md-sys-color-on-primary); }
@@ -948,6 +983,70 @@ footer {
   .reveal:not(.in) { opacity: 1; }
   .reveal.in { animation: none; }
 }
+
+/* ===== MD3 EXPRESSIVE LAYER ===== */
+.hero-heading { overflow-wrap: break-word; }
+html[lang="uk"] .hero-heading,
+html[lang="ru"] .hero-heading { font-size: clamp(2rem, 8.2vw, 4.2rem); line-height: 1.08; }
+
+/* scalloped, slowly morphing icon shapes */
+.sym-shape-frame {
+  --fr-bg: var(--md-sys-color-primary-container);
+  position: relative; isolation: isolate; background: none; border-radius: 0;
+  width: 64px; height: 64px;
+}
+.sym-shape-frame.alt { --fr-bg: var(--md-sys-color-secondary-container); background: none; }
+.sym-shape-frame.tertiary { --fr-bg: var(--md-sys-color-tertiary-container); background: none; }
+.sym-shape-frame::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; background: var(--fr-bg);
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+  transition: rotate 0.9s var(--spring-default-spatial), scale 0.5s var(--spring-fast-spatial);
+}
+@media (hover: hover) and (pointer: fine) {
+  .trilogy-tile:hover .sym-shape-frame::before,
+  .tutorial-card:hover .sym-shape-frame::before { rotate: 45deg; scale: 1.06; }
+}
+
+/* section labels as tonal pills */
+.step-label {
+  padding: 6px 14px; border-radius: 14px; margin-bottom: 12px;
+  background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);
+}
+
+/* larger, softer containers with tonal depth */
+.trilogy-tile, .tutorial-card, .m3e-expandable, .bulk-inquiry-box {
+  border-radius: 32px; border-color: transparent;
+  background: var(--md-sys-color-surface-container-low);
+}
+.trilogy-tile { padding: 28px 24px; transition: translate 0.5s var(--spring-default-spatial), background-color 0.3s; }
+@media (hover: hover) and (pointer: fine) {
+  .trilogy-tile:hover { translate: 0 -6px; background: var(--md-sys-color-surface-container); }
+}
+.tile-badge {
+  background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);
+  border-radius: 12px; padding: 6px 12px;
+}
+.tile-action-btn { height: 56px; border-radius: 28px; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); border: 0; }
+
+/* hero buttons: taller, with asymmetric shape morph on press */
+.m3e-btn { height: 60px; padding: 0 32px; font-size: 1.02rem; }
+.m3e-btn.filled { box-shadow: var(--elevation-1); }
+.hero-button-group .m3e-btn { flex: 1 1 auto; min-width: 160px; }
+.m3e-chip { height: 44px; border-radius: 16px; background: var(--md-sys-color-surface-container-high); border-color: transparent; }
+
+/* pricing card with decorative expressive shape */
+.pricing-expressive-card { border-radius: 40px; border: 0; background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+.pricing-expressive-card::after {
+  content: ''; position: absolute; width: 260px; height: 260px; right: -90px; top: -90px; z-index: 0;
+  background: var(--md-sys-color-primary); opacity: 0.14; pointer-events: none;
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+  animation: m3eCurlySpin 40s linear infinite;
+}
+.pricing-expressive-card > * { position: relative; z-index: 1; }
+.pricing-expressive-card .price-note, .pricing-expressive-card .cadence-str { color: var(--md-sys-color-on-primary-container); }
+.pricing-expressive-card .currency-sym { color: var(--md-sys-color-on-primary-container); }
+.pricing-expressive-card .perk-check { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+.pricing-expressive-card .m3e-btn.filled { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
 </style>
 </head>
 <body>
@@ -1030,7 +1129,10 @@ footer {
     var r = 42 + 4.2 * Math.cos(lobes * t);
     pts.push((50 + r * Math.cos(t)).toFixed(2) + ' ' + (50 + r * Math.sin(t)).toFixed(2));
   }
-  document.getElementById('scallopShape').setAttribute('d', 'M' + pts.join('L') + 'Z');
+  var d = 'M' + pts.join('L') + 'Z';
+  document.getElementById('scallopShape').setAttribute('d', d);
+  var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='" + d + "'/></svg>";
+  document.documentElement.style.setProperty('--scallop', 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
 })();
 </script>
 
@@ -1091,7 +1193,7 @@ footer {
 
 <main class="wrapper">
   <section class="hero-box" id="hero">
-    <h1 class="hero-heading" data-i="heroTitle">Automate your <br><span class="hero-highlight">work now.</span></h1>
+    <h1 class="hero-heading" data-i="heroTitle">Automate<br>your<br><span class="hero-highlight">work now.</span></h1>
     <p class="hero-text" data-i="heroSubtitle">Replica performs tasks automatically on your phone like you do, helping you save time and earn more.</p>
 
     <div class="hero-button-group">
@@ -1282,7 +1384,7 @@ const I18N = {
   en: {
     monetPaletteTitle: "Monet Color Hues",
     darkThemeLabel: "Dark Theme",
-    heroTitle: "Automate your <br><span class=\"hero-highlight\">work now.</span>",
+    heroTitle: "Automate<br>your<br><span class=\"hero-highlight\">work now.</span>",
     heroSubtitle: "Replica performs tasks automatically on your phone like you do, helping you save time and earn more.",
     btnHeroGetStarted: "Get Started",
     btnHeroLicense: "Get a License",
@@ -1331,7 +1433,7 @@ const I18N = {
   uk: {
     monetPaletteTitle: "Палітра кольорів",
     darkThemeLabel: "Темна тема",
-    heroTitle: "Автоматизуйте <br><span class=\"hero-highlight\">свою роботу зараз.</span>",
+    heroTitle: "Автоматизуйте<br>свою<br><span class=\"hero-highlight\">роботу зараз.</span>",
     heroSubtitle: "Replica автоматично виконує завдання на вашому телефоні так само, як і ви, допомагаючи заощаджувати час і заробляти більше.",
     btnHeroGetStarted: "Почати",
     btnHeroLicense: "Отримати ліцензію",
@@ -1380,7 +1482,7 @@ const I18N = {
   ru: {
     monetPaletteTitle: "Палитра цветов",
     darkThemeLabel: "Тёмная тема",
-    heroTitle: "Автоматизируйте <br><span class=\"hero-highlight\">свою работу сейчас.</span>",
+    heroTitle: "Автоматизируйте<br>свою<br><span class=\"hero-highlight\">работу сейчас.</span>",
     heroSubtitle: "Replica автоматически выполняет задания на вашем телефоне так же, как и вы, помогая экономить время и зарабатывать больше.",
     btnHeroGetStarted: "Начать",
     btnHeroLicense: "Получить лицензию",
@@ -1586,6 +1688,23 @@ function applyI18n() {
   `).join('');
 }
 
+async function slideSwap(dir) {
+  const blocks = [...$$('main > section'), $('footer')];
+  if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
+  const dist = 28 * dir;
+  const outs = blocks.map((el, i) => el.animate(
+    [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: `translateX(${-dist}px)` }],
+    { duration: 180, delay: i * 22, easing: 'cubic-bezier(0.3, 0, 0.8, 0.15)', fill: 'forwards' }
+  ));
+  await Promise.all(outs.map(a => a.finished.catch(() => {})));
+  applyI18n();
+  blocks.forEach((el, i) => el.animate(
+    [{ opacity: 0, transform: `translateX(${dist}px)` }, { opacity: 1, transform: 'translateX(0)' }],
+    { duration: 520, delay: i * 38, easing: 'cubic-bezier(0.38, 1.21, 0.22, 1)', fill: 'backwards' }
+  ));
+  outs.forEach(a => a.cancel());
+}
+
 function setLangTrayVisible(show) {
   const nav = $('#capsuleNav');
   if (nav.classList.contains('lang-open') === show) return;
@@ -1653,14 +1772,29 @@ function setupMotion() {
 }
 
 /* INIT */
-function selectLang(next) {
-  if (next === lang) { markActiveLang(); setLangTrayVisible(false); return; }
+let langBusy = false;
+
+async function selectLang(next) {
+  if (langBusy) return;
+  if (next === lang) {
+    haptic('tick');
+    markActiveLang();
+    await sleep(160);
+    setLangTrayVisible(false);
+    return;
+  }
+  langBusy = true;
   haptic('select');
+  const dir = LANGS.indexOf(next) > LANGS.indexOf(lang) ? 1 : -1;
   lang = next;
   store.set('replica_lang', lang);
   markActiveLang();
-  applyI18n();
+  await sleep(120);
+  await slideSwap(dir);
+  await sleep(260);
   setLangTrayVisible(false);
+  haptic('close');
+  langBusy = false;
 }
 
 function setupLangSlider() {
@@ -1677,6 +1811,7 @@ function setupLangSlider() {
   };
 
   track.addEventListener('pointerdown', e => {
+    if (langBusy) return;
     dragging = true;
     try { track.setPointerCapture(e.pointerId); } catch (_) {}
     track.classList.add('dragging');
@@ -1734,7 +1869,7 @@ function init() {
   setupLangSlider();
 
   document.addEventListener('click', e => {
-    if (!e.target.closest('#capsuleNav')) setLangTrayVisible(false);
+    if (!e.target.closest('#capsuleNav') && !langBusy) setLangTrayVisible(false);
     if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) closeThemeSheet();
   });
   document.addEventListener('keydown', e => {
