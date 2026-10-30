@@ -349,51 +349,18 @@ header.m3e-app-bar {
 .m3e-action-btn.is-pressed { border-radius: 14px; scale: 0.92; }
 .m3e-action-btn .ic { width: 22px; height: 22px; }
 
-.brand-deck, .actions-cluster {
-  transition: opacity 0.25s var(--spring-default-effects),
-              translate 0.5s var(--spring-default-spatial),
-              scale 0.5s var(--spring-default-spatial),
-              visibility 0s;
-}
 .m3e-capsule-nav.lang-open .brand-deck,
 .m3e-capsule-nav.lang-open .actions-cluster {
-  opacity: 0;
-  scale: 0.94;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.18s var(--ease-expressive-standard),
-              translate 0.35s var(--ease-expressive-standard),
-              scale 0.35s var(--ease-expressive-standard),
-              visibility 0s 0.35s;
+  display: none;
 }
-.m3e-capsule-nav.lang-open .brand-deck { translate: -28px 0; }
-.m3e-capsule-nav.lang-open .actions-cluster { translate: 28px 0; }
 
-/* LANGUAGE SLIDER: one unified track, draggable thumb */
+/* LANGUAGE SLIDER: instant show/hide, no morph */
 .lang-morph-tray {
   position: absolute;
   inset: 6px 8px;
-  visibility: hidden;
-  pointer-events: none;
-  opacity: 0;
-  translate: 40px 0;
-  scale: 0.96;
-  transition: opacity 0.2s var(--ease-expressive-standard),
-              translate 0.3s var(--ease-expressive-standard),
-              scale 0.3s var(--ease-expressive-standard),
-              visibility 0s 0.3s;
+  display: none;
 }
-.m3e-capsule-nav.lang-open .lang-morph-tray {
-  visibility: visible;
-  pointer-events: auto;
-  opacity: 1;
-  translate: 0 0;
-  scale: 1;
-  transition: opacity 0.3s var(--spring-default-effects) 0.06s,
-              translate 0.55s var(--spring-default-spatial),
-              scale 0.55s var(--spring-default-spatial),
-              visibility 0s;
-}
+.m3e-capsule-nav.lang-open .lang-morph-tray { display: block; }
 
 .lang-track {
   position: relative;
@@ -419,7 +386,6 @@ header.m3e-app-bar {
   background: var(--md-sys-color-primary);
   box-shadow: var(--elevation-1);
   translate: calc(var(--idx, 0) * 100%) 0;
-  transition: translate 0.55s var(--spring-default-spatial);
   pointer-events: none;
 }
 .lang-track.dragging .lang-indicator { transition: none; }
@@ -948,12 +914,14 @@ footer {
   font-size: 0.92rem;
   font-weight: 700;
   box-shadow: var(--elevation-3);
-  transition: transform 0.5s var(--spring-default-spatial);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.5s var(--spring-default-spatial), opacity 0.2s, visibility 0s 0.5s;
   pointer-events: none;
   max-width: calc(100% - 32px);
   text-align: center;
 }
-.m3e-snackbar.active { transform: translate(-50%, 0); }
+.m3e-snackbar.active { transform: translate(-50%, 0); opacity: 1; visibility: visible; transition: transform 0.5s var(--spring-default-spatial), opacity 0.2s, visibility 0s; }
 
 /* MOTION (fade + gentle slide only, no scaling) */
 :root { transition: --h 0.6s var(--ease-expressive-standard); }
@@ -985,7 +953,7 @@ footer {
 <body>
 
 <!-- Shared SVG symbols -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<svg width="0" height="0" style="position:absolute;left:-9999px;top:0;overflow:hidden;pointer-events:none" aria-hidden="true" focusable="false">
   <defs>
     <path id="scallopShape" d=""/>
 
@@ -1123,8 +1091,8 @@ footer {
 
 <main class="wrapper">
   <section class="hero-box" id="hero">
-    <h1 class="hero-heading" data-i="heroTitle">Instagram tasks, <br><span class="hero-highlight">on autopilot.</span></h1>
-    <p class="hero-text" data-i="heroSubtitle">Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.</p>
+    <h1 class="hero-heading" data-i="heroTitle">Automate your <br><span class="hero-highlight">work now.</span></h1>
+    <p class="hero-text" data-i="heroSubtitle">Replica performs tasks automatically on your phone like you do, helping you save time and earn more.</p>
 
     <div class="hero-button-group">
       <a href="#protect" class="m3e-btn filled m3e-state">
@@ -1153,7 +1121,7 @@ footer {
     <div class="step-section-header">
       <span class="step-label" data-i="lbl1">Step 01</span>
       <h2 class="step-headline" data-i="st1Head">Disable Play Protect</h2>
-      <p class="step-summary" data-i="st1Sub">Android can prevent sideloading background automation apps. Turn off scanning first.</p>
+      <p class="step-summary" data-i="st1Sub">Android may block sideloaded automation apps. Turn off scanning first.</p>
     </div>
 
     <div class="m3e-expandable" id="protectExpandable">
@@ -1180,8 +1148,8 @@ footer {
   <section id="downloads">
     <div class="step-section-header">
       <span class="step-label" data-i="lbl2">Step 02</span>
-      <h2 class="step-headline" data-i="st2Head">Download the Trilogy</h2>
-      <p class="step-summary" data-i="st2Sub">Install these three apps to establish automation, background terminal sessions, and system hooks.</p>
+      <h2 class="step-headline" data-i="st2Head">Install Apps</h2>
+      <p class="step-summary" data-i="st2Sub">These are required to run Replica on your phone seamlessly.</p>
     </div>
 
     <div class="trilogy-layout">
@@ -1189,8 +1157,8 @@ footer {
         <span class="tile-badge" data-i="badgeAuto">Automation</span>
         <div>
           <div class="sym-shape-frame"><svg class="ic"><use href="#icAndroid"/></svg></div>
-          <h3 class="tile-title" data-i="btnDlReplica">Download Replica</h3>
-          <p class="tile-desc" data-i="descReplica">Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.</p>
+          <h3 class="tile-title" data-i="titleReplica">Replica App</h3>
+          <p class="tile-desc" data-i="descReplica">A companion app that lets you configure your information and add or remove VIP accounts seamlessly.</p>
         </div>
         <a class="tile-action-btn m3e-state" id="dlReplicaAnchor" href="#" download>
           <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlReplica">Download Replica</span>
@@ -1201,8 +1169,8 @@ footer {
         <span class="tile-badge" data-i="badgeEnv">Environment</span>
         <div>
           <div class="sym-shape-frame alt"><svg class="ic"><use href="#icTerminal"/></svg></div>
-          <h3 class="tile-title" data-i="btnDlTermux">Download Termux</h3>
-          <p class="tile-desc" data-i="descTermux">High-performance terminal environment that runs local Python workers and scripts.</p>
+          <h3 class="tile-title" data-i="titleTermux">Termux App</h3>
+          <p class="tile-desc" data-i="descTermux">An app needed to run the actual Replica workflow on your device. It comes with a preconfigured environment so everything works smoothly.</p>
         </div>
         <a class="tile-action-btn m3e-state" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
           <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermux">Download Termux</span>
@@ -1213,8 +1181,8 @@ footer {
         <span class="tile-badge" data-i="badgeBridge">System Bridge</span>
         <div>
           <div class="sym-shape-frame tertiary"><svg class="ic"><use href="#icExtension"/></svg></div>
-          <h3 class="tile-title" data-i="btnDlTermuxApi">Download Termux API</h3>
-          <p class="tile-desc" data-i="descTermuxApi">Hardware and intent bridge enabling screen touch actions and clipboard integration.</p>
+          <h3 class="tile-title" data-i="titleTermuxApi">Termux API App</h3>
+          <p class="tile-desc" data-i="descTermuxApi">A simple companion app for Termux to use normal device features, such as sending notifications.</p>
         </div>
         <a class="tile-action-btn m3e-state" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
           <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermuxApi">Download Termux API</span>
@@ -1236,7 +1204,7 @@ footer {
         <div class="sym-shape-frame alt"><svg class="ic"><use href="#icPlayCircle"/></svg></div>
         <div>
           <h3 data-i="videoTileTitle">Video Walkthrough</h3>
-          <p data-i="videoTileSub">Available directly inside our official Telegram channel</p>
+          <p data-i="videoTileSub">Available in English, Ukrainian and Russian languages.</p>
         </div>
       </div>
       <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer">
@@ -1250,7 +1218,7 @@ footer {
     <div class="step-section-header">
       <span class="step-label" data-i="lblLicense">License</span>
       <h2 class="step-headline" data-i="priceHead">License Pricing</h2>
-      <p class="step-summary" data-i="priceSub">Simple, affordable monthly license per device with continuous feature updates.</p>
+      <p class="step-summary" data-i="priceSub">A simple, affordable monthly license per device with continuous feature updates.</p>
     </div>
 
     <div class="pricing-expressive-card">
@@ -1261,7 +1229,7 @@ footer {
             <span class="cost-num" id="costAmount">10</span>
             <span class="cadence-str" data-i="priceCadence">/ month</span>
           </div>
-          <p class="price-note" data-i="priceDesc">Single device per license</p>
+          <p class="price-note" data-i="priceDesc">One device per license</p>
         </div>
         <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer">
           <span data-i="btnGetLicense">Get a License</span><svg class="ic"><use href="#icArrowRight"/></svg>
@@ -1271,7 +1239,7 @@ footer {
       <div class="perks-grid">
         <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></div>
         <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></div>
-        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature3">Direct support &amp; script updates</span></div>
+        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature3">Direct support &amp; regular updates</span></div>
       </div>
     </div>
 
@@ -1314,46 +1282,47 @@ const I18N = {
   en: {
     monetPaletteTitle: "Monet Color Hues",
     darkThemeLabel: "Dark Theme",
-    heroTitle: "Instagram tasks, <br><span class=\"hero-highlight\">on autopilot.</span>",
-    heroSubtitle: "Replica takes tasks directly from SMM Kingdom Tasks Bot, completes them on your Android phone, and reports back in real time.",
+    heroTitle: "Automate your <br><span class=\"hero-highlight\">work now.</span>",
+    heroSubtitle: "Replica performs tasks automatically on your phone like you do, helping you save time and earn more.",
     btnHeroGetStarted: "Get Started",
     btnHeroLicense: "Get a License",
     chipSetupText: "Setup",
     chipTutorialText: "Tutorial Video",
     lbl1: "Step 01", lbl2: "Step 02", lbl3: "Step 03", lblLicense: "License",
     st1Head: "Disable Play Protect",
-    st1Sub: "Android can prevent sideloading background automation apps. Turn off scanning first.",
+    st1Sub: "Android may block sideloaded automation apps. Turn off scanning first.",
     st1CardTitle: "Play Protect Walkthrough",
     st1CardPrompt: "Tap to view step-by-step instructions",
     st1Steps: [
       "Open the <b>Play Store</b> and tap your profile picture in the top corner.",
       "Tap <b>Play Protect</b>, then tap the <b>settings gear</b>.",
       "Turn off <b>Scan apps with Play Protect</b>.",
-      "Confirm if Android prompts you with a dialog."
+      "Confirm if Android shows a prompt."
     ],
-    st2Head: "Download the Trilogy",
-    st2Sub: "Install these three apps to establish automation, background terminal sessions, and system hooks.",
+    st2Head: "Install Apps",
+    st2Sub: "These are required to run Replica on your phone seamlessly.",
     badgeAuto: "Automation", badgeEnv: "Environment", badgeBridge: "System Bridge",
-    descReplica: "Core APK executing Instagram tasks received from the SMM Kingdom Tasks Bot.",
-    descTermux: "High-performance terminal environment that runs local Python workers and scripts.",
-    descTermuxApi: "Hardware and intent bridge enabling screen touch actions and clipboard integration.",
+    descReplica: "A companion app that lets you configure your information and add or remove VIP accounts seamlessly.",
+    descTermux: "An app needed to run the actual Replica workflow on your device. It comes with a preconfigured environment so everything works smoothly.",
+    descTermuxApi: "A simple companion app for Termux to use normal device features, such as sending notifications.",
     btnDlReplica: "Download Replica",
     btnDlTermux: "Download Termux",
     btnDlTermuxApi: "Download Termux API",
+    titleReplica: "Replica App", titleTermux: "Termux App", titleTermuxApi: "Termux API App",
     st3Head: "Setup Tutorial Video",
     st3Sub: "Watch the step-by-step walkthrough to get everything set up in minutes.",
     videoTileTitle: "Video Walkthrough",
-    videoTileSub: "Available directly inside our official Telegram channel",
+    videoTileSub: "Available in English, Ukrainian and Russian languages.",
     btnWatchVideo: "Watch Video",
-    apkComingSoon: "Replica APK download link coming soon",
+    apkComingSoon: "The Replica APK download link is coming soon",
     priceHead: "License Pricing",
-    priceSub: "Simple, affordable monthly license per device with continuous feature updates.",
+    priceSub: "A simple, affordable monthly license per device with continuous feature updates.",
     priceCadence: "/ month",
-    priceDesc: "Single device per license",
+    priceDesc: "One device per license",
     btnGetLicense: "Get a License",
     feature1: "Automated Instagram tasks for SMM Kingdom",
     feature2: "Runs smoothly on Android 11+",
-    feature3: "Direct support & script updates",
+    feature3: "Direct support & regular updates",
     bulkTitle: "Need More Than One Device?",
     bulkSub: "Contact the developer for a discount on multiple-device licenses.",
     btnBulk: "Contact Developer",
@@ -1362,8 +1331,8 @@ const I18N = {
   uk: {
     monetPaletteTitle: "Палітра кольорів",
     darkThemeLabel: "Темна тема",
-    heroTitle: "Завдання Instagram, <br><span class=\"hero-highlight\">на автопілоті.</span>",
-    heroSubtitle: "Replica автоматично бере завдання з бота SMM Kingdom, виконує їх на телефоні та надсилає звіт.",
+    heroTitle: "Автоматизуйте <br><span class=\"hero-highlight\">свою роботу зараз.</span>",
+    heroSubtitle: "Replica автоматично виконує завдання на вашому телефоні так само, як і ви, допомагаючи заощаджувати час і заробляти більше.",
     btnHeroGetStarted: "Почати",
     btnHeroLicense: "Отримати ліцензію",
     chipSetupText: "Налаштування",
@@ -1379,19 +1348,20 @@ const I18N = {
       "Вимкніть <b>Сканувати додатки за допомогою Play Захисту</b>.",
       "Підтвердьте вимкнення, якщо з'явиться запит Android."
     ],
-    st2Head: "Завантажте три додатки",
-    st2Sub: "Встановіть три основні компоненти для середовища, взаємодії з ботом та емуляції кліків.",
+    st2Head: "Встановіть додатки",
+    st2Sub: "Вони потрібні для безперебійної роботи Replica на вашому телефоні.",
     badgeAuto: "Автоматизація", badgeEnv: "Середовище", badgeBridge: "Системний міст",
-    descReplica: "Основний клієнт, що отримує та виконує завдання бота SMM Kingdom.",
-    descTermux: "Швидке термінальне середовище для запуску скриптів та процесів.",
-    descTermuxApi: "Системний плагін для зв'язку зі службами клікера, буфера та подій.",
+    descReplica: "Допоміжний додаток, що дає змогу налаштувати вашу інформацію та без проблем додавати або видаляти VIP-акаунти.",
+    descTermux: "Додаток, потрібний для запуску основного робочого процесу Replica на вашому пристрої. Він має попередньо налаштоване середовище, тож усе працює безперебійно.",
+    descTermuxApi: "Простий допоміжний додаток для Termux, що дає змогу використовувати звичайні функції пристрою, наприклад надсилати сповіщення.",
     btnDlReplica: "Завантажити Replica",
     btnDlTermux: "Завантажити Termux",
     btnDlTermuxApi: "Завантажити Termux API",
+    titleReplica: "Додаток Replica", titleTermux: "Додаток Termux", titleTermuxApi: "Додаток Termux API",
     st3Head: "Відеоурок з налаштування",
     st3Sub: "Перегляньте покроковий відеоролик і налаштуйте все за кілька хвилин.",
     videoTileTitle: "Відеоінструкція",
-    videoTileSub: "Доступна у нашому офіційному каналі Telegram",
+    videoTileSub: "Доступно англійською, українською та російською мовами.",
     btnWatchVideo: "Дивитися відео",
     apkComingSoon: "Посилання на Replica APK незабаром з'явиться",
     priceHead: "Вартість ліцензії",
@@ -1410,8 +1380,8 @@ const I18N = {
   ru: {
     monetPaletteTitle: "Палитра цветов",
     darkThemeLabel: "Тёмная тема",
-    heroTitle: "Задания Instagram, <br><span class=\"hero-highlight\">на автопилоте.</span>",
-    heroSubtitle: "Replica берёт задания из бота SMM Kingdom Tasks, выполняет их на вашем телефоне и отправляет результат.",
+    heroTitle: "Автоматизируйте <br><span class=\"hero-highlight\">свою работу сейчас.</span>",
+    heroSubtitle: "Replica автоматически выполняет задания на вашем телефоне так же, как и вы, помогая экономить время и зарабатывать больше.",
     btnHeroGetStarted: "Начать",
     btnHeroLicense: "Получить лицензию",
     chipSetupText: "Настройка",
@@ -1427,19 +1397,20 @@ const I18N = {
       "Отключите <b>Сканировать приложения с помощью Play Защиты</b>.",
       "Подтвердите действие, если Android запросит согласие."
     ],
-    st2Head: "Скачайте три приложения",
-    st2Sub: "Установите эти три пакета для запуска терминала, рабочего скрипта и кликов.",
+    st2Head: "Установите приложения",
+    st2Sub: "Они необходимы для бесперебойной работы Replica на вашем телефоне.",
     badgeAuto: "Автоматизация", badgeEnv: "Среда", badgeBridge: "Системный мост",
-    descReplica: "Основное приложение, обрабатывающее задачи SMM Kingdom Tasks Bot.",
-    descTermux: "Эмулятор терминала для выполнения автоматических сценариев и Python.",
-    descTermuxApi: "Системный мост для взаимодействия с кликами, буфером и экраном.",
+    descReplica: "Вспомогательное приложение, позволяющее настроить вашу информацию и без проблем добавлять или удалять VIP-аккаунты.",
+    descTermux: "Приложение, необходимое для запуска основного рабочего процесса Replica на вашем устройстве. Оно имеет предварительно настроенную среду, поэтому всё работает без сбоев.",
+    descTermuxApi: "Простое вспомогательное приложение для Termux, позволяющее использовать обычные функции устройства, например отправлять уведомления.",
     btnDlReplica: "Скачать Replica",
     btnDlTermux: "Скачать Termux",
     btnDlTermuxApi: "Скачать Termux API",
+    titleReplica: "Приложение Replica", titleTermux: "Приложение Termux", titleTermuxApi: "Приложение Termux API",
     st3Head: "Видеоурок по настройке",
     st3Sub: "Пошаговое руководство: от авторизации до полностью автономной работы.",
     videoTileTitle: "Обучающее видео",
-    videoTileSub: "Доступно в нашем официальном канале Telegram",
+    videoTileSub: "Доступно на английском, украинском и русском языках.",
     btnWatchVideo: "Смотреть видео",
     apkComingSoon: "Ссылка на Replica APK скоро появится",
     priceHead: "Стоимость лицензии",
@@ -1615,26 +1586,6 @@ function applyI18n() {
   `).join('');
 }
 
-async function slideSwap(dir) {
-  const blocks = [...$$('main > section'), $('footer')];
-  if (reduceMotion || !blocks[0].animate) { applyI18n(); return; }
-
-  const dist = 34 * dir;
-  const outs = blocks.map((el, i) => el.animate(
-    [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: `translateX(${-dist}px)` }],
-    { duration: 200, delay: i * 26, easing: 'cubic-bezier(0.3, 0, 0.8, 0.15)', fill: 'forwards' }
-  ));
-  await Promise.all(outs.map(a => a.finished.catch(() => {})));
-
-  applyI18n();
-
-  blocks.forEach((el, i) => el.animate(
-    [{ opacity: 0, transform: `translateX(${dist}px)` }, { opacity: 1, transform: 'translateX(0)' }],
-    { duration: 560, delay: i * 42, easing: 'cubic-bezier(0.38, 1.21, 0.22, 1)', fill: 'backwards' }
-  ));
-  outs.forEach(a => a.cancel());
-}
-
 function setLangTrayVisible(show) {
   const nav = $('#capsuleNav');
   if (nav.classList.contains('lang-open') === show) return;
@@ -1702,30 +1653,14 @@ function setupMotion() {
 }
 
 /* INIT */
-let langBusy = false;
-
-async function selectLang(next) {
-  if (langBusy) return;
-  if (next === lang) {
-    haptic('tick');
-    markActiveLang();
-    await sleep(160);
-    setLangTrayVisible(false);
-    return;
-  }
-  langBusy = true;
+function selectLang(next) {
+  if (next === lang) { markActiveLang(); setLangTrayVisible(false); return; }
   haptic('select');
-  const dir = LANGS.indexOf(next) > LANGS.indexOf(lang) ? 1 : -1;
   lang = next;
   store.set('replica_lang', lang);
   markActiveLang();
-
-  await sleep(120);
-  await slideSwap(dir);
-  await sleep(300);
+  applyI18n();
   setLangTrayVisible(false);
-  haptic('close');
-  langBusy = false;
 }
 
 function setupLangSlider() {
@@ -1742,7 +1677,6 @@ function setupLangSlider() {
   };
 
   track.addEventListener('pointerdown', e => {
-    if (langBusy) return;
     dragging = true;
     try { track.setPointerCapture(e.pointerId); } catch (_) {}
     track.classList.add('dragging');
@@ -1800,7 +1734,7 @@ function init() {
   setupLangSlider();
 
   document.addEventListener('click', e => {
-    if (!e.target.closest('#capsuleNav') && !langBusy) setLangTrayVisible(false);
+    if (!e.target.closest('#capsuleNav')) setLangTrayVisible(false);
     if (!e.target.closest('#monetSheet') && !e.target.closest('#btnThemeToggle')) closeThemeSheet();
   });
   document.addEventListener('keydown', e => {
