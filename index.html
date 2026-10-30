@@ -1368,6 +1368,25 @@ header.m3e-app-bar { view-transition-name: appbar; }
   .brand-label { font-size: 1.1rem; }
   .brand-deck { gap: 8px; }
 }
+
+/* ===== SMOOTHNESS: GPU-friendly motion, no layout thrash ===== */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overscroll-behavior-y: none; }
+.shape-fab-bg, .curly-svg-loader, .nav-curly-rotator, .pricing-expressive-card::after { will-change: transform; backface-visibility: hidden; }
+.lang-seg-ind, .monet-sheet, .m3e-snackbar { will-change: transform; }
+.m3e-capsule-nav { transform: translateZ(0); }
+.hero-heading, .hero-text, .step-headline, .step-summary, .tile-title, .tile-desc,
+.bug-card h3, .bug-card p, .tutorial-left h3, .tutorial-left p { text-wrap: balance; }
+.hero-text, .step-summary, .tile-desc, .bug-card p { text-wrap: pretty; }
+section { content-visibility: visible; }
+main > section, footer { backface-visibility: hidden; }
+/* reserve space so language changes don't make cards jump as much */
+.tile-desc { min-height: 5.2em; }
+::view-transition-old(root), ::view-transition-new(root) { mix-blend-mode: normal; }
+::view-transition-old(root) { animation: vt-out 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
+::view-transition-new(root) { animation: vt-in 0.55s cubic-bezier(0.4, 0, 0.2, 1) both; }
+@keyframes vt-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; } to { opacity: 1; } }
 </style>
 </head>
 <body>
@@ -1577,7 +1596,7 @@ header.m3e-app-bar { view-transition-name: appbar; }
           <h3 class="tile-title" data-i="titleReplica">Replica App</h3>
           <p class="tile-desc" data-i="descReplica">A companion app that lets you configure your information and add or remove VIP accounts seamlessly.</p>
         </div>
-        <a class="tile-action-btn m3e-state" id="dlReplicaAnchor" href="#" download>
+        <a class="tile-action-btn m3e-state" id="dlReplicaAnchor" href="https://github.com/rajatroel/replica/releases/download/v1.0/replica.apk" download="replica.apk" rel="noopener noreferrer">
           <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlReplica">Download Replica</span>
         </a>
       </article>
@@ -1589,7 +1608,7 @@ header.m3e-app-bar { view-transition-name: appbar; }
           <h3 class="tile-title" data-i="titleTermux">Termux App</h3>
           <p class="tile-desc" data-i="descTermux">An app needed to run the actual Replica workflow on your device. It comes with a preconfigured environment so everything works smoothly.</p>
         </div>
-        <a class="tile-action-btn m3e-state" id="dlTermuxAnchor" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener noreferrer">
+        <a class="tile-action-btn m3e-state" id="dlTermuxAnchor" href="https://github.com/rajatroel/replica/releases/download/v1.0/termux.apk" download="termux.apk" rel="noopener noreferrer">
           <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermux">Download Termux</span>
         </a>
       </article>
@@ -1601,7 +1620,7 @@ header.m3e-app-bar { view-transition-name: appbar; }
           <h3 class="tile-title" data-i="titleTermuxApi">Termux API App</h3>
           <p class="tile-desc" data-i="descTermuxApi">A simple companion app for Termux to use normal device features, such as sending notifications.</p>
         </div>
-        <a class="tile-action-btn m3e-state" id="dlTermuxApiAnchor" href="https://github.com/termux/termux-api/releases" target="_blank" rel="noopener noreferrer">
+        <a class="tile-action-btn m3e-state" id="dlTermuxApiAnchor" href="https://github.com/rajatroel/replica/releases/download/v1.0/termux-api.apk" download="termux-api.apk" rel="noopener noreferrer">
           <svg class="ic"><use href="#icDownload"/></svg><span data-i="btnDlTermuxApi">Download Termux API</span>
         </a>
       </article>
@@ -1718,9 +1737,9 @@ header.m3e-app-bar { view-transition-name: appbar; }
 <script>
 const CONFIG = {
   links: {
-    replicaApk: '#',
-    termuxApk: 'https://github.com/termux/termux-app/releases',
-    termuxApiApk: 'https://github.com/termux/termux-api/releases',
+    replicaApk: 'https://github.com/rajatroel/replica/releases/download/v1.0/replica.apk',
+    termuxApk: 'https://github.com/rajatroel/replica/releases/download/v1.0/termux.apk',
+    termuxApiApk: 'https://github.com/rajatroel/replica/releases/download/v1.0/termux-api.apk',
     telegram: 'https://t.me/iamrajatroel'
   },
   monetHues: [
@@ -2058,9 +2077,19 @@ function applyI18n() {
   `).join('');
 }
 
+const FONT_SAMPLE = { en: 'Aa', uk: 'Привіт Ґґ Єє Її Іі', ru: 'Привет Ёё Ъъ Ыы' };
+async function preloadFonts() {
+  if (!document.fonts || !document.fonts.load) return;
+  const loads = ['400', '500', '600', '700', '800'].map(w =>
+    document.fonts.load(`${w} 1em "Plus Jakarta Sans"`, FONT_SAMPLE[lang]).catch(() => {}));
+  await Promise.race([Promise.all(loads), sleep(700)]);
+}
+
 async function slideSwap() {
+  await preloadFonts();
   if (document.startViewTransition && !reduceMotion) {
-    const vt = document.startViewTransition(() => applyI18n());
+    const y = window.scrollY;
+    const vt = document.startViewTransition(() => { applyI18n(); window.scrollTo(0, Math.min(y, document.documentElement.scrollHeight)); });
     await vt.finished.catch(() => {});
     return;
   }
@@ -2159,6 +2188,7 @@ function init() {
   $$('[data-tg]').forEach(a => a.href = CONFIG.links.telegram);
   $('#dlTermuxAnchor').href = CONFIG.links.termuxApk;
   $('#dlTermuxApiAnchor').href = CONFIG.links.termuxApiApk;
+  $('#dlReplicaAnchor').href = CONFIG.links.replicaApk;
 
   $('#swatchGrid').innerHTML = CONFIG.monetHues.map(item => `
     <button class="monet-swatch ${item.hue === hue ? 'active' : ''}" data-hue="${item.hue}"
@@ -2212,19 +2242,23 @@ function init() {
     }
   });
 
+  if (document.fonts && document.fonts.load) {
+    Object.values(FONT_SAMPLE).forEach(t => ['400', '600', '800'].forEach(w => document.fonts.load(`${w} 1em "Plus Jakarta Sans"`, t).catch(() => {})));
+  }
   applyHue(hue);
   applyMode(mode);
   applyI18n();
   markActiveLang();
   setupMotion();
 
-  setTimeout(() => {
+  const ready = Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), sleep(2000)]);
+  Promise.all([ready, sleep(700)]).then(() => {
     const loader = $('#m3eLoader');
     if (loader) {
       loader.classList.add('vanish');
       setTimeout(() => loader.remove(), 550);
     }
-  }, 900);
+  });
 }
 
 window.addEventListener('DOMContentLoaded', init);
