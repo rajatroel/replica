@@ -1852,6 +1852,194 @@ footer { border-top: 1px solid var(--line); }
   .help-btn:hover .ic, .multi-btn:hover .ic, .thanks-pill .m3e-btn:hover .ic { translate: 2px -2px; rotate: -8deg; }
 }
 @media (prefers-reduced-motion: reduce) { .help-tile::after { animation: none; } }
+
+/* ===== v7: MD3E consistency layer ===== */
+:root {
+  --sec-gap: 56px;
+  --btn-h: 56px;
+  --pad-card: clamp(20px, 5vw, 32px);
+}
+/* one section rhythm + one header style */
+.step-section-header { margin: var(--sec-gap) 0 20px; }
+.step-label { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); border-color: transparent; }
+.step-summary { color: var(--md-sys-color-on-surface-variant); max-width: 56ch; }
+/* one button height, one chip shape */
+.m3e-btn { height: var(--btn-h); }
+.hero-button-group .m3e-btn { height: var(--btn-h); }
+.lic-cta { height: 64px; }
+.m3e-chip { height: 40px; border-radius: 20px; }
+.m3e-chip:not(.m3e-state) { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); border-color: transparent; }
+
+/* video flow: connected pair that sits right above the video tile */
+.video-flow { margin-bottom: var(--conn-gap); }
+#video .flow { margin-bottom: 12px; }
+@media (min-width: 720px) {
+  #video .flow { grid-template-columns: 1fr 1fr; }
+  #video .flow::before { display: none; }
+  #video .flow .prereq { border-radius: var(--r-xl) var(--r-conn) var(--r-conn) var(--r-xl); padding: 18px 24px 18px 18px; }
+  #video .flow .prereq.next { border-radius: var(--r-conn) var(--r-xl) var(--r-xl) var(--r-conn); }
+}
+@media (hover: hover) and (pointer: fine) {
+  #video .flow .prereq:hover { border-radius: var(--r-hover); }
+}
+.video-card.portrait .video-info { align-content: center; }
+
+/* license: price tile + multi-device tile stay one connected pair */
+.lic-price { border-radius: var(--r-xl) var(--r-xl) var(--r-conn) var(--r-conn); }
+
+/* ---------- FOOTER (MD3E: large container, scallop accent, tonal links) ---------- */
+footer {
+  position: relative; isolation: isolate; overflow: hidden; margin-top: var(--sec-gap);
+  padding: 36px 0 calc(28px + env(safe-area-inset-bottom, 0px));
+  border: 0; border-top: 1px solid var(--line); border-radius: var(--r-xl) var(--r-xl) 0 0;
+  background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface);
+  text-align: left; font-weight: 600;
+}
+footer::after {
+  content: ''; position: absolute; z-index: -1; width: 260px; height: 260px; right: -90px; top: -110px; pointer-events: none;
+  background: var(--md-sys-color-primary-container); opacity: 0.55; animation: m3eCurlySpin 60s linear infinite;
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+}
+footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
+.ft-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
+.ft-brand { display: flex; align-items: center; gap: 14px; }
+.ft-brand .nav-curly-badge { width: 52px; height: 52px; }
+.ft-brand .nav-curly-bot { width: 28px; height: 28px; }
+.ft-name { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+.ft-cta { padding: 0 28px 0 22px; gap: 10px; }
+.ft-cta .ic { width: 20px; height: 20px; }
+.ft-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.ft-bottom {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+  padding-top: 18px; border-top: 1px solid var(--md-sys-color-outline-variant);
+  font-size: 0.88rem; color: var(--md-sys-color-on-surface-variant);
+}
+.ft-badge {
+  display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 14px; border-radius: 16px;
+  background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);
+  font-size: 0.8rem; font-weight: 800;
+}
+.ft-badge .ic { width: 16px; height: 16px; }
+@media (max-width: 560px) { .ft-cta { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { footer::after { animation: none; } }
+
+/* ===== v8: clean video section + one button motion ===== */
+:root { --r-press: 14px; --r-btn-hover: 22px; }
+
+/* ---------- VIDEO: calm two-pane layout ---------- */
+.video-card {
+  gap: 28px; padding: 20px; border-radius: var(--r-xl);
+  background: var(--md-sys-color-surface-container-low); border: 1px solid var(--line);
+}
+.video-card::before, .video-card::after, .help-tile::after { display: none; }
+.video-side { padding: 8px 0 0; gap: 0; }
+.video-stage {
+  max-width: 280px; padding: 8px; border-radius: 44px;
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--elevation-2);
+}
+.video-stage::after { display: none; }
+.video-stage::before { top: 17px; width: 56px; height: 14px; margin-left: -28px; }
+.video-frame { border-radius: 36px; }
+.video-info { gap: 20px; align-content: center; }
+.video-head { gap: 16px; padding: 0; }
+.video-head .guide-titles { gap: 6px; }
+.video-head .guide-titles h3 { font-size: 1.4rem; }
+.video-head .guide-titles p { font-size: 0.96rem; line-height: 1.55; color: var(--md-sys-color-on-surface-variant); }
+.help-tile {
+  margin-top: 0; padding: 22px; gap: 18px; border-radius: var(--r-lg);
+  background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface); border-color: transparent;
+}
+.help-tile-top { gap: 8px 16px; }
+.help-tile p { color: var(--md-sys-color-on-surface-variant); opacity: 1; }
+.help-btn { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+@media (min-width: 860px) {
+  .video-card.portrait { grid-template-columns: 320px 1fr; gap: 48px; padding: 36px; align-items: center; }
+}
+@media (min-width: 760px) and (max-width: 859px) {
+  .video-card.portrait { grid-template-columns: 280px 1fr; gap: 32px; padding: 28px; }
+}
+#video .flow { margin-bottom: 16px; }
+
+/* ---------- ONE BUTTON MOTION: rounded at rest, squarer + shrinks when pressed ---------- */
+:is(.m3e-btn, .tile-action-btn, .m3e-action-btn, .m3e-chip.m3e-state, .guide-next, .lang-seg-btn) {
+  transition: border-radius 0.4s var(--spring-fast-spatial), scale 0.4s var(--spring-fast-spatial),
+              box-shadow 0.3s var(--spring-fast-effects), background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(.m3e-btn, .tile-action-btn, .guide-next):hover { border-radius: var(--r-btn-hover); }
+}
+:is(.m3e-btn, .tile-action-btn, .m3e-action-btn, .m3e-chip.m3e-state, .guide-next, .lang-seg-btn).is-pressed,
+:is(.m3e-btn, .tile-action-btn, .guide-next).is-pressed:hover,
+.help-btn.is-pressed, .multi-btn.is-pressed, .thanks-pill .m3e-btn.is-pressed, .lic-cta.is-pressed {
+  border-radius: var(--r-press); scale: 0.96;
+}
+.m3e-action-btn.is-pressed, .m3e-chip.m3e-state.is-pressed, .lang-seg-btn.is-pressed { scale: 0.94; }
+.m3e-btn.is-pressed, .tile-action-btn.is-pressed, .guide-next.is-pressed { box-shadow: var(--press-shadow); }
+
+/* ===== v9: VIDEO bento (info + player + help), same connected-shape language as License/Support ===== */
+.vb { display: grid; gap: var(--conn-gap); grid-template-columns: 1fr; }
+.vb > * { position: relative; isolation: isolate; overflow: hidden; border: 1px solid var(--line); transition: border-radius 0.6s var(--spring-fast-spatial); }
+
+.vb-info {
+  display: grid; gap: 18px; justify-items: start; padding: var(--pad-card);
+  border-radius: var(--r-xl) var(--r-xl) var(--r-conn) var(--r-conn);
+  background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+}
+.vb-info .play-badge { width: 56px; height: 56px; }
+.vb-text h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 8px; }
+.vb-text p { font-size: 1rem; line-height: 1.6; opacity: 0.88; }
+.vb-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.vb-tag {
+  display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 17px;
+  font-size: 0.84rem; font-weight: 800; border: 1px solid color-mix(in oklch, var(--md-sys-color-on-primary-container) 22%, transparent);
+  background: color-mix(in oklch, var(--md-sys-color-primary) 14%, transparent);
+}
+
+.vb-player {
+  display: grid; place-items: center; padding: var(--pad-card); border-radius: var(--r-conn);
+  background: var(--md-sys-color-surface-container-high);
+}
+.vb-stage {
+  width: 100%; max-width: 280px; padding: 8px; border-radius: 42px;
+  background: var(--md-sys-color-surface-container-lowest); border: 1px solid var(--line); box-shadow: var(--elevation-2);
+}
+.vb-player:not(.portrait) .vb-stage { max-width: none; border-radius: 28px; }
+.vb-stage .video-frame { max-width: none; border: 0; border-radius: 34px; background: var(--md-sys-color-primary-container); }
+.vb-player:not(.portrait) .vb-stage .video-frame { border-radius: 22px; }
+
+.vb-help {
+  display: grid; gap: 14px; justify-items: start; padding: var(--pad-card);
+  border-radius: var(--r-conn) var(--r-conn) var(--r-xl) var(--r-xl);
+  background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);
+}
+.vb-help-top { display: flex; align-items: center; gap: 16px; }
+.vb-help .sym-shape-frame { --fr-bg: var(--md-sys-color-tertiary); display: grid; place-items: center; width: 52px; height: 52px; flex: none; color: var(--md-sys-color-surface); }
+.vb-help h3 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; }
+.vb-help p { font-size: 0.96rem; line-height: 1.55; opacity: 0.88; }
+.vb-help .help-btn { margin-top: 6px; }
+
+@media (min-width: 860px) {
+  .vb:has(.vb-player.portrait) { grid-template-columns: 380px 1fr; grid-template-areas: "player info" "player help"; }
+  .vb:has(.vb-player.portrait) .vb-player { grid-area: player; padding: 40px 32px; border-radius: var(--r-xl) var(--r-conn) var(--r-conn) var(--r-xl); }
+  .vb:has(.vb-player.portrait) .vb-info { grid-area: info; align-content: center; border-radius: var(--r-conn) var(--r-xl) var(--r-conn) var(--r-conn); padding: 36px; }
+  .vb:has(.vb-player.portrait) .vb-help { grid-area: help; border-radius: var(--r-conn) var(--r-conn) var(--r-xl) var(--r-conn); padding: 32px 36px; }
+  .vb:has(.vb-player.portrait) .vb-stage { max-width: 300px; }
+}
+/* mobile order: info, player, help */
+.vb-info { order: 1; } .vb-player { order: 2; } .vb-help { order: 3; }
+@media (min-width: 860px) { .vb:has(.vb-player.portrait) > * { order: 0; } }
+
+@media (hover: hover) and (pointer: fine) {
+  .vb-info:hover { border-radius: var(--r-xl) var(--r-xl) var(--r-hover) var(--r-hover); }
+  .vb-help:hover { border-radius: var(--r-hover) var(--r-hover) var(--r-xl) var(--r-xl); }
+  .vb-player:hover { border-radius: var(--r-hover); }
+}
+@media (hover: hover) and (pointer: fine) and (min-width: 860px) {
+  .vb:has(.vb-player.portrait) .vb-player:hover { border-radius: var(--r-xl) var(--r-hover) var(--r-hover) var(--r-xl); }
+  .vb:has(.vb-player.portrait) .vb-info:hover { border-radius: var(--r-hover) var(--r-xl) var(--r-hover) var(--r-hover); }
+  .vb:has(.vb-player.portrait) .vb-help:hover { border-radius: var(--r-hover) var(--r-hover) var(--r-xl) var(--r-hover); }
+}
 </style>
 </head>
 <body>
@@ -2063,60 +2251,54 @@ footer { border-top: 1px solid var(--line); }
       <p class="step-summary" data-i="videoSub">Facing trouble following the steps? Complete the first 6 steps, then follow the video tutorial to do the rest visually.</p>
     </div>
 
-    <div class="video-card">
-      <div class="video-info">
-        <div class="video-head">
-          <span class="guide-badge play-badge" aria-hidden="true">
-            <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-            <svg class="ic badge-play"><use href="#icPlay"/></svg>
-          </span>
-          <span class="guide-titles">
-            <h3 data-i="videoCardTitle">Video walkthrough</h3>
-            <p data-i="videoCardSub">Shows the rest: Replica setup, Termux permissions, ADB pairing and linking Telegram.</p>
-          </span>
-        </div>
+    <div class="flow">
+      <div class="prereq" id="flowSteps">
+        <span class="prereq-badge" aria-hidden="true">
+          <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+          <span class="flow-badge-num">1–6</span>
+          <svg class="ic flow-badge-check"><use href="#icCheck"/></svg>
+        </span>
+        <span class="flow-text"><b data-i="videoFlow1">Do steps 1–6</b><span data-i="videoFlow1Sub">Phone &amp; account setup</span></span>
+      </div>
+      <span class="flow-link" aria-hidden="true"></span>
+      <div class="prereq next">
+        <span class="prereq-badge" aria-hidden="true">
+          <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+          <svg class="ic flow-next-ic"><use href="#icPlay"/></svg>
+        </span>
+        <span class="flow-text"><b data-i="videoFlow2">Follow the video</b><span data-i="videoFlow2Sub">Replica, Termux, ADB &amp; Telegram</span></span>
+      </div>
+    </div>
 
-        <div class="flow">
-          <div class="prereq" id="flowSteps">
-            <span class="prereq-badge" aria-hidden="true">
-              <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-              <span class="flow-badge-num">1–6</span>
-              <svg class="ic flow-badge-check"><use href="#icCheck"/></svg>
-            </span>
-            <span class="flow-text"><b data-i="videoFlow1">Do steps 1–6</b><span data-i="videoFlow1Sub">Phone &amp; account setup</span></span>
-          </div>
-          <span class="flow-link" aria-hidden="true"></span>
-          <div class="prereq next">
-            <span class="prereq-badge" aria-hidden="true">
-              <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-              <svg class="ic flow-next-ic"><use href="#icPlay"/></svg>
-            </span>
-            <span class="flow-text"><b data-i="videoFlow2">Follow the video</b><span data-i="videoFlow2Sub">Replica, Termux, ADB &amp; Telegram</span></span>
-          </div>
+    <div class="vb">
+      <article class="vb-info">
+        <span class="guide-badge play-badge" aria-hidden="true">
+          <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+          <svg class="ic badge-play"><use href="#icPlay"/></svg>
+        </span>
+        <div class="vb-text">
+          <h3 data-i="videoCardTitle">Video walkthrough</h3>
+          <p data-i="videoCardSub">Shows the rest: Replica setup, Termux permissions, ADB pairing and linking Telegram.</p>
         </div>
+        <div class="vb-tags" aria-hidden="true">
+          <span class="vb-tag">Replica</span><span class="vb-tag">Termux</span><span class="vb-tag">ADB</span><span class="vb-tag">Telegram</span>
+        </div>
+      </article>
 
-        <article class="help-tile">
-          <div class="help-tile-top">
-            <span class="sym-shape-frame"><svg class="ic"><use href="#icTune"/></svg></span>
-            <div>
-              <h3 data-i="bug1Title">Problem during setup</h3>
-              <p data-i="bug1Desc">If you encounter any problem while setting up the automation, report it directly to the developer with a short description.</p>
-            </div>
-          </div>
-          <a class="m3e-btn m3e-state help-btn" data-tg target="_blank" rel="noopener noreferrer">
-            <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
-          </a>
-        </article>
+      <div class="vb-player">
+        <div class="vb-stage"><div class="video-frame" id="videoFrame"></div></div>
       </div>
 
-      <div class="video-side">
-        <span class="float-chip c1" aria-hidden="true">Replica</span>
-        <span class="float-chip c2" aria-hidden="true">Termux</span>
-        <span class="float-chip c3" aria-hidden="true">ADB</span>
-        <span class="float-chip c4" aria-hidden="true">Telegram</span>
-        <div class="video-stage"><div class="video-frame" id="videoFrame"></div></div>
-        <span class="lang-note"><svg class="ic"><use href="#icTranslate"/></svg><span data-i="videoTileSub">Available in English, Ukrainian and Russian languages.</span></span>
-      </div>
+      <article class="vb-help">
+        <div class="vb-help-top">
+          <span class="sym-shape-frame"><svg class="ic"><use href="#icTune"/></svg></span>
+          <h3 data-i="bug1Title">Problem during setup</h3>
+        </div>
+        <p data-i="bug1Desc">If you encounter any problem while setting up the automation, report it directly to the developer with a short description.</p>
+        <a class="m3e-btn m3e-state help-btn" data-tg target="_blank" rel="noopener noreferrer">
+          <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+        </a>
+      </article>
     </div>
   </section>
 
@@ -2141,11 +2323,6 @@ footer { border-top: 1px solid var(--line); }
         <a class="m3e-btn filled m3e-state lic-cta" data-tg target="_blank" rel="noopener noreferrer">
           <span data-i="btnGetLicense">Get a License</span><svg class="ic"><use href="#icArrowRight"/></svg>
         </a>
-      </div>
-      <div class="lic-perks">
-        <div class="lic-perk p1"><span class="sym-shape-frame"><svg class="ic"><use href="#icExtension"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></div>
-        <div class="lic-perk p2"><span class="sym-shape-frame"><svg class="ic"><use href="#icAndroid"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></div>
-        <div class="lic-perk p3"><span class="sym-shape-frame"><svg class="ic"><use href="#icHelp"/></svg></span><span data-i="feature3">Direct support &amp; regular updates</span></div>
       </div>
     </div>
 
@@ -2196,8 +2373,28 @@ footer { border-top: 1px solid var(--line); }
 
 <footer>
   <div class="wrapper">
-    <span class="ft-mark" aria-hidden="true"></span>
-    <p data-i="ftCopy">© Replica. All rights reserved.</p>
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="nav-curly-badge">
+          <svg class="nav-curly-rotator" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/></svg>
+          <svg class="nav-curly-bot"><use href="#icAndroid"/></svg>
+        </div>
+        <span class="ft-name">Replica</span>
+      </div>
+      <a class="m3e-btn filled m3e-state ft-cta" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+      </a>
+    </div>
+    <nav class="ft-links" aria-label="Footer">
+      <a href="#guide" class="m3e-chip m3e-state"><svg class="ic"><use href="#icTune"/></svg><span data-i="guideLbl">Setup Guide</span></a>
+      <a href="#video" class="m3e-chip m3e-state"><svg class="ic"><use href="#icPlayCircle"/></svg><span data-i="videoLbl">Video</span></a>
+      <a href="#pricing" class="m3e-chip m3e-state"><svg class="ic"><use href="#icKey"/></svg><span data-i="lblLicense">License</span></a>
+      <a href="#bugs" class="m3e-chip m3e-state"><svg class="ic"><use href="#icBug"/></svg><span data-i="lblSupport">Support</span></a>
+    </nav>
+    <div class="ft-bottom">
+      <p data-i="ftCopy">© Replica. All rights reserved.</p>
+      <span class="ft-badge"><svg class="ic"><use href="#icAndroid"/></svg>Android 11+</span>
+    </div>
   </div>
 </footer>
 
@@ -2891,7 +3088,7 @@ function renderVideo(dict) {
   const v = CONFIG.video;
   const portrait = /^\s*9\s*\/\s*16/.test(v.aspect);
   frame.style.setProperty('--ar', v.aspect);
-  frame.closest('.video-card').classList.toggle('portrait', portrait);
+  frame.closest('.vb-player').classList.toggle('portrait', portrait);
   if (v.id) {
     const q = `rel=0&modestbranding=1&playsinline=1&cc_load_policy=1&cc_lang_pref=${lang}&hl=${lang}`;
     const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?${q}`;
@@ -2961,7 +3158,7 @@ function setupMotion() {
   const groups = [
     ['.hero-heading', 120], ['.hero-text', 220], ['.hero-button-group', 320], ['.chips-row', 420],
     ['.step-section-header'], ['.m3e-expandable'], ['.trilogy-tile'],
-    ['.tutorial-card'], ['.video-card'], ['.lic-price'], ['.lic-perk'], ['.multi'], ['.bug-hero'], ['.thanks-pill']
+    ['.tutorial-card'], ['.vb-info'], ['.vb-player'], ['.vb-help'], ['.lic-price'], ['.multi'], ['.bug-hero'], ['.thanks-pill']
   ];
   const targets = [];
   groups.forEach(([sel, delay]) => {
