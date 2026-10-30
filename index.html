@@ -1578,6 +1578,280 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
 }
 @keyframes video-pulse { 0% { scale: 0.9; opacity: 0.5; } 100% { scale: 1.7; opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .play-shape::after, .play-badge .badge-shape { animation: none; } }
+
+/* ===== MD3E v4: Video, License, Support, Footer ===== */
+/* one shape system: big outer corners, small connector corners, springy morphs */
+:root {
+  --r-xl: 48px;        /* outer corners of grouped containers */
+  --r-lg: 32px;        /* standalone cards inside a group */
+  --r-conn: 12px;      /* corners where neighbours connect */
+  --r-hover: 28px;     /* hover / press morph target */
+  --conn-gap: 4px;     /* gap between connected shapes */
+}
+
+/* shared tonal scallop icon + shared decorative blob */
+.help-tile .sym-shape-frame, .lic-perk .sym-shape-frame, .bug-hero .sym-shape-frame {
+  display: grid; place-items: center; color: var(--md-sys-color-surface);
+}
+.video-card::before, .lic-price::after, .bug-hero::after, .multi::after {
+  content: ''; position: absolute; z-index: 0; pointer-events: none;
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+  animation: m3eCurlySpin 60s linear infinite; will-change: transform;
+}
+
+/* ---------- VIDEO (v5: player-first stage) ---------- */
+:root { --line: color-mix(in oklch, var(--md-sys-color-on-surface) 16%, transparent); }
+.video-card {
+  position: relative; isolation: isolate; overflow: hidden; display: grid; gap: 30px; padding: 22px 20px 20px;
+  border: 1px solid var(--line); box-shadow: none; border-radius: var(--r-xl);
+  background: radial-gradient(90% 55% at 50% 0%, color-mix(in oklch, var(--md-sys-color-primary-container) 85%, transparent), transparent 75%), var(--md-sys-color-surface-container-low);
+}
+.video-card::before { width: 440px; height: 440px; left: 50%; margin-left: -220px; top: -90px; background: var(--md-sys-color-primary-container); opacity: 0.45; }
+.video-card::after {
+  content: ''; position: absolute; z-index: 0; pointer-events: none; width: 190px; height: 190px; right: -60px; bottom: -70px;
+  background: var(--md-sys-color-tertiary-container); opacity: 0.7; animation: m3eCurlySpin 45s linear infinite reverse;
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+}
+.video-card > * { position: relative; z-index: 1; }
+.video-side { order: -1; position: relative; display: grid; gap: 18px; justify-items: center; padding: 14px 0 0; }
+.video-stage {
+  position: relative; width: 100%; max-width: 292px; padding: 10px; border-radius: 48px; border: 1px solid var(--line);
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--elevation-3), 0 36px 70px -26px color-mix(in oklch, var(--md-sys-color-primary) 55%, transparent);
+}
+.video-stage::before { content: ''; position: absolute; z-index: 3; top: 19px; left: 50%; width: 64px; height: 16px; margin-left: -32px; border-radius: 8px; background: var(--md-sys-color-surface-container-lowest); pointer-events: none; }
+.video-stage::after { content: ''; position: absolute; right: -4px; top: 110px; width: 4px; height: 58px; border-radius: 0 3px 3px 0; background: var(--md-sys-color-outline-variant); }
+.video-card:not(.portrait) .video-stage { max-width: none; }
+.video-frame { max-width: none; border: 0; border-radius: 38px; background: var(--md-sys-color-primary-container); }
+.float-chip {
+  position: absolute; z-index: 4; height: 34px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 17px;
+  font-size: 0.82rem; font-weight: 800; letter-spacing: -0.01em; border: 1px solid var(--line);
+  background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface);
+  box-shadow: var(--elevation-1); animation: chip-bob 5s var(--ease-expressive-standard) infinite alternate;
+}
+.float-chip.c1 { left: 0; top: 70px; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+.float-chip.c2 { right: 0; top: 150px; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); animation-delay: -1.5s; }
+.float-chip.c3 { left: 0; bottom: 120px; background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); animation-delay: -3s; }
+.float-chip.c4 { right: 0; bottom: 70px; animation-delay: -4s; }
+@keyframes chip-bob { from { translate: 0 -5px; } to { translate: 0 6px; } }
+.lang-note { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 20px; border: 1px solid var(--line); font-size: 0.84rem; font-weight: 700; line-height: 1.3; text-align: left; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+
+.video-info { display: grid; gap: 14px; align-content: center; }
+.video-head { align-items: center; gap: 16px; padding: 0 4px 6px; }
+.video-head .guide-titles h3 { font-size: 1.35rem; letter-spacing: -0.03em; }
+.video-head .guide-titles p { font-size: 0.94rem; line-height: 1.5; }
+.play-badge { width: 56px; height: 56px; }
+.flow { position: relative; display: grid; gap: var(--conn-gap); }
+.flow::before { content: ''; position: absolute; left: 37px; top: 40px; bottom: 40px; width: 3px; border-radius: 2px; background: var(--md-sys-color-outline-variant); transition: background-color 0.5s var(--ease-expressive-standard); }
+.flow:has(.prereq.done)::before { background: var(--md-sys-color-primary); }
+.flow-link { display: none; }
+.flow .prereq { padding: 14px 20px 14px 14px; gap: 16px; border: 1px solid var(--line); border-radius: var(--r-lg) var(--r-lg) var(--r-conn) var(--r-conn); background: var(--md-sys-color-surface-container-high); transition: background-color 0.4s var(--ease-expressive-standard), color 0.3s, border-radius 0.5s var(--spring-fast-spatial); }
+.flow .prereq.done { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+.flow .prereq.next { border-radius: var(--r-conn) var(--r-conn) var(--r-lg) var(--r-lg); background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.prereq.next .badge-shape { fill: var(--md-sys-color-secondary); }
+.flow-next-ic { position: relative; width: 22px; height: 22px; color: var(--md-sys-color-surface); }
+.help-tile { display: grid; gap: 16px; padding: 20px; margin-top: 8px; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); transition: border-radius 0.55s var(--spring-fast-spatial); }
+.help-tile-top { display: flex; gap: 16px; align-items: flex-start; }
+.help-tile .sym-shape-frame { --fr-bg: var(--md-sys-color-tertiary); width: 52px; height: 52px; flex: none; }
+.help-tile h3 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
+.help-tile p { font-size: 0.92rem; line-height: 1.5; opacity: 0.86; }
+.help-btn, .multi-btn { box-shadow: none; }
+.help-btn { width: 100%; height: 56px; background: var(--md-sys-color-tertiary); color: var(--md-sys-color-surface); }
+@media (min-width: 860px) {
+  .video-card.portrait { grid-template-columns: 340px 1fr; gap: 56px; padding: 40px; align-items: center; }
+  .video-card.portrait .video-side { padding-top: 0; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .flow .prereq:hover { border-radius: var(--r-hover); }
+  .help-tile:hover { border-radius: var(--r-xl) var(--r-conn) var(--r-xl) var(--r-conn); }
+}
+@media (prefers-reduced-motion: reduce) { .float-chip, .video-card::after { animation: none; } }
+
+/* ---------- LICENSE: one connected bento (price > perks > multi) ---------- */
+.lic { display: grid; gap: var(--conn-gap); }
+.lic-price {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: 28px; padding: clamp(26px, 6vw, 44px);
+  border-radius: var(--r-xl) var(--r-xl) var(--r-conn) var(--r-conn);
+  background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+  transition: border-radius 0.6s var(--spring-fast-spatial);
+}
+.lic-price::after {
+  width: 300px; height: 300px; right: -90px; top: -110px;
+  background: var(--md-sys-color-primary); opacity: 0.1;
+}
+.lic-price > * { position: relative; z-index: 1; }
+.lic-top { display: grid; gap: 18px; justify-items: start; }
+.lic-chip {
+  display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px 0 12px; border-radius: 18px;
+  font-size: 0.86rem; font-weight: 800; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+}
+.lic-chip .ic { width: 18px; height: 18px; }
+.pricing-sum { align-items: flex-start; gap: 8px; }
+.lic .currency-sym { color: inherit; font-size: 2.2rem; line-height: 1; margin-top: 0.5rem; }
+.lic .cost-num { font-size: clamp(4.6rem, 15vw, 7rem); line-height: 0.85; font-variant-numeric: tabular-nums; }
+.lic .cadence-str { color: inherit; opacity: 0.72; align-self: flex-end; font-size: 1.1rem; margin-bottom: 0.4rem; }
+.lic-cta {
+  width: 100%; height: 64px; padding: 0 36px; font-size: 1.08rem; font-weight: 800; border-radius: 32px;
+  background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+}
+.lic-cta .ic { transition: translate 0.45s var(--spring-fast-spatial), rotate 0.45s var(--spring-fast-spatial); }
+@media (hover: hover) and (pointer: fine) {
+  .lic-cta:hover .ic { translate: 4px 0; }
+  .lic-price:hover { border-radius: var(--r-xl) var(--r-xl) var(--r-hover) var(--r-hover); }
+}
+
+.lic-perks { display: grid; gap: var(--conn-gap); }
+.lic-perk {
+  display: flex; align-items: center; gap: 16px; padding: 20px; border-radius: var(--r-conn);
+  font-weight: 700; font-size: 1rem; line-height: 1.35;
+  transition: border-radius 0.55s var(--spring-fast-spatial);
+}
+.lic-perk .sym-shape-frame { width: 52px; height: 52px; flex: none; }
+.lic-perk .ic { width: 24px; height: 24px; }
+.lic-perk.p1 { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+.lic-perk.p2 { background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); }
+.lic-perk.p3 { background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface); }
+.lic-perk.p1 .sym-shape-frame { --fr-bg: var(--md-sys-color-secondary); }
+.lic-perk.p2 .sym-shape-frame { --fr-bg: var(--md-sys-color-tertiary); }
+.lic-perk.p3 .sym-shape-frame { --fr-bg: var(--md-sys-color-primary); }
+@media (min-width: 720px) {
+  .lic-price { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+  .lic-cta { width: auto; }
+  .lic-perks { grid-template-columns: repeat(3, 1fr); }
+  .lic-perk { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 26px; padding: 24px; min-height: 184px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .lic-perk:hover { border-radius: var(--r-hover); }
+  .lic-perk:hover .sym-shape-frame::before { rotate: 45deg; scale: 1.06; }
+}
+
+.multi {
+  position: relative; isolation: isolate; overflow: hidden; margin-top: 0;
+  display: grid; gap: 22px; align-items: center; padding: 28px 24px;
+  border-radius: var(--r-conn) var(--r-conn) var(--r-xl) var(--r-xl);
+  background: var(--md-sys-color-tertiary); color: var(--md-sys-color-surface);
+  transition: border-radius 0.6s var(--spring-fast-spatial);
+}
+.multi::after { width: 220px; height: 220px; left: -70px; bottom: -110px; background: var(--md-sys-color-surface); opacity: 0.1; }
+.multi > * { position: relative; z-index: 1; }
+.multi-art { position: relative; display: flex; align-items: center; width: max-content; padding-right: 26px; height: 72px; }
+.dev { position: relative; width: 64px; height: 64px; display: grid; place-items: center; margin-left: -16px; color: var(--md-sys-color-tertiary); }
+.dev:first-child { margin-left: 0; }
+.dev svg:first-child { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--md-sys-color-surface); stroke: var(--md-sys-color-tertiary); stroke-width: 3; paint-order: stroke; }
+.dev:nth-child(2) { z-index: 1; scale: 1.12; } .dev:nth-child(3) { z-index: 2; }
+.dev .ic { position: relative; width: 26px; height: 26px; }
+.pct {
+  position: absolute; right: 0; top: -6px; z-index: 3; width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 12px; rotate: 10deg; font-weight: 800;
+  background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+}
+.multi-text h3 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 4px; }
+.multi-text p { font-size: 0.95rem; line-height: 1.5; opacity: 0.88; }
+.multi-btn { width: 100%; background: var(--md-sys-color-surface); color: var(--md-sys-color-tertiary); }
+@media (min-width: 720px) {
+  .multi { grid-template-columns: auto 1fr auto; gap: 28px; padding: 28px 28px 28px 34px; }
+  .multi-btn { width: auto; padding: 0 32px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .multi:hover { border-radius: var(--r-hover) var(--r-hover) var(--r-xl) var(--r-xl); }
+  .multi:hover .dev:nth-child(1) { rotate: -8deg; } .multi:hover .dev:nth-child(3) { rotate: 8deg; }
+  .dev { transition: rotate 0.6s var(--spring-fast-spatial); }
+}
+
+/* ---------- SUPPORT: connected pair ---------- */
+#bugs { display: grid; }
+#bugs .step-section-header { margin-bottom: 20px; }
+.bug-hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: 20px; padding: 28px 24px;
+  border-radius: var(--r-xl) var(--r-xl) var(--r-conn) var(--r-conn);
+  background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);
+  transition: border-radius 0.6s var(--spring-fast-spatial);
+}
+.bug-hero::after { width: 280px; height: 280px; right: -100px; bottom: -130px; background: var(--md-sys-color-secondary); opacity: 0.1; }
+.bug-hero > * { position: relative; z-index: 1; }
+.bug-hero .sym-shape-frame { --fr-bg: var(--md-sys-color-secondary); width: 64px; height: 64px; flex: none; }
+.bug-hero h3 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 6px; }
+.bug-hero p { font-size: 1rem; line-height: 1.6; opacity: 0.88; }
+@media (min-width: 720px) { .bug-hero { flex-direction: row; align-items: flex-start; gap: 24px; padding: 36px; } }
+.thanks-pill {
+  margin-top: var(--conn-gap); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 18px 18px 28px; border-radius: var(--r-conn) var(--r-conn) var(--r-xl) var(--r-xl);
+  background: var(--md-sys-color-surface-container-high);
+  transition: border-radius 0.6s var(--spring-fast-spatial);
+}
+.thanks-pill h3 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }
+.thanks-pill p { font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant); }
+@media (max-width: 560px) { .thanks-pill { padding: 22px; } .thanks-pill .m3e-btn { width: 100%; } }
+@media (hover: hover) and (pointer: fine) {
+  .bug-hero:hover { border-radius: var(--r-xl) var(--r-xl) var(--r-hover) var(--r-hover); }
+  .bug-hero:hover .sym-shape-frame::before { rotate: 45deg; scale: 1.06; }
+  .thanks-pill:hover { border-radius: var(--r-hover) var(--r-hover) var(--r-xl) var(--r-xl); }
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+  margin-top: 56px; border-top: 0; border-radius: var(--r-xl) var(--r-xl) 0 0;
+  background: var(--md-sys-color-surface-container-low); color: var(--md-sys-color-on-surface-variant);
+  padding: 32px 0 calc(32px + env(safe-area-inset-bottom, 0px)); font-weight: 600; text-align: center;
+}
+footer .wrapper { display: grid; justify-items: center; gap: 14px; }
+.ft-mark {
+  width: 36px; height: 36px; background: var(--md-sys-color-primary-container);
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+  animation: m3eCurlySpin 24s linear infinite;
+}
+
+
+/* ===== THIN OUTLINE on every element ===== */
+.lic-price, .lic-perk, .bug-hero, .thanks-pill, .m3e-btn, .tile-action-btn, .m3e-chip, .m3e-action-btn, .step-label, .lic-chip,
+.trilogy-tile, .tutorial-card, .m3e-expandable, .guide-step, .dl-row, .brand-item, .step-note, .app-chip, .phase-title, .progress-track,
+.m3e-capsule-nav, .pricing-expressive-card, .bulk-inquiry-box, .bug-card, .pct, .m3e-snackbar { border: 1px solid var(--line); }
+.m3e-btn.filled, .lic-cta { border-color: color-mix(in oklch, var(--md-sys-color-on-primary) 28%, var(--md-sys-color-primary)); }
+.multi { border: 1px solid color-mix(in oklch, var(--md-sys-color-surface) 32%, transparent); }
+.multi-btn { border: 1px solid color-mix(in oklch, var(--md-sys-color-tertiary) 30%, var(--md-sys-color-surface)); }
+.help-btn { border: 1px solid color-mix(in oklch, var(--md-sys-color-surface) 28%, var(--md-sys-color-tertiary)); }
+footer { border-top: 1px solid var(--line); }
+.brand-chip.active { border-color: var(--md-sys-color-primary); }
+@media (prefers-reduced-motion: reduce) {
+  .video-card::before, .lic-price::after, .bug-hero::after, .multi::after, .ft-mark { animation: none; }
+}
+
+/* ===== v6: help tile + Contact Developer buttons ===== */
+.help-tile {
+  position: relative; isolation: isolate; overflow: hidden; gap: 18px; padding: 22px; margin-top: 8px;
+  border-radius: var(--r-lg); border: 1px solid var(--line);
+  background: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);
+}
+.help-tile::after {
+  content: ''; position: absolute; z-index: -1; width: 170px; height: 170px; right: -56px; top: -64px; pointer-events: none;
+  background: var(--md-sys-color-tertiary); opacity: 0.12; animation: m3eCurlySpin 50s linear infinite;
+  -webkit-mask: var(--scallop) center / 100% 100% no-repeat; mask: var(--scallop) center / 100% 100% no-repeat;
+}
+.help-tile-top { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: center; }
+.help-tile-top > div { display: contents; }
+.help-tile .sym-shape-frame { grid-row: 1; width: 52px; height: 52px; }
+.help-tile h3 { grid-column: 2; grid-row: 1; margin: 0; font-size: 1.15rem; letter-spacing: -0.025em; }
+.help-tile p { grid-column: 1 / -1; grid-row: 2; margin-top: 6px; font-size: 0.94rem; line-height: 1.55; opacity: 0.88; }
+
+/* one button language for every "Contact Developer" */
+.help-btn, .multi-btn, .thanks-pill .m3e-btn {
+  width: auto; align-self: start; justify-self: start; height: 56px; padding: 0 28px 0 22px; gap: 10px;
+  border-radius: 28px; font-size: 1rem; font-weight: 800; letter-spacing: -0.005em; box-shadow: none;
+}
+.help-btn .ic, .multi-btn .ic, .thanks-pill .m3e-btn .ic { width: 20px; height: 20px; }
+.help-btn { background: var(--md-sys-color-tertiary); color: var(--md-sys-color-surface); border: 1px solid transparent; }
+.multi-btn { background: var(--md-sys-color-surface); color: var(--md-sys-color-tertiary); border: 1px solid transparent; }
+.thanks-pill .m3e-btn { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border: 1px solid transparent; }
+@media (max-width: 560px) {
+  .help-btn, .multi-btn, .thanks-pill .m3e-btn { width: 100%; justify-self: stretch; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .help-btn:hover, .multi-btn:hover, .thanks-pill .m3e-btn:hover { border-radius: 20px; }
+  .help-btn:hover .ic, .multi-btn:hover .ic, .thanks-pill .m3e-btn:hover .ic { translate: 2px -2px; rotate: -8deg; }
+}
+@media (prefers-reduced-motion: reduce) { .help-tile::after { animation: none; } }
 </style>
 </head>
 <body>
@@ -1781,7 +2055,7 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
     <div class="guide-list" id="guideList"></div>
   </section>
 
-  <!-- VIDEO -->
+  <!-- VIDEO (with setup-problem help merged in) -->
   <section id="video">
     <div class="step-section-header">
       <span class="step-label" data-i="videoLbl">Video</span>
@@ -1802,21 +2076,51 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
           </span>
         </div>
 
-        <div class="prereq" id="flowSteps">
-          <span class="prereq-badge" aria-hidden="true">
-            <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-            <span class="flow-badge-num">1–6</span>
-            <svg class="ic flow-badge-check"><use href="#icCheck"/></svg>
-          </span>
-          <span class="flow-text"><b data-i="videoFlow1">Do steps 1–6</b><span data-i="videoFlow1Sub">Phone &amp; account setup</span></span>
+        <div class="flow">
+          <div class="prereq" id="flowSteps">
+            <span class="prereq-badge" aria-hidden="true">
+              <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+              <span class="flow-badge-num">1–6</span>
+              <svg class="ic flow-badge-check"><use href="#icCheck"/></svg>
+            </span>
+            <span class="flow-text"><b data-i="videoFlow1">Do steps 1–6</b><span data-i="videoFlow1Sub">Phone &amp; account setup</span></span>
+          </div>
+          <span class="flow-link" aria-hidden="true"></span>
+          <div class="prereq next">
+            <span class="prereq-badge" aria-hidden="true">
+              <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+              <svg class="ic flow-next-ic"><use href="#icPlay"/></svg>
+            </span>
+            <span class="flow-text"><b data-i="videoFlow2">Follow the video</b><span data-i="videoFlow2Sub">Replica, Termux, ADB &amp; Telegram</span></span>
+          </div>
         </div>
+
+        <article class="help-tile">
+          <div class="help-tile-top">
+            <span class="sym-shape-frame"><svg class="ic"><use href="#icTune"/></svg></span>
+            <div>
+              <h3 data-i="bug1Title">Problem during setup</h3>
+              <p data-i="bug1Desc">If you encounter any problem while setting up the automation, report it directly to the developer with a short description.</p>
+            </div>
+          </div>
+          <a class="m3e-btn m3e-state help-btn" data-tg target="_blank" rel="noopener noreferrer">
+            <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+          </a>
+        </article>
       </div>
 
-      <div class="video-frame" id="videoFrame"></div>
+      <div class="video-side">
+        <span class="float-chip c1" aria-hidden="true">Replica</span>
+        <span class="float-chip c2" aria-hidden="true">Termux</span>
+        <span class="float-chip c3" aria-hidden="true">ADB</span>
+        <span class="float-chip c4" aria-hidden="true">Telegram</span>
+        <div class="video-stage"><div class="video-frame" id="videoFrame"></div></div>
+        <span class="lang-note"><svg class="ic"><use href="#icTranslate"/></svg><span data-i="videoTileSub">Available in English, Ukrainian and Russian languages.</span></span>
+      </div>
     </div>
   </section>
 
-  <!-- PRICING -->
+  <!-- LICENSE -->
   <section id="pricing">
     <div class="step-section-header">
       <span class="step-label" data-i="lblLicense">License</span>
@@ -1824,41 +2128,45 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
       <p class="step-summary" data-i="priceSub">A simple, affordable monthly license per device with continuous feature updates.</p>
     </div>
 
-    <div class="pricing-expressive-card">
-      <div class="pricing-row">
-        <div>
+    <div class="lic">
+      <div class="lic-price">
+        <div class="lic-top">
+          <span class="lic-chip"><svg class="ic"><use href="#icKey"/></svg><span data-i="priceDesc">One device per license</span></span>
           <div class="pricing-sum">
             <span class="currency-sym">$</span>
             <span class="cost-num" id="costAmount">10</span>
             <span class="cadence-str" data-i="priceCadence">/ month</span>
           </div>
-          <p class="price-note" data-i="priceDesc">One device per license</p>
         </div>
-        <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer">
+        <a class="m3e-btn filled m3e-state lic-cta" data-tg target="_blank" rel="noopener noreferrer">
           <span data-i="btnGetLicense">Get a License</span><svg class="ic"><use href="#icArrowRight"/></svg>
         </a>
       </div>
-
-      <div class="perks-grid">
-        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></div>
-        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></div>
-        <div class="perk-row"><span class="perk-check"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature3">Direct support &amp; regular updates</span></div>
+      <div class="lic-perks">
+        <div class="lic-perk p1"><span class="sym-shape-frame"><svg class="ic"><use href="#icExtension"/></svg></span><span data-i="feature1">Automated Instagram tasks for SMM Kingdom</span></div>
+        <div class="lic-perk p2"><span class="sym-shape-frame"><svg class="ic"><use href="#icAndroid"/></svg></span><span data-i="feature2">Runs smoothly on Android 11+</span></div>
+        <div class="lic-perk p3"><span class="sym-shape-frame"><svg class="ic"><use href="#icHelp"/></svg></span><span data-i="feature3">Direct support &amp; regular updates</span></div>
       </div>
     </div>
 
-    <div class="bulk-inquiry-box">
-      <div>
+    <div class="multi">
+      <div class="multi-art" aria-hidden="true">
+        <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
+        <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
+        <span class="dev"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icPhone"/></svg></span>
+        <span class="pct">%</span>
+      </div>
+      <div class="multi-text">
         <h3 data-i="bulkTitle">Need More Than One Device?</h3>
         <p data-i="bulkSub">Contact the developer for a discount on multiple-device licenses.</p>
       </div>
-      <a class="shape-fab" data-tg target="_blank" rel="noopener noreferrer">
-        <svg class="shape-fab-bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#scallopShape"/></svg>
-        <svg class="ic"><use href="#icSend"/></svg>
-        <span class="sr-only" data-i="btnBulk">Contact Developer</span>
+      <a class="m3e-btn m3e-state multi-btn" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
       </a>
     </div>
   </section>
-  <!-- REPORT BUGS -->
+
+  <!-- SUPPORT -->
   <section id="bugs">
     <div class="step-section-header">
       <span class="step-label" data-i="lblSupport">Support</span>
@@ -1866,28 +2174,21 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
       <p class="step-summary" data-i="bugSub">Found a problem? Send it to the developer and it will be fixed promptly.</p>
     </div>
 
-    <div class="bug-grid">
-      <article class="bug-card">
-        <div class="sym-shape-frame tertiary"><svg class="ic"><use href="#icTune"/></svg></div>
-        <h3 data-i="bug1Title">Problem during setup</h3>
-        <p data-i="bug1Desc">If you encounter any problem while setting up the automation, report it directly to the developer with a short description.</p>
-      </article>
-      <article class="bug-card">
-        <div class="sym-shape-frame alt"><svg class="ic"><use href="#icBug"/></svg></div>
+    <article class="bug-hero">
+      <span class="sym-shape-frame"><svg class="ic"><use href="#icBug"/></svg></span>
+      <div class="bug-hero-text">
         <h3 data-i="bug2Title">Bug while running</h3>
         <p data-i="bug2Desc">If you face a bug while the automation is running, stop the automation, tap the Share button in the log window of the main automation screen, and send the log to the developer with a short description of what actually happened.</p>
-      </article>
-    </div>
+      </div>
+    </article>
 
-    <div class="bulk-inquiry-box bug-thanks">
+    <div class="thanks-pill">
       <div>
         <h3 data-i="bugThanksTitle">Thanks for visiting!</h3>
         <p data-i="bugThanksSub">Bugs are resolved promptly and efficiently.</p>
       </div>
-      <a class="shape-fab" data-tg target="_blank" rel="noopener noreferrer">
-        <svg class="shape-fab-bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#scallopShape"/></svg>
-        <svg class="ic"><use href="#icSend"/></svg>
-        <span class="sr-only" data-i="btnBulk">Contact Developer</span>
+      <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer">
+        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
       </a>
     </div>
   </section>
@@ -1895,6 +2196,7 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
 
 <footer>
   <div class="wrapper">
+    <span class="ft-mark" aria-hidden="true"></span>
     <p data-i="ftCopy">© Replica. All rights reserved.</p>
   </div>
 </footer>
@@ -2589,7 +2891,7 @@ function renderVideo(dict) {
   const v = CONFIG.video;
   const portrait = /^\s*9\s*\/\s*16/.test(v.aspect);
   frame.style.setProperty('--ar', v.aspect);
-  frame.parentElement.classList.toggle('portrait', portrait);
+  frame.closest('.video-card').classList.toggle('portrait', portrait);
   if (v.id) {
     const q = `rel=0&modestbranding=1&playsinline=1&cc_load_policy=1&cc_lang_pref=${lang}&hl=${lang}`;
     const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?${q}`;
@@ -2659,7 +2961,7 @@ function setupMotion() {
   const groups = [
     ['.hero-heading', 120], ['.hero-text', 220], ['.hero-button-group', 320], ['.chips-row', 420],
     ['.step-section-header'], ['.m3e-expandable'], ['.trilogy-tile'],
-    ['.tutorial-card'], ['.pricing-expressive-card'], ['.bulk-inquiry-box'], ['.bug-card']
+    ['.tutorial-card'], ['.video-card'], ['.lic-price'], ['.lic-perk'], ['.multi'], ['.bug-hero'], ['.thanks-pill']
   ];
   const targets = [];
   groups.forEach(([sel, delay]) => {
