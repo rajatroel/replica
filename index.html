@@ -2287,6 +2287,128 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   #pricing .lic-price::after, #pricing .multi::after, .site-footer::after { animation: none !important; }
 }
 
+
+/* ===== v10: MD3 EXPRESSIVE CONSISTENCY LAYER ===== */
+:root{
+  --md-sys-color-primary:oklch(0.5 0.15 var(--h));
+  --md-sys-color-on-primary:oklch(0.99 0.005 var(--h));
+  --md-sys-color-primary-container:oklch(0.91 0.065 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.26 0.09 var(--h));
+  --md-sys-color-secondary:oklch(0.5 0.055 calc(var(--h) + 20));
+  --md-sys-color-on-secondary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-secondary-container:oklch(0.91 0.032 calc(var(--h) + 20));
+  --md-sys-color-on-secondary-container:oklch(0.27 0.045 calc(var(--h) + 20));
+  --md-sys-color-tertiary:oklch(0.5 0.1 calc(var(--h) + 65));
+  --md-sys-color-tertiary-container:oklch(0.91 0.055 calc(var(--h) + 65));
+  --md-sys-color-on-tertiary-container:oklch(0.27 0.07 calc(var(--h) + 65));
+  --md-sys-color-surface:oklch(0.985 0.006 var(--h));
+  --md-sys-color-surface-container-lowest:oklch(0.995 0.004 var(--h));
+  --md-sys-color-surface-container-low:oklch(0.972 0.009 var(--h));
+  --md-sys-color-surface-container:oklch(0.958 0.012 var(--h));
+  --md-sys-color-surface-container-high:oklch(0.943 0.014 var(--h));
+  --md-sys-color-surface-container-highest:oklch(0.928 0.016 var(--h));
+  --md-sys-color-on-surface:oklch(0.2 0.012 var(--h));
+  --md-sys-color-on-surface-variant:oklch(0.45 0.02 var(--h));
+  --md-sys-color-outline:oklch(0.6 0.02 var(--h));
+  --md-sys-color-outline-variant:oklch(0.84 0.018 var(--h));
+  --tile:var(--md-sys-color-surface-container);
+  --tile-inner:var(--md-sys-color-surface-container-high);
+  --r-press:12px;
+  --r-btn-hover:20px;
+}
+:root[data-mode="dark"]{
+  --md-sys-color-primary:oklch(0.82 0.12 var(--h));
+  --md-sys-color-on-primary:oklch(0.27 0.08 var(--h));
+  --md-sys-color-primary-container:oklch(0.38 0.085 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.92 0.05 var(--h));
+  --md-sys-color-secondary:oklch(0.82 0.05 calc(var(--h) + 20));
+  --md-sys-color-on-secondary:oklch(0.28 0.035 var(--h));
+  --md-sys-color-secondary-container:oklch(0.36 0.04 calc(var(--h) + 20));
+  --md-sys-color-on-secondary-container:oklch(0.91 0.035 calc(var(--h) + 20));
+  --md-sys-color-tertiary:oklch(0.82 0.09 calc(var(--h) + 65));
+  --md-sys-color-tertiary-container:oklch(0.38 0.07 calc(var(--h) + 65));
+  --md-sys-color-on-tertiary-container:oklch(0.92 0.045 calc(var(--h) + 65));
+  --md-sys-color-surface:oklch(0.16 0.01 var(--h));
+  --md-sys-color-surface-container-lowest:oklch(0.12 0.008 var(--h));
+  --md-sys-color-surface-container-low:oklch(0.19 0.012 var(--h));
+  --md-sys-color-surface-container:oklch(0.22 0.014 var(--h));
+  --md-sys-color-surface-container-high:oklch(0.25 0.016 var(--h));
+  --md-sys-color-surface-container-highest:oklch(0.28 0.018 var(--h));
+  --md-sys-color-on-surface:oklch(0.93 0.012 var(--h));
+  --md-sys-color-on-surface-variant:oklch(0.78 0.02 var(--h));
+  --md-sys-color-outline:oklch(0.6 0.02 var(--h));
+  --md-sys-color-outline-variant:oklch(0.4 0.02 var(--h));
+}
+
+/* ONE tile colour for every container (no vivid / dark mix) */
+.guide-step,.m3e-expandable,.vb-info,.vb-player,.vb-help,#pricing .lic-price,#pricing .multi,.bug-hero,.thanks-pill,.bug-card,.bulk-inquiry-box,.trilogy-tile,.tutorial-card,.site-footer{background:var(--tile);background-image:none;color:var(--md-sys-color-on-surface);
+  border:1px solid var(--md-sys-color-outline-variant);box-shadow:none}
+:is(.guide-step,.m3e-expandable,.vb-info,.vb-player,.vb-help,#pricing .lic-price,#pricing .multi,.bug-hero,.thanks-pill,.bug-card,.bulk-inquiry-box,.trilogy-tile,.tutorial-card,.site-footer):hover{background:var(--tile);border-color:var(--md-sys-color-outline-variant);box-shadow:none}
+.m3e-expandable.open{border-color:var(--md-sys-color-primary)}
+.site-footer{border-radius:var(--r-xl) var(--r-xl) 0 0}
+.vb-text p,.vb-help p,.bug-hero p,.lic-card-copy{color:var(--md-sys-color-on-surface-variant);opacity:1}
+.vb-help h3,.vb-text h3,.bug-hero h3{color:var(--md-sys-color-on-surface)}
+/* nested surfaces: one step above the tile */
+.dl-row,.brand-item,.ft-social-link,#pricing .lic-price-summary,.app-chip,.lang-track,.prereq,.lang-seg{background:var(--tile-inner);border:1px solid var(--md-sys-color-outline-variant);color:var(--md-sys-color-on-surface)}
+.flow .prereq.done{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.flow .prereq.next{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.m3e-chip{background:var(--tile-inner)}
+.m3e-chip:not(.m3e-state){background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+/* accents use tonal roles only */
+.vb-tag,.lic-chip,#pricing .lic-chip,#pricing .multi-badge,.tile-badge,.step-label{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border-color:transparent}
+#pricing .lic-eyebrow{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.sym-shape-frame,.dl-info .sym-shape-frame{--fr-bg:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.vb-help .sym-shape-frame,.bug-hero .sym-shape-frame,.help-tile .sym-shape-frame{--fr-bg:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}
+.dl-info .sym-shape-frame.alt{--fr-bg:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.dl-info .sym-shape-frame.tertiary{--fr-bg:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}
+.vb-info::after,#pricing .lic-price::after,#pricing .multi::after,.bug-hero::after,.site-footer::after{background:var(--md-sys-color-primary-container);opacity:.55}
+#pricing .dev svg:first-child{fill:var(--md-sys-color-primary-container);stroke:var(--tile)}
+
+/* buttons: filled = primary, tonal = secondary container */
+.m3e-btn.filled,.thanks-pill .m3e-btn,.help-btn,#pricing .license-choice-trial{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border:1px solid transparent;box-shadow:none}
+.m3e-btn.tonal,.tile-action-btn,.guide-next,#pricing .license-choice-license{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border:1px solid transparent;box-shadow:none}
+@media (hover:hover) and (pointer:fine){
+  .tile-action-btn:hover,#pricing .license-choice-license:hover{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border-color:transparent}
+}
+
+/* ONE press effect on EVERY button: rest = pill, hover = softer, pressed = squarer + shrink */
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.ft-brand){transition:border-radius .4s var(--spring-fast-spatial),scale .4s var(--spring-fast-spatial),background-color .2s ease,color .2s ease,border-color .2s ease,translate .3s var(--ease-expressive-standard)}
+.ft-social-link{border-radius:18px}
+.ft-brand{border-radius:20px}
+.ft-social-link:hover,.ft-brand:hover{translate:0 0}
+@media (hover:hover) and (pointer:fine){
+  :is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn):hover:not(.is-pressed){border-radius:var(--r-btn-hover)!important;translate:0 0!important}
+}
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.ft-brand).is-pressed,:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.ft-brand).is-pressed:hover{border-radius:var(--r-press)!important;scale:.96;box-shadow:none}
+.monet-swatch.is-pressed{border-radius:10px;transform:scale(.9)}
+.m3e-expandable:has(.expandable-trigger.is-pressed){border-radius:20px}
+.m3e-btn.is-pressed .ic,.tile-action-btn.is-pressed .ic,.guide-next.is-pressed .ic{rotate:-10deg}
+
+
+/* ===== v11: pill buttons, press changes ONLY roundness ===== */
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.shape-fab,.monet-swatch),:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.shape-fab,.monet-swatch):hover{border-radius:999px!important;scale:none!important;rotate:none!important;translate:none!important;box-shadow:none!important;transform:none!important;
+  transition:border-radius .35s var(--spring-fast-spatial),background-color .2s ease,color .2s ease,border-color .2s ease!important}
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.shape-fab,.monet-swatch).is-pressed.is-pressed,:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.shape-fab,.monet-swatch).is-pressed.is-pressed:hover{border-radius:14px!important;scale:none!important;rotate:none!important;translate:none!important;box-shadow:none!important;transform:none!important}
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.shape-fab,.monet-swatch).is-pressed .ic,:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link,.shape-fab,.monet-swatch):hover .ic,.m3e-btn .ic,.tile-action-btn .ic,.guide-next .ic{rotate:none!important;translate:none!important;scale:none!important}
+.monet-swatch.active{border-radius:999px!important}
+.m3e-rip{display:none!important}
+.m3e-expandable:has(.expandable-trigger.is-pressed){border-radius:var(--r-card)!important}
+.expandable-trigger.is-pressed .expand-chevron{scale:none;border-radius:21px}
+
+/* ===== v12: smooth, non-overshooting corner change (rest = true pill radius, press = slightly squarer) ===== */
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link){--rr:28px}
+.license-choice{--rr:46px}
+.m3e-chip.m3e-state,.m3e-action-btn,.ft-social-link{--rr:20px}
+.ft-social-link{--rr:29px}
+.brand-chip{--rr:19px}
+.lang-seg-btn{--rr:17px}
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link),:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link):hover{border-radius:var(--rr)!important;
+  transition:border-radius .22s cubic-bezier(.2,0,0,1),background-color .2s ease,color .2s ease,border-color .2s ease!important}
+:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link).is-pressed.is-pressed,:is(.m3e-btn,.tile-action-btn,.guide-next,.license-choice,.help-btn,.multi-btn,.m3e-chip.m3e-state,.brand-chip,.m3e-action-btn,.lang-seg-btn,.ft-social-link).is-pressed.is-pressed:hover{border-radius:calc(var(--rr) * .68)!important;
+  transition:border-radius .12s cubic-bezier(.2,0,0,1),background-color .2s ease,color .2s ease,border-color .2s ease!important}
+.monet-swatch,.monet-swatch:hover{border-radius:14px!important}
+.monet-swatch.active{border-radius:50%!important}
+.monet-swatch.is-pressed{border-radius:10px!important}
 </style>
 </head>
 <body>
@@ -3158,7 +3280,7 @@ function haptic(kind = 'tap') {
 
 /* PRESS EFFECT: touch presses show only after a short hold and are cancelled
    as soon as the finger moves (scrolling) or the browser takes over the gesture */
-const PRESS_SEL = '.lang-seg-btn, .shape-fab, .m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
+const PRESS_SEL = '.ft-social-link, .ft-brand, .lang-seg-btn, .shape-fab, .m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
 const MIN_PRESS_MS = 160;
 let pend = null;
 
