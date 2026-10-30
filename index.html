@@ -1691,13 +1691,7 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
 .lic .currency-sym { color: inherit; font-size: 2.2rem; line-height: 1; margin-top: 0.5rem; }
 .lic .cost-num { font-size: clamp(4.6rem, 15vw, 7rem); line-height: 0.85; font-variant-numeric: tabular-nums; }
 .lic .cadence-str { color: inherit; opacity: 0.72; align-self: flex-end; font-size: 1.1rem; margin-bottom: 0.4rem; }
-.lic-cta {
-  width: 100%; height: 64px; padding: 0 36px; font-size: 1.08rem; font-weight: 800; border-radius: 32px;
-  background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
-}
-.lic-cta .ic { transition: translate 0.45s var(--spring-fast-spatial), rotate 0.45s var(--spring-fast-spatial); }
 @media (hover: hover) and (pointer: fine) {
-  .lic-cta:hover .ic { translate: 4px 0; }
   .lic-price:hover { border-radius: var(--r-xl) var(--r-xl) var(--r-hover) var(--r-hover); }
 }
 
@@ -1717,7 +1711,6 @@ html { scroll-padding-top: 104px; -webkit-overflow-scrolling: touch; }
 .lic-perk.p3 .sym-shape-frame { --fr-bg: var(--md-sys-color-primary); }
 @media (min-width: 720px) {
   .lic-price { flex-direction: row; align-items: flex-end; justify-content: space-between; }
-  .lic-cta { width: auto; }
   .lic-perks { grid-template-columns: repeat(3, 1fr); }
   .lic-perk { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 26px; padding: 24px; min-height: 184px; }
 }
@@ -1808,7 +1801,7 @@ footer .wrapper { display: grid; justify-items: center; gap: 14px; }
 .lic-price, .lic-perk, .bug-hero, .thanks-pill, .m3e-btn, .tile-action-btn, .m3e-chip, .m3e-action-btn, .step-label, .lic-chip,
 .trilogy-tile, .tutorial-card, .m3e-expandable, .guide-step, .dl-row, .brand-item, .step-note, .app-chip, .phase-title, .progress-track,
 .m3e-capsule-nav, .pricing-expressive-card, .bulk-inquiry-box, .bug-card, .pct, .m3e-snackbar { border: 1px solid var(--line); }
-.m3e-btn.filled, .lic-cta { border-color: color-mix(in oklch, var(--md-sys-color-on-primary) 28%, var(--md-sys-color-primary)); }
+.m3e-btn.filled { border-color: color-mix(in oklch, var(--md-sys-color-on-primary) 28%, var(--md-sys-color-primary)); }
 .multi { border: 1px solid color-mix(in oklch, var(--md-sys-color-surface) 32%, transparent); }
 .multi-btn { border: 1px solid color-mix(in oklch, var(--md-sys-color-tertiary) 30%, var(--md-sys-color-surface)); }
 .help-btn { border: 1px solid color-mix(in oklch, var(--md-sys-color-surface) 28%, var(--md-sys-color-tertiary)); }
@@ -1866,7 +1859,6 @@ footer { border-top: 1px solid var(--line); }
 /* one button height, one chip shape */
 .m3e-btn { height: var(--btn-h); }
 .hero-button-group .m3e-btn { height: var(--btn-h); }
-.lic-cta { height: 64px; }
 .m3e-chip { height: 40px; border-radius: 20px; }
 .m3e-chip:not(.m3e-state) { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); border-color: transparent; }
 
@@ -1971,7 +1963,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 }
 :is(.m3e-btn, .tile-action-btn, .m3e-action-btn, .m3e-chip.m3e-state, .guide-next, .lang-seg-btn).is-pressed,
 :is(.m3e-btn, .tile-action-btn, .guide-next).is-pressed:hover,
-.help-btn.is-pressed, .multi-btn.is-pressed, .thanks-pill .m3e-btn.is-pressed, .lic-cta.is-pressed {
+.help-btn.is-pressed, .multi-btn.is-pressed, .thanks-pill .m3e-btn.is-pressed {
   border-radius: var(--r-press); scale: 0.96;
 }
 .m3e-action-btn.is-pressed, .m3e-chip.m3e-state.is-pressed, .lang-seg-btn.is-pressed { scale: 0.94; }
@@ -2070,7 +2062,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   background: var(--md-sys-color-primary-container); opacity: .45;
 }
 #pricing .license-main,
-#pricing .license-action-panel { position: relative; z-index: 1; min-width: 0; }
+#pricing .license-action-buttons { position: relative; z-index: 1; min-width: 0; }
 #pricing .license-main { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
 #pricing .lic-eyebrow {
   display: inline-flex; align-items: center; gap: 9px;
@@ -2125,56 +2117,38 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   color: var(--md-sys-color-on-primary-container); background: var(--md-sys-color-primary-container);
 }
 #pricing .lic-feature-icon .ic { width: 14px; height: 14px; stroke-width: 2.8; }
-#pricing .license-action-panel {
-  display: flex; flex-direction: column; justify-content: center; align-items: stretch;
-  gap: 15px; padding: clamp(16px, 2.6vw, 24px);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: 30px;
-  background: color-mix(in oklch, var(--md-sys-color-surface-container-high) 92%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in oklch, white 5%, transparent);
+#pricing .license-action-buttons {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: center; align-items: stretch; gap: 12px;
+  padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
 }
-#pricing .trial-callout {
-  display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: start; gap: 12px;
-  position: relative; padding: 16px 15px;
-  border: 1px solid color-mix(in oklch, var(--md-sys-color-tertiary) 25%, transparent);
-  border-radius: 22px;
-  background: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
-}
-#pricing .trial-icon {
-  width: 46px; height: 46px; display: grid; place-items: center; border-radius: 17px;
-  background: var(--md-sys-color-tertiary); color: var(--md-sys-color-surface);
-}
-#pricing .trial-icon .ic { width: 23px; height: 23px; }
-#pricing .trial-copy { min-width: 0; padding-right: 2px; }
-#pricing .trial-copy h4 { margin: 1px 0 5px; font-size: 1rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.3; }
-#pricing .trial-copy p { font-size: .86rem; line-height: 1.55; opacity: .9; }
-#pricing .trial-badge {
-  grid-column: 2; justify-self: start; display: inline-flex; align-items: center; min-height: 25px;
-  padding: 3px 10px; margin-top: 1px; border-radius: 13px;
-  background: color-mix(in oklch, var(--md-sys-color-tertiary) 15%, transparent);
-  border: 1px solid color-mix(in oklch, var(--md-sys-color-on-tertiary-container) 18%, transparent);
-  font-size: .69rem; font-weight: 850; letter-spacing: .06em;
-}
-#pricing .lic-cta {
-  width: 100%; min-height: 62px; height: auto; padding: 13px 18px;
-  display: flex; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 10px;
-  border: 1px solid color-mix(in oklch, var(--md-sys-color-on-primary) 26%, var(--md-sys-color-primary));
-  border-radius: 24px; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
-  font-size: .95rem; font-weight: 800; line-height: 1.35; text-align: center;
+#pricing .license-choice {
+  min-width: 0; min-height: 92px; width: 100%; height: auto; padding: 14px 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px;
+  border: 1px solid transparent; border-radius: 24px;
+  font-size: .88rem; font-weight: 850; line-height: 1.25; text-align: center;
+  text-decoration: none; white-space: normal; overflow-wrap: anywhere;
   box-shadow: var(--edge-hi), var(--elevation-1);
-  transition: border-radius .38s var(--spring-fast-spatial), box-shadow .3s var(--spring-fast-effects), background-color .2s ease, translate .3s var(--ease-expressive-standard);
+  transition: border-radius .38s var(--spring-fast-spatial), box-shadow .3s var(--spring-fast-effects), background-color .2s ease, color .2s ease, translate .3s var(--ease-expressive-standard);
 }
-#pricing .lic-cta > span { min-width: 0; }
-#pricing .lic-cta .ic { width: 19px; height: 19px; flex: none; }
-#pricing .lic-cta .lic-cta-arrow { margin-left: auto; transition: translate .35s var(--spring-fast-spatial); }
-#pricing .license-action-note { color: var(--md-sys-color-on-surface-variant); font-size: .76rem; line-height: 1.45; text-align: center; }
+#pricing .license-choice .ic { width: 23px; height: 23px; flex: none; }
+#pricing .license-choice-trial {
+  background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+  border-color: color-mix(in oklch, var(--md-sys-color-on-primary) 26%, var(--md-sys-color-primary));
+}
+#pricing .license-choice-license {
+  background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);
+  border-color: color-mix(in oklch, var(--md-sys-color-on-secondary-container) 22%, var(--md-sys-color-secondary-container));
+}
 @media (hover: hover) and (pointer: fine) {
   #pricing .lic-price:hover { border-color: color-mix(in oklch, var(--md-sys-color-primary) 42%, var(--line)); box-shadow: var(--edge-hi), var(--card-shadow-hover); }
-  #pricing .lic-cta:hover { border-radius: 18px; box-shadow: var(--edge-hi), var(--elevation-2); translate: 0 -1px; }
-  #pricing .lic-cta:hover .lic-cta-arrow { translate: 4px 0; }
+  #pricing .license-choice:hover { border-radius: 17px; box-shadow: var(--edge-hi), var(--elevation-2); translate: 0 -2px; }
+  #pricing .license-choice-license:hover { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
 }
-#pricing .lic-cta:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 4px; }
+#pricing .license-choice:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  #pricing .license-choice { transition: none !important; }
+}
 #pricing .multi {
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 20px;
   min-width: 0; margin: 0; padding: 18px 24px;
@@ -2205,7 +2179,6 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 @media (max-width: 720px) {
   #pricing .lic-price { grid-template-columns: 1fr; gap: 22px; }
   #pricing .lic-card-title { max-width: 22ch; }
-  #pricing .license-action-panel { padding: 16px; }
   #pricing .multi { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: 17px 18px; }
   #pricing .multi-badge { grid-column: 2; justify-self: start; }
 }
@@ -2213,12 +2186,13 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   #pricing .lic-price { padding: 21px 17px; border-radius: 30px; }
   #pricing .lic-price-summary { align-items: flex-start; flex-direction: column; }
   #pricing .lic .cost-num { font-size: 3.7rem; }
-  #pricing .trial-callout { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; padding: 14px 12px; }
-  #pricing .trial-icon { width: 40px; height: 40px; border-radius: 14px; }
-  #pricing .lic-cta { min-height: 60px; padding: 12px 13px; gap: 8px; font-size: .88rem; }
   #pricing .multi { grid-template-columns: 1fr; justify-items: start; }
   #pricing .multi-art { margin-left: 3px; }
   #pricing .multi-badge { grid-column: 1; }
+}
+@media (max-width: 380px) {
+  #pricing .license-action-buttons { grid-template-columns: 1fr; gap: 9px; }
+  #pricing .license-choice { min-height: 58px; flex-direction: row; gap: 10px; padding: 12px 16px; }
 }
 
 /* Footer: three calm areas, clear contact routes, compact project metadata. */
@@ -2309,7 +2283,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   .ft-social-links { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-  #pricing .lic-price, #pricing .multi, #pricing .lic-cta, .ft-social-link, .ft-social-arrow { transition: none !important; }
+  #pricing .lic-price, #pricing .multi, #pricing .license-choice, .ft-social-link, .ft-social-arrow { transition: none !important; }
   #pricing .lic-price::after, #pricing .multi::after, .site-footer::after { animation: none !important; }
 }
 
@@ -2411,6 +2385,13 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
     </symbol>
     <symbol id="icSend" viewBox="0 0 24 24">
       <path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6a.7.7 0 0 0-1 .64L2.4 9.5c0 .35.25.65.6.7L14 12 3 13.8a.72.72 0 0 0-.6.7l-.01 5.26a.7.7 0 0 0 1 .64Z"/>
+    </symbol>
+    <symbol id="icDeveloper" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8.2" cy="7" r="3.1"/>
+        <path d="M2.8 19.8v-1.1a5.4 5.4 0 0 1 10.8 0v1.1H2.8Z"/>
+        <path d="m17 9.2-2.1 2 2.1 2M20 9.2l2.1 2-2.1 2"/>
+      </g>
     </symbol>
     <symbol id="icGithub" viewBox="0 0 24 24">
       <path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.08c-3.1.68-3.76-1.31-3.76-1.31-.5-1.28-1.24-1.62-1.24-1.62-1.02-.7.08-.69.08-.69 1.12.08 1.71 1.15 1.71 1.15 1 .1.77 2.47 3.43 1.86.1-.72.4-1.21.72-1.49-2.48-.28-5.09-1.24-5.09-5.52 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.54.23 2.68.11 2.96.72.78 1.15 1.77 1.15 2.99 0 4.29-2.61 5.23-5.1 5.5.4.35.76 1.02.76 2.06V22c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/>
@@ -2572,7 +2553,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
         </div>
         <p data-i="bug1Desc">If you encounter any problem while setting up the automation, report it directly to the developer with a short description.</p>
         <a class="m3e-btn m3e-state help-btn" data-tg target="_blank" rel="noopener noreferrer">
-          <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+          <svg class="ic"><use href="#icDeveloper"/></svg><span data-i="btnBulk">Contact Developer</span>
         </a>
       </article>
     </div>
@@ -2612,22 +2593,15 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
           </ul>
         </div>
 
-        <div class="license-action-panel">
-          <aside class="trial-callout" role="note" aria-labelledby="trialTitle">
-            <span class="trial-icon" aria-hidden="true"><svg class="ic"><use href="#icPlayCircle"/></svg></span>
-            <div class="trial-copy">
-              <h4 id="trialTitle" data-i="trialTitle">Try it before you pay</h4>
-              <p data-i="trialText">Request a free trial first. Test the features and make sure the workflow suits you before deciding to purchase a license.</p>
-            </div>
-            <span class="trial-badge" data-i="trialBadge">FREE TRIAL</span>
-          </aside>
-
-          <a class="m3e-btn filled m3e-state lic-cta" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer">
-            <svg class="ic" aria-hidden="true"><use href="#icSend"/></svg>
-            <span data-i="licenseCta">Contact Developer for Trial / License</span>
-            <svg class="ic lic-cta-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
+        <div class="license-action-buttons" aria-label="License options">
+          <a class="m3e-btn m3e-state license-choice license-choice-trial" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a free trial from the developer">
+            <svg class="ic" aria-hidden="true"><use href="#icPlayCircle"/></svg>
+            <span data-i="btnGetTrial">Get Trial</span>
           </a>
-          <p class="license-action-note" data-i="licenseCtaNote">Opens a Telegram conversation with the developer. No payment is collected on this page.</p>
+          <a class="m3e-btn m3e-state license-choice license-choice-license" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a license from the developer">
+            <svg class="ic" aria-hidden="true"><use href="#icKey"/></svg>
+            <span data-i="btnGetLicense">Get License</span>
+          </a>
         </div>
       </article>
 
@@ -2669,7 +2643,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
         <p data-i="bugThanksSub">Bugs are resolved promptly and efficiently.</p>
       </div>
       <a class="m3e-btn filled m3e-state" data-tg target="_blank" rel="noopener noreferrer">
-        <svg class="ic"><use href="#icSend"/></svg><span data-i="btnBulk">Contact Developer</span>
+        <svg class="ic"><use href="#icDeveloper"/></svg><span data-i="btnBulk">Contact Developer</span>
       </a>
     </div>
   </section>
@@ -2853,13 +2827,9 @@ const I18N = {
     licenseKicker: "DIRECT DEVELOPER LICENSING",
     licenseCardTitleText: "A simple license, issued personally.",
     licenseDirectText: "Licenses are issued directly by the developer. Get in touch to request your license and receive your activation details.",
-    trialTitle: "Try it before you pay",
-    trialText: "Request a free trial first. Test the features and make sure the workflow suits you before deciding to purchase a license.",
-    trialBadge: "FREE TRIAL",
-    licenseCta: "Contact Developer for Trial / License",
-    licenseCtaNote: "Opens a Telegram conversation with the developer. No payment is collected on this page.",
     multiBadge: "Multi-device enquiries welcome",
-    btnGetLicense: "Get a License",
+    btnGetTrial: "Get Trial",
+    btnGetLicense: "Get License",
     feature1: "Automated Instagram tasks for SMM Kingdom",
     feature2: "Runs smoothly on Android 11+",
     feature3: "Direct support & regular updates",
@@ -2986,12 +2956,8 @@ const I18N = {
     licenseKicker: "ЛІЦЕНЗІЯ БЕЗПОСЕРЕДНЬО ВІД РОЗРОБНИКА",
     licenseCardTitleText: "Проста ліцензія від розробника особисто.",
     licenseDirectText: "Ліцензії видаються безпосередньо розробником. Напишіть, щоб запросити ліцензію та отримати дані для активації.",
-    trialTitle: "Спробуйте перед оплатою",
-    trialText: "Спочатку попросіть безкоштовний пробний період. Перевірте функції та переконайтеся, що автоматизація вам підходить, перш ніж купувати ліцензію.",
-    trialBadge: "БЕЗКОШТОВНО",
-    licenseCta: "Написати розробнику: пробний період / ліцензія",
-    licenseCtaNote: "Відкриється чат із розробником у Telegram. Оплата на цій сторінці не приймається.",
     multiBadge: "Запити щодо кількох пристроїв вітаються",
+    btnGetTrial: "Отримати пробний період",
     btnGetLicense: "Отримати ліцензію",
     feature1: "Автоматизація завдань Instagram для SMM Kingdom",
     feature2: "Працює плавно на Android 11+",
@@ -3119,12 +3085,8 @@ const I18N = {
     licenseKicker: "ЛИЦЕНЗИЯ НАПРЯМУЮ ОТ РАЗРАБОТЧИКА",
     licenseCardTitleText: "Простая лицензия лично от разработчика.",
     licenseDirectText: "Лицензии выдаются напрямую разработчиком. Напишите ему, чтобы запросить лицензию и получить данные для активации.",
-    trialTitle: "Сначала попробуйте",
-    trialText: "Сначала запросите бесплатный пробный период. Проверьте функции и убедитесь, что автоматизация вам подходит, прежде чем покупать лицензию.",
-    trialBadge: "БЕСПЛАТНО",
-    licenseCta: "Связаться с разработчиком: пробный период / лицензия",
-    licenseCtaNote: "Откроется чат с разработчиком в Telegram. Оплата на этой странице не принимается.",
     multiBadge: "Можно обсудить несколько устройств",
+    btnGetTrial: "Получить пробный период",
     btnGetLicense: "Получить лицензию",
     feature1: "Автоматизация Instagram для бота SMM Kingdom",
     feature2: "Плавная работа на Android 11+",
