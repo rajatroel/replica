@@ -3787,6 +3787,41 @@ html.gated, html.gated body { overflow: hidden; }
 #video .vp,#video .vq{border-radius:inherit}
 #video .vc-top{top:calc(var(--fr) * .55);right:calc(var(--fr) * .55)}
 #video .vc-bar{left:calc(var(--fr) * .7);right:calc(var(--fr) * .7);bottom:calc(var(--fr) * .75)}
+
+/* ===== v23: Realme P3 Ultra look: punch-hole, glass overlay, side keys, dark video scrims ===== */
+#video .vb .vb-player.portrait{--fw:calc(var(--sw) - var(--b) * 2)}
+#video .vb .vb-player.portrait .vb-stage{
+  background:linear-gradient(155deg,oklch(.5 .008 var(--h)) 0,oklch(.22 .008 var(--h)) 22%,oklch(.14 .006 var(--h)) 55%,oklch(.3 .008 var(--h)) 100%);
+  box-shadow:0 0 0 1px oklch(.06 .004 var(--h)),inset 0 0 0 .5px oklch(.75 .008 var(--h)/.5),
+    0 44px 70px -30px color-mix(in oklch,var(--md-sys-color-primary) 70%,black),0 14px 28px -12px rgba(0,0,0,.55)}
+/* volume rocker (stage::after) and power key (stage::before) on the right edge */
+#video .vb .vb-player.portrait .vb-stage::after{right:-3px;top:17%;width:2.5px;height:13%;border-radius:0 2px 2px 0;background:linear-gradient(90deg,oklch(.2 .008 var(--h)),oklch(.42 .008 var(--h)))}
+#video .vb .vb-player.portrait .vb-stage::before{content:'';position:absolute;right:-3px;top:35%;width:2.5px;height:8%;border-radius:0 2px 2px 0;background:linear-gradient(90deg,oklch(.2 .008 var(--h)),oklch(.42 .008 var(--h)))}
+
+/* glass overlay above the video: curved-edge shade + sheen */
+#video .vb .vb-player.portrait .video-frame::after{
+  content:''!important;display:block!important;position:absolute;inset:0;z-index:5;pointer-events:none;width:auto;height:auto;
+  top:0;left:0;translate:none;border-radius:inherit;
+  background:linear-gradient(118deg,rgba(255,255,255,.13) 0,rgba(255,255,255,.04) 24%,transparent 40%),
+             linear-gradient(to bottom,rgba(0,0,0,.18),transparent 9%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 0 calc(var(--fw) * .05) rgba(0,0,0,.34)}
+/* punch-hole selfie camera, centred on the video's status bar */
+#video .vb .vb-player.portrait .video-frame::before{
+  content:'';position:absolute;z-index:6;pointer-events:none;left:50%;
+  width:calc(var(--fw) * .034);height:calc(var(--fw) * .034);
+  top:calc(var(--fw) * .0405 - var(--fw) * .017);translate:-50% 0;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,rgba(130,150,255,.55) 0 9%,transparent 24%),
+             radial-gradient(circle,#0a0b12 0 48%,#000 62%);
+  box-shadow:0 0 0 calc(var(--fw) * .0035) rgba(0,0,0,.85),0 0 0 calc(var(--fw) * .005) rgba(255,255,255,.05)}
+
+/* player controls: real dark scrims, white text, kept clear of the status bar */
+#video .vc{color:#fff}
+#video .vc-scrim{background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent 24%,transparent 58%,rgba(0,0,0,.62))}
+#video .vc-top{top:calc(var(--fw) * .095);right:calc(var(--fw) * .05)}
+#video .vc-bar{left:calc(var(--fw) * .06);right:calc(var(--fw) * .06);bottom:calc(var(--fw) * .06)}
+#video .vc-knob{box-shadow:0 0 0 4px rgba(0,0,0,.28),var(--elevation-1)}
+#video .video-frame.vy:fullscreen::before,#video .video-frame.vy:fullscreen::after,
+#video .video-frame.vy:-webkit-full-screen::before,#video .video-frame.vy:-webkit-full-screen::after{display:none!important}
 </style>
 </head>
 <body>
@@ -5319,7 +5354,7 @@ function mountPlayer(frame, host, ui) {
     const w = frame.clientWidth, h = frame.clientHeight;
     if (!w || !h) return;
     const fsOn = document.fullscreenElement === frame || document.webkitFullscreenElement === frame;
-    frame.style.setProperty('--vs', Math.min(w / bw, h / bh) * (fsOn ? 1 : 1.03));
+    frame.style.setProperty('--vs', fsOn ? Math.min(w / bw, h / bh) : Math.max(w / bw, h / bh) * 1.015);
   };
   if (window.ResizeObserver) { vyRO = new ResizeObserver(fit); vyRO.observe(frame); }
   fit();
