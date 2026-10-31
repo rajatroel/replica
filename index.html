@@ -3209,6 +3209,11 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 }
 #bugs .bug-hero:hover{border-radius:40px 40px 24px 24px}
 #bugs .thanks-pill:hover{border-radius:24px 24px 40px 40px}
+
+/* iOS-style status bar */
+.ph-status{font-weight:700;letter-spacing:-.01em;padding:0 8px}
+.ph-sys{gap:5px}
+.ph-sys svg{display:block;flex:none}
 </style>
 </head>
 <body>
@@ -3425,9 +3430,9 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
           <div class="ph-status">
             <span>9:41</span>
             <span class="ph-sys">
-              <svg viewBox="0 0 24 24" width="13" height="13"><path d="M2 22h20V2z" fill="currentColor"/></svg>
-              <svg viewBox="0 0 24 24" width="13" height="13"><path d="M12 21L.6 8.3C3.6 5.5 7.6 4 12 4s8.4 1.5 11.4 4.3L12 21z" fill="currentColor"/></svg>
-              <i class="ph-batt"></i>
+              <svg class="ios-signal" viewBox="0 0 18 12" width="17" height="11" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+              <svg class="ios-wifi" viewBox="0 0 17 12" width="16" height="11" fill="currentColor"><path d="M2.14 4.14A9 9 0 0 1 14.86 4.14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M4.4 6.4A5.8 5.8 0 0 1 12.6 6.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8.5 11 6.1 8.5A3.4 3.4 0 0 1 10.9 8.5Z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
+              <svg class="ios-batt" viewBox="0 0 27 13" width="26" height="12"><rect x=".5" y=".5" width="22" height="12" rx="3.8" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2" y="2" width="19" height="9" rx="2.4" fill="currentColor"/><path d="M24.2 4.4v4.2c.9-.3 1.6-1.2 1.6-2.1s-.7-1.8-1.6-2.1z" fill="currentColor" fill-opacity=".5"/></svg>
             </span>
           </div>
 
