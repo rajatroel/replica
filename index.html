@@ -3518,7 +3518,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 /* ===== v8: MD3E upright phone (Pixel-style, slim bezel, no tilt) ===== */
 .phone-stage{--pw:clamp(262px,68vw,296px);--pr:calc(var(--pw)*.16);--bz:6px}
 .phone{
-  box-sizing:border-box;width:var(--pw);max-width:none;aspect-ratio:9/19;padding:var(--bz);
+  box-sizing:border-box;width:var(--pw);max-width:none;aspect-ratio:9/17.4;padding:var(--bz);
   border-radius:var(--pr);display:flex;transform:none;transition:none;
   background:linear-gradient(160deg,oklch(.34 .01 var(--h)),oklch(.16 .008 var(--h)) 45%,oklch(.26 .01 var(--h)));
   box-shadow:0 0 0 1px oklch(.5 .01 var(--h)/.55) inset,0 0 0 1px oklch(.1 .005 var(--h)/.6),
@@ -3621,6 +3621,8 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 html,body{overflow-x:clip}
 header.m3e-app-bar{padding:0 20px;box-sizing:border-box}
 .nav-anchor{max-width:820px}
+/* mobile: a bit more side margin for page content (top bar keeps its own 20px) */
+@media(max-width:819px){.wrapper{padding-left:26px;padding-right:26px}}
 </style>
 </head>
 <body>
