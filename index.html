@@ -3498,6 +3498,22 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 .ut-btn.g{margin-top:22px}
 .ut-pin.alt{right:24px}
 .ut-title{border-image:linear-gradient(90deg,#7c6cf0,#4f7bff) 1}
+
+/* ===== v17: balanced desktop layout, 6 steps ===== */
+.us-dash::before{left:50%;top:50%;translate:-50% -50%;width:88%;opacity:.4}
+.us-dash{align-content:center}
+.us-help{align-content:center}
+.ut-title{position:relative}
+.ut-pin-t{right:-34px;top:-8px}
+.us-step{align-items:center}
+@media(min-width:860px){
+  #usage .us{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)}
+  .us-steps{align-content:stretch;grid-auto-rows:1fr}
+  .us-term{max-width:380px;font-size:.76rem}
+}
+@media(min-width:1100px){
+  #usage .us{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}
+}
 </style>
 </head>
 <body>
@@ -3827,43 +3843,47 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
     <div class="us">
       <div class="us-dash" role="img" aria-label="Automation Dashboard">
         <div class="us-term" aria-hidden="true">
-          <div class="ut-title">AUTOMATION DASHBOARD</div>
-          <div class="ut-box"><span class="ut-pin">1</span><b class="ut-leg">SYSTEM INFORMATION</b>
+          <div class="ut-title">AUTOMATION DASHBOARD<span class="ut-pin ut-pin-t">1</span></div>
+          <div class="ut-box"><span class="ut-pin">2</span><b class="ut-leg">SYSTEM INFORMATION</b>
             <div class="ut-row"><span>ACCOUNT</span><em class="c-w">RAJAT ROEL<i class="ut-dot"></i></em></div>
             <div class="ut-row"><span>LICENSE</span><em class="c-g">99 DAYS LEFT<i class="ut-dot"></i></em></div>
             <div class="ut-row"><span>DEVICE</span><em class="c-b">REALME RMX5030<i class="ut-dot"></i></em></div>
             <div class="ut-row"><span>CASHCOINS</span><em class="c-y">0.0<i class="ut-dot"></i></em></div>
             <div class="ut-row"><span>STATUS</span><em class="c-b">READY TO START<i class="ut-dot"></i></em></div>
           </div>
-          <div class="ut-box"><span class="ut-pin">2</span><b class="ut-leg">SYSTEM LOGS</b>
+          <div class="ut-box"><span class="ut-pin">3</span><b class="ut-leg">SYSTEM LOGS</b>
             <div class="ut-log"><i>13:45:12</i>LICENSE VALID: 99 DAYS LEFT (UNTIL 07 FEB 2027)</div>
             <div class="ut-btns"><span class="ut-btn">CLEAR</span><span class="ut-btn">SHARE</span></div>
           </div>
-          <div class="ut-btn g"><span class="ut-pin alt">3</span><span class="ut-pin">4</span>START AUTOMATION</div>
-          <div class="ut-btn r"><span class="ut-pin">5</span>EXIT</div>
+          <div class="ut-btn g"><span class="ut-pin alt">4</span><span class="ut-pin">5</span>START AUTOMATION</div>
+          <div class="ut-btn r"><span class="ut-pin">6</span>EXIT</div>
         </div>
       </div>
 
       <ol class="us-steps">
         <li class="us-step">
           <span class="guide-badge"><svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><span class="us-n">1</span></span>
-          <div><h3 data-i="useS1T">Check the dashboard</h3><p data-i="useS1D"><b>SYSTEM INFORMATION</b> shows your account, license days left, device and CashCoins. Make sure STATUS reads <b>READY TO START</b>.</p></div>
+          <div><h3 data-i="useS1T">Open Termux</h3><p data-i="useS1D">Open the Termux app and wait until the Automation Dashboard loads, like in the picture.</p></div>
         </li>
         <li class="us-step">
           <span class="guide-badge"><svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><span class="us-n">2</span></span>
-          <div><h3 data-i="useS2T">Read the logs</h3><p data-i="useS2D"><b>SYSTEM LOGS</b> lists every action with a time. <b>CLEAR</b> empties the log and <b>SHARE</b> sends it, for example to the developer.</p></div>
+          <div><h3 data-i="useS2T">Check the dashboard</h3><p data-i="useS2D"><b>SYSTEM INFORMATION</b> shows your account, license days left, device and CashCoins. Make sure STATUS reads <b>READY TO START</b>.</p></div>
         </li>
         <li class="us-step">
           <span class="guide-badge"><svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><span class="us-n">3</span></span>
-          <div><h3 data-i="useS3T">Start automation</h3><p data-i="useS3D">Tap <b>START AUTOMATION</b> to begin. STATUS updates while it runs.</p></div>
+          <div><h3 data-i="useS3T">Read the logs</h3><p data-i="useS3D"><b>SYSTEM LOGS</b> lists every action with a time. <b>CLEAR</b> empties the log and <b>SHARE</b> sends it, for example to the developer.</p></div>
         </li>
         <li class="us-step">
           <span class="guide-badge"><svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><span class="us-n">4</span></span>
-          <div><h3 data-i="useS4T">Stop automation</h3><p data-i="useS4D">While automation is running, a stop button appears in the exact place where <b>START AUTOMATION</b> was. Tap it to stop.</p></div>
+          <div><h3 data-i="useS4T">Start automation</h3><p data-i="useS4D">Tap <b>START AUTOMATION</b> to begin. STATUS updates while it runs.</p></div>
         </li>
         <li class="us-step">
           <span class="guide-badge"><svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><span class="us-n">5</span></span>
-          <div><h3 data-i="useS5T">Exit</h3><p data-i="useS5D">When you want to close the Termux app, tap <b>EXIT</b>. It clears every running process related to it.</p></div>
+          <div><h3 data-i="useS5T">Stop automation</h3><p data-i="useS5D">While automation is running, a stop button appears in the exact place where <b>START AUTOMATION</b> was. Tap it to stop.</p></div>
+        </li>
+        <li class="us-step">
+          <span class="guide-badge"><svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><span class="us-n">6</span></span>
+          <div><h3 data-i="useS6T">Exit</h3><p data-i="useS6D">When you want to close the Termux app, tap <b>EXIT</b>. It clears every running process related to it.</p></div>
         </li>
       </ol>
 
@@ -4091,16 +4111,18 @@ const I18N = {
     videoLbl: "Video",
     useLbl: "Usage",
     useHead: "How to operate",
-    useS1T: "Check the dashboard",
-    useS1D: "<b>SYSTEM INFORMATION</b> shows your account, license days left, device and CashCoins. Make sure STATUS reads <b>READY TO START</b>.",
-    useS2T: "Read the logs",
-    useS2D: "<b>SYSTEM LOGS</b> lists every action with a time. <b>CLEAR</b> empties the log and <b>SHARE</b> sends it, for example to the developer.",
-    useS3T: "Start automation",
-    useS3D: "Tap <b>START AUTOMATION</b> to begin. STATUS updates while it runs.",
-    useS4T: "Stop automation",
-    useS4D: "While automation is running, a stop button appears in the exact place where <b>START AUTOMATION</b> was. Tap it to stop.",
-    useS5T: "Exit",
-    useS5D: "When you want to close the Termux app, tap <b>EXIT</b>. It clears every running process related to it.",
+    useS1T: "Open Termux",
+    useS1D: "Open the Termux app and wait until the Automation Dashboard loads, like in the picture.",
+    useS2T: "Check the dashboard",
+    useS2D: "<b>SYSTEM INFORMATION</b> shows your account, license days left, device and CashCoins. Make sure STATUS reads <b>READY TO START</b>.",
+    useS3T: "Read the logs",
+    useS3D: "<b>SYSTEM LOGS</b> lists every action with a time. <b>CLEAR</b> empties the log and <b>SHARE</b> sends it, for example to the developer.",
+    useS4T: "Start automation",
+    useS4D: "Tap <b>START AUTOMATION</b> to begin. STATUS updates while it runs.",
+    useS5T: "Stop automation",
+    useS5D: "While automation is running, a stop button appears in the exact place where <b>START AUTOMATION</b> was. Tap it to stop.",
+    useS6T: "Exit",
+    useS6D: "When you want to close the Termux app, tap <b>EXIT</b>. It clears every running process related to it.",
     useSub: "Everything runs from the Automation Dashboard in Termux. Here is what each part does.",
     useHelpT: "Something not working?",
     useHelpD: "Tap <b>SHARE</b> in System Logs and send the log to the developer with a short description.",
@@ -4238,16 +4260,18 @@ const I18N = {
     videoLbl: "Відео",
     useLbl: "Використання",
     useHead: "Як користуватися",
-    useS1T: "Перевірте панель",
-    useS1D: "<b>SYSTEM INFORMATION</b> показує акаунт, залишок ліцензії, пристрій і CashCoins. Переконайтеся, що STATUS має значення <b>READY TO START</b>.",
-    useS2T: "Читайте журнал",
-    useS2D: "<b>SYSTEM LOGS</b> показує кожну дію з часом. <b>CLEAR</b> очищає журнал, а <b>SHARE</b> надсилає його, наприклад розробнику.",
-    useS3T: "Запустіть автоматизацію",
-    useS3D: "Натисніть <b>START AUTOMATION</b>, щоб почати. Під час роботи STATUS оновлюється.",
-    useS4T: "Зупиніть автоматизацію",
-    useS4D: "Поки автоматизація працює, на місці, де була кнопка <b>START AUTOMATION</b>, з'являється кнопка зупинки. Натисніть її, щоб зупинити.",
-    useS5T: "Вихід",
-    useS5D: "Коли захочете закрити додаток Termux, натисніть <b>EXIT</b>. Це очистить усі запущені процеси, пов'язані з ним.",
+    useS1T: "Відкрийте Termux",
+    useS1D: "Відкрийте додаток Termux і зачекайте, поки завантажиться панель автоматизації, як на зображенні.",
+    useS2T: "Перевірте панель",
+    useS2D: "<b>SYSTEM INFORMATION</b> показує акаунт, залишок ліцензії, пристрій і CashCoins. Переконайтеся, що STATUS має значення <b>READY TO START</b>.",
+    useS3T: "Читайте журнал",
+    useS3D: "<b>SYSTEM LOGS</b> показує кожну дію з часом. <b>CLEAR</b> очищає журнал, а <b>SHARE</b> надсилає його, наприклад розробнику.",
+    useS4T: "Запустіть автоматизацію",
+    useS4D: "Натисніть <b>START AUTOMATION</b>, щоб почати. Під час роботи STATUS оновлюється.",
+    useS5T: "Зупиніть автоматизацію",
+    useS5D: "Поки автоматизація працює, на місці, де була кнопка <b>START AUTOMATION</b>, з'являється кнопка зупинки. Натисніть її, щоб зупинити.",
+    useS6T: "Вихід",
+    useS6D: "Коли захочете закрити додаток Termux, натисніть <b>EXIT</b>. Це очистить усі запущені процеси, пов'язані з ним.",
     useSub: "Усе керується з панелі автоматизації в Termux. Ось що робить кожна її частина.",
     useHelpT: "Щось не працює?",
     useHelpD: "Натисніть <b>SHARE</b> у System Logs і надішліть журнал розробнику з коротким описом проблеми.",
@@ -4385,16 +4409,18 @@ const I18N = {
     videoLbl: "Видео",
     useLbl: "Использование",
     useHead: "Как пользоваться",
-    useS1T: "Проверьте панель",
-    useS1D: "<b>SYSTEM INFORMATION</b> показывает аккаунт, остаток лицензии, устройство и CashCoins. Убедитесь, что STATUS — <b>READY TO START</b>.",
-    useS2T: "Читайте журнал",
-    useS2D: "<b>SYSTEM LOGS</b> показывает каждое действие со временем. <b>CLEAR</b> очищает журнал, а <b>SHARE</b> отправляет его, например разработчику.",
-    useS3T: "Запустите автоматизацию",
-    useS3D: "Нажмите <b>START AUTOMATION</b>, чтобы начать. Во время работы STATUS обновляется.",
-    useS4T: "Остановите автоматизацию",
-    useS4D: "Пока автоматизация работает, на месте кнопки <b>START AUTOMATION</b> появляется кнопка остановки. Нажмите её, чтобы остановить.",
-    useS5T: "Выход",
-    useS5D: "Когда захотите закрыть приложение Termux, нажмите <b>EXIT</b>. Это очистит все запущенные процессы, связанные с ним.",
+    useS1T: "Откройте Termux",
+    useS1D: "Откройте приложение Termux и подождите, пока загрузится панель автоматизации, как на изображении.",
+    useS2T: "Проверьте панель",
+    useS2D: "<b>SYSTEM INFORMATION</b> показывает аккаунт, остаток лицензии, устройство и CashCoins. Убедитесь, что STATUS — <b>READY TO START</b>.",
+    useS3T: "Читайте журнал",
+    useS3D: "<b>SYSTEM LOGS</b> показывает каждое действие со временем. <b>CLEAR</b> очищает журнал, а <b>SHARE</b> отправляет его, например разработчику.",
+    useS4T: "Запустите автоматизацию",
+    useS4D: "Нажмите <b>START AUTOMATION</b>, чтобы начать. Во время работы STATUS обновляется.",
+    useS5T: "Остановите автоматизацию",
+    useS5D: "Пока автоматизация работает, на месте кнопки <b>START AUTOMATION</b> появляется кнопка остановки. Нажмите её, чтобы остановить.",
+    useS6T: "Выход",
+    useS6D: "Когда захотите закрыть приложение Termux, нажмите <b>EXIT</b>. Это очистит все запущенные процессы, связанные с ним.",
     useSub: "Всё управляется с панели автоматизации в Termux. Вот что делает каждая её часть.",
     useHelpT: "Что-то не работает?",
     useHelpD: "Нажмите <b>SHARE</b> в System Logs и отправьте журнал разработчику с кратким описанием проблемы.",
