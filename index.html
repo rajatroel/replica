@@ -3275,19 +3275,19 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 @keyframes vpSpin{to{rotate:360deg}}
 @keyframes vpFloat{to{translate:-6px 10px;rotate:-12deg}}
 #video .vb-player.portrait .vb-stage{
-  width:100%;max-width:272px;padding:8px;border-radius:46px;
+  width:100%;max-width:280px;padding:6px;border-radius:44px;
   background:var(--md-sys-color-surface-container-lowest);
   box-shadow:var(--elevation-3),0 18px 40px -12px color-mix(in oklch,var(--md-sys-color-primary) 45%,transparent);
   outline:1px solid var(--md-sys-color-outline-variant);outline-offset:-1px;
 }
 #video .vb-player.portrait .vb-stage .video-frame{
-  --ar:9 / 16;aspect-ratio:9 / 16;max-width:none;width:100%;border:0;border-radius:38px;
+  aspect-ratio:var(--ar,9 / 19.8);max-width:none;width:100%;border:0;border-radius:38px;
   background:var(--md-sys-color-surface-container-highest);
 }
 /* little handle pill, shown on the poster only */
 #video .video-frame:not([data-playing])::after{
   content:'';position:absolute;z-index:3;top:10px;left:50%;translate:-50% 0;width:56px;height:6px;border-radius:3px;
-  background:rgba(255,255,255,.55);pointer-events:none;
+  background:color-mix(in oklch,var(--md-sys-color-on-primary-container) 35%,transparent);pointer-events:none;
 }
 /* poster: stronger readable scrim, bigger expressive play button with soft pulse */
 #video .vp-scrim{background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,.05) 50%,rgba(0,0,0,.28))}
@@ -3307,6 +3307,42 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 @media(prefers-reduced-motion:reduce){
   #video .vb-player.portrait::before,#video .vb-player.portrait::after,#video .vp-play::before{animation:none}
 }
+
+/* ===== v10: designed poster + tight wrap ===== */
+#video .vb-player.portrait .vb-stage .video-frame[data-playing]{background:#000}
+#video .vb-player.portrait .vb-stage .video-frame iframe{border-radius:inherit}
+.vq{background:linear-gradient(165deg,var(--md-sys-color-primary-container),var(--md-sys-color-tertiary-container) 120%)!important;
+  color:var(--md-sys-color-on-primary-container)!important;display:flex!important;flex-direction:column;align-items:center;
+  justify-content:space-between;padding:34px 16px 18px!important;text-align:center}
+.vq-bg{position:absolute;inset:0;pointer-events:none}
+.vq-blob{position:absolute;display:block}
+.vq-blob.b1{width:70%;aspect-ratio:1;left:-22%;bottom:12%;border-radius:42% 58% 60% 40%/50% 40% 60% 50%;
+  background:var(--md-sys-color-secondary-container);opacity:.7;animation:vqDrift 9s var(--ease-expressive-standard) infinite alternate}
+.vq-blob.b2{width:34%;aspect-ratio:1;right:-8%;top:30%;border-radius:50%;background:var(--md-sys-color-tertiary);opacity:.22}
+.vq-blob.b3{width:22%;aspect-ratio:1;left:10%;top:9%;border-radius:32%;rotate:20deg;background:var(--md-sys-color-primary);opacity:.18}
+@keyframes vqDrift{to{translate:10% -6%;rotate:25deg}}
+.vq-hero{position:relative;width:72%;aspect-ratio:1;margin-top:8%;display:grid;place-items:center;flex:none}
+.vq-shape{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-primary);stroke:none;
+  filter:drop-shadow(0 14px 24px color-mix(in oklch,var(--md-sys-color-primary) 45%,transparent));
+  animation:vpSpin 30s linear infinite}
+.vq-btn{position:relative;width:46%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;
+  background:var(--md-sys-color-on-primary);color:var(--md-sys-color-primary);box-shadow:var(--elevation-2);
+  transition:scale .45s var(--spring-fast-spatial)}
+.vq-btn .ic{width:42%;height:42%;margin-left:6%}
+.vq-btn::before{content:'';position:absolute;inset:0;border-radius:50%;background:var(--md-sys-color-on-primary);opacity:.5;
+  animation:vpPulse 2.4s var(--ease-expressive-standard) infinite}
+.vq-copy{position:relative;display:grid;gap:12px;justify-items:center;width:100%}
+.vq-title{font-size:1.2rem;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.vq-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.vq-tags b{font-size:.7rem;font-weight:700;letter-spacing:0;padding:5px 10px;border-radius:10px;
+  background:color-mix(in oklch,var(--md-sys-color-primary) 16%,transparent)}
+.vq-cta{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;
+  border-radius:24px;background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);
+  font-size:.92rem;font-weight:800;box-shadow:var(--elevation-1);transition:border-radius .3s var(--spring-fast-spatial),scale .3s var(--spring-fast-spatial)}
+.vq-cta .ic{width:20px;height:20px}
+@media(hover:hover) and (pointer:fine){.vq:hover .vq-btn{scale:1.08}.vq:hover .vq-cta{border-radius:16px}}
+.vq:active .vq-cta{scale:.97}
+@media(prefers-reduced-motion:reduce){.vq-blob.b1,.vq-shape,.vq-btn::before{animation:none}}
 </style>
 </head>
 <body>
@@ -3779,7 +3815,7 @@ const CONFIG = {
     telegram: 'https://t.me/iamrajatroel'
   },
   /* Put your YouTube video ID below (the part after v= in the link). aspect: '9 / 16' (portrait) or '16 / 9' (landscape) is the fallback; with auto: true the page detects the real shape itself. */
-  video: { id: 'ZqXO3BRm9qc', aspect: '9 / 16', auto: false },
+  video: { id: 'ZqXO3BRm9qc', aspect: '9 / 19.8', auto: false },
   monetHues: [
     { hue: 154, name: 'Emerald' }, { hue: 185, name: 'Cyan' }, { hue: 220, name: 'Cobalt' }, { hue: 250, name: 'Indigo' },
     { hue: 280, name: 'Amethyst' }, { hue: 310, name: 'Magenta' }, { hue: 345, name: 'Rose' }, { hue: 18, name: 'Coral' },
@@ -4508,7 +4544,8 @@ function renderVideo(dict) {
   if (!frame) return;
   const v = CONFIG.video;
   const ar = (v.auto && videoAspect) || v.aspect || '9 / 16';
-  const portrait = /^\s*9\s*\/\s*16/.test(ar);
+  const [aw, ah] = String(ar).split('/').map(parseFloat);
+  const portrait = aw < ah;
   frame.style.setProperty('--ar', ar);
   frame.closest('.vb-player').classList.toggle('portrait', portrait);
   const open = $('#videoOpen');
@@ -4516,17 +4553,18 @@ function renderVideo(dict) {
     if (open) { open.href = 'https://youtu.be/' + encodeURIComponent(v.id); open.hidden = false; }
     if (frame.dataset.playing === '1') return;          // keep a playing video untouched
     const id = encodeURIComponent(v.id);
-    frame.innerHTML = `<button class="vp" type="button" aria-label="${dict.videoPlay}">
-      <img class="vp-img" src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" alt="" decoding="async">
-      <span class="vp-scrim" aria-hidden="true"></span>
-      <span class="vp-play" aria-hidden="true">
-        <svg class="vp-bg" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-        <svg class="ic"><use href="#icPlay"/></svg>
+    frame.innerHTML = `<button class="vp vq" type="button" aria-label="${dict.videoPlay}">
+      <span class="vq-bg" aria-hidden="true"><i class="vq-blob b1"></i><i class="vq-blob b2"></i><i class="vq-blob b3"></i></span>
+      <span class="vq-hero" aria-hidden="true">
+        <svg class="vq-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+        <span class="vq-btn"><svg class="ic"><use href="#icPlay"/></svg></span>
       </span>
-      <span class="vp-chip"><svg class="ic"><use href="#icPlay"/></svg><span>${dict.videoPlay}</span></span>
+      <span class="vq-copy">
+        <span class="vq-title">${dict.videoCardTitle}</span>
+        <span class="vq-tags" aria-hidden="true"><b>Replica</b><b>Termux</b><b>ADB</b><b>Telegram</b></span>
+      </span>
+      <span class="vq-cta"><svg class="ic"><use href="#icPlay"/></svg><span>${dict.videoPlay}</span></span>
     </button>`;
-    const img = frame.querySelector('.vp-img');
-    img.onerror = () => { img.onerror = null; img.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; };
     frame.querySelector('.vp').addEventListener('click', () => playVideo(frame));
   } else {
     frame.dataset.src = '';
