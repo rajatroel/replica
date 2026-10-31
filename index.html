@@ -3514,6 +3514,97 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 @media(min-width:1100px){
   #usage .us{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}
 }
+
+/* ===== v8: MD3E upright phone (Pixel-style, slim bezel, no tilt) ===== */
+.phone-stage{--pw:clamp(262px,68vw,296px);--pr:calc(var(--pw)*.16);--bz:6px}
+.phone{
+  box-sizing:border-box;width:var(--pw);max-width:none;aspect-ratio:9/19;padding:var(--bz);
+  border-radius:var(--pr);display:flex;transform:none;transition:none;
+  background:linear-gradient(160deg,oklch(.34 .01 var(--h)),oklch(.16 .008 var(--h)) 45%,oklch(.26 .01 var(--h)));
+  box-shadow:0 0 0 1px oklch(.5 .01 var(--h)/.55) inset,0 0 0 1px oklch(.1 .005 var(--h)/.6),
+    0 40px 70px -28px color-mix(in oklch,var(--md-sys-color-primary) 60%,black),0 14px 28px -12px rgba(0,0,0,.4);
+}
+@media(hover:hover) and (pointer:fine){.phone-stage:hover .phone{transform:none}}
+.ph-btn{position:absolute;width:3px;border-radius:2px;background:oklch(.3 .01 var(--h))}
+.b-pow{right:-2.5px;top:21%;height:11%;border-radius:0 3px 3px 0}
+.b-vol{right:-2.5px;top:35%;height:17%;left:auto;border-radius:0 3px 3px 0}
+.ph-screen{
+  flex:1;min-width:0;min-height:0;gap:10px;padding:10px 12px 8px;
+  border-radius:calc(var(--pr) - var(--bz));
+  background:linear-gradient(180deg,var(--md-sys-color-surface),var(--md-sys-color-surface-container-low,var(--md-sys-color-surface)));
+}
+.ph-cam{top:11px;width:10px;height:10px;background:oklch(.1 .005 var(--h));box-shadow:0 0 0 2.5px oklch(.18 .008 var(--h)),inset 1px 1px 2px oklch(.4 .05 250/.6)}
+.ph-status{height:24px;padding:0 6px 0 8px;font-size:.7rem}
+.ph-bar{padding:0 4px}
+.ph-balance{padding:14px 16px 16px;border-radius:28px 28px 10px 10px}
+.ph-bal-num{font-size:2rem}
+.ph-feed{flex:1;min-height:0;height:auto;gap:5px;overflow:hidden}
+.fi{padding:9px 11px 9px 9px;border-radius:10px}
+.fi-sh{width:38px;height:38px}
+.ph-nav{flex:none;margin-top:auto;display:flex;justify-content:space-around;align-items:flex-start;padding:6px 0 0;
+  background:var(--md-sys-color-surface-container);margin-inline:-12px;padding-inline:10px;border-radius:0}
+.ph-nav-i{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.62rem;font-weight:700;color:var(--md-sys-color-on-surface-variant);flex:1}
+.ph-nav-i i{display:grid;place-items:center;width:46px;height:26px;border-radius:13px;font-style:normal}
+.ph-nav-i .ic{width:16px;height:16px}
+.ph-nav-i.on{color:var(--md-sys-color-on-surface)}
+.ph-nav-i.on i{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.ph-gesture{width:34%;height:4px;margin:0 auto;opacity:.5}
+.ph-nav-wrap{display:flex;flex-direction:column;gap:8px;margin-top:auto;margin-inline:-12px;margin-bottom:-8px;padding-bottom:8px;background:var(--md-sys-color-surface-container)}
+.ph-nav-wrap .ph-nav{margin:0;padding-top:8px}
+.phone-stage.in .phone{animation:phPop 1s var(--spring-default-spatial) both}
+.st-shape{display:none!important}
+@keyframes phFloat{50%{transform:translateY(-8px)}}
+@media(prefers-reduced-motion:reduce){.phone-stage.in .phone{animation:none}}
+@media(max-width:340px){.phone-stage{--pw:clamp(240px,80vw,262px)}.ph-bal-num{font-size:1.8rem}}
+
+/* ===== v9: Termux automation dashboard on the phone screen ===== */
+.ph-screen.term{container-type:inline-size;padding:0;gap:0;background:#000;color:#fff;justify-content:flex-start;
+  font:400 3.5cqw/1.25 ui-monospace,"JetBrains Mono","SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace}
+.term .ph-cam{z-index:3}
+.t-sb{flex:none;height:10.5cqw;background:#1b1412;display:flex;align-items:center;justify-content:space-between;padding:1.6cqw 6cqw 0;font:600 3.4cqw system-ui,sans-serif}
+.t-sb .l{display:flex;align-items:center;gap:2.4cqw}
+.t-sb .tb{display:grid;place-items:center;width:5.2cqw;height:4.4cqw;border-radius:1cqw;background:#000;font:700 2.4cqw ui-monospace,monospace}
+.t-sb .r{display:flex;align-items:center;gap:1.6cqw}
+.t-sb svg{height:2.8cqw;width:auto;display:block}
+.t-main{flex:none;display:flex;flex-direction:column;gap:5cqw;padding-top:3.4cqw}
+.t-title{align-self:center;position:relative;padding-bottom:2cqw;font-size:3.7cqw;background:linear-gradient(90deg,#8f7cff,#4aa8ff);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.t-title::after{content:"";position:absolute;left:50%;bottom:0;translate:-50% 0;width:40%;height:.5cqw;border-radius:1cqw;background:linear-gradient(90deg,#7c5cff,#3b9cff)}
+.t-box{position:relative;margin:0 6cqw;border:1px solid #4a3f8c;border-radius:1cqw;padding:4.4cqw 5.5cqw 2.6cqw}
+.t-leg{position:absolute;top:-2.4cqw;left:4cqw;padding:0 1.8cqw;background:#000;color:#a58bff;white-space:nowrap}
+.t-r{display:flex;justify-content:space-between;align-items:center;height:7.8cqw;border-bottom:1px solid #26233a;white-space:nowrap}
+.t-r:last-child{border:0}
+.t-r>span:first-child{color:#b4aec9}
+.t-v{display:flex;align-items:center;gap:2.6cqw}
+.t-v::after{content:"";width:1.7cqw;height:1.7cqw;border-radius:50%;background:currentColor}
+.c-w{color:#fff}.c-g{color:#4ade80}.c-b{color:#4db8ff}.c-y{color:#fbbf24}
+.t-log{height:10cqw;margin-top:1.6cqw;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;gap:.6cqw;margin-bottom:4cqw}
+.t-ln{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3cqw;align-items:start;color:#4ade80;font-size:3.5cqw;line-height:5cqw}.t-ln time{white-space:nowrap}
+.t-ln time{color:#8e89a3}
+.t-ln.in{animation:tLn .35s ease both}
+@keyframes tLn{from{opacity:0;translate:0 1.5cqw}}
+.t-two{display:grid;grid-template-columns:1fr 1fr;gap:4.4cqw}
+.t-b{padding:1.7cqw;transition:filter .2s}
+.t-b>span{display:block;text-align:center;height:7.4cqw;line-height:7.2cqw;border-radius:1cqw;border:1.5px solid}
+.t-b.p{background:#17134a}.t-b.p>span{background:#0f0c2b;border-color:#6d5ae0;color:#bdb4ff}
+.t-b.g{background:#0b2418}.t-b.g>span{background:#07160f;border-color:#22c55e;color:#5be6a0}
+.t-b.x{background:#26101a}.t-b.x>span{background:#1d0a10;border-color:#ef4a5a;color:#ff6b7a}
+.t-b.press{filter:brightness(1.7)}
+.t-act{margin:auto 5cqw 0;display:flex;flex-direction:column;gap:3.4cqw;padding-bottom:4cqw}
+.t-keys{flex:none;display:grid;grid-template-columns:repeat(7,1fr);padding:0 1cqw 8cqw;font:500 3.3cqw/1 system-ui,sans-serif;text-align:center}
+.t-keys span{height:8.6cqw;display:grid;place-items:center}
+.t-gest{position:absolute;left:50%;bottom:1.8cqw;translate:-50% 0;width:34%;height:.9cqw;border-radius:1cqw;background:#cfcfd4;opacity:.8}
+
+/* ===== v10: straight phone, studio glow + depth ===== */
+.phone-stage::before{content:"";position:absolute;z-index:0;left:50%;top:50%;translate:-50% -50%;width:min(125%,440px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,color-mix(in oklch,var(--md-sys-color-primary) 38%,transparent),color-mix(in oklch,var(--md-sys-color-primary-container) 70%,transparent) 55%,transparent 100%)}
+.phone-stage::after{content:"";position:absolute;z-index:0;left:50%;bottom:10px;translate:-50% 0;width:62%;height:34px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(0,0,0,.45),transparent);filter:blur(8px)}
+.phone{
+  box-shadow:0 0 0 1.5px oklch(.62 .008 var(--h)/.7) inset,0 0 0 2.5px oklch(.1 .005 var(--h)),
+    0 0 0 4px color-mix(in oklch,var(--md-sys-color-on-surface) 10%,transparent),
+    0 50px 80px -30px color-mix(in oklch,var(--md-sys-color-primary) 70%,black),0 18px 34px -12px rgba(0,0,0,.5)}
+.phone::after{content:"";position:absolute;z-index:5;inset:var(--bz);border-radius:calc(var(--pr) - var(--bz));pointer-events:none;
+  background:linear-gradient(118deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.04) 28%,transparent 42%)}
 </style>
 </head>
 <body>
@@ -3722,38 +3813,29 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
       <span class="st-shape st-3"></span>
 
       <div class="phone">
-        <span class="ph-btn b-pow"></span>
-        <span class="ph-btn b-vol"></span>
-        <div class="ph-screen">
+        <span class="ph-btn b-pow"></span><span class="ph-btn b-vol"></span>
+        <div class="ph-screen term">
           <span class="ph-cam"></span>
-
-          <div class="ph-status">
-            <span>9:41</span>
-            <span class="ph-sys">
-              <svg class="ios-signal" viewBox="0 0 18 12" width="17" height="11" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
-              <svg class="ios-wifi" viewBox="0 0 17 12" width="16" height="11" fill="currentColor"><path d="M2.14 4.14A9 9 0 0 1 14.86 4.14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M4.4 6.4A5.8 5.8 0 0 1 12.6 6.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8.5 11 6.1 8.5A3.4 3.4 0 0 1 10.9 8.5Z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
-              <svg class="ios-batt" viewBox="0 0 27 13" width="26" height="12"><rect x=".5" y=".5" width="22" height="12" rx="3.8" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2" y="2" width="19" height="9" rx="2.4" fill="currentColor"/><path d="M24.2 4.4v4.2c.9-.3 1.6-1.2 1.6-2.1s-.7-1.8-1.6-2.1z" fill="currentColor" fill-opacity=".5"/></svg>
-            </span>
-          </div>
-
-          <div class="ph-bar"><span class="ph-brand">Replica</span><span class="ph-live"></span></div>
-
-          <div class="ph-balance">
-            <span class="ph-bal-label" data-i="heroPhBalance">Cash coins</span>
-            <div class="ph-bal-row">
-              <i class="cn cn-l"></i>
-              <span class="ph-bal-num" id="phBal">132.95</span>
+          <div class="t-sb"><span class="l"><span>13:45</span><span class="tb">&gt;_</span></span><span class="r">5G <svg class="ios-signal" viewBox="0 0 18 12" width="17" height="11" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg class="ios-batt" viewBox="0 0 27 13" width="26" height="12"><rect x=".5" y=".5" width="22" height="12" rx="3.8" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2" y="2" width="19" height="9" rx="2.4" fill="currentColor"/><path d="M24.2 4.4v4.2c.9-.3 1.6-1.2 1.6-2.1s-.7-1.8-1.6-2.1z" fill="currentColor" fill-opacity=".5"/></svg></span></div>
+          <div class="t-main">
+            <div class="t-title">AUTOMATION DASHBOARD</div>
+            <div class="t-box"><span class="t-leg">SYSTEM INFORMATION</span>
+              <div class="t-r"><span>ACCOUNT</span><span class="t-v c-w">RAJAT ROEL</span></div>
+              <div class="t-r"><span>LICENSE</span><span class="t-v c-g">99 DAYS LEFT</span></div>
+              <div class="t-r"><span>DEVICE</span><span class="t-v c-b">REALME RMX5030</span></div>
+              <div class="t-r"><span>CASHCOINS</span><span class="t-v c-y" id="phBal">0.0</span></div>
+              <div class="t-r"><span>STATUS</span><span class="t-v c-b" id="phStat">READY TO START</span></div>
             </div>
-            <span class="ph-gain" id="phGain">+0.65</span>
+            <div class="t-box"><span class="t-leg">SYSTEM LOGS</span>
+              <div class="t-log" id="phLog"><div class="t-ln"><time>13:45:12</time><span>LICENSE VALID: 99 DAYS LEFT (UNTIL 07 FEB 2027)</span></div></div>
+              <div class="t-two"><div class="t-b p"><span>CLEAR</span></div><div class="t-b p"><span>SHARE</span></div></div>
+            </div>
           </div>
-
-          <div class="ph-feed" id="phFeed"><div class="fi" data-type="t3"><span class="fi-sh sh-t3"><b class="fi-num">3</b></span><span class="fi-tx"><b data-i="heroTk3">Task 3</b><small data-i="heroTkDone">Task completed</small></span><span class="fi-gain"><i class="cn cn-s"></i>+1.10</span></div><div class="fi" data-type="t2"><span class="fi-sh sh-t2"><b class="fi-num">2</b></span><span class="fi-tx"><b data-i="heroTk2">Task 2</b><small data-i="heroTkDone">Task completed</small></span><span class="fi-gain"><i class="cn cn-s"></i>+6.00</span></div><div class="fi" data-type="t1"><span class="fi-sh sh-t1"><b class="fi-num">1</b></span><span class="fi-tx"><b data-i="heroTk1">Task 1</b><small data-i="heroTkDone">Task completed</small></span><span class="fi-gain"><i class="cn cn-s"></i>+1.10</span></div></div>
-
-          <span class="ph-gesture"></span>
+          <div class="t-act"><div class="t-b g" id="phStart"><span>START AUTOMATION</span></div><div class="t-b x"><span>EXIT</span></div></div>
+          <div class="t-keys"><span>ESC</span><span>☰</span><span>⇳</span><span>HOME</span><span>↑</span><span>END</span><span>PGUP</span><span>⇥</span><span>CTRL</span><span>ALT</span><span>←</span><span>↓</span><span>→</span><span>PGDN</span></div>
+          <span class="t-gest"></span>
         </div>
       </div>
-
-      <div class="ph-tpl" id="phTpl" hidden><div class="fi" data-type="t1"><span class="fi-sh sh-t1"><b class="fi-num">1</b></span><span class="fi-tx"><b data-i="heroTk1">Task 1</b><small data-i="heroTkDone">Task completed</small></span><span class="fi-gain"><i class="cn cn-s"></i>+1.10</span></div><div class="fi" data-type="t2"><span class="fi-sh sh-t2"><b class="fi-num">2</b></span><span class="fi-tx"><b data-i="heroTk2">Task 2</b><small data-i="heroTkDone">Task completed</small></span><span class="fi-gain"><i class="cn cn-s"></i>+1.10</span></div><div class="fi" data-type="t3"><span class="fi-sh sh-t3"><b class="fi-num">3</b></span><span class="fi-tx"><b data-i="heroTk3">Task 3</b><small data-i="heroTkDone">Task completed</small></span><span class="fi-gain"><i class="cn cn-s"></i>+1.10</span></div></div>
     </div>
   </section>
 
@@ -5216,51 +5298,39 @@ function init() {
 window.addEventListener('DOMContentLoaded', init);
 </script>
 <script>
-/* hero phone demo: Task 1/2/3 complete, cash coins go up by 1.10 or 6.00 */
+/* hero phone demo: Termux dashboard starts automation, logs tasks, cashcoins go up */
 (function(){
   var stage=document.querySelector('.phone-stage'); if(!stage) return;
-  var feed=stage.querySelector('#phFeed'), tpl=stage.querySelector('#phTpl');
-  var bal=stage.querySelector('#phBal'), gain=stage.querySelector('#phGain');
+  var log=stage.querySelector('#phLog'), bal=stage.querySelector('#phBal'), stat=stage.querySelector('#phStat'), btn=stage.querySelector('#phStart');
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var rewards=[1.1,6.0], val=132.95, n=3, visible=false, started=false;
+  var val=0, n=0, sec=13*3600+45*60+12, visible=false, started=false;
   var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms)})};
-
-  function countTo(to){
-    var from=val; val=to; var t0=performance.now(), d=800;
-    bal.classList.add('bump'); setTimeout(function(){bal.classList.remove('bump')},350);
-    (function tick(now){
-      var k=Math.min(1,(now-t0)/d), e=1-Math.pow(1-k,3);
-      bal.textContent=(from+(to-from)*e).toFixed(2);
-      if(k<1) requestAnimationFrame(tick);
-    })(t0);
+  var p2=function(x){return (x<10?'0':'')+x};
+  function stamp(){sec+=2+Math.floor(Math.random()*2);return p2(Math.floor(sec/3600)%24)+':'+p2(Math.floor(sec/60)%60)+':'+p2(sec%60)}
+  function add(msg){
+    var d=document.createElement('div'); d.className='t-ln in';
+    var t=document.createElement('time'); t.textContent=stamp();
+    var m=document.createElement('span'); m.textContent=msg;
+    d.appendChild(t); d.appendChild(m); log.appendChild(d);
+    while(log.children.length>1) log.removeChild(log.firstChild);
   }
-  function pop(r){
-    gain.textContent='+'+r.toFixed(2);
-    gain.classList.remove('show'); void gain.offsetWidth; gain.classList.add('show');
-    setTimeout(function(){gain.classList.remove('show')},1400);
-  }
-  function next(){
-    n=n%3+1;
-    var r=rewards[Math.random()<0.5?0:1];
-    var src=tpl.querySelector('.fi[data-type="t'+n+'"]'); if(!src) return;
-    var el=src.cloneNode(true); el.classList.add('enter');
-    el.querySelector('.fi-gain').innerHTML='<i class="cn cn-s"></i>+'+r.toFixed(2);
-    feed.insertBefore(el,feed.firstChild);
-    var items=feed.querySelectorAll('.fi');
-    for(var i=3;i<items.length;i++){
-      (function(x){x.classList.add('out'); setTimeout(function(){x.remove()},380)})(items[i]);
-    }
-    pop(r); countTo(val+r);
-  }
+  function setStat(t,c){stat.textContent=t; stat.className='t-v '+c}
   async function loop(){
-    await sleep(1600);
+    await sleep(1800);
     while(true){
       while(!visible) await sleep(300);
-      next();
-      await sleep(2300);
+      btn.classList.add('press'); await sleep(260); btn.classList.remove('press');
+      setStat('RUNNING','c-g'); add('AUTOMATION STARTED');
+      for(var k=0;k<4;k++){
+        await sleep(2300);
+        while(!visible) await sleep(300);
+        n=n%3+1; var r=Math.random()<.5?1.1:6.0; val+=r;
+        bal.textContent=val.toFixed(2);
+        add('TASK '+n+' COMPLETED +'+r.toFixed(2));
+      }
+      await sleep(2000);
     }
   }
-
   stage.classList.add('pre');
   var io=new IntersectionObserver(function(es){
     es.forEach(function(en){
