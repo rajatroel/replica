@@ -3805,74 +3805,6 @@ header.m3e-app-bar{padding:0 20px;box-sizing:border-box}
   #video .vb:has(.vb-player.portrait) .vb-player{padding:28px 0!important;align-self:center;display:grid;place-items:center}
 }
 
-/* ===== v25: language gate (transform + opacity only) ===== */
-html.gated,html.gated body{overflow:hidden}
-#m3eLoader{display:grid;place-items:center;place-items:safe center;overflow-x:hidden;overflow-y:auto;padding:24px 0;isolation:isolate}
-#m3eLoader::before,#m3eLoader::after{content:'';position:absolute;z-index:-1;pointer-events:none;aspect-ratio:1;
-  -webkit-mask:var(--scallop) center/100% 100% no-repeat;mask:var(--scallop) center/100% 100% no-repeat}
-#m3eLoader::before{width:min(520px,110vw);left:-24%;top:-12%;background:var(--md-sys-color-primary-container);opacity:.38}
-#m3eLoader::after{width:min(420px,92vw);right:-22%;bottom:-10%;background:var(--md-sys-color-tertiary-container);opacity:.42}
-#m3eLoader .curly-loader-container,#m3eLoader .gt{grid-area:1/1}
-#m3eLoader .curly-loader-container{transition:opacity .4s ease,scale .6s var(--ease-expressive-emphasized)}
-#m3eLoader.gate .curly-loader-container{opacity:0;scale:.55;pointer-events:none}
-.gt{width:min(440px,calc(100vw - 32px));visibility:hidden;pointer-events:none;transition:opacity .45s ease,scale .6s var(--ease-expressive-emphasized)}
-#m3eLoader.gate .gt{visibility:visible;pointer-events:auto}
-#m3eLoader.exit{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s .12s var(--ease-expressive-standard),visibility 0s .8s}
-#m3eLoader.exit .gt{opacity:0;scale:.96}
-.gt-in{display:grid;gap:18px;justify-items:center}
-#m3eLoader.gate .gt-anim{animation:gtIn .85s var(--ease-expressive-emphasized) backwards;animation-delay:calc(var(--k,0) * 70ms + 90ms)}
-@keyframes gtIn{from{opacity:0;transform:translateY(26px) scale(.97)}}
-.gt-logo{position:relative;width:88px;height:88px;display:grid;place-items:center;color:var(--md-sys-color-on-primary-container)}
-.gt-sc{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-primary-container);animation:m3eCurlySpin 14s linear infinite;will-change:transform}
-.gt-logo .ic{position:relative;width:40px;height:40px}
-.gt-title{display:grid;justify-items:center;align-items:center;width:100%;height:2.7rem}
-.gt-title span{grid-area:1/1;opacity:0;white-space:nowrap;font-size:clamp(1.55rem,6.6vw,2rem);font-weight:800;letter-spacing:-.035em;line-height:1.2;color:var(--md-sys-color-on-surface)}
-.gt-title span.on{opacity:1}
-.gt-title span.in{animation:gtTi .75s var(--ease-expressive-emphasized) both}
-.gt-title span.out{animation:gtTo .4s var(--ease-expressive-standard) both}
-@keyframes gtTi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes gtTo{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
-.gt-dots{display:flex;gap:6px;align-items:center;height:8px}
-.gt-dots i{display:block;width:8px;height:8px;border-radius:4px;background:var(--md-sys-color-outline-variant);transition:width .5s var(--ease-expressive-emphasized),background-color .3s ease}
-.gt-dots i.on{width:28px;background:var(--md-sys-color-primary)}
-.gt-list{display:grid;gap:4px;width:100%;margin-top:6px}
-.gt-opt{appearance:none;-webkit-appearance:none;border:0;margin:0;font:inherit;text-align:left;cursor:pointer;position:relative;overflow:hidden;
-  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;min-height:88px;padding:14px 16px 14px 14px;
-  border-radius:14px;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface);
-  transition:border-radius .5s var(--ease-expressive-emphasized),background-color .35s ease,color .35s ease,scale .4s var(--ease-expressive-emphasized);
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.gt-opt:first-child{border-radius:40px 40px 14px 14px}
-.gt-opt:last-child{border-radius:14px 14px 40px 40px}
-.gt-opt.sel{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
-@media(hover:hover) and (pointer:fine){
-  .gt-opt:hover{border-radius:28px;background:var(--md-sys-color-secondary-container)}
-  .gt-opt.sel:hover{background:var(--md-sys-color-primary-container)}
-  .gt-opt:hover .gt-go{border-radius:14px}
-}
-.gt-opt:active{scale:.98;border-radius:22px}
-.gt-opt:focus-visible{outline:3px solid var(--md-sys-color-primary);outline-offset:-3px}
-.gt-badge{position:relative;width:56px;height:56px;display:grid;place-items:center}
-.gt-badge svg{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-primary-container);transition:rotate .9s var(--ease-expressive-emphasized),fill .35s ease}
-.gt-badge b{position:relative;font-size:.86rem;font-weight:800;letter-spacing:.03em;color:var(--md-sys-color-on-primary-container);transition:color .35s ease}
-.gt-opt.sel .gt-badge svg{fill:var(--md-sys-color-primary)}
-.gt-opt.sel .gt-badge b{color:var(--md-sys-color-on-primary)}
-.gt-opt.hint .gt-badge svg{rotate:60deg}
-.gt-text{display:grid;gap:2px;min-width:0}
-.gt-name{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;line-height:1.2}
-.gt-sub{font-size:.84rem;font-weight:600;line-height:1.3;opacity:.72}
-.gt-go{width:44px;height:44px;display:grid;place-items:center;border-radius:22px;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);
-  transition:border-radius .45s var(--ease-expressive-emphasized),background-color .35s ease,color .35s ease}
-.gt-go .ic{width:22px;height:22px}
-.gt-opt.sel .gt-go{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
-.gt-opt.picked,.gt-opt.picked:hover{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border-radius:28px;scale:.98}
-.gt-opt.picked .gt-badge svg{fill:var(--md-sys-color-on-primary);rotate:90deg}
-.gt-opt.picked .gt-badge b{color:var(--md-sys-color-primary)}
-.gt-opt.picked .gt-go{background:var(--md-sys-color-on-primary);color:var(--md-sys-color-primary);border-radius:14px}
-@media(prefers-reduced-motion:reduce){
-  #m3eLoader.gate .gt-anim,.gt-title span.in,.gt-title span.out,.gt-sc{animation:none!important}
-  .gt-opt,.gt-go,.gt-dots i,.gt-badge svg{transition-duration:.01s!important}
-}
-
 /* ===== v25: license bento (price card, two action tiles, multi-device tile) ===== */
 #pricing .lic{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
 #pricing .lic .lic-price,#pricing .lic .lic-price:hover{
@@ -3916,6 +3848,71 @@ html.gated,html.gated body{overflow:hidden}
   #pricing .lic .multi{grid-column:1 / -1;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:28px;padding:28px 32px}
   #pricing .lic .multi .multi-btn{width:auto}
 }
+
+/* ===== v26: language gate: giant greeting + expressive shape picker (no background shapes) ===== */
+html.gated,html.gated body{overflow:hidden}
+#m3eLoader{display:grid;place-items:center;place-items:safe center;overflow-x:hidden;overflow-y:auto;padding:24px 0}
+#m3eLoader .curly-loader-container,#m3eLoader .gt{grid-area:1/1}
+#m3eLoader .curly-loader-container{transition:opacity .4s ease,scale .6s var(--ease-expressive-emphasized)}
+#m3eLoader.gate .curly-loader-container{opacity:0;scale:.55;pointer-events:none}
+.gt{width:min(520px,calc(100vw - 32px));visibility:hidden;pointer-events:none;transition:opacity .45s ease,scale .6s var(--ease-expressive-emphasized)}
+#m3eLoader.gate .gt{visibility:visible;pointer-events:auto}
+#m3eLoader.exit{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s .12s var(--ease-expressive-standard),visibility 0s .8s}
+#m3eLoader.exit .gt{opacity:0;scale:.96}
+.gt-in{display:grid;gap:8px;justify-items:center;text-align:center}
+#m3eLoader.gate .gt-anim{animation:gtIn .85s var(--ease-expressive-emphasized) backwards;animation-delay:calc(var(--k,0) * 80ms + 90ms)}
+@keyframes gtIn{from{opacity:0;transform:translateY(28px) scale(.97)}}
+
+.gt-cyc{display:grid;justify-items:center;align-items:center;width:100%}
+.gt-cyc span{grid-area:1/1;opacity:0;white-space:nowrap}
+.gt-cyc span.on{opacity:1}
+.gt-cyc span.in{animation:gtTi .8s var(--ease-expressive-emphasized) both}
+.gt-cyc span.out{animation:gtTo .4s var(--ease-expressive-standard) both}
+@keyframes gtTi{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes gtTo{from{opacity:1}to{opacity:0;transform:translateY(-12px)}}
+.gt-hello{height:1.2em;font-size:clamp(3.8rem,19vw,6.4rem);font-weight:800;letter-spacing:-.055em;line-height:1.2;color:var(--md-sys-color-primary)}
+.gt-cap{height:1.7em;margin-bottom:30px;font-size:1.05rem;font-weight:700;letter-spacing:-.01em;color:var(--md-sys-color-on-surface-variant)}
+
+.gt-picks{display:flex;justify-content:center;gap:clamp(10px,3.6vw,22px);width:100%;transition:opacity .4s ease}
+.gt-pick{appearance:none;-webkit-appearance:none;border:0;background:none;margin:0;padding:0;font:inherit;cursor:pointer;
+  display:grid;justify-items:center;gap:14px;width:clamp(88px,27vw,132px);color:var(--md-sys-color-on-surface);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:opacity .45s ease,scale .5s var(--ease-expressive-emphasized)}
+.gt-shape{position:relative;width:100%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%}
+.gt-shape svg{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-surface-container-highest);
+  transition:rotate .9s var(--ease-expressive-emphasized),scale .5s var(--ease-expressive-emphasized),fill .35s ease}
+.gt-shape b{position:relative;font-size:clamp(1.3rem,5.6vw,1.95rem);font-weight:800;letter-spacing:-.02em;color:var(--md-sys-color-on-surface);transition:color .35s ease}
+.gt-lab{font-size:.92rem;font-weight:800;letter-spacing:-.01em;color:var(--md-sys-color-on-surface-variant);transition:color .35s ease}
+.gt-pick.sel .gt-shape svg{fill:var(--md-sys-color-primary)}
+.gt-pick.sel .gt-shape b{color:var(--md-sys-color-on-primary)}
+.gt-pick.sel .gt-lab{color:var(--md-sys-color-primary)}
+.gt-pick.hint .gt-shape svg{rotate:45deg}
+@media(hover:hover) and (pointer:fine){
+  .gt-pick:hover .gt-shape svg{rotate:90deg;scale:1.07}
+  .gt-pick:not(.sel):hover .gt-shape svg{fill:var(--md-sys-color-secondary-container)}
+}
+.gt-pick:active{scale:.94}
+.gt-pick:focus-visible .gt-shape{outline:3px solid var(--md-sys-color-primary);outline-offset:5px}
+.gt-picks.has-pick .gt-pick{pointer-events:none}
+.gt-picks.has-pick .gt-pick:not(.picked){opacity:.22;scale:.9}
+.gt-pick.picked .gt-shape svg{fill:var(--md-sys-color-primary);scale:1.2;rotate:120deg}
+.gt-pick.picked .gt-shape b{color:var(--md-sys-color-on-primary)}
+.gt-pick.picked .gt-lab{color:var(--md-sys-color-primary)}
+@media(prefers-reduced-motion:reduce){
+  #m3eLoader.gate .gt-anim,.gt-cyc span.in,.gt-cyc span.out{animation:none!important}
+  .gt-pick,.gt-shape svg{transition-duration:.01s!important}
+}
+
+/* ===== v26: desktop video layout: compact tiles centred beside the phone ===== */
+@media(min-width:760px){
+  #video .vb .vb-player.portrait{--sw:min(300px,38vw)}
+  #video .vb:has(.vb-player.portrait){
+    grid-template-areas:none;grid-template-columns:minmax(0,1fr) min(300px,38vw);
+    grid-template-rows:1fr auto auto 1fr;gap:4px 44px;align-items:stretch}
+  #video .vb:has(.vb-player.portrait) .vb-info{grid-area:auto;grid-column:1;grid-row:2;align-content:center;padding:34px 36px;border-radius:40px 40px 12px 12px!important}
+  #video .vb:has(.vb-player.portrait) .vb-help{grid-area:auto;grid-column:1;grid-row:3;align-content:center;padding:30px 36px;border-radius:12px 12px 40px 40px!important}
+  #video .vb:has(.vb-player.portrait) .vb-player{grid-area:auto;grid-column:2;grid-row:1 / 5;align-self:center;padding:24px 0!important}
+}
 </style>
 </head>
 <body>
@@ -3924,6 +3921,8 @@ html.gated,html.gated body{overflow:hidden}
 <svg width="0" height="0" style="position:absolute;left:-9999px;top:0;overflow:hidden;pointer-events:none" aria-hidden="true" focusable="false">
   <defs>
     <path id="scallopShape" d=""/>
+    <path id="shapeUk" d=""/>
+    <path id="shapeRu" d=""/>
 
     <!-- Default Android robot icon -->
     <symbol id="icAndroid" viewBox="0 0 24 24">
@@ -4047,6 +4046,15 @@ html.gated,html.gated body{overflow:hidden}
 })();
 </script>
 
+<script>
+/* extra expressive shapes for the language picker */
+(function(){
+  function gen(b,a,l){var p=[],N=240;for(var i=0;i<N;i++){var t=i/N*Math.PI*2,r=b+a*Math.cos(l*t);p.push((50+r*Math.cos(t)).toFixed(2)+' '+(50+r*Math.sin(t)).toFixed(2));}return 'M'+p.join('L')+'Z';}
+  document.getElementById('shapeUk').setAttribute('d',gen(41,6,8));
+  document.getElementById('shapeRu').setAttribute('d',gen(38.5,8.5,6));
+})();
+</script>
+
 <!-- Loader: just the icon inside a rotating curly circle -->
 <div id="m3eLoader" role="status" aria-label="Loading">
   <div class="curly-loader-container">
@@ -4055,13 +4063,12 @@ html.gated,html.gated body{overflow:hidden}
   </div>
   <div class="gt" id="gateLang" aria-hidden="true">
     <div class="gt-in">
-      <div class="gt-logo gt-anim" style="--k:0" aria-hidden="true"><svg class="gt-sc" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icAndroid"/></svg></div>
-      <div class="gt-title gt-anim" style="--k:1" aria-live="off"><span lang="en">Choose your language</span><span lang="uk">Оберіть мову</span><span lang="ru">Выберите язык</span></div>
-      <div class="gt-dots gt-anim" style="--k:2" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="gt-list" role="radiogroup" aria-label="Language">
-        <button type="button" class="gt-opt gt-anim" style="--k:3" data-gate="en" role="radio"><span class="gt-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>EN</b></span><span class="gt-text"><span class="gt-name">English</span><span class="gt-sub">Continue in English</span></span><span class="gt-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
-        <button type="button" class="gt-opt gt-anim" style="--k:4" data-gate="uk" role="radio"><span class="gt-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>UA</b></span><span class="gt-text"><span class="gt-name">Українська</span><span class="gt-sub">Продовжити українською</span></span><span class="gt-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
-        <button type="button" class="gt-opt gt-anim" style="--k:5" data-gate="ru" role="radio"><span class="gt-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>RU</b></span><span class="gt-text"><span class="gt-name">Русский</span><span class="gt-sub">Продолжить на русском</span></span><span class="gt-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
+      <div class="gt-cyc gt-hello gt-anim" style="--k:0" aria-hidden="true"><span lang="en">Hello</span><span lang="uk">Привіт</span><span lang="ru">Привет</span></div>
+      <div class="gt-cyc gt-cap gt-anim" style="--k:1" aria-live="off"><span lang="en">Choose your language</span><span lang="uk">Оберіть мову</span><span lang="ru">Выберите язык</span></div>
+      <div class="gt-picks" role="radiogroup" aria-label="Language">
+        <button type="button" class="gt-pick gt-anim" style="--k:2" data-gate="en" role="radio" aria-label="English"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>EN</b></span><span class="gt-lab">English</span></button>
+        <button type="button" class="gt-pick gt-anim" style="--k:3" data-gate="uk" role="radio" aria-label="Українська"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#shapeUk"/></svg><b>UA</b></span><span class="gt-lab">Українська</span></button>
+        <button type="button" class="gt-pick gt-anim" style="--k:4" data-gate="ru" role="radio" aria-label="Русский"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#shapeRu"/></svg><b>RU</b></span><span class="gt-lab">Русский</span></button>
       </div>
     </div>
   </div>
@@ -5713,46 +5720,49 @@ function init() {
   Promise.all([ready, sleep(700)]).then(showLangGate);
 }
 
-/* LANGUAGE GATE: transform/opacity only, so it stays smooth on any device */
+/* LANGUAGE GATE: giant greeting + shape picker, transform/opacity only */
 let gateTimer = 0;
 function showLangGate() {
   const loader = $('#m3eLoader');
   if (!loader) return;
   const gate = $('#gateLang');
   gate.removeAttribute('aria-hidden');
-  const opts = [...gate.querySelectorAll('.gt-opt')];
-  const titles = [...gate.querySelectorAll('.gt-title span')];
-  const dots = [...gate.querySelectorAll('.gt-dots i')];
+  const picks = [...gate.querySelectorAll('.gt-pick')];
+  const groups = [...gate.querySelectorAll('.gt-cyc')].map(g => [...g.querySelectorAll('span')]);
   const codes = ['en', 'uk', 'ru'];
-  opts.forEach(b => {
+  picks.forEach(b => {
     const on = b.dataset.gate === lang;
     b.classList.toggle('sel', on);
     b.setAttribute('aria-checked', String(on));
   });
   let ti = 0;
-  titles[0].classList.add('on'); dots[0].classList.add('on');
-  opts.forEach(o => o.classList.toggle('hint', o.dataset.gate === codes[0]));
+  groups.forEach(g => g[0].classList.add('on'));
+  picks.forEach(o => o.classList.toggle('hint', o.dataset.gate === codes[0]));
   requestAnimationFrame(() => requestAnimationFrame(() => loader.classList.add('gate')));
 
   if (!reduceMotion) {
     gateTimer = setInterval(() => {
-      const n = (ti + 1) % titles.length, cur = titles[ti], nxt = titles[n];
-      cur.classList.remove('on', 'in'); cur.classList.add('out');
-      setTimeout(() => cur.classList.remove('out'), 420);
-      nxt.classList.remove('out'); nxt.classList.add('on', 'in');
-      dots.forEach((d, k) => d.classList.toggle('on', k === n));
-      opts.forEach(o => o.classList.toggle('hint', o.dataset.gate === codes[n]));
+      const n = (ti + 1) % codes.length;
+      groups.forEach(g => {
+        const cur = g[ti], nxt = g[n];
+        cur.classList.remove('on', 'in'); cur.classList.add('out');
+        setTimeout(() => cur.classList.remove('out'), 420);
+        nxt.classList.remove('out'); nxt.classList.add('on', 'in');
+      });
+      picks.forEach(o => o.classList.toggle('hint', o.dataset.gate === codes[n]));
       ti = n;
     }, 2600);
   }
 
   let picked = false;
+  const wrap = gate.querySelector('.gt-picks');
   gate.addEventListener('click', async e => {
-    const btn = e.target.closest('.gt-opt');
+    const btn = e.target.closest('.gt-pick');
     if (!btn || picked) return;
     picked = true;
     clearInterval(gateTimer);
     haptic('select');
+    wrap.classList.add('has-pick');
     btn.classList.add('picked');
     if (btn.dataset.gate !== lang) {
       lang = btn.dataset.gate;
@@ -5760,7 +5770,7 @@ function showLangGate() {
       markActiveLang();
       applyI18n();
     }
-    await sleep(reduceMotion ? 0 : 420);
+    await sleep(reduceMotion ? 0 : 520);
     revealSite(loader);
   });
 }
