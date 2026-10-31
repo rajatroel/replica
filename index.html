@@ -3281,7 +3281,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   outline:1px solid var(--md-sys-color-outline-variant);outline-offset:-1px;
 }
 #video .vb-player.portrait .vb-stage .video-frame{
-  aspect-ratio:var(--ar,9 / 19.8);max-width:none;width:100%;border:0;border-radius:38px;
+  aspect-ratio:var(--ar,872 / 1920);max-width:none;width:100%;border:0;border-radius:38px;
   background:var(--md-sys-color-surface-container-highest);
 }
 /* little handle pill, shown on the poster only */
@@ -3361,7 +3361,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 
 /* iframe is oversized a hair so no sliver of black can show at the edges, taps go to our controls */
 .video-frame.vy{--vc-acc:oklch(.87 .12 var(--h));--vc-on:oklch(.2 .07 var(--h));background:#000!important}
-.video-frame.vy iframe{inset:auto;left:50%;top:50%;width:104%;height:104%;translate:-50% -50%;pointer-events:none;border-radius:0!important}
+.video-frame.vy iframe{inset:auto;left:50%;top:50%;width:101.2%;height:101.2%;translate:-50% -50%;pointer-events:none;border-radius:0!important}
 .vy .vp{z-index:2;transition:opacity .45s var(--ease-expressive-standard),visibility .45s}
 .vy.vy-on .vp{opacity:0;visibility:hidden;pointer-events:none}
 .vy:not(.vy-on)::after{display:none!important}
@@ -3879,7 +3879,7 @@ const CONFIG = {
     telegram: 'https://t.me/iamrajatroel'
   },
   /* Put your YouTube video ID below (the part after v= in the link). aspect: '9 / 16' (portrait) or '16 / 9' (landscape) is the fallback; with auto: true the page detects the real shape itself. */
-  video: { id: 'ZqXO3BRm9qc', aspect: '9 / 19.8', auto: false },
+  video: { id: 'ZqXO3BRm9qc', aspect: '872 / 1920', auto: false },
   monetHues: [
     { hue: 154, name: 'Emerald' }, { hue: 185, name: 'Cyan' }, { hue: 220, name: 'Cobalt' }, { hue: 250, name: 'Indigo' },
     { hue: 280, name: 'Amethyst' }, { hue: 310, name: 'Magenta' }, { hue: 345, name: 'Rose' }, { hue: 18, name: 'Coral' },
