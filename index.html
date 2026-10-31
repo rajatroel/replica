@@ -2750,6 +2750,212 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 .ft-icon-btn.i-gh{background:var(--md-sys-color-secondary);color:var(--md-sys-color-on-secondary)}
 @media(hover:hover) and (pointer:fine){.ft-icon-btn:hover{border-radius:24px}}
 .ft-icon-btn.is-pressed.is-pressed,.ft-icon-btn.is-pressed.is-pressed:hover{border-radius:14px}
+
+/* =====================================================================
+   v16 — SETUP GUIDE, clean MD3 Expressive rebuild (scoped to #guide)
+   Separate rounded cards · scalloped icon badges · timeline instructions
+   ===================================================================== */
+#guide .guide-progress{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px 16px;margin:0 0 12px;padding:22px 24px;
+  border:0;border-radius:36px;background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);position:relative;isolation:isolate;overflow:hidden}
+#guide .guide-progress::after{content:'';position:absolute;z-index:-1;width:170px;height:170px;right:-50px;top:-70px;background:var(--md-sys-color-primary);opacity:.14;
+  -webkit-mask:var(--scallop) center/100% 100% no-repeat;mask:var(--scallop) center/100% 100% no-repeat;animation:m3eCurlySpin 40s linear infinite}
+#guide .progress-text{grid-column:1;grid-row:1;font-size:1.25rem;font-weight:800;letter-spacing:-.03em;color:var(--md-sys-color-on-primary-container)}
+#guide .progress-track{grid-column:1/-1;grid-row:2;height:14px;border:0;border-radius:7px;background:color-mix(in oklch,var(--md-sys-color-primary) 18%,transparent)}
+#guide .progress-fill{border-radius:7px;background:var(--md-sys-color-primary)}
+
+#guide .guide-list{display:grid;gap:8px}
+#guide .guide-list::before{display:none}
+#guide .guide-step{
+  border:1px solid var(--md-sys-color-outline-variant)!important;border-radius:32px!important;margin:0!important;overflow:hidden;
+  background:var(--md-sys-color-surface-container-low)!important;box-shadow:none!important;
+  transition:border-radius .45s var(--spring-fast-spatial),background-color .3s,border-color .3s!important}
+#guide .guide-step.open{background:var(--md-sys-color-surface-container)!important;border-color:var(--md-sys-color-primary)!important}
+@media(hover:hover) and (pointer:fine){#guide .guide-step:not(.open):hover{border-radius:24px!important;background:var(--md-sys-color-surface-container)!important}}
+#guide .guide-step:has(.guide-head.is-pressed){border-radius:22px!important}
+
+#guide .guide-head{display:flex;align-items:center;gap:16px;padding:16px 18px;width:100%;text-align:left}
+#guide .guide-badge{position:relative;flex:none;width:56px;height:56px;display:grid;place-items:center}
+#guide .badge-shape{fill:var(--md-sys-color-secondary-container);stroke:none;transition:fill .35s,rotate .9s var(--spring-default-spatial)}
+#guide .badge-ic{position:relative;width:26px;height:26px;color:var(--md-sys-color-on-secondary-container);transition:opacity .2s,scale .4s var(--spring-fast-spatial),color .3s}
+#guide .badge-check{position:absolute;width:26px;height:26px;opacity:0;scale:.4;color:var(--md-sys-color-on-tertiary);transition:opacity .25s,scale .45s var(--spring-fast-spatial)}
+#guide .guide-step.open .badge-shape{fill:var(--md-sys-color-primary);rotate:30deg}
+#guide .guide-step.open .badge-ic{color:var(--md-sys-color-on-primary)}
+#guide .guide-step.done .badge-shape{fill:var(--md-sys-color-tertiary)}
+#guide .guide-step.done .badge-ic{opacity:0;scale:.4}
+#guide .guide-step.done .badge-check{opacity:1;scale:1}
+#guide .guide-step.done.open .badge-shape{fill:var(--md-sys-color-primary)}
+#guide .guide-step.done.open .badge-check{color:var(--md-sys-color-on-primary)}
+
+#guide .guide-titles{flex:1;min-width:0;display:grid;gap:3px}
+#guide .guide-over{font-size:.7rem;font-weight:800;letter-spacing:.12em;color:var(--md-sys-color-primary)}
+#guide .guide-titles h3{font-size:1.12rem;font-weight:800;letter-spacing:-.025em;line-height:1.25;color:var(--md-sys-color-on-surface)}
+#guide .guide-titles p{font-size:.86rem;line-height:1.4;color:var(--md-sys-color-on-surface-variant)}
+#guide .expand-chevron{width:44px;height:44px;border-radius:50%;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);display:grid;place-items:center;flex:none}
+#guide .guide-step.open .expand-chevron{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+
+#guide .guide-body{display:grid;gap:12px;padding:4px 18px 22px}
+/* timeline instructions */
+#guide .gsteps{display:grid;gap:0;padding:6px 4px 2px}
+#guide .gstep{position:relative;display:flex;align-items:flex-start;gap:16px;padding:0 0 18px;background:none!important;border:0!important;border-radius:0!important;color:var(--md-sys-color-on-surface);font-size:.96rem;line-height:1.55}
+#guide .gstep:last-child{padding-bottom:4px}
+#guide .gstep::before{content:'';position:absolute;left:15px;top:36px;bottom:4px;width:2px;border-radius:1px;background:var(--md-sys-color-outline-variant)}
+#guide .gstep:last-child::before{display:none}
+#guide .gnum{position:relative;z-index:1;flex:none;width:32px;height:32px;display:grid;place-items:center;border-radius:12px;
+  background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);font-size:.84rem;font-weight:800;
+  transition:border-radius .4s var(--spring-fast-spatial),background-color .3s,color .3s}
+#guide .gstep:first-child .gnum{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+@media(hover:hover) and (pointer:fine){#guide .gstep:hover .gnum{border-radius:50%;background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}}
+#guide .gtext{min-width:0;padding-top:4px}
+#guide .gtext b{color:var(--md-sys-color-on-surface)}
+#guide .gtext a{color:var(--md-sys-color-primary);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+
+/* nested tiles */
+#guide .brand-area{display:grid;gap:4px}
+#guide .brand-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+#guide .brand-chip{height:40px;padding:0 16px;font-size:.84rem;background:var(--md-sys-color-surface-container-highest);border:0}
+#guide .brand-chip.active{background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important}
+#guide .brand-item{display:grid;gap:6px;padding:18px;border:0;border-radius:24px;background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+#guide .brand-name{color:var(--md-sys-color-on-secondary-container);font-size:1rem}
+#guide .brand-line,#guide .brand-line span{color:var(--md-sys-color-on-secondary-container)}
+#guide .brand-note{color:var(--md-sys-color-on-secondary-container);opacity:.8;font-size:.82rem;padding:4px 0 0}
+
+#guide .dl-row{display:grid;gap:14px;padding:16px;border:0;border-radius:28px;background:var(--md-sys-color-surface-container-highest)}
+#guide .dl-info{display:flex;align-items:center;gap:14px}
+#guide .dl-text{display:grid;gap:3px;min-width:0}
+#guide .dl-text span{font-size:.84rem;line-height:1.45;color:var(--md-sys-color-on-surface-variant)}
+#guide .dl-row .tile-action-btn{width:100%;height:52px;background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important}
+
+#guide .step-note{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:0!important;border-radius:24px;background:var(--md-sys-color-tertiary-container)!important;color:var(--md-sys-color-on-tertiary-container)!important}
+#guide .step-note b{color:inherit}
+#guide .step-note .ic{flex:none;width:24px;height:24px;color:var(--md-sys-color-tertiary)}
+
+#guide .guide-next{width:100%;height:56px;margin-top:4px;background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important;border:0!important}
+
+/* =====================================================================
+   v17 — NORMALISED MONET TONAL PALETTE (final colour authority)
+   Primary = seed hue. Secondary = seed hue, low chroma. Tertiary = seed + 28deg
+   (analogous, never jumps to purple). Neutrals = seed hue, very low chroma.
+   ===================================================================== */
+:root{
+  --md-sys-color-primary:oklch(0.47 0.11 var(--h));
+  --md-sys-color-on-primary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-primary-container:oklch(0.925 0.045 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.26 0.07 var(--h));
+  --md-sys-color-secondary:oklch(0.5 0.04 var(--h));
+  --md-sys-color-on-secondary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-secondary-container:oklch(0.925 0.026 var(--h));
+  --md-sys-color-on-secondary-container:oklch(0.27 0.035 var(--h));
+  --md-sys-color-tertiary:oklch(0.48 0.075 calc(var(--h) + 28));
+  --md-sys-color-on-tertiary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-tertiary-container:oklch(0.925 0.04 calc(var(--h) + 28));
+  --md-sys-color-on-tertiary-container:oklch(0.27 0.055 calc(var(--h) + 28));
+  --md-sys-color-surface:oklch(0.985 0.005 var(--h));
+  --md-sys-color-surface-dim:oklch(0.92 0.008 var(--h));
+  --md-sys-color-surface-container-lowest:oklch(0.997 0.002 var(--h));
+  --md-sys-color-surface-container-low:oklch(0.972 0.007 var(--h));
+  --md-sys-color-surface-container:oklch(0.958 0.009 var(--h));
+  --md-sys-color-surface-container-high:oklch(0.944 0.011 var(--h));
+  --md-sys-color-surface-container-highest:oklch(0.93 0.013 var(--h));
+  --md-sys-color-on-surface:oklch(0.21 0.012 var(--h));
+  --md-sys-color-on-surface-variant:oklch(0.46 0.018 var(--h));
+  --md-sys-color-outline:oklch(0.62 0.018 var(--h));
+  --md-sys-color-outline-variant:oklch(0.86 0.014 var(--h));
+}
+:root[data-mode="dark"]{
+  --md-sys-color-primary:oklch(0.82 0.1 var(--h));
+  --md-sys-color-on-primary:oklch(0.27 0.06 var(--h));
+  --md-sys-color-primary-container:oklch(0.36 0.07 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.92 0.045 var(--h));
+  --md-sys-color-secondary:oklch(0.82 0.04 var(--h));
+  --md-sys-color-on-secondary:oklch(0.28 0.03 var(--h));
+  --md-sys-color-secondary-container:oklch(0.34 0.03 var(--h));
+  --md-sys-color-on-secondary-container:oklch(0.91 0.03 var(--h));
+  --md-sys-color-tertiary:oklch(0.82 0.075 calc(var(--h) + 28));
+  --md-sys-color-on-tertiary:oklch(0.28 0.05 calc(var(--h) + 28));
+  --md-sys-color-tertiary-container:oklch(0.36 0.06 calc(var(--h) + 28));
+  --md-sys-color-on-tertiary-container:oklch(0.92 0.04 calc(var(--h) + 28));
+  --md-sys-color-surface:oklch(0.16 0.008 var(--h));
+  --md-sys-color-surface-dim:oklch(0.13 0.006 var(--h));
+  --md-sys-color-surface-container-lowest:oklch(0.12 0.006 var(--h));
+  --md-sys-color-surface-container-low:oklch(0.195 0.009 var(--h));
+  --md-sys-color-surface-container:oklch(0.22 0.011 var(--h));
+  --md-sys-color-surface-container-high:oklch(0.25 0.013 var(--h));
+  --md-sys-color-surface-container-highest:oklch(0.285 0.015 var(--h));
+  --md-sys-color-on-surface:oklch(0.93 0.01 var(--h));
+  --md-sys-color-on-surface-variant:oklch(0.78 0.018 var(--h));
+  --md-sys-color-outline:oklch(0.6 0.018 var(--h));
+  --md-sys-color-outline-variant:oklch(0.38 0.016 var(--h));
+}
+/* quieter background wash on the nav and page, no cyan glow leaking */
+.top-blur-scrim{background:linear-gradient(to bottom,color-mix(in oklch,var(--md-sys-color-surface) 70%,transparent),transparent)}
+.m3e-capsule-nav,.m3e-capsule-nav.scrolled{background:color-mix(in oklch,var(--md-sys-color-surface-container-high) 82%,transparent)}
+/* all hover/press accents derive from the same roles */
+.m3e-chip:not(.m3e-state){background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.m3e-chip.m3e-state{background:var(--md-sys-color-surface-container-high)}
+#pricing .license-choice-license{background:var(--md-sys-color-secondary-container)!important;color:var(--md-sys-color-on-secondary-container)!important}
+#pricing .license-choice-license .lc-ic::before{background:var(--md-sys-color-secondary)}
+#pricing .license-choice-license .lc-ic{color:var(--md-sys-color-on-secondary)}
+.ft-icon-btn.i-tg{background:var(--md-sys-color-tertiary);color:var(--md-sys-color-on-tertiary)}
+.ft-icon-btn.i-mail{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+.ft-icon-btn.i-gh{background:var(--md-sys-color-secondary);color:var(--md-sys-color-on-secondary)}
+.ft-brand-tile{background:var(--md-sys-color-primary-container)}
+.ft-links-tile{background:var(--md-sys-color-tertiary-container)}
+
+/* ===== v18: strictly monochromatic Monet palette — every role uses the seed hue ===== */
+:root{
+  --md-sys-color-tertiary:oklch(0.42 0.09 var(--h));
+  --md-sys-color-on-tertiary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-tertiary-container:oklch(0.895 0.055 var(--h));
+  --md-sys-color-on-tertiary-container:oklch(0.25 0.065 var(--h));
+  --md-sys-color-secondary:oklch(0.52 0.05 var(--h));
+  --md-sys-color-secondary-container:oklch(0.935 0.03 var(--h));
+}
+:root[data-mode="dark"]{
+  --md-sys-color-tertiary:oklch(0.76 0.09 var(--h));
+  --md-sys-color-on-tertiary:oklch(0.26 0.06 var(--h));
+  --md-sys-color-tertiary-container:oklch(0.42 0.075 var(--h));
+  --md-sys-color-on-tertiary-container:oklch(0.93 0.04 var(--h));
+  --md-sys-color-secondary:oklch(0.8 0.05 var(--h));
+  --md-sys-color-secondary-container:oklch(0.32 0.035 var(--h));
+}
+
+/* ===== v19: calm, low-chroma tonal palette + 4-icon connect row ===== */
+:root{
+  --md-sys-color-primary:oklch(0.46 0.075 var(--h));
+  --md-sys-color-primary-container:oklch(0.935 0.03 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.27 0.05 var(--h));
+  --md-sys-color-secondary:oklch(0.5 0.035 var(--h));
+  --md-sys-color-secondary-container:oklch(0.945 0.02 var(--h));
+  --md-sys-color-on-secondary-container:oklch(0.28 0.03 var(--h));
+  --md-sys-color-tertiary:oklch(0.42 0.06 var(--h));
+  --md-sys-color-tertiary-container:oklch(0.915 0.035 var(--h));
+  --md-sys-color-on-tertiary-container:oklch(0.26 0.045 var(--h));
+  --md-sys-color-surface:oklch(0.985 0.004 var(--h));
+  --md-sys-color-surface-container-low:oklch(0.973 0.006 var(--h));
+  --md-sys-color-surface-container:oklch(0.96 0.008 var(--h));
+  --md-sys-color-surface-container-high:oklch(0.946 0.01 var(--h));
+  --md-sys-color-surface-container-highest:oklch(0.932 0.012 var(--h));
+}
+:root[data-mode="dark"]{
+  --md-sys-color-primary:oklch(0.8 0.07 var(--h));
+  --md-sys-color-on-primary:oklch(0.26 0.045 var(--h));
+  --md-sys-color-primary-container:oklch(0.35 0.05 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.93 0.03 var(--h));
+  --md-sys-color-secondary-container:oklch(0.31 0.026 var(--h));
+  --md-sys-color-tertiary:oklch(0.76 0.065 var(--h));
+  --md-sys-color-tertiary-container:oklch(0.39 0.05 var(--h));
+}
+.hero-highlight{color:var(--md-sys-color-primary)}
+.ft-icon-row{grid-template-columns:repeat(4,1fr);gap:6px}
+.ft-icon-btn,.ft-icon-btn.i-wa,.ft-icon-btn.i-tg,.ft-icon-btn.i-mail,.ft-icon-btn.i-gh{
+  height:64px;border-radius:32px;background:var(--md-sys-color-surface-container-lowest);color:var(--md-sys-color-primary);border:1px solid var(--line)}
+.ft-icon-btn .ic{width:26px;height:26px}
+@media(hover:hover) and (pointer:fine){
+  .ft-icon-btn:hover{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border-color:transparent}
+}
+.ft-icon-btn.is-pressed.is-pressed{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+@media(max-width:340px){.ft-icon-row{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -2846,9 +3052,8 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
         <path d="M9.5 8a2.5 2.5 0 0 1 5 0M7.5 13H4M16.5 13H20M8 17l-3 2M16 17l3 2M8 10 5 8M16 10l3-2M12 11v5"/>
       </g>
     </symbol>
-    <symbol id="icSend" viewBox="0 0 24 24">
-      <path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6a.7.7 0 0 0-1 .64L2.4 9.5c0 .35.25.65.6.7L14 12 3 13.8a.72.72 0 0 0-.6.7l-.01 5.26a.7.7 0 0 0 1 .64Z"/>
-    </symbol>
+    <symbol id="icSend" viewBox="0 0 24 24"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></symbol>
+    <symbol id="icWhatsapp" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.174-.3-.019-.465.13-.615.136-.135.301-.345.451-.523.146-.181.194-.301.297-.496.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.172-.015-.371-.015-.571-.015-.2 0-.523.074-.797.359-.273.3-1.045 1.02-1.045 2.475s1.07 2.865 1.219 3.075c.149.18 2.095 3.195 5.076 4.483.709.3 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol>
     <symbol id="icDeveloper" viewBox="0 0 24 24">
       <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="8.2" cy="7" r="3.1"/>
@@ -3139,6 +3344,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
       <section class="ft-tile ft-links-tile" aria-labelledby="ftConnectHeading">
         <h2 class="ft-heading" id="ftConnectHeading" data-i="ftConnectTitle">Connect</h2>
         <div class="ft-icon-row">
+          <a class="ft-icon-btn m3e-state i-wa" href="https://wa.me/qr/7AYS3472METPH1" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp"><svg class="ic"><use href="#icWhatsapp"/></svg></a>
           <a class="ft-icon-btn m3e-state i-tg" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram"><svg class="ic"><use href="#icSend"/></svg></a>
           <a class="ft-icon-btn m3e-state i-mail" href="mailto:imrajatroel@gmail.com" aria-label="Email" title="imrajatroel@gmail.com"><svg class="ic"><use href="#icMail"/></svg></a>
           <a class="ft-icon-btn m3e-state i-gh" href="https://github.com/rajatroel/replica" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg class="ic"><use href="#icGithub"/></svg></a>
