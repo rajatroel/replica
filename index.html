@@ -3623,6 +3623,20 @@ header.m3e-app-bar{padding:0 20px;box-sizing:border-box}
 .nav-anchor{max-width:820px}
 /* mobile: a bit more side margin for page content (top bar keeps its own 20px) */
 @media(max-width:819px){.wrapper{padding-left:26px;padding-right:26px}}
+
+/* ===== DEVICE PICKER (steps 2 & 3) ===== */
+#guide .dev-q{font-weight:800;font-size:.95rem;color:var(--md-sys-color-on-surface);margin:6px 2px 8px;letter-spacing:-.01em}
+#guide .brand-area .dev-q:first-child{margin-top:0}
+#guide .dev-result{margin-top:14px;padding:18px;border:0;border-radius:28px;background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+#guide .dev-result .gsteps{margin-top:8px}
+#guide .dev-result .gstep{background:var(--md-sys-color-surface-container-lowest, var(--md-sys-color-surface));border:0}
+#guide #devLoc .dev-result{margin-top:0}
+#guide .dev-goto{margin-top:10px}
+#guide .brand-chip[data-v]{min-width:96px;justify-content:center}
+#guide .dev-sel{color:var(--md-sys-color-primary)}
+#guide .dev-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#guide .dev-actions .m3e-btn{height:44px;padding:0 18px}
+#guide .dev-actions .ic{width:18px;height:18px}
 </style>
 </head>
 <body>
@@ -4783,13 +4797,102 @@ function animatePanel(wrap, open) {
 }
 
 /* ===== SETUP GUIDE ===== */
-const GUIDE_TYPES = ['list', 'dev', 'list', 'install', 'list', 'list', 'list', 'list', 'list', 'list'];
+const GUIDE_TYPES = ['list', 'dev', 'devloc', 'install', 'list', 'list', 'list', 'list', 'list', 'list'];
 let doneSteps = new Set();
 try { doneSteps = new Set(JSON.parse(store.get('replica_done') || '[]')); } catch (_) {}
 let openStep = -2;     // -2 = not decided yet, -1 = all closed
 let devIdx = 0;
 
 function saveDone() { store.set('replica_done', JSON.stringify([...doneSteps])); }
+
+/* ===== DEVICE PICKER DATA (step 2 + 3) ===== */
+const VERS = [11, 12, 13, 14, 15, 16, 17];
+const T7 = n => `Tap <b>${n}</b> rapidly <b>7 times</b>.`;
+const PIN = 'Enter your lock screen PIN, pattern, or password when prompted.';
+const DEV = [
+  { n: 'Pixel / Motorola / Stock', full: 'Google Pixel, Motorola & Stock Android',
+    on: v => ['Open <b>Settings</b>.', 'Scroll to the bottom and tap <b>About phone</b> (or <b>About tablet</b>).', 'Scroll down to find <b>Build number</b>.', T7('Build number'), PIN],
+    loc: v => v >= 12 ? ['Return to <b>Settings</b>.', 'Tap <b>System</b>.', 'Select <b>Developer options</b>.']
+      : ['Return to <b>Settings</b>.', 'Tap <b>System</b>.', 'Expand <b>Advanced</b>.', 'Select <b>Developer options</b>.'] },
+  { n: 'Samsung', full: 'Samsung Galaxy (One UI)',
+    on: v => ['Open <b>Settings</b>.', 'Scroll down to the bottom and tap <b>About phone</b>.', 'Tap <b>Software information</b>.', T7('Build number'), 'Enter your device PIN, pattern, or password to confirm.'],
+    loc: v => ['Press back <b>twice</b> to return to the main <b>Settings</b> screen.', 'Scroll to the very bottom. <b>Developer options</b> appears directly below <b>About phone</b>.'] },
+  { n: 'Xiaomi / Redmi / POCO', full: 'Xiaomi, Redmi & POCO (MIUI & HyperOS)',
+    on: v => ['Open <b>Settings</b>.', 'Tap <b>About phone</b> (or <b>My device</b>) at the top of the menu.',
+      v >= 14 ? 'Tap <b>OS version</b> rapidly <b>7 times</b> (HyperOS).' : 'Tap <b>MIUI version</b> rapidly <b>7 times</b>.',
+      'You will see the message <b>You are now a developer!</b>'],
+    loc: v => ['Return to the main <b>Settings</b>.', 'Scroll down and tap <b>Additional settings</b>.', 'Select <b>Developer options</b>.'] },
+  { n: 'OnePlus', full: 'OnePlus (OxygenOS)',
+    on: v => ['Open <b>Settings</b>.', v === 11 ? 'Scroll down and tap <b>About phone</b>.' : 'Scroll down and tap <b>About device</b>.',
+      ...(v === 11 ? [] : ['Tap <b>Version</b>.']), T7('Build number</b> (or <b>Version number'), 'Enter your lock screen PIN or password.'],
+    loc: v => v >= 13 ? ['Return to <b>Settings</b>.', 'Tap <b>Additional settings</b> (or <b>System settings</b>).', 'Tap <b>Developer options</b>.']
+      : v === 12 ? ['Return to <b>Settings</b>.', 'Tap <b>System settings</b>.', 'Tap <b>Developer options</b>.']
+      : ['Return to <b>Settings</b>.', 'Tap <b>System</b>.', 'Tap <b>Developer options</b>.'] },
+  { n: 'OPPO / realme', full: 'OPPO & realme (ColorOS & realme UI)',
+    on: v => ['Open <b>Settings</b>.', 'Scroll down and tap <b>About device</b> (or <b>About phone</b>).', 'Tap <b>Version</b>.', T7('Version number</b> (or <b>Build number'), 'Enter your screen lock PIN or password.'],
+    loc: v => ['Return to <b>Settings</b>.', 'Tap <b>Additional settings</b> (or <b>System settings</b>).', 'Select <b>Developer options</b>.'] },
+  { n: 'Vivo / iQOO', full: 'Vivo & iQOO (Funtouch OS & OriginOS)',
+    on: v => ['Open <b>Settings</b>.', 'Scroll to the bottom and tap <b>About phone</b>.', 'Tap <b>Software info</b> (or <b>Software information</b>).', T7('Build number'), 'Enter your lock screen PIN or password.'],
+    loc: v => ['Return to <b>Settings</b>.', 'Scroll down and tap <b>System</b>.', 'Select <b>Developer options</b>.'] },
+  { n: 'Tecno / Infinix / itel', full: 'Transsion (Tecno HiOS, Infinix XOS, itel itelOS)',
+    on: v => ['Open <b>Settings</b>.', 'Tap <b>My Phone</b> at the very top.', 'Scroll down to find <b>Build number</b>.', T7('Build number'), 'Enter your security PIN or pattern.'],
+    loc: v => ['Return to the main <b>Settings</b>.', 'Scroll to the bottom and tap <b>System</b>.', 'Select <b>Developer options</b>.'] }
+];
+const DEV_UI = {
+  en: { brandQ: 'Which phone brand do you have?', verQ: 'Which Android version?', verHint: 'Find it in Settings \u203A About phone \u203A Android version.',
+    onT: 'How to enable Developer options', locT: 'Where to find Developer options',
+    find: 'Open <b>Settings</b>, tap the <b>search bar</b> at the top, type <b>Developer options</b> (or <b>Developer settings</b>) and open it.', chB: 'Change brand', chV: 'Change Android version', pick: 'Pick your phone in step 2 first. The exact path will appear here.', go: 'Go to step 2', android: 'Android', search: 'Tip: you can also type <b>Build number</b> in the Settings search bar.' },
+  uk: { brandQ: '\u042F\u043A\u0438\u0439 \u0443 \u0432\u0430\u0441 \u0431\u0440\u0435\u043D\u0434 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430?', verQ: '\u042F\u043A\u0430 \u0432\u0435\u0440\u0441\u0456\u044F Android?', verHint: '\u0414\u0438\u0432\u0456\u0442\u044C\u0441\u044F: \u041D\u0430\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u043D\u043D\u044F \u203A \u041F\u0440\u043E \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u203A \u0412\u0435\u0440\u0441\u0456\u044F Android.',
+    onT: '\u042F\u043A \u0443\u0432\u0456\u043C\u043A\u043D\u0443\u0442\u0438 \u0440\u0435\u0436\u0438\u043C \u0440\u043E\u0437\u0440\u043E\u0431\u043D\u0438\u043A\u0430', locT: '\u0414\u0435 \u0437\u043D\u0430\u0439\u0442\u0438 \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u0438 \u0440\u043E\u0437\u0440\u043E\u0431\u043D\u0438\u043A\u0430',
+    find: '\u0412\u0456\u0434\u043A\u0440\u0438\u0439\u0442\u0435 <b>\u041D\u0430\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u043D\u043D\u044F</b>, \u0442\u0430\u043F\u043D\u0456\u0442\u044C <b>\u043F\u043E\u0448\u0443\u043A</b> \u0443\u0433\u043E\u0440\u0456, \u0432\u0432\u0435\u0434\u0456\u0442\u044C <b>Developer options</b> (\u0430\u0431\u043E <b>Developer settings</b>) \u0456 \u0432\u0456\u0434\u043A\u0440\u0438\u0439\u0442\u0435 \u0446\u0435\u0439 \u043F\u0443\u043D\u043A\u0442.', chB: '\u0417\u043C\u0456\u043D\u0438\u0442\u0438 \u0431\u0440\u0435\u043D\u0434', chV: '\u0417\u043C\u0456\u043D\u0438\u0442\u0438 \u0432\u0435\u0440\u0441\u0456\u044E Android', pick: '\u0421\u043F\u0435\u0440\u0448\u0443 \u043E\u0431\u0435\u0440\u0456\u0442\u044C \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0443 \u043A\u0440\u043E\u043A\u0443 2. \u0422\u0443\u0442 \u0437\u02BC\u044F\u0432\u0438\u0442\u044C\u0441\u044F \u0442\u043E\u0447\u043D\u0438\u0439 \u0448\u043B\u044F\u0445.', go: '\u0414\u043E \u043A\u0440\u043E\u043A\u0443 2', android: 'Android', search: '\u041F\u043E\u0440\u0430\u0434\u0430: \u043C\u043E\u0436\u043D\u0430 \u0432\u0432\u0435\u0441\u0442\u0438 <b>Build number</b> \u0443 \u043F\u043E\u0448\u0443\u043A\u0443 \u043D\u0430\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u043D\u044C.' },
+  ru: { brandQ: '\u041A\u0430\u043A\u043E\u0439 \u0443 \u0432\u0430\u0441 \u0431\u0440\u0435\u043D\u0434 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430?', verQ: '\u041A\u0430\u043A\u0430\u044F \u0432\u0435\u0440\u0441\u0438\u044F Android?', verHint: '\u0421\u043C\u043E\u0442\u0440\u0438\u0442\u0435: \u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u203A \u041E \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0435 \u203A \u0412\u0435\u0440\u0441\u0438\u044F Android.',
+    onT: '\u041A\u0430\u043A \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u0447\u0438\u043A\u0430', locT: '\u0413\u0434\u0435 \u043D\u0430\u0439\u0442\u0438 \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u0447\u0438\u043A\u0430',
+    find: '\u041E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 <b>\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438</b>, \u043D\u0430\u0436\u043C\u0438\u0442\u0435 <b>\u043F\u043E\u0438\u0441\u043A</b> \u0432\u0432\u0435\u0440\u0445\u0443, \u0432\u0432\u0435\u0434\u0438\u0442\u0435 <b>Developer options</b> (\u0438\u043B\u0438 <b>Developer settings</b>) \u0438 \u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u044D\u0442\u043E\u0442 \u043F\u0443\u043D\u043A\u0442.', chB: '\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u0431\u0440\u0435\u043D\u0434', chV: '\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u0432\u0435\u0440\u0441\u0438\u044E Android', pick: '\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0432 \u0448\u0430\u0433\u0435 2. \u0417\u0434\u0435\u0441\u044C \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0442\u043E\u0447\u043D\u044B\u0439 \u043F\u0443\u0442\u044C.', go: '\u041A \u0448\u0430\u0433\u0443 2', android: 'Android', search: '\u0421\u043E\u0432\u0435\u0442: \u043C\u043E\u0436\u043D\u043E \u0432\u0432\u0435\u0441\u0442\u0438 <b>Build number</b> \u0432 \u043F\u043E\u0438\u0441\u043A\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043A.' }
+};
+let devBrand = null, devVer = null;
+try {
+  const b = store.get('replica_dev_brand'), v = store.get('replica_dev_ver');
+  if (b !== null && b !== undefined && b !== '' && DEV[+b]) devBrand = +b;
+  if (v && VERS.includes(+v)) devVer = +v;
+} catch (_) {}
+
+const stepsHtml = arr => '<div class="gsteps">' + arr.map((t, n) =>
+  `<div class="gstep step-point" style="--i:${n}"><span class="gnum">${n + 1}</span><div class="gtext">${t}</div></div>`).join('') + '</div>';
+
+function devPickHtml() {
+  const u = DEV_UI[lang] || DEV_UI.en;
+  const back = (act, label) => `<button class="m3e-btn tonal m3e-state dev-act" type="button" data-act="${act}"><svg class="ic" style="rotate:180deg"><use href="#icArrowRight"/></svg><span>${label}</span></button>`;
+  if (devBrand === null) {
+    return `<div class="dev-q">${u.brandQ}</div><div class="brand-chips" role="radiogroup">${DEV.map((d, n) =>
+      `<button class="m3e-chip m3e-state brand-chip" data-b="${n}" role="radio" aria-checked="false">${d.n}</button>`).join('')}</div>`;
+  }
+  const d = DEV[devBrand];
+  if (devVer === null) {
+    return `<div class="dev-q">${u.verQ} <span class="dev-sel">${d.n}</span></div><div class="brand-chips" role="radiogroup">${VERS.map(v =>
+      `<button class="m3e-chip m3e-state brand-chip" data-v="${v}" role="radio" aria-checked="false">${u.android} ${v}</button>`).join('')}</div>
+      <p class="brand-note">${u.verHint}</p><div class="dev-actions">${back('brand', u.chB)}</div>`;
+  }
+  return `<div class="brand-item dev-result"><div class="brand-name">${d.full} \u00B7 ${u.android} ${devVer}</div>
+    <div class="brand-line"><span>${u.onT}</span></div>${stepsHtml(d.on(devVer))}
+    <p class="brand-note">${u.search}</p></div>
+    <div class="dev-actions">${back('brand', u.chB)}${back('ver', u.chV)}</div>`;
+}
+function devLocHtml() {
+  const u = DEV_UI[lang] || DEV_UI.en;
+  if (devBrand === null || devVer === null) {
+    return `<div class="step-note"><svg class="ic"><use href="#icShield"/></svg><div>${u.pick}<br>
+      <button class="m3e-btn tonal m3e-state dev-goto" type="button"><span>${u.go}</span></button></div></div>`;
+  }
+  const d = DEV[devBrand];
+  return `<div class="brand-item dev-result"><div class="brand-name">${d.full} \u00B7 ${u.android} ${devVer}</div>
+    <div class="brand-line"><span>${u.locT}</span></div>${stepsHtml(d.loc(devVer))}</div>`;
+}
+function refreshDev(animate) {
+  const p = $('#devPick'), l = $('#devLoc');
+  if (p) p.innerHTML = devPickHtml();
+  if (l) l.innerHTML = devLocHtml();
+  if (animate && p) { const r = p.firstElementChild; if (r && !reduceMotion) p.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(0.2,0,0,1)' }); }
+}
 
 function brandHtml(dict) {
   const b = dict.devBrands[devIdx];
@@ -4813,13 +4916,11 @@ function renderGuide(dict) {
   list.innerHTML = dict.guideSteps.map((g, i) => {
     const type = GUIDE_TYPES[i];
     let k = 0;
-    let body = '<div class="gsteps">' + g.steps.map((txt, n) =>
+    const stepList = type === 'devloc' ? [(DEV_UI[lang] || DEV_UI.en).find, ...g.steps.slice(1)] : g.steps;
+    let body = '<div class="gsteps">' + stepList.map((txt, n) =>
       `<div class="step-point gstep" style="--i:${k++}"><span class="gnum">${n + 1}</span><div class="gtext">${txt}</div></div>`).join('') + '</div>';
     if (type === 'dev') {
-      body += `<div class="step-point" style="--i:${k++}"><div class="brand-area">
-        <div class="brand-chips" role="tablist">${dict.devChips.map((c, n) =>
-          `<button class="m3e-chip m3e-state brand-chip${n === devIdx ? ' active' : ''}" data-b="${n}">${c}</button>`).join('')}</div>
-        <div class="brand-item" id="brandBox">${brandHtml(dict)}</div></div></div>`;
+      body = `<div class="step-point" style="--i:${k++}"><div class="brand-area" id="devPick">${devPickHtml()}</div></div>`;
     }
     if (type === 'install') {
       body += DL.map(([ic, cls, id, tt, dd, bb, href, file]) => `
@@ -4888,11 +4989,27 @@ function setupGuide() {
   list.addEventListener('click', e => {
     const chip = e.target.closest('.brand-chip');
     if (chip) {
-      devIdx = +chip.dataset.b;
-      $$('#guideList .brand-chip').forEach(c => c.classList.toggle('active', +c.dataset.b === devIdx));
-      const box = $('#brandBox');
-      box.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: 'ease-out' });
-      box.innerHTML = brandHtml(I18N[lang]);
+      if (chip.dataset.b !== undefined) {
+        devBrand = +chip.dataset.b; devVer = null;
+        store.set('replica_dev_brand', String(devBrand)); store.set('replica_dev_ver', '');
+      } else if (chip.dataset.v !== undefined) {
+        devVer = +chip.dataset.v;
+        store.set('replica_dev_ver', String(devVer));
+      }
+      haptic('toggle');
+      refreshDev(true);
+      return;
+    }
+    const act = e.target.closest('.dev-act');
+    if (act) {
+      if (act.dataset.act === 'brand') { devBrand = null; devVer = null; store.set('replica_dev_brand', ''); store.set('replica_dev_ver', ''); }
+      else { devVer = null; store.set('replica_dev_ver', ''); }
+      haptic('toggle');
+      refreshDev(true);
+      return;
+    }
+    if (e.target.closest('.dev-goto')) {
+      setOpen(1).then(() => focusStep(1));
       return;
     }
     const next = e.target.closest('.guide-next');
