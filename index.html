@@ -2,7 +2,7 @@
 <html lang="en" data-mode="dark">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover">
 <title>Replica – Instagram Automation</title>
 <meta name="description" content="Automate Instagram tasks on Android 11+ with Replica, Termux, and SMM Kingdom Tasks Bot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3595,7 +3595,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 .t-gest{position:absolute;left:50%;bottom:calc(var(--u)*1.8);translate:-50% 0;width:34%;height:calc(var(--u)*.9);border-radius:calc(var(--u)*1);background:#cfcfd4;opacity:.8}
 
 /* ===== v10: straight phone, studio glow + depth ===== */
-.phone-stage::before{content:"";position:absolute;z-index:0;left:50%;top:50%;translate:-50% -50%;width:min(125%,440px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+.phone-stage::before{content:"";position:absolute;z-index:0;left:50%;top:50%;translate:-50% -50%;width:min(100%,420px);aspect-ratio:1;border-radius:50%;pointer-events:none;
   background:radial-gradient(closest-side,color-mix(in oklch,var(--md-sys-color-primary) 38%,transparent),color-mix(in oklch,var(--md-sys-color-primary-container) 70%,transparent) 55%,transparent 100%)}
 .phone-stage::after{content:"";position:absolute;z-index:0;left:50%;bottom:10px;translate:-50% 0;width:62%;height:34px;border-radius:50%;pointer-events:none;
   background:radial-gradient(closest-side,rgba(0,0,0,.45),transparent);filter:blur(8px)}
@@ -3615,6 +3615,29 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 }
 @media(max-width:819px){
   .phone-stage{padding:24px 0 36px}
+}
+
+/* ===== v12: no sideways overflow (fixes zoomed load) + responsive top bar ===== */
+html{overflow-x:clip;max-width:100%}
+body{overflow-x:clip;max-width:100%;min-width:0}
+.wrapper,main,section,.hero-box{max-width:100%;min-width:0}
+
+header.m3e-app-bar{padding:0 clamp(10px,3.5vw,24px);box-sizing:border-box}
+.nav-anchor{width:100%;max-width:min(580px,100%)}
+.m3e-capsule-nav{box-sizing:border-box;width:100%;min-width:0;gap:8px;height:clamp(52px,14vw,60px);padding:5px 8px 5px 12px}
+.brand-deck{min-width:0;flex:0 1 auto;gap:clamp(8px,2.6vw,12px)}
+.brand-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(1.05rem,4.6vw,1.25rem)}
+.nav-curly-badge{width:clamp(34px,10vw,40px);height:clamp(34px,10vw,40px)}
+.nav-curly-bot{width:clamp(20px,6vw,24px);height:clamp(20px,6vw,24px)}
+.actions-cluster{flex:none;gap:clamp(3px,1.4vw,6px)}
+.lang-seg{height:clamp(36px,10.4vw,40px)}
+.lang-seg-btn{width:clamp(28px,8.4vw,32px);font-size:clamp(.66rem,2.7vw,.74rem)}
+.lang-seg-ind{width:clamp(28px,8.4vw,32px)}
+.m3e-action-btn{width:clamp(36px,10.4vw,40px);height:clamp(36px,10.4vw,40px)}
+@media(max-width:340px){.brand-label{display:none}}
+@media(min-width:900px){
+  .nav-anchor{max-width:640px}
+  .m3e-capsule-nav{height:64px;padding:6px 10px 6px 16px}
 }
 </style>
 </head>
