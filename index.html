@@ -3951,6 +3951,37 @@ html.gated,html.gated body{overflow:hidden}
   #video .vb:has(.vb-player.portrait) .vb-help{grid-column:1;grid-row:2}
   #video .vb:has(.vb-player.portrait) .vb-player{grid-column:2;grid-row:1 / 3;align-self:center}
 }
+
+/* ===== v28: video section = same connected bento as Usage; phone lives inside its own tile, sized to fit any screen ===== */
+#video .vb,#video .vb:has(.vb-player.portrait){display:grid;gap:4px!important;grid-template-columns:minmax(0,1fr);grid-template-rows:none;
+  grid-template-areas:"info" "player" "help";align-items:stretch}
+#video .vb .vb-info{grid-area:info!important}
+#video .vb .vb-player{grid-area:player!important}
+#video .vb .vb-help{grid-area:help!important}
+#video .vb .vb-player.portrait,#video .vb .vb-player.portrait:hover{
+  --b:3.5px;--sw:min(300px,calc(100vw - 112px),calc((100vh - 150px)*.46),calc((100dvh - 150px)*.46));
+  position:relative;display:grid!important;place-items:center;overflow:hidden!important;
+  padding:clamp(22px,5vw,34px) 16px!important;border-radius:12px!important;border:0!important;box-shadow:none!important;
+  background:var(--md-sys-color-surface-container-high)!important;align-self:stretch}
+#video .vb .vb-player.portrait::before{content:'';position:absolute;z-index:0;left:50%;top:50%;translate:-50% -50%;width:92%;aspect-ratio:1;border-radius:50%;
+  clip-path:none!important;animation:none!important;opacity:.55!important;background:var(--md-sys-color-primary-container)!important}
+#video .vb .vb-player.portrait::after{display:none!important}
+#video .vb .vb-player.portrait .vb-stage{position:relative;z-index:1;width:var(--sw);max-width:100%;margin:0 auto}
+#video .vb .vb-info.vb-tile,#video .vb .vb-info.vb-tile:hover{border-radius:40px 40px 12px 12px!important}
+#video .vb .vb-help.vb-tile,#video .vb .vb-help.vb-tile:hover{border-radius:12px 12px 40px 40px!important}
+@media(min-width:760px){
+  #video .vb,#video .vb:has(.vb-player.portrait){
+    grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-rows:1fr 1fr;
+    grid-template-areas:"player info" "player help"}
+  #video .vb .vb-player.portrait,#video .vb .vb-player.portrait:hover{
+    --sw:min(310px,calc((100vh - 170px)*.46),calc((100dvh - 170px)*.46),calc(50vw - 120px));
+    padding:36px 24px!important;border-radius:40px 12px 12px 40px!important}
+  #video .vb .vb-info.vb-tile,#video .vb .vb-info.vb-tile:hover{border-radius:12px 40px 12px 12px!important}
+  #video .vb .vb-help.vb-tile,#video .vb .vb-help.vb-tile:hover{border-radius:12px 12px 40px 12px!important}
+}
+@media(hover:hover) and (pointer:fine){
+  #video .vb .vb-info.vb-tile:hover,#video .vb .vb-help.vb-tile:hover,#video .vb .vb-player.portrait:hover{border-radius:28px!important}
+}
 </style>
 </head>
 <body>
