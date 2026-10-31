@@ -3262,6 +3262,51 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 .vb-player:not(.portrait) .vp-play{width:96px;height:96px}
 .vb-player:not(.portrait) .vp-play .ic{width:36px;height:36px}
 @media(prefers-reduced-motion:reduce){.vp-img,.vp-play,.vp-play .ic{transition:none}}
+
+/* ===== v9: portrait video player (MD3 Expressive) ===== */
+#video .vb-player{overflow:hidden}
+#video .vb-player.portrait{padding:clamp(28px,7vw,36px) 20px}
+#video .vb-player.portrait::before{width:min(104%,360px);opacity:.6;animation:vpSpin 40s linear infinite}
+#video .vb-player.portrait::after{
+  content:'';position:absolute;z-index:0;right:9%;top:7%;width:54px;height:54px;rotate:18deg;
+  border-radius:38% 62% 55% 45% / 50% 40% 60% 50%;background:var(--md-sys-color-tertiary-container);opacity:.9;
+  animation:vpFloat 6s var(--ease-expressive-standard) infinite alternate;
+}
+@keyframes vpSpin{to{rotate:360deg}}
+@keyframes vpFloat{to{translate:-6px 10px;rotate:-12deg}}
+#video .vb-player.portrait .vb-stage{
+  width:100%;max-width:272px;padding:8px;border-radius:46px;
+  background:var(--md-sys-color-surface-container-lowest);
+  box-shadow:var(--elevation-3),0 18px 40px -12px color-mix(in oklch,var(--md-sys-color-primary) 45%,transparent);
+  outline:1px solid var(--md-sys-color-outline-variant);outline-offset:-1px;
+}
+#video .vb-player.portrait .vb-stage .video-frame{
+  --ar:9 / 16;aspect-ratio:9 / 16;max-width:none;width:100%;border:0;border-radius:38px;
+  background:var(--md-sys-color-surface-container-highest);
+}
+/* little handle pill, shown on the poster only */
+#video .video-frame:not([data-playing])::after{
+  content:'';position:absolute;z-index:3;top:10px;left:50%;translate:-50% 0;width:56px;height:6px;border-radius:3px;
+  background:rgba(255,255,255,.55);pointer-events:none;
+}
+/* poster: stronger readable scrim, bigger expressive play button with soft pulse */
+#video .vp-scrim{background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,.05) 50%,rgba(0,0,0,.28))}
+#video .vp-play{top:47%;width:80px;height:80px}
+#video .vp-play::before{
+  content:'';position:absolute;inset:0;border-radius:50%;background:var(--md-sys-color-primary);opacity:.4;
+  animation:vpPulse 2.4s var(--ease-expressive-standard) infinite;
+}
+@keyframes vpPulse{0%{scale:1;opacity:.45}100%{scale:1.7;opacity:0}}
+#video .vp-chip{bottom:16px;height:40px;background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);
+  -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:var(--elevation-1)}
+#video .vp-chip .ic{color:var(--md-sys-color-on-primary-container)}
+@media(min-width:760px){
+  #video .vb:has(.vb-player.portrait){grid-template-columns:minmax(0,1fr) 340px}
+  #video .vb:has(.vb-player.portrait) .vb-player{padding:32px 24px}
+}
+@media(prefers-reduced-motion:reduce){
+  #video .vb-player.portrait::before,#video .vb-player.portrait::after,#video .vp-play::before{animation:none}
+}
 </style>
 </head>
 <body>
@@ -3734,7 +3779,7 @@ const CONFIG = {
     telegram: 'https://t.me/iamrajatroel'
   },
   /* Put your YouTube video ID below (the part after v= in the link). aspect: '9 / 16' (portrait) or '16 / 9' (landscape) is the fallback; with auto: true the page detects the real shape itself. */
-  video: { id: 'ZqXO3BRm9qc', aspect: '9 / 16', auto: true },
+  video: { id: 'ZqXO3BRm9qc', aspect: '9 / 16', auto: false },
   monetHues: [
     { hue: 154, name: 'Emerald' }, { hue: 185, name: 'Cyan' }, { hue: 220, name: 'Cobalt' }, { hue: 250, name: 'Indigo' },
     { hue: 280, name: 'Amethyst' }, { hue: 310, name: 'Magenta' }, { hue: 345, name: 'Rose' }, { hue: 18, name: 'Coral' },
@@ -4462,7 +4507,7 @@ function renderVideo(dict) {
   const frame = $('#videoFrame');
   if (!frame) return;
   const v = CONFIG.video;
-  const ar = videoAspect || v.aspect;
+  const ar = (v.auto && videoAspect) || v.aspect || '9 / 16';
   const portrait = /^\s*9\s*\/\s*16/.test(ar);
   frame.style.setProperty('--ar', ar);
   frame.closest('.vb-player').classList.toggle('portrait', portrait);
