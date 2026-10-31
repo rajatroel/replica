@@ -2409,6 +2409,312 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 .monet-swatch,.monet-swatch:hover{border-radius:14px!important}
 .monet-swatch.active{border-radius:50%!important}
 .monet-swatch.is-pressed{border-radius:10px!important}
+
+/* =====================================================================
+   v13 — UNIFIED MD3 EXPRESSIVE LAYER (final authority)
+   Tonal palette: primary = hue, secondary = hue (low chroma),
+   tertiary = hue + 60, neutral / neutral-variant = hue (very low chroma).
+   Shapes: 12px connectors, 28px cards, 48px outer corners, pill buttons.
+   ===================================================================== */
+:root{
+  --md-sys-color-primary:oklch(0.48 0.14 var(--h));
+  --md-sys-color-on-primary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-primary-container:oklch(0.91 0.065 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.25 0.085 var(--h));
+  --md-sys-color-secondary:oklch(0.5 0.045 var(--h));
+  --md-sys-color-on-secondary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-secondary-container:oklch(0.915 0.03 var(--h));
+  --md-sys-color-on-secondary-container:oklch(0.27 0.04 var(--h));
+  --md-sys-color-tertiary:oklch(0.5 0.09 calc(var(--h) + 60));
+  --md-sys-color-on-tertiary:oklch(0.99 0.004 var(--h));
+  --md-sys-color-tertiary-container:oklch(0.915 0.05 calc(var(--h) + 60));
+  --md-sys-color-on-tertiary-container:oklch(0.27 0.065 calc(var(--h) + 60));
+  --md-sys-color-surface:oklch(0.986 0.006 var(--h));
+  --md-sys-color-surface-dim:oklch(0.92 0.01 var(--h));
+  --md-sys-color-surface-container-lowest:oklch(0.997 0.003 var(--h));
+  --md-sys-color-surface-container-low:oklch(0.972 0.009 var(--h));
+  --md-sys-color-surface-container:oklch(0.958 0.012 var(--h));
+  --md-sys-color-surface-container-high:oklch(0.944 0.015 var(--h));
+  --md-sys-color-surface-container-highest:oklch(0.93 0.017 var(--h));
+  --md-sys-color-on-surface:oklch(0.21 0.014 var(--h));
+  --md-sys-color-on-surface-variant:oklch(0.46 0.022 var(--h));
+  --md-sys-color-outline:oklch(0.62 0.022 var(--h));
+  --md-sys-color-outline-variant:oklch(0.85 0.018 var(--h));
+  --tile:var(--md-sys-color-surface-container-low);
+  --tile-inner:var(--md-sys-color-surface-container-high);
+  --line:var(--md-sys-color-outline-variant);
+}
+:root[data-mode="dark"]{
+  --md-sys-color-primary:oklch(0.82 0.12 var(--h));
+  --md-sys-color-on-primary:oklch(0.27 0.08 var(--h));
+  --md-sys-color-primary-container:oklch(0.37 0.09 var(--h));
+  --md-sys-color-on-primary-container:oklch(0.92 0.05 var(--h));
+  --md-sys-color-secondary:oklch(0.82 0.045 var(--h));
+  --md-sys-color-on-secondary:oklch(0.28 0.03 var(--h));
+  --md-sys-color-secondary-container:oklch(0.35 0.035 var(--h));
+  --md-sys-color-on-secondary-container:oklch(0.91 0.03 var(--h));
+  --md-sys-color-tertiary:oklch(0.82 0.09 calc(var(--h) + 60));
+  --md-sys-color-on-tertiary:oklch(0.28 0.06 calc(var(--h) + 60));
+  --md-sys-color-tertiary-container:oklch(0.37 0.07 calc(var(--h) + 60));
+  --md-sys-color-on-tertiary-container:oklch(0.92 0.045 calc(var(--h) + 60));
+  --md-sys-color-surface:oklch(0.16 0.01 var(--h));
+  --md-sys-color-surface-dim:oklch(0.13 0.008 var(--h));
+  --md-sys-color-surface-container-lowest:oklch(0.12 0.008 var(--h));
+  --md-sys-color-surface-container-low:oklch(0.195 0.012 var(--h));
+  --md-sys-color-surface-container:oklch(0.22 0.014 var(--h));
+  --md-sys-color-surface-container-high:oklch(0.25 0.016 var(--h));
+  --md-sys-color-surface-container-highest:oklch(0.285 0.018 var(--h));
+  --md-sys-color-on-surface:oklch(0.93 0.012 var(--h));
+  --md-sys-color-on-surface-variant:oklch(0.78 0.02 var(--h));
+  --md-sys-color-outline:oklch(0.6 0.02 var(--h));
+  --md-sys-color-outline-variant:oklch(0.38 0.02 var(--h));
+}
+
+/* ---- section headers: one rhythm ---- */
+.step-section-header{margin:64px 0 24px}
+.step-label{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);border:0;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:.72rem}
+.step-headline{letter-spacing:-.04em}
+
+/* ---- hero ---- */
+.hero-heading{letter-spacing:-.045em}
+.hero-highlight{color:var(--md-sys-color-primary)}
+.m3e-chip{background:var(--md-sys-color-surface-container-high);border:1px solid var(--line)}
+
+/* ---- every container = same tile, nested = one tone up ---- */
+.guide-step,.vb-info,.vb-player,.vb-help,#pricing .lic-price,#pricing .multi,.bug-hero,.thanks-pill,.site-footer{
+  background:var(--tile)!important;background-image:none!important;border:1px solid var(--line)!important;box-shadow:none!important;color:var(--md-sys-color-on-surface)}
+.vb-info h3,.vb-help h3,.bug-hero h3{color:var(--md-sys-color-on-surface)}
+.vb-text p,.vb-help p,.bug-hero p,.lic-card-copy{color:var(--md-sys-color-on-surface-variant)!important;opacity:1!important}
+.dl-row,.brand-item,.ft-social-link,#pricing .lic-price-summary,.app-chip,.prereq,.lang-seg{background:var(--tile-inner);border:1px solid var(--line)}
+
+/* tonal accents, three roles used consistently across sections */
+.sym-shape-frame{--fr-bg:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.sym-shape-frame.alt{--fr-bg:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.sym-shape-frame.tertiary,.vb-help .sym-shape-frame,.bug-hero .sym-shape-frame{--fr-bg:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container)}
+.vb-tag,#pricing .lic-chip,#pricing .multi-badge,.tile-badge{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border-color:transparent}
+#pricing .lic-eyebrow{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.vb-info::after,#pricing .lic-price::after,#pricing .multi::after,.bug-hero::after,.site-footer::after{background:var(--md-sys-color-primary-container)!important;opacity:.5}
+
+/* ---- buttons: filled = primary, tonal = secondary container ---- */
+.m3e-btn.filled,.help-btn,.thanks-pill .m3e-btn,#pricing .license-choice-trial{background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important;border:0!important}
+.m3e-btn.tonal,.tile-action-btn,#pricing .license-choice-license{background:var(--md-sys-color-secondary-container)!important;color:var(--md-sys-color-on-secondary-container)!important;border:0!important}
+@media (hover:hover) and (pointer:fine){
+  .m3e-btn.filled:hover,.help-btn:hover{background:color-mix(in oklch,var(--md-sys-color-primary) 88%,var(--md-sys-color-on-primary))!important}
+  .tile-action-btn:hover,.m3e-btn.tonal:hover{background:var(--md-sys-color-primary-container)!important}
+}
+
+/* ================= SETUP GUIDE (redesigned) ================= */
+.guide-progress{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px 16px;margin:0 0 14px;padding:18px 20px;
+  border-radius:28px 28px 12px 12px;background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border:1px solid var(--line)}
+.progress-track{grid-column:1/-1;order:2;height:12px;border-radius:6px;background:color-mix(in oklch,var(--md-sys-color-on-primary-container) 14%,transparent);border:0;overflow:hidden}
+.progress-fill{height:100%;border-radius:6px;background:var(--md-sys-color-primary);transition:width .7s cubic-bezier(.2,0,0,1)}
+.progress-text{order:1;grid-column:1;font-size:1rem;font-weight:800;color:var(--md-sys-color-on-primary-container);letter-spacing:-.01em}
+.guide-progress::after{content:'';order:1;grid-column:2;grid-row:1;width:32px;height:32px;background:var(--md-sys-color-primary);
+  -webkit-mask:var(--scallop) center/100% 100% no-repeat;mask:var(--scallop) center/100% 100% no-repeat;animation:m3eCurlySpin 12s linear infinite}
+
+.guide-list{gap:4px}
+.guide-list::before{display:none}
+.guide-step{border-radius:12px!important;transition:border-radius .5s var(--spring-fast-spatial),border-color .3s,background-color .3s!important}
+.guide-step:first-child{border-radius:12px 12px 12px 12px!important}
+.guide-step.open{border-radius:28px!important;background:var(--md-sys-color-surface-container)!important;border-color:var(--md-sys-color-primary)!important;margin:6px 0}
+.guide-list>.guide-step:last-child:not(.open){border-radius:12px 12px 28px 28px!important}
+.guide-list>.guide-step:first-child:not(.open){border-radius:12px!important}
+@media (hover:hover) and (pointer:fine){.guide-step:not(.open):hover{border-radius:22px!important}}
+
+.guide-step .expandable-trigger.guide-head{gap:16px;padding:16px 18px}
+.guide-badge{width:56px;height:56px}
+.badge-shape{fill:var(--md-sys-color-secondary-container);stroke:none;transition:fill .35s,rotate .9s var(--spring-default-spatial)}
+.badge-ic{position:relative;width:26px;height:26px;color:var(--md-sys-color-on-secondary-container);transition:opacity .2s,scale .4s var(--spring-fast-spatial),color .3s}
+.guide-step.open .badge-shape{fill:var(--md-sys-color-primary);rotate:30deg}
+.guide-step.open .badge-ic{color:var(--md-sys-color-on-primary)}
+.guide-step.done .badge-shape{fill:var(--md-sys-color-tertiary)}
+.guide-step.done .badge-ic{opacity:0;scale:.4}
+.guide-step.done .badge-check{color:var(--md-sys-color-on-tertiary);opacity:1;scale:1}
+.guide-step.done.open .badge-shape{fill:var(--md-sys-color-primary)}
+.guide-step.done.open .badge-check{color:var(--md-sys-color-on-primary)}
+.guide-over{font-size:.7rem;font-weight:800;letter-spacing:.1em;color:var(--md-sys-color-primary)}
+.guide-titles{gap:2px}
+.guide-titles h3{font-size:1.1rem}
+.guide-step.open .expand-chevron{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+
+.guide-body{padding:2px 18px 20px;gap:10px}
+.gsteps{display:grid;gap:4px}
+.gstep{align-items:flex-start;gap:14px;padding:14px 16px;border-radius:12px;background:var(--tile-inner);border:1px solid var(--line);color:var(--md-sys-color-on-surface);font-size:.95rem;line-height:1.55}
+.gstep:first-child{border-radius:24px 24px 12px 12px}
+.gstep:last-child{border-radius:12px 12px 24px 24px}
+.gstep:only-child{border-radius:24px}
+.gstep b{color:var(--md-sys-color-on-surface)}
+.gstep a{color:var(--md-sys-color-primary);font-weight:800}
+.gnum{flex:none;width:30px;height:30px;display:grid;place-items:center;border-radius:11px;background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);font-size:.82rem;font-weight:800;transition:border-radius .4s var(--spring-fast-spatial),background-color .3s}
+@media (hover:hover) and (pointer:fine){.gstep:hover .gnum{border-radius:50%;background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}}
+.gtext{min-width:0;padding-top:3px}
+
+.dl-row{border-radius:24px;padding:16px}
+.dl-row .tile-action-btn{height:52px;width:100%}
+.brand-chip{background:var(--tile-inner)}
+.brand-chip.active{background:var(--md-sys-color-primary-container)!important;color:var(--md-sys-color-on-primary-container)!important;border-color:var(--md-sys-color-primary)}
+.brand-item{border-radius:24px;padding:16px}
+.step-note{background:var(--md-sys-color-tertiary-container)!important;color:var(--md-sys-color-on-tertiary-container)!important;border:0!important;border-radius:24px;padding:16px 18px}
+.step-note .ic{color:var(--md-sys-color-tertiary)}
+.guide-next{width:100%;height:56px;margin-top:2px}
+.prereq.done{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+.prereq.next{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.prereq-badge .badge-shape{fill:var(--md-sys-color-primary)}
+.prereq.next .badge-shape{fill:var(--md-sys-color-secondary)}
+
+/* =====================================================================
+   v14 — SECTIONS BELOW THE GUIDE + FOOTER (MD3 Expressive)
+   One bento language: 44px outer corners, 12px connectors, 4px gaps,
+   tonal accent tiles (primary / secondary / tertiary containers),
+   pill buttons that go squarer on press.
+   ===================================================================== */
+:root{--r-out:44px;--r-con:12px;--bg4:4px}
+
+/* ---------- VIDEO ---------- */
+#video .flow{display:grid;gap:var(--bg4);margin-bottom:var(--bg4)}
+#video .flow::before{display:none}
+#video .flow .prereq{padding:18px 20px;gap:16px;border:1px solid var(--line);
+  border-radius:var(--r-out) var(--r-out) var(--r-con) var(--r-con);background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
+#video .flow .prereq.done{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+#video .flow .prereq.next{border-radius:var(--r-con) var(--r-con) var(--r-out) var(--r-out);background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.prereq-badge{width:52px;height:52px}
+.prereq-badge .badge-shape{fill:var(--md-sys-color-primary);animation:m3eCurlySpin 30s linear infinite}
+.prereq.next .badge-shape{fill:var(--md-sys-color-secondary)}
+.flow-badge-num,.flow-next-ic{color:var(--md-sys-color-on-primary)}
+.prereq.next .flow-next-ic{color:var(--md-sys-color-on-secondary)}
+@media(min-width:720px){
+  #video .flow{grid-template-columns:1fr 1fr}
+  #video .flow .prereq{border-radius:var(--r-out) var(--r-con) var(--r-con) var(--r-out)}
+  #video .flow .prereq.next{border-radius:var(--r-con) var(--r-out) var(--r-out) var(--r-con)}
+}
+.vb{gap:var(--bg4)}
+.vb>*{border-radius:var(--r-con);transition:border-radius .55s var(--spring-fast-spatial)}
+.vb-info{background:var(--md-sys-color-primary-container)!important;color:var(--md-sys-color-on-primary-container)!important;border-color:transparent!important;
+  border-radius:var(--r-out) var(--r-out) var(--r-con) var(--r-con);padding:clamp(24px,5vw,36px)}
+.vb-info h3{color:var(--md-sys-color-on-primary-container)}
+.vb-info .vb-text p{color:var(--md-sys-color-on-primary-container)!important;opacity:.85!important}
+.vb-info .play-badge .badge-shape{fill:var(--md-sys-color-primary);stroke:none}
+.vb-info::after{display:none}
+.vb-tag{background:color-mix(in oklch,var(--md-sys-color-primary) 18%,transparent)!important;color:var(--md-sys-color-on-primary-container)!important;border:0!important}
+.vb-player{background:var(--md-sys-color-surface-container-high)!important;padding:clamp(24px,5vw,36px)}
+.vb-stage{border-radius:44px;background:var(--md-sys-color-surface-container-lowest);box-shadow:var(--elevation-2);padding:8px}
+.vb-stage .video-frame{border-radius:36px;background:var(--md-sys-color-secondary-container)}
+.video-empty{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
+.vb-help{background:var(--md-sys-color-tertiary-container)!important;color:var(--md-sys-color-on-tertiary-container)!important;border-color:transparent!important;
+  border-radius:var(--r-con) var(--r-con) var(--r-out) var(--r-out);padding:clamp(24px,5vw,32px)}
+.vb-help h3,.vb-help p{color:var(--md-sys-color-on-tertiary-container)!important}
+.vb-help p{opacity:.85!important}
+.vb-help .sym-shape-frame{--fr-bg:var(--md-sys-color-tertiary);color:var(--md-sys-color-on-tertiary)}
+.vb-help .help-btn{background:var(--md-sys-color-tertiary)!important;color:var(--md-sys-color-on-tertiary)!important}
+@media(min-width:860px){
+  .vb:has(.vb-player.portrait){grid-template-columns:360px 1fr}
+  .vb:has(.vb-player.portrait) .vb-info{border-radius:var(--r-con) var(--r-out) var(--r-con) var(--r-con)}
+  .vb:has(.vb-player.portrait) .vb-player{border-radius:var(--r-out) var(--r-con) var(--r-con) var(--r-out)}
+  .vb:has(.vb-player.portrait) .vb-help{border-radius:var(--r-con) var(--r-con) var(--r-out) var(--r-con)}
+}
+@media(hover:hover) and (pointer:fine){
+  .vb-info:hover{border-radius:var(--r-out) var(--r-out) 24px 24px}
+  .vb-help:hover{border-radius:24px 24px var(--r-out) var(--r-out)}
+}
+
+/* ---------- LICENSE ---------- */
+#pricing .lic{gap:var(--bg4)}
+#pricing .lic-price{border-radius:var(--r-out) var(--r-out) var(--r-con) var(--r-con)!important;padding:clamp(24px,5vw,40px);gap:clamp(24px,4vw,40px)}
+#pricing .lic-price::after{width:280px;height:280px;right:-110px;top:-120px;opacity:.45}
+#pricing .lic-card-title{letter-spacing:-.04em}
+#pricing .lic-price-summary{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border:0;border-radius:28px;padding:18px 22px}
+#pricing .lic .currency-sym,#pricing .lic .cost-num,#pricing .lic .cadence-str{color:var(--md-sys-color-on-primary-container)}
+#pricing .lic-chip{background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important}
+#pricing .lic-feature-list{gap:4px}
+#pricing .lic-feature-list li{padding:12px 14px;border-radius:var(--r-con);background:var(--tile-inner);border:1px solid var(--line);color:var(--md-sys-color-on-surface);align-items:center}
+#pricing .lic-feature-list li:first-child{border-radius:22px 22px var(--r-con) var(--r-con)}
+#pricing .lic-feature-list li:last-child{border-radius:var(--r-con) var(--r-con) 22px 22px}
+#pricing .lic-feature-icon{width:28px;height:28px;border-radius:10px;background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);margin:0}
+#pricing .lic-feature-icon .ic{width:16px;height:16px}
+#pricing .license-action-buttons{grid-template-columns:1fr;gap:var(--bg4);align-content:center}
+#pricing .license-choice{min-height:84px;flex-direction:row;justify-content:flex-start;gap:16px;padding:16px 22px;font-size:1.02rem;text-align:left}
+#pricing .license-choice .ic{width:28px;height:28px}
+#pricing .license-choice-trial{border-radius:32px 32px var(--r-con) var(--r-con)!important}
+#pricing .license-choice-license{border-radius:var(--r-con) var(--r-con) 32px 32px!important}
+#pricing .multi{background:var(--md-sys-color-tertiary-container)!important;color:var(--md-sys-color-on-tertiary-container)!important;border-color:transparent!important;
+  border-radius:var(--r-con) var(--r-con) var(--r-out) var(--r-out)!important;padding:22px 26px}
+#pricing .multi::after{display:none}
+#pricing .multi-text h3{color:var(--md-sys-color-on-tertiary-container);font-size:1.1rem}
+#pricing .multi-text p{color:var(--md-sys-color-on-tertiary-container);opacity:.82}
+#pricing .dev{color:var(--md-sys-color-on-tertiary)}
+#pricing .dev svg:first-child{fill:var(--md-sys-color-tertiary);stroke:var(--md-sys-color-tertiary-container)}
+#pricing .pct{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border:0}
+#pricing .multi-badge{background:var(--md-sys-color-tertiary)!important;color:var(--md-sys-color-on-tertiary)!important}
+@media(hover:hover) and (pointer:fine){
+  #pricing .lic-price:hover{border-radius:var(--r-out) var(--r-out) 24px 24px!important}
+  #pricing .multi:hover{border-radius:24px 24px var(--r-out) var(--r-out)!important}
+}
+
+/* ---------- SUPPORT ---------- */
+#bugs{gap:var(--bg4)}
+#bugs .step-section-header{margin-bottom:24px}
+.bug-hero{background:var(--md-sys-color-secondary-container)!important;color:var(--md-sys-color-on-secondary-container)!important;border-color:transparent!important;
+  border-radius:var(--r-out) var(--r-out) var(--r-con) var(--r-con);padding:clamp(24px,5vw,36px)}
+.bug-hero h3,.bug-hero p{color:var(--md-sys-color-on-secondary-container)!important}
+.bug-hero p{opacity:.85!important}
+.bug-hero .sym-shape-frame{--fr-bg:var(--md-sys-color-secondary);color:var(--md-sys-color-on-secondary)}
+.bug-hero::after{display:none}
+.thanks-pill{background:var(--md-sys-color-surface-container-high)!important;border-radius:var(--r-con) var(--r-con) var(--r-out) var(--r-out);padding:20px 20px 20px 28px;margin-top:0}
+.thanks-pill .m3e-btn{background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important}
+@media(hover:hover) and (pointer:fine){
+  .bug-hero:hover{border-radius:var(--r-out) var(--r-out) 24px 24px}
+  .thanks-pill:hover{border-radius:24px 24px var(--r-out) var(--r-out)}
+}
+
+/* ---------- FOOTER ---------- */
+.site-footer{margin-top:72px;padding:28px 0 calc(24px + env(safe-area-inset-bottom,0px));
+  background:var(--md-sys-color-surface-container)!important;border:0!important;border-top:1px solid var(--line)!important;
+  border-radius:var(--r-out) var(--r-out) 0 0!important;overflow:hidden}
+.site-footer::after{display:none}
+.ft-bento{display:grid;gap:var(--bg4);grid-template-columns:1fr}
+.ft-brand-tile,.ft-tile{position:relative;isolation:isolate;overflow:hidden;display:grid;gap:14px;align-content:start;padding:clamp(22px,4vw,30px);border:1px solid var(--line)}
+.ft-brand-tile{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border-color:transparent;
+  border-radius:36px 36px var(--r-con) var(--r-con);gap:18px;transition:border-radius .55s var(--spring-fast-spatial)}
+.ft-brand-tile::after{content:'';position:absolute;z-index:-1;width:240px;height:240px;right:-90px;bottom:-110px;background:var(--md-sys-color-primary);opacity:.14;
+  -webkit-mask:var(--scallop) center/100% 100% no-repeat;mask:var(--scallop) center/100% 100% no-repeat;animation:m3eCurlySpin 60s linear infinite}
+.ft-brand{display:inline-flex;align-items:center;gap:14px;width:fit-content;color:inherit;text-decoration:none}
+.ft-brand .nav-curly-badge{width:56px;height:56px}
+.ft-brand .nav-curly-bot{width:30px;height:30px}
+.ft-name{font-size:1.9rem;font-weight:800;letter-spacing:-.045em;line-height:1.05}
+.ft-tagline{font-size:.84rem;font-weight:700;opacity:.78}
+.ft-brand-tile .ft-group-copy{color:var(--md-sys-color-on-primary-container);opacity:.85;font-size:.95rem;line-height:1.55;max-width:42ch}
+.ft-cta{width:fit-content;height:56px;padding:0 28px 0 22px}
+.ft-tile{background:var(--tile-inner);color:var(--md-sys-color-on-surface);border-radius:var(--r-con);transition:border-radius .55s var(--spring-fast-spatial)}
+.ft-links-tile{background:var(--md-sys-color-tertiary-container);color:var(--md-sys-color-on-tertiary-container);border-color:transparent}
+.ft-heading{font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:inherit;opacity:.8}
+.ft-social-links{display:grid;gap:var(--bg4)}
+.ft-social-link{min-height:64px;padding:10px 14px;border:0;background:var(--md-sys-color-surface-container-lowest);color:var(--md-sys-color-on-surface);border-radius:var(--r-con)}
+.ft-social-link:first-child{border-radius:26px 26px var(--r-con) var(--r-con)}
+.ft-social-link:last-child{border-radius:var(--r-con) var(--r-con) 26px 26px}
+.ft-social-icon{width:40px;height:40px;border-radius:14px;background:var(--md-sys-color-tertiary);color:var(--md-sys-color-on-tertiary)}
+.ft-social-icon.alt{background:var(--md-sys-color-secondary);color:var(--md-sys-color-on-secondary)}
+.ft-social-copy strong{font-size:.95rem}
+.ft-social-copy small{font-size:.76rem}
+.ft-nav{border-radius:var(--r-con) var(--r-con) 36px 36px}
+.ft-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ft-links .m3e-chip{height:48px;font-size:.84rem;padding-inline:14px;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--line);width:100%;justify-content:flex-start}
+.ft-links .m3e-chip .ic{width:20px;height:20px;color:var(--md-sys-color-primary)}
+.ft-bottom{margin-top:20px;padding:16px 4px 0;border-top:0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;color:var(--md-sys-color-on-surface-variant);font-size:.82rem}
+.ft-meta-chip{height:34px;padding:0 14px;border-radius:17px;background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);border:0;font-size:.76rem}
+.ft-meta-chip .ic{color:var(--md-sys-color-on-secondary-container)}
+@media(min-width:760px){
+  .ft-bento{grid-template-columns:1.25fr 1fr;grid-template-areas:"brand links" "brand nav"}
+  .ft-brand-tile{grid-area:brand;border-radius:var(--r-out) var(--r-con) var(--r-con) var(--r-out);align-content:space-between}
+  .ft-links-tile{grid-area:links;border-radius:var(--r-con) var(--r-out) var(--r-con) var(--r-con)}
+  .ft-nav{grid-area:nav;border-radius:var(--r-con) var(--r-con) var(--r-out) var(--r-con)}
+}
+@media(hover:hover) and (pointer:fine){
+  .ft-brand-tile:hover{border-radius:28px}
+  .ft-tile:hover{border-radius:24px}
+}
+@media(max-width:420px){.ft-links{grid-template-columns:1fr}.ft-cta{width:100%}}
+@media(prefers-reduced-motion:reduce){.ft-brand-tile::after,.prereq-badge .badge-shape{animation:none}}
 </style>
 </head>
 <body>
@@ -2518,6 +2824,10 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
     <symbol id="icGithub" viewBox="0 0 24 24">
       <path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.08c-3.1.68-3.76-1.31-3.76-1.31-.5-1.28-1.24-1.62-1.24-1.62-1.02-.7.08-.69.08-.69 1.12.08 1.71 1.15 1.71 1.15 1 .1.77 2.47 3.43 1.86.1-.72.4-1.21.72-1.49-2.48-.28-5.09-1.24-5.09-5.52 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.54.23 2.68.11 2.96.72.78 1.15 1.77 1.15 2.99 0 4.29-2.61 5.23-5.1 5.5.4.35.76 1.02.76 2.06V22c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/>
     </symbol>
+
+    <symbol id="icSettings" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="7"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4"/></g></symbol>
+    <symbol id="icLink" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></g></symbol>
+    <symbol id="icRocket" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.6 1.6 6 5 6 9l-3 3.2H9L6 11.8c0-4 2.4-7.4 6-9Z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M9 15.5 7 20l4-1.2M15 15.5l2 4.5-4-1.2"/></g></symbol>
   </defs>
 </svg>
 <script>
@@ -2773,38 +3083,38 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 
 <footer class="site-footer">
   <div class="wrapper">
-    <div class="ft-grid">
-      <div class="ft-brand-block">
-        <a class="ft-brand" href="#hero" aria-label="Replica — back to top">
+    <div class="ft-bento">
+      <section class="ft-brand-tile" aria-label="Replica">
+        <a class="ft-brand" href="#hero" aria-label="Replica, back to top">
           <span class="nav-curly-badge" aria-hidden="true">
-            <svg class="nav-curly-rotator" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/></svg>
-            <svg class="nav-curly-bot"><use href="#icAndroid"/></svg>
+            <svg class="nav-curly-rotator" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary)"/></svg>
+            <svg class="nav-curly-bot" style="color:var(--md-sys-color-on-primary)"><use href="#icAndroid"/></svg>
           </span>
-          <span class="ft-brand-copy">
-            <span class="ft-name">Replica</span>
-            <span class="ft-tagline" data-i="ftTagline">Automation tools for Android</span>
-          </span>
+          <span class="ft-brand-copy"><span class="ft-name">Replica</span><span class="ft-tagline" data-i="ftTagline">Automation tools for Android</span></span>
         </a>
-      </div>
-
-      <section class="ft-group" aria-labelledby="ftConnectHeading">
-        <h2 class="ft-heading" id="ftConnectHeading" data-i="ftConnectTitle">Connect</h2>
         <p class="ft-group-copy" data-i="ftConnectText">Questions, trial requests and license enquiries go directly to the developer.</p>
+        <a class="m3e-btn filled m3e-state ft-cta" data-tg target="_blank" rel="noopener noreferrer">
+          <svg class="ic"><use href="#icDeveloper"/></svg><span data-i="btnBulk">Contact Developer</span>
+        </a>
+      </section>
+
+      <section class="ft-tile ft-links-tile" aria-labelledby="ftConnectHeading">
+        <h2 class="ft-heading" id="ftConnectHeading" data-i="ftConnectTitle">Connect</h2>
         <div class="ft-social-links">
-          <a class="ft-social-link m3e-state" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a free trial or license from the developer on Telegram">
+          <a class="ft-social-link m3e-state" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Telegram, developer contact">
             <span class="ft-social-icon"><svg class="ic"><use href="#icSend"/></svg></span>
             <span class="ft-social-copy"><strong>Telegram</strong><small data-i="ftTelegramSub">Developer contact</small></span>
             <svg class="ic ft-social-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
           </a>
-          <a class="ft-social-link m3e-state" href="https://github.com/rajatroel/replica" target="_blank" rel="noopener noreferrer" aria-label="Open the Replica project on GitHub">
-            <span class="ft-social-icon"><svg class="ic"><use href="#icGithub"/></svg></span>
+          <a class="ft-social-link m3e-state" href="https://github.com/rajatroel/replica" target="_blank" rel="noopener noreferrer" aria-label="GitHub, project and releases">
+            <span class="ft-social-icon alt"><svg class="ic"><use href="#icGithub"/></svg></span>
             <span class="ft-social-copy"><strong>GitHub</strong><small data-i="ftProjectSub">Project and releases</small></span>
             <svg class="ic ft-social-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
           </a>
         </div>
       </section>
 
-      <nav class="ft-group ft-nav" aria-label="Footer navigation">
+      <nav class="ft-tile ft-nav" aria-label="Footer navigation">
         <h2 class="ft-heading" data-i="ftNavTitle">Explore</h2>
         <div class="ft-links">
           <a href="#guide" class="m3e-chip m3e-state"><svg class="ic"><use href="#icTune"/></svg><span data-i="guideLbl">Setup Guide</span></a>
@@ -3427,10 +3737,8 @@ function renderGuide(dict) {
   const list = $('#guideList');
   if (!list) return;
   const total = dict.guideSteps.length;
-  if (openStep === -2) {
-    const first = dict.guideSteps.findIndex((_, i) => !doneSteps.has(i));
-    openStep = first;
-  }
+  if (openStep === -2) openStep = dict.guideSteps.findIndex((_, i) => !doneSteps.has(i));
+  const ICONS = ['icShield', 'icCode', 'icTune', 'icDownload', 'icKey', 'icPhone', 'icSettings', 'icTerminal', 'icLink', 'icRocket'];
   const DL = [
     ['icAndroid', '', 'dlReplicaAnchor', 'titleReplica', 'descReplica', 'btnDlReplica', CONFIG.links.replicaApk, 'replica.apk'],
     ['icTerminal', 'alt', 'dlTermuxAnchor', 'titleTermux', 'descTermux', 'btnDlTermux', CONFIG.links.termuxApk, 'termux.apk'],
@@ -3439,8 +3747,8 @@ function renderGuide(dict) {
   list.innerHTML = dict.guideSteps.map((g, i) => {
     const type = GUIDE_TYPES[i];
     let k = 0;
-    let body = g.steps.map((txt, n) => `
-      <div class="step-point" style="--i:${k++}"><div class="point-number">${n + 1}</div><div>${txt}</div></div>`).join('');
+    let body = '<div class="gsteps">' + g.steps.map((txt, n) =>
+      `<div class="step-point gstep" style="--i:${k++}"><span class="gnum">${n + 1}</span><div class="gtext">${txt}</div></div>`).join('') + '</div>';
     if (type === 'dev') {
       body += `<div class="step-point" style="--i:${k++}"><div class="brand-area">
         <div class="brand-chips" role="tablist">${dict.devChips.map((c, n) =>
@@ -3462,18 +3770,18 @@ function renderGuide(dict) {
       body += `<div class="step-point step-note" style="--i:${k++}"><svg class="ic"><use href="#icShield"/></svg>
         <div><b>${dict.apiNoteTitle}</b><br>${dict.apiNoteText}</div></div>`;
     }
-    body += `<div class="step-point" style="--i:${k++}"><button class="m3e-btn tonal m3e-state guide-next" data-next="${i}">
-        <span>${i === total - 1 ? dict.guideFinish : dict.guideNext}</span><svg class="ic"><use href="#icArrowRight"/></svg></button></div>`;
+    body += `<div class="step-point" style="--i:${k++}"><button class="m3e-btn filled m3e-state guide-next" data-next="${i}">
+        <span>${i === total - 1 ? dict.guideFinish : dict.guideNext}</span><svg class="ic"><use href="#${i === total - 1 ? 'icCheck' : 'icArrowRight'}"/></svg></button></div>`;
     const cls = 'm3e-expandable guide-step' + (i === openStep ? ' open' : '') + (doneSteps.has(i) ? ' done' : '');
     return `
     <article class="${cls}" data-idx="${i}" id="gs-${i}">
       <button class="expandable-trigger guide-head" aria-expanded="${i === openStep}" aria-controls="gp-${i}">
         <span class="guide-badge" aria-hidden="true">
           <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-          <span class="badge-num">${i + 1}</span>
+          <svg class="ic badge-ic"><use href="#${ICONS[i]}"/></svg>
           <svg class="ic badge-check"><use href="#icCheck"/></svg>
         </span>
-        <span class="guide-titles"><h3>${g.t}</h3><p>${g.s}</p></span>
+        <span class="guide-titles"><span class="guide-over">${String(i + 1).padStart(2, '0')} / ${total}</span><h3>${g.t}</h3><p>${g.s}</p></span>
         <span class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></span>
       </button>
       <div class="expandable-panel" id="gp-${i}"><div class="expandable-content"><div class="guide-body">${body}</div></div></div>
