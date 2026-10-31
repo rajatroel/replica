@@ -3666,60 +3666,6 @@ header.m3e-app-bar{padding:0 20px;box-sizing:border-box}
 @media (hover:hover) and (pointer:fine){#guide .dl-row:hover{border-radius:36px 20px 36px 20px;transform:translateY(-2px)}}
 #guide .dl-row:active,#guide .dl-row:has(.dl-fab:active){border-radius:36px 20px 36px 20px}
 
-/* ===== LANGUAGE GATE v2 (inside loader, MD3E) ===== */
-html.gated, html.gated body { overflow: hidden; }
-#m3eLoader { flex-direction: column; justify-content: safe center; overflow-y: auto; padding: 24px 0; }
-#m3eLoader .curly-loader-container { flex: none; transition: width .9s var(--ease-expressive-emphasized), height .9s var(--ease-expressive-emphasized), margin .9s var(--ease-expressive-emphasized), scale .5s var(--ease-expressive-emphasized), opacity .4s var(--ease-expressive-standard); }
-#m3eLoader.gate .curly-loader-container { width: 104px; height: 104px; margin-bottom: 6px; }
-#m3eLoader.gate .curly-loader-icon .ic { width: 44px; height: 44px; }
-.curly-loader-icon .ic { transition: width .9s var(--ease-expressive-emphasized), height .9s var(--ease-expressive-emphasized); }
-.gate-lang { flex: none; display: grid; grid-template-rows: 0fr; width: min(440px, calc(100% - 32px)); transition: grid-template-rows .9s var(--ease-expressive-emphasized); pointer-events: none; }
-#m3eLoader.gate .gate-lang { grid-template-rows: 1fr; pointer-events: auto; }
-.gate-inner { min-height: 0; overflow: hidden; display: grid; gap: 22px; padding: 6px 4px 4px; }
-.gate-head { display: grid; gap: 14px; justify-items: center; opacity: 0; translate: 0 18px; transition: opacity .6s .3s, translate .8s .3s var(--ease-expressive-emphasized); }
-.gate-title { display: grid; justify-items: center; text-align: center; height: 2.5rem; width: 100%; }
-.gate-title span { grid-area: 1 / 1; font-size: clamp(1.55rem, 6.4vw, 1.95rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.2; color: var(--md-sys-color-on-surface); opacity: 0; translate: 0 10px; transition: opacity .2s linear, translate 0s .2s; }
-.gate-title span.off { translate: 0 -8px; transition: opacity .2s linear, translate .2s var(--ease-expressive-standard); }
-.gate-title span.on { opacity: 1; translate: 0 0; transition: opacity .38s .22s var(--ease-expressive-standard), translate .55s .22s var(--ease-expressive-emphasized); }
-.gate-dots { display: flex; gap: 6px; align-items: center; height: 8px; }
-.gate-dots i { display: block; width: 8px; height: 8px; border-radius: 4px; background: var(--md-sys-color-outline-variant); transition: width .6s var(--spring-fast-spatial), background-color .3s; }
-.gate-dots i.on { width: 28px; background: var(--md-sys-color-primary); }
-.gate-list { display: grid; gap: 6px; }
-.gate-opt { all: unset; box-sizing: border-box; cursor: pointer; position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 14px 14px 14px 14px; min-height: 84px; background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface); border-radius: 18px; opacity: 0; translate: 0 34px; transition: opacity .5s, translate .8s var(--ease-expressive-emphasized), border-radius .55s var(--spring-fast-spatial), background-color .35s, color .35s, scale .35s var(--spring-fast-spatial); -webkit-tap-highlight-color: transparent; }
-.gate-opt:nth-child(1) { border-radius: 36px 36px 18px 18px; }
-.gate-opt:nth-child(3) { border-radius: 18px 18px 36px 36px; }
-#m3eLoader.gate .gate-head, #m3eLoader.gate .gate-opt { opacity: 1; translate: 0 0; }
-#m3eLoader.gate .gate-opt:nth-child(1) { transition-delay: .45s, .45s, 0s, 0s, 0s, 0s; }
-#m3eLoader.gate .gate-opt:nth-child(2) { transition-delay: .55s, .55s, 0s, 0s, 0s, 0s; }
-#m3eLoader.gate .gate-opt:nth-child(3) { transition-delay: .65s, .65s, 0s, 0s, 0s, 0s; }
-.gate-opt.sel { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
-.gate-opt:focus-visible { outline: 3px solid var(--md-sys-color-primary); outline-offset: -3px; }
-.gate-badge { position: relative; flex: none; width: 56px; height: 56px; display: grid; place-items: center; }
-.gate-badge svg { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--md-sys-color-secondary-container); transition: rotate .9s var(--spring-fast-spatial), fill .35s; }
-.gate-badge b { position: relative; font-size: .86rem; font-weight: 800; letter-spacing: .03em; color: var(--md-sys-color-on-secondary-container); transition: color .35s; }
-.gate-opt.sel .gate-badge svg { fill: var(--md-sys-color-primary); }
-.gate-opt.sel .gate-badge b { color: var(--md-sys-color-on-primary); }
-.gate-opt.hint .gate-badge svg { rotate: 60deg; }
-.gate-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
-.gate-name { font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; }
-.gate-sub { font-size: .84rem; font-weight: 600; opacity: .7; line-height: 1.3; }
-.gate-go { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 22px; background: var(--md-sys-color-surface-container-highest); color: var(--md-sys-color-on-surface); transition: border-radius .5s var(--spring-fast-spatial), background-color .35s, color .35s, rotate .5s var(--spring-fast-spatial); }
-.gate-go .ic { width: 22px; height: 22px; }
-.gate-opt.sel .gate-go { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-@media (hover:hover) and (pointer:fine) {
-  .gate-opt:hover { border-radius: 30px; background: var(--md-sys-color-secondary-container); }
-  .gate-opt.sel:hover { background: var(--md-sys-color-primary-container); }
-  .gate-opt:hover .gate-go { border-radius: 14px; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-}
-.gate-opt:active, .gate-opt.picked { scale: .97; border-radius: 40px; transition-delay: 0s; }
-.gate-opt.picked { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-.gate-opt.picked .gate-badge svg { fill: var(--md-sys-color-on-primary); rotate: 90deg; }
-.gate-opt.picked .gate-badge b { color: var(--md-sys-color-primary); }
-.gate-opt.picked .gate-go { background: var(--md-sys-color-on-primary); color: var(--md-sys-color-primary); border-radius: 14px; rotate: 360deg; }
-#m3eLoader.exit { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .6s .15s var(--ease-expressive-standard), visibility 0s .8s; }
-#m3eLoader.exit .gate-lang { opacity: 0; translate: 0 24px; transition: opacity .35s, translate .6s var(--ease-expressive-emphasized), grid-template-rows .9s var(--ease-expressive-emphasized); }
-#m3eLoader.exit .curly-loader-container { scale: 1.4; opacity: 0; }
-@media (prefers-reduced-motion: reduce) { .gate-opt, .gate-head, .gate-title span { transition-duration: .01s !important; } }
 #guide .badge-ic.gnumtxt{width:auto;height:auto;display:grid;place-items:center;font-size:1.4rem;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 #guide .guide-head .guide-titles h3{margin-top:0}
 
@@ -3822,6 +3768,154 @@ html.gated, html.gated body { overflow: hidden; }
 #video .vc-knob{box-shadow:0 0 0 4px rgba(0,0,0,.28),var(--elevation-1)}
 #video .video-frame.vy:fullscreen::before,#video .video-frame.vy:fullscreen::after,
 #video .video-frame.vy:-webkit-full-screen::before,#video .video-frame.vy:-webkit-full-screen::after{display:none!important}
+
+/* ===== v24: quad-curved screen + bezel, darker lower punch-hole, balanced desktop layout ===== */
+#video .vb .vb-player.portrait .video-frame::before{
+  top:calc(var(--fw) * .05 - var(--fw) * .017);
+  background:radial-gradient(circle at 34% 30%,rgba(120,140,255,.2) 0 8%,transparent 20%),#000;
+  box-shadow:0 0 0 calc(var(--fw) * .004) rgba(0,0,0,.95),0 0 0 calc(var(--fw) * .0062) rgba(255,255,255,.035)}
+
+/* quad-curved glass: light catches all four rolled edges, darkening toward the rim */
+#video .vb .vb-player.portrait .video-frame::after{
+  background:
+    linear-gradient(to right,rgba(255,255,255,.2) 0,rgba(255,255,255,.05) 1.4%,transparent 4.2%),
+    linear-gradient(to left,rgba(255,255,255,.12) 0,rgba(255,255,255,.03) 1.4%,transparent 4.2%),
+    linear-gradient(to bottom,rgba(255,255,255,.1) 0,transparent 2.2%),
+    linear-gradient(to top,rgba(255,255,255,.08) 0,transparent 2%),
+    linear-gradient(118deg,rgba(255,255,255,.12) 0,rgba(255,255,255,.035) 24%,transparent 40%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),inset 0 0 calc(var(--fw) * .075) calc(var(--fw) * .006) rgba(0,0,0,.5),
+    inset 0 0 calc(var(--fw) * .02) rgba(0,0,0,.4)}
+
+/* bezel: rounded metal frame lit on every side to match the curved panel */
+#video .vb .vb-player.portrait .vb-stage{
+  --b:3.5px;
+  background:conic-gradient(from 200deg at 50% 50%,oklch(.5 .008 var(--h)),oklch(.2 .007 var(--h)) 18%,oklch(.38 .008 var(--h)) 36%,oklch(.14 .006 var(--h)) 52%,oklch(.4 .008 var(--h)) 70%,oklch(.16 .006 var(--h)) 86%,oklch(.5 .008 var(--h)));
+  box-shadow:0 0 0 1px oklch(.06 .004 var(--h)),
+    inset 0 0 0 .5px oklch(.78 .008 var(--h)/.55),
+    inset 0 1.2px 1px oklch(.9 .006 var(--h)/.32),inset 0 -1.2px 1px oklch(.9 .006 var(--h)/.16),
+    inset 1.2px 0 1px oklch(.9 .006 var(--h)/.2),inset -1.2px 0 1px oklch(.9 .006 var(--h)/.2),
+    0 44px 70px -30px color-mix(in oklch,var(--md-sys-color-primary) 70%,black),0 14px 28px -12px rgba(0,0,0,.55)}
+
+/* desktop: phone matches the height of the two tiles beside it */
+@media(min-width:760px){
+  #video .vb .vb-player.portrait{--sw:min(340px,44vw)}
+  #video .vb:has(.vb-player.portrait){
+    grid-template-columns:minmax(0,1fr) calc(min(340px,44vw) + 40px);grid-template-rows:1fr 1fr;align-items:stretch}
+  #video .vb:has(.vb-player.portrait) .vb-info,#video .vb:has(.vb-player.portrait) .vb-help{align-content:center}
+  #video .vb:has(.vb-player.portrait) .vb-player{padding:28px 0!important;align-self:center;display:grid;place-items:center}
+}
+
+/* ===== v25: language gate (transform + opacity only) ===== */
+html.gated,html.gated body{overflow:hidden}
+#m3eLoader{display:grid;place-items:center;place-items:safe center;overflow-x:hidden;overflow-y:auto;padding:24px 0;isolation:isolate}
+#m3eLoader::before,#m3eLoader::after{content:'';position:absolute;z-index:-1;pointer-events:none;aspect-ratio:1;
+  -webkit-mask:var(--scallop) center/100% 100% no-repeat;mask:var(--scallop) center/100% 100% no-repeat}
+#m3eLoader::before{width:min(520px,110vw);left:-24%;top:-12%;background:var(--md-sys-color-primary-container);opacity:.38}
+#m3eLoader::after{width:min(420px,92vw);right:-22%;bottom:-10%;background:var(--md-sys-color-tertiary-container);opacity:.42}
+#m3eLoader .curly-loader-container,#m3eLoader .gt{grid-area:1/1}
+#m3eLoader .curly-loader-container{transition:opacity .4s ease,scale .6s var(--ease-expressive-emphasized)}
+#m3eLoader.gate .curly-loader-container{opacity:0;scale:.55;pointer-events:none}
+.gt{width:min(440px,calc(100vw - 32px));visibility:hidden;pointer-events:none;transition:opacity .45s ease,scale .6s var(--ease-expressive-emphasized)}
+#m3eLoader.gate .gt{visibility:visible;pointer-events:auto}
+#m3eLoader.exit{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s .12s var(--ease-expressive-standard),visibility 0s .8s}
+#m3eLoader.exit .gt{opacity:0;scale:.96}
+.gt-in{display:grid;gap:18px;justify-items:center}
+#m3eLoader.gate .gt-anim{animation:gtIn .85s var(--ease-expressive-emphasized) backwards;animation-delay:calc(var(--k,0) * 70ms + 90ms)}
+@keyframes gtIn{from{opacity:0;transform:translateY(26px) scale(.97)}}
+.gt-logo{position:relative;width:88px;height:88px;display:grid;place-items:center;color:var(--md-sys-color-on-primary-container)}
+.gt-sc{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-primary-container);animation:m3eCurlySpin 14s linear infinite;will-change:transform}
+.gt-logo .ic{position:relative;width:40px;height:40px}
+.gt-title{display:grid;justify-items:center;align-items:center;width:100%;height:2.7rem}
+.gt-title span{grid-area:1/1;opacity:0;white-space:nowrap;font-size:clamp(1.55rem,6.6vw,2rem);font-weight:800;letter-spacing:-.035em;line-height:1.2;color:var(--md-sys-color-on-surface)}
+.gt-title span.on{opacity:1}
+.gt-title span.in{animation:gtTi .75s var(--ease-expressive-emphasized) both}
+.gt-title span.out{animation:gtTo .4s var(--ease-expressive-standard) both}
+@keyframes gtTi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes gtTo{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+.gt-dots{display:flex;gap:6px;align-items:center;height:8px}
+.gt-dots i{display:block;width:8px;height:8px;border-radius:4px;background:var(--md-sys-color-outline-variant);transition:width .5s var(--ease-expressive-emphasized),background-color .3s ease}
+.gt-dots i.on{width:28px;background:var(--md-sys-color-primary)}
+.gt-list{display:grid;gap:4px;width:100%;margin-top:6px}
+.gt-opt{appearance:none;-webkit-appearance:none;border:0;margin:0;font:inherit;text-align:left;cursor:pointer;position:relative;overflow:hidden;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;min-height:88px;padding:14px 16px 14px 14px;
+  border-radius:14px;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface);
+  transition:border-radius .5s var(--ease-expressive-emphasized),background-color .35s ease,color .35s ease,scale .4s var(--ease-expressive-emphasized);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.gt-opt:first-child{border-radius:40px 40px 14px 14px}
+.gt-opt:last-child{border-radius:14px 14px 40px 40px}
+.gt-opt.sel{background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container)}
+@media(hover:hover) and (pointer:fine){
+  .gt-opt:hover{border-radius:28px;background:var(--md-sys-color-secondary-container)}
+  .gt-opt.sel:hover{background:var(--md-sys-color-primary-container)}
+  .gt-opt:hover .gt-go{border-radius:14px}
+}
+.gt-opt:active{scale:.98;border-radius:22px}
+.gt-opt:focus-visible{outline:3px solid var(--md-sys-color-primary);outline-offset:-3px}
+.gt-badge{position:relative;width:56px;height:56px;display:grid;place-items:center}
+.gt-badge svg{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-primary-container);transition:rotate .9s var(--ease-expressive-emphasized),fill .35s ease}
+.gt-badge b{position:relative;font-size:.86rem;font-weight:800;letter-spacing:.03em;color:var(--md-sys-color-on-primary-container);transition:color .35s ease}
+.gt-opt.sel .gt-badge svg{fill:var(--md-sys-color-primary)}
+.gt-opt.sel .gt-badge b{color:var(--md-sys-color-on-primary)}
+.gt-opt.hint .gt-badge svg{rotate:60deg}
+.gt-text{display:grid;gap:2px;min-width:0}
+.gt-name{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.gt-sub{font-size:.84rem;font-weight:600;line-height:1.3;opacity:.72}
+.gt-go{width:44px;height:44px;display:grid;place-items:center;border-radius:22px;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);
+  transition:border-radius .45s var(--ease-expressive-emphasized),background-color .35s ease,color .35s ease}
+.gt-go .ic{width:22px;height:22px}
+.gt-opt.sel .gt-go{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+.gt-opt.picked,.gt-opt.picked:hover{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);border-radius:28px;scale:.98}
+.gt-opt.picked .gt-badge svg{fill:var(--md-sys-color-on-primary);rotate:90deg}
+.gt-opt.picked .gt-badge b{color:var(--md-sys-color-primary)}
+.gt-opt.picked .gt-go{background:var(--md-sys-color-on-primary);color:var(--md-sys-color-primary);border-radius:14px}
+@media(prefers-reduced-motion:reduce){
+  #m3eLoader.gate .gt-anim,.gt-title span.in,.gt-title span.out,.gt-sc{animation:none!important}
+  .gt-opt,.gt-go,.gt-dots i,.gt-badge svg{transition-duration:.01s!important}
+}
+
+/* ===== v25: license bento (price card, two action tiles, multi-device tile) ===== */
+#pricing .lic{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+#pricing .lic .lic-price,#pricing .lic .lic-price:hover{
+  display:block;grid-column:1;padding:clamp(24px,5.5vw,40px);
+  background:var(--md-sys-color-surface-container)!important;border:0!important;box-shadow:none!important;
+  border-radius:40px 40px 12px 12px!important}
+#pricing .lic .lic-price::after{display:none}
+#pricing .lic .license-main{gap:4px}
+#pricing .lic .lic-eyebrow{margin-bottom:12px}
+#pricing .lic .lic-card-title{margin-bottom:6px}
+#pricing .lic .lic-card-copy{margin-bottom:18px}
+#pricing .lic .lic-price-summary{margin:0;max-width:none;background:var(--md-sys-color-primary-container);color:var(--md-sys-color-on-primary-container);border:0;border-radius:28px 28px 12px 12px;padding:18px 22px}
+#pricing .lic .lic-feature-list{gap:4px;padding:0}
+#pricing .lic .lic-feature-list li{padding:14px 16px;border:0;border-radius:12px;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
+#pricing .lic .lic-feature-list li:first-child,#pricing .lic .lic-feature-list li:nth-child(2){border-radius:12px}
+#pricing .lic .lic-feature-list li:last-child{border-radius:12px 12px 28px 28px}
+
+#pricing .lic .license-action-buttons{grid-column:1;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:none;gap:4px;margin:0;padding:0}
+#pricing .lic .license-action-buttons .license-choice{border:0;height:100%;border-radius:var(--rt,12px)!important}
+#pricing .lic .license-action-buttons .license-choice:hover{border-radius:28px!important}
+#pricing .lic .license-action-buttons .license-choice.is-pressed{border-radius:16px!important}
+
+#pricing .lic .multi{
+  grid-column:1;display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;margin:0;
+  padding:clamp(24px,5.5vw,34px);border:0!important;
+  border-radius:12px 12px 40px 40px!important}
+#pricing .lic .multi:hover{border-radius:12px 12px 40px 40px!important}
+#pricing .lic .multi-art{width:max-content}
+#pricing .lic .multi-text h3{font-size:1.3rem;margin:0 0 6px}
+#pricing .lic .multi-text p{font-size:.96rem;line-height:1.55;opacity:.86}
+#pricing .lic .multi .multi-btn{background:var(--md-sys-color-tertiary)!important;color:var(--md-sys-color-on-tertiary)!important;border:0!important}
+
+@media(min-width:480px) and (max-width:759px){
+  #pricing .lic .license-action-buttons{grid-template-columns:1fr 1fr}
+}
+@media(min-width:760px){
+  #pricing .lic{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+  #pricing .lic .lic-price,#pricing .lic .lic-price:hover{grid-column:1;border-radius:40px 12px 12px 12px!important}
+  #pricing .lic .license-action-buttons{grid-column:2;grid-template-rows:1fr 1fr;align-self:stretch}
+  #pricing .lic .license-action-buttons .license-choice-trial{--rt:12px 40px 12px 12px}
+  #pricing .lic .multi{grid-column:1 / -1;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:28px;padding:28px 32px}
+  #pricing .lic .multi .multi-btn{width:auto}
+}
 </style>
 </head>
 <body>
@@ -3959,17 +4053,18 @@ html.gated, html.gated body { overflow: hidden; }
     <svg class="curly-svg-loader" viewBox="0 0 100 100"><use href="#scallopShape" fill="var(--md-sys-color-primary-container)"/></svg>
     <div class="curly-loader-icon"><svg class="ic"><use href="#icAndroid"/></svg></div>
   </div>
-  <div class="gate-lang" id="gateLang" aria-hidden="true"><div class="gate-inner">
-    <div class="gate-head">
-      <div class="gate-title" aria-live="off"><span class="on" lang="en">Choose your language</span><span lang="uk">Оберіть мову</span><span lang="ru">Выберите язык</span></div>
-      <div class="gate-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+  <div class="gt" id="gateLang" aria-hidden="true">
+    <div class="gt-in">
+      <div class="gt-logo gt-anim" style="--k:0" aria-hidden="true"><svg class="gt-sc" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><svg class="ic"><use href="#icAndroid"/></svg></div>
+      <div class="gt-title gt-anim" style="--k:1" aria-live="off"><span lang="en">Choose your language</span><span lang="uk">Оберіть мову</span><span lang="ru">Выберите язык</span></div>
+      <div class="gt-dots gt-anim" style="--k:2" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="gt-list" role="radiogroup" aria-label="Language">
+        <button type="button" class="gt-opt gt-anim" style="--k:3" data-gate="en" role="radio"><span class="gt-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>EN</b></span><span class="gt-text"><span class="gt-name">English</span><span class="gt-sub">Continue in English</span></span><span class="gt-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
+        <button type="button" class="gt-opt gt-anim" style="--k:4" data-gate="uk" role="radio"><span class="gt-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>UA</b></span><span class="gt-text"><span class="gt-name">Українська</span><span class="gt-sub">Продовжити українською</span></span><span class="gt-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
+        <button type="button" class="gt-opt gt-anim" style="--k:5" data-gate="ru" role="radio"><span class="gt-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>RU</b></span><span class="gt-text"><span class="gt-name">Русский</span><span class="gt-sub">Продолжить на русском</span></span><span class="gt-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
+      </div>
     </div>
-    <div class="gate-list" role="radiogroup" aria-label="Language">
-      <button type="button" class="gate-opt" data-gate="en" role="radio"><span class="gate-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>EN</b></span><span class="gate-text"><span class="gate-name">English</span><span class="gate-sub">Continue in English</span></span><span class="gate-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
-      <button type="button" class="gate-opt" data-gate="uk" role="radio"><span class="gate-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>UA</b></span><span class="gate-text"><span class="gate-name">Українська</span><span class="gate-sub">Продовжити українською</span></span><span class="gate-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
-      <button type="button" class="gate-opt" data-gate="ru" role="radio"><span class="gate-badge"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>RU</b></span><span class="gate-text"><span class="gate-name">Русский</span><span class="gate-sub">Продолжить на русском</span></span><span class="gate-go"><svg class="ic"><use href="#icArrowRight"/></svg></span></button>
-    </div>
-  </div></div>
+  </div>
 </div>
 
 <div class="top-blur-scrim" aria-hidden="true"></div>
@@ -4224,20 +4319,20 @@ html.gated, html.gated body { overflow: hidden; }
             <li><span class="lic-feature-icon" aria-hidden="true"><svg class="ic"><use href="#icCheck"/></svg></span><span data-i="feature3">Direct support &amp; regular updates</span></li>
           </ul>
         </div>
-
-        <div class="license-action-buttons" aria-label="License options">
-          <a class="m3e-btn m3e-state license-choice license-choice-trial" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a free trial from the developer">
-            <span class="lc-ic" aria-hidden="true"><svg class="ic"><use href="#icRocket"/></svg></span>
-            <span class="lc-text"><b data-i="btnGetTrial">Get Trial</b><small data-i="btnGetTrialSub">Try it free first</small></span>
-            <svg class="ic lc-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
-          </a>
-          <a class="m3e-btn m3e-state license-choice license-choice-license" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a license from the developer">
-            <span class="lc-ic" aria-hidden="true"><svg class="ic"><use href="#icKey"/></svg></span>
-            <span class="lc-text"><b data-i="btnGetLicense">Get License</b><small data-i="btnGetLicenseSub">$10 / month per device</small></span>
-            <svg class="ic lc-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
-          </a>
-        </div>
       </article>
+
+      <div class="license-action-buttons" aria-label="License options">
+        <a class="m3e-btn m3e-state license-choice license-choice-trial" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a free trial from the developer">
+          <span class="lc-ic" aria-hidden="true"><svg class="ic"><use href="#icRocket"/></svg></span>
+          <span class="lc-text"><b data-i="btnGetTrial">Get Trial</b><small data-i="btnGetTrialSub">Try it free first</small></span>
+          <svg class="ic lc-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
+        </a>
+        <a class="m3e-btn m3e-state license-choice license-choice-license" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a license from the developer">
+          <span class="lc-ic" aria-hidden="true"><svg class="ic"><use href="#icKey"/></svg></span>
+          <span class="lc-text"><b data-i="btnGetLicense">Get License</b><small data-i="btnGetLicenseSub">$10 / month per device</small></span>
+          <svg class="ic lc-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
+        </a>
+      </div>
 
       <aside class="multi" aria-label="Multi-device licensing">
         <div class="multi-art" aria-hidden="true">
@@ -4250,7 +4345,7 @@ html.gated, html.gated body { overflow: hidden; }
           <h3 data-i="bulkTitle">Need More Than One Device?</h3>
           <p data-i="bulkSub">Ask the developer about multiple-device pricing and available discounts.</p>
         </div>
-        <span class="multi-badge" data-i="multiBadge">Multi-device enquiries welcome</span>
+        <a class="m3e-btn filled m3e-state multi-btn" data-tg target="_blank" rel="noopener noreferrer"><svg class="ic"><use href="#icDeveloper"/></svg><span data-i="btnBulk">Contact Developer</span></a>
       </aside>
     </div>
   </section>
@@ -5618,42 +5713,42 @@ function init() {
   Promise.all([ready, sleep(700)]).then(showLangGate);
 }
 
-/* LANGUAGE GATE: shown once the page has finished loading, then the site is revealed */
+/* LANGUAGE GATE: transform/opacity only, so it stays smooth on any device */
 let gateTimer = 0;
 function showLangGate() {
   const loader = $('#m3eLoader');
   if (!loader) return;
   const gate = $('#gateLang');
   gate.removeAttribute('aria-hidden');
-  const opts = [...gate.querySelectorAll('.gate-opt')];
+  const opts = [...gate.querySelectorAll('.gt-opt')];
+  const titles = [...gate.querySelectorAll('.gt-title span')];
+  const dots = [...gate.querySelectorAll('.gt-dots i')];
+  const codes = ['en', 'uk', 'ru'];
   opts.forEach(b => {
     const on = b.dataset.gate === lang;
     b.classList.toggle('sel', on);
     b.setAttribute('aria-checked', String(on));
   });
-  requestAnimationFrame(() => requestAnimationFrame(() => loader.classList.add('gate')));
-  const cur = gate.querySelector('.gate-opt.sel') || opts[0];
-  setTimeout(() => { try { cur.focus({ preventScroll: true }); } catch (_) {} }, 1000);
-
-  /* live-cycling title: English, Ukrainian, Russian... */
-  const titles = [...gate.querySelectorAll('.gate-title span')];
-  const dots = [...gate.querySelectorAll('.gate-dots i')];
-  const codes = ['en', 'uk', 'ru'];
   let ti = 0;
-  const show = n => {
-    titles.forEach((t, k) => { t.classList.toggle('on', k === n); t.classList.toggle('off', k !== n && k === ti); });
-    dots.forEach((d, k) => d.classList.toggle('on', k === n));
-    opts.forEach(o => o.classList.toggle('hint', o.dataset.gate === codes[n]));
-    ti = n;
-  };
+  titles[0].classList.add('on'); dots[0].classList.add('on');
+  opts.forEach(o => o.classList.toggle('hint', o.dataset.gate === codes[0]));
+  requestAnimationFrame(() => requestAnimationFrame(() => loader.classList.add('gate')));
+
   if (!reduceMotion) {
-    show(0);
-    gateTimer = setInterval(() => show((ti + 1) % titles.length), 2400);
+    gateTimer = setInterval(() => {
+      const n = (ti + 1) % titles.length, cur = titles[ti], nxt = titles[n];
+      cur.classList.remove('on', 'in'); cur.classList.add('out');
+      setTimeout(() => cur.classList.remove('out'), 420);
+      nxt.classList.remove('out'); nxt.classList.add('on', 'in');
+      dots.forEach((d, k) => d.classList.toggle('on', k === n));
+      opts.forEach(o => o.classList.toggle('hint', o.dataset.gate === codes[n]));
+      ti = n;
+    }, 2600);
   }
 
   let picked = false;
   gate.addEventListener('click', async e => {
-    const btn = e.target.closest('.gate-opt');
+    const btn = e.target.closest('.gt-opt');
     if (!btn || picked) return;
     picked = true;
     clearInterval(gateTimer);
@@ -5665,7 +5760,7 @@ function showLangGate() {
       markActiveLang();
       applyI18n();
     }
-    await sleep(reduceMotion ? 0 : 380);
+    await sleep(reduceMotion ? 0 : 420);
     revealSite(loader);
   });
 }
