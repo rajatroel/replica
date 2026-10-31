@@ -3913,6 +3913,44 @@ html.gated,html.gated body{overflow:hidden}
   #video .vb:has(.vb-player.portrait) .vb-help{grid-area:auto;grid-column:1;grid-row:3;align-content:center;padding:30px 36px;border-radius:12px 12px 40px 40px!important}
   #video .vb:has(.vb-player.portrait) .vb-player{grid-area:auto;grid-column:2;grid-row:1 / 5;align-self:center;padding:24px 0!important}
 }
+
+/* ===== v27: gate centred on all sides, true circles; unified video tiles ===== */
+#m3eLoader{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;padding:0;overflow:hidden}
+#m3eLoader .curly-loader-container,#m3eLoader .gt{grid-area:auto}
+#m3eLoader .curly-loader-container{position:absolute;left:50%;top:50%;translate:-50% -50%}
+#m3eLoader .gt{position:absolute;left:50%;top:50%;translate:-50% -50%;width:min(520px,calc(100vw - 32px))}
+.gt-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(20px,4vh,36px);text-align:center;width:100%}
+.gt-hello{height:1.2em;margin:0}
+.gt-cap{margin:0;height:1.7em}
+.gt-picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));justify-items:center;align-items:start;gap:clamp(8px,3vw,20px);width:100%;max-width:440px;margin:0 auto}
+.gt-pick{width:100%;max-width:128px;justify-self:center}
+.gt-shape{width:100%;aspect-ratio:1;border-radius:0;background:none}
+.gt-shape svg{display:block}
+.gt-lab{text-align:center;width:100%}
+@keyframes gtIn{from{opacity:0;transform:translateY(20px)}}
+
+/* video: both tiles identical in size, shape, colour and layout (matches the video template) */
+#video .vb .vb-tile,#video .vb .vb-tile:hover{
+  display:flex!important;flex-direction:column;justify-content:space-between;align-content:normal;gap:18px;
+  padding:clamp(24px,5vw,34px)!important;border-radius:40px!important;border:0!important;box-shadow:none!important;
+  background:var(--md-sys-color-primary-container)!important;color:var(--md-sys-color-on-primary-container)!important}
+#video .vb .vb-tile .vb-head{display:flex;align-items:center;gap:16px}
+#video .vb .vb-tile .guide-badge{width:56px;height:56px;flex:none}
+#video .vb .vb-tile .badge-shape{fill:var(--md-sys-color-primary);stroke:none}
+#video .vb .vb-tile .badge-play{position:relative;width:26px;height:26px;color:var(--md-sys-color-on-primary)}
+#video .vb .vb-tile h3{margin:0;font-size:clamp(1.25rem,3.4vw,1.5rem);font-weight:800;letter-spacing:-.03em;line-height:1.2;color:var(--md-sys-color-on-primary-container)!important}
+#video .vb .vb-tile p{margin:0;font-size:1rem;line-height:1.6;color:var(--md-sys-color-on-primary-container)!important;opacity:.86!important}
+#video .vb .vb-tile .vb-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-height:56px}
+#video .vb .vb-tile .vb-tag{background:color-mix(in oklch,var(--md-sys-color-primary) 18%,transparent)!important;color:var(--md-sys-color-on-primary-container)!important}
+#video .vb .vb-tile .help-btn{width:auto;margin:0;background:var(--md-sys-color-primary)!important;color:var(--md-sys-color-on-primary)!important}
+#video .vb{gap:12px}
+@media(max-width:559px){#video .vb .vb-tile .help-btn{width:100%}}
+@media(min-width:760px){
+  #video .vb:has(.vb-player.portrait){grid-template-columns:minmax(0,1fr) min(300px,38vw);grid-template-rows:1fr 1fr;gap:12px 44px;align-items:stretch}
+  #video .vb:has(.vb-player.portrait) .vb-info{grid-column:1;grid-row:1}
+  #video .vb:has(.vb-player.portrait) .vb-help{grid-column:1;grid-row:2}
+  #video .vb:has(.vb-player.portrait) .vb-player{grid-column:2;grid-row:1 / 3;align-self:center}
+}
 </style>
 </head>
 <body>
@@ -4067,8 +4105,8 @@ html.gated,html.gated body{overflow:hidden}
       <div class="gt-cyc gt-cap gt-anim" style="--k:1" aria-live="off"><span lang="en">Choose your language</span><span lang="uk">Оберіть мову</span><span lang="ru">Выберите язык</span></div>
       <div class="gt-picks" role="radiogroup" aria-label="Language">
         <button type="button" class="gt-pick gt-anim" style="--k:2" data-gate="en" role="radio" aria-label="English"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>EN</b></span><span class="gt-lab">English</span></button>
-        <button type="button" class="gt-pick gt-anim" style="--k:3" data-gate="uk" role="radio" aria-label="Українська"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#shapeUk"/></svg><b>UA</b></span><span class="gt-lab">Українська</span></button>
-        <button type="button" class="gt-pick gt-anim" style="--k:4" data-gate="ru" role="radio" aria-label="Русский"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#shapeRu"/></svg><b>RU</b></span><span class="gt-lab">Русский</span></button>
+        <button type="button" class="gt-pick gt-anim" style="--k:3" data-gate="uk" role="radio" aria-label="Українська"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>UA</b></span><span class="gt-lab">Українська</span></button>
+        <button type="button" class="gt-pick gt-anim" style="--k:4" data-gate="ru" role="radio" aria-label="Русский"><span class="gt-shape"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>RU</b></span><span class="gt-lab">Русский</span></button>
       </div>
     </div>
   </div>
@@ -4194,33 +4232,38 @@ html.gated,html.gated body{overflow:hidden}
     </div>
 
     <div class="vb">
-      <article class="vb-info">
-        <span class="guide-badge play-badge" aria-hidden="true">
-          <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-          <svg class="ic badge-play"><use href="#icPlay"/></svg>
-        </span>
-        <div class="vb-text">
+      <article class="vb-info vb-tile">
+        <div class="vb-head">
+          <span class="guide-badge play-badge" aria-hidden="true">
+            <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+            <svg class="ic badge-play"><use href="#icPlay"/></svg>
+          </span>
           <h3 data-i="videoCardTitle">Video tutorial</h3>
-          <p data-i="videoCardSub">Watch steps 7–10 on screen, from setting up Replica and Termux to pairing and logging in.</p>
         </div>
-        <div class="vb-tags" aria-hidden="true">
+        <p data-i="videoCardSub">Watch steps 7–10 on screen, from setting up Replica and Termux to pairing and logging in.</p>
+        <div class="vb-foot vb-tags" aria-hidden="true">
           <span class="vb-tag">Replica</span><span class="vb-tag">Termux</span><span class="vb-tag" data-i="vbTagA">Pairing</span><span class="vb-tag" data-i="vbTagB">Login</span>
         </div>
-        </article>
+      </article>
 
       <div class="vb-player">
         <div class="vb-stage"><div class="video-frame" id="videoFrame"></div></div>
       </div>
 
-      <article class="vb-help">
-        <div class="vb-help-top">
-          <span class="sym-shape-frame"><svg class="ic"><use href="#icTune"/></svg></span>
+      <article class="vb-help vb-tile">
+        <div class="vb-head">
+          <span class="guide-badge play-badge" aria-hidden="true">
+            <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+            <svg class="ic badge-play"><use href="#icTune"/></svg>
+          </span>
           <h3 data-i="bug1Title">Problem during setup</h3>
         </div>
         <p data-i="bug1Desc">If you encounter any problem while setting up the automation, report it directly to the developer with a short description.</p>
-        <a class="m3e-btn m3e-state help-btn" data-tg target="_blank" rel="noopener noreferrer">
-          <svg class="ic"><use href="#icDeveloper"/></svg><span data-i="btnBulk">Contact Developer</span>
-        </a>
+        <div class="vb-foot">
+          <a class="m3e-btn m3e-state help-btn" data-tg target="_blank" rel="noopener noreferrer">
+            <svg class="ic"><use href="#icDeveloper"/></svg><span data-i="btnBulk">Contact Developer</span>
+          </a>
+        </div>
       </article>
     </div>
   </section>
