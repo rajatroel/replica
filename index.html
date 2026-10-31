@@ -3617,28 +3617,10 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   .phone-stage{padding:24px 0 36px}
 }
 
-/* ===== v12: no sideways overflow (fixes zoomed load) + responsive top bar ===== */
-html{overflow-x:clip;max-width:100%}
-body{overflow-x:clip;max-width:100%;min-width:0}
-.wrapper,main,section,.hero-box{max-width:100%;min-width:0}
-
-header.m3e-app-bar{padding:0 clamp(10px,3.5vw,24px);box-sizing:border-box}
-.nav-anchor{width:100%;max-width:min(580px,100%)}
-.m3e-capsule-nav{box-sizing:border-box;width:100%;min-width:0;gap:8px;height:clamp(52px,14vw,60px);padding:5px 8px 5px 12px}
-.brand-deck{min-width:0;flex:0 1 auto;gap:clamp(8px,2.6vw,12px)}
-.brand-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(1.05rem,4.6vw,1.25rem)}
-.nav-curly-badge{width:clamp(34px,10vw,40px);height:clamp(34px,10vw,40px)}
-.nav-curly-bot{width:clamp(20px,6vw,24px);height:clamp(20px,6vw,24px)}
-.actions-cluster{flex:none;gap:clamp(3px,1.4vw,6px)}
-.lang-seg{height:clamp(36px,10.4vw,40px)}
-.lang-seg-btn{width:clamp(28px,8.4vw,32px);font-size:clamp(.66rem,2.7vw,.74rem)}
-.lang-seg-ind{width:clamp(28px,8.4vw,32px)}
-.m3e-action-btn{width:clamp(36px,10.4vw,40px);height:clamp(36px,10.4vw,40px)}
-@media(max-width:340px){.brand-label{display:none}}
-@media(min-width:900px){
-  .nav-anchor{max-width:640px}
-  .m3e-capsule-nav{height:64px;padding:6px 10px 6px 16px}
-}
+/* ===== v12: top bar matches page content width (nothing else changed) ===== */
+html,body{overflow-x:clip}
+header.m3e-app-bar{padding:0 20px;box-sizing:border-box}
+.nav-anchor{max-width:820px}
 </style>
 </head>
 <body>
