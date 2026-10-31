@@ -3424,6 +3424,19 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 .vc-knob{box-shadow:0 0 0 4px color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 85%,transparent),var(--elevation-1)}
 .vc-spin{border-color:color-mix(in oklch,var(--md-sys-color-on-surface) 14%,transparent);border-top-color:var(--vc-acc)}
 .vc-mini{box-shadow:0 0 0 .5px color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 60%,transparent)}
+
+/* ===== v13: faster curly spin on play, lighter fade ===== */
+.vq-spin{display:none!important}
+.is-loading .vq-btn .ic{opacity:1}
+.is-loading .vq-shape{animation:vqRamp .7s cubic-bezier(.55,.09,.68,.53) 1,vqFast .9s linear .7s infinite}
+@keyframes vqRamp{from{rotate:var(--a0,0deg)}to{rotate:calc(var(--a0,0deg) + 140deg)}}
+@keyframes vqFast{from{rotate:calc(var(--a0,0deg) + 140deg)}to{rotate:calc(var(--a0,0deg) + 500deg)}}
+.is-loading .vq-hero::before{animation-duration:1.2s}
+.vc-scrim{background:linear-gradient(to bottom,
+  color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 82%,transparent) 0,
+  transparent 22%,transparent 62%,
+  color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 90%,transparent) 100%)}
+@media(prefers-reduced-motion:reduce){.is-loading .vq-shape{animation:none}}
 </style>
 </head>
 <body>
@@ -4656,6 +4669,11 @@ const VC_ICONS = {
 function playVideo(frame) {
   if (frame.dataset.playing === '1') return;
   frame.dataset.playing = '1';
+  const shp = frame.querySelector('.vq-shape');
+  if (shp) {   // continue from the current angle so the speed-up has no jump
+    const a = parseFloat(getComputedStyle(shp).rotate);
+    shp.style.setProperty('--a0', (isNaN(a) ? 0 : a) + 'deg');
+  }
   frame.classList.add('vy', 'is-loading');
   const host = document.createElement('div');
   const ui = document.createElement('div');
@@ -4729,7 +4747,9 @@ function mountPlayer(frame, host, ui) {
   if (!bw || !bh) { bw = 872; bh = 1920; }
   if (bh < 1200) { bw = bw * 1920 / bh; bh = 1920; }
   const ifr = vyPlayer.getIframe();
-  ifr.style.width = bw + 'px'; ifr.style.height = bh + 'px';
+  const pad = Math.round(bh * 0.085);
+  ifr.style.width = bw + 'px'; ifr.style.height = (bh + pad * 2) + 'px';
+  ifr.style.clipPath = `inset(${pad}px 0)`;
   const fit = () => {
     const w = frame.clientWidth, h = frame.clientHeight;
     if (!w || !h) return;
@@ -4801,7 +4821,7 @@ function renderVideo(dict) {
       <span class="vq-bg" aria-hidden="true"><i class="vq-blob b1"></i><i class="vq-blob b2"></i><i class="vq-blob b3"></i></span>
       <span class="vq-hero" aria-hidden="true">
         <svg class="vq-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-        <span class="vq-btn"><svg class="ic"><use href="#icPlay"/></svg><i class="vq-spin"></i></span>
+        <span class="vq-btn"><svg class="ic"><use href="#icPlay"/></svg></span>
       </span>
       <span class="vq-copy">
         <span class="vq-title">${dict.videoCardTitle}</span>
