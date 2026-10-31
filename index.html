@@ -3982,6 +3982,16 @@ html.gated,html.gated body{overflow:hidden}
 @media(hover:hover) and (pointer:fine){
   #video .vb .vb-info.vb-tile:hover,#video .vb .vb-help.vb-tile:hover,#video .vb .vb-player.portrait:hover{border-radius:28px!important}
 }
+
+/* ===== v29: seam-aligned corners: only the outer corners of the whole bento are large ===== */
+#video .vb:has(.vb-player.portrait) .vb-info.vb-tile,#video .vb:has(.vb-player.portrait) .vb-info.vb-tile:hover,#video .vb:has(.vb-player.portrait) .vb-info.vb-tile:active{border-radius:40px 40px 12px 12px!important}
+#video .vb:has(.vb-player.portrait) .vb-player.portrait,#video .vb:has(.vb-player.portrait) .vb-player.portrait:hover,#video .vb:has(.vb-player.portrait) .vb-player.portrait:active{border-radius:12px!important}
+#video .vb:has(.vb-player.portrait) .vb-help.vb-tile,#video .vb:has(.vb-player.portrait) .vb-help.vb-tile:hover,#video .vb:has(.vb-player.portrait) .vb-help.vb-tile:active{border-radius:12px 12px 40px 40px!important}
+@media(min-width:760px){
+#video .vb:has(.vb-player.portrait) .vb-player.portrait,#video .vb:has(.vb-player.portrait) .vb-player.portrait:hover,#video .vb:has(.vb-player.portrait) .vb-player.portrait:active{border-radius:40px 12px 12px 40px!important}
+#video .vb:has(.vb-player.portrait) .vb-info.vb-tile,#video .vb:has(.vb-player.portrait) .vb-info.vb-tile:hover,#video .vb:has(.vb-player.portrait) .vb-info.vb-tile:active{border-radius:12px 40px 12px 12px!important}
+#video .vb:has(.vb-player.portrait) .vb-help.vb-tile,#video .vb:has(.vb-player.portrait) .vb-help.vb-tile:hover,#video .vb:has(.vb-player.portrait) .vb-help.vb-tile:active{border-radius:12px 12px 40px 12px!important}
+}
 </style>
 </head>
 <body>
