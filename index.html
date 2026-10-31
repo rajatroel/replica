@@ -3992,6 +3992,65 @@ html.gated,html.gated body{overflow:hidden}
 #video .vb:has(.vb-player.portrait) .vb-info.vb-tile,#video .vb:has(.vb-player.portrait) .vb-info.vb-tile:hover,#video .vb:has(.vb-player.portrait) .vb-info.vb-tile:active{border-radius:12px 40px 12px 12px!important}
 #video .vb:has(.vb-player.portrait) .vb-help.vb-tile,#video .vb:has(.vb-player.portrait) .vb-help.vb-tile:hover,#video .vb:has(.vb-player.portrait) .vb-help.vb-tile:active{border-radius:12px 12px 40px 12px!important}
 }
+
+/* ===== v30: FAQ (connected MD3E accordion bento) ===== */
+#faq .faq-list{display:grid;gap:4px}
+.faq-list .faq-item.m3e-expandable,.faq-list .faq-item.m3e-expandable:hover,.faq-list .faq-item.m3e-expandable:has(.expandable-trigger.is-pressed){
+  background:var(--md-sys-color-surface-container-high)!important;border:0!important;box-shadow:none!important;
+  border-radius:12px!important;overflow:hidden;transition:background-color .35s ease!important}
+.faq-list .faq-item:first-child.m3e-expandable,.faq-list .faq-item:first-child.m3e-expandable:hover,.faq-list .faq-item:first-child.m3e-expandable:has(.expandable-trigger.is-pressed){border-radius:40px 40px 12px 12px!important}
+.faq-list .faq-item:last-child.m3e-expandable,.faq-list .faq-item:last-child.m3e-expandable:hover,.faq-list .faq-item:last-child.m3e-expandable:has(.expandable-trigger.is-pressed){border-radius:12px 12px 40px 40px!important}
+.faq-list .faq-item.m3e-expandable.open{background:var(--md-sys-color-primary-container)!important;color:var(--md-sys-color-on-primary-container)}
+.faq-item .faq-head{display:flex;align-items:center;gap:16px;width:100%;padding:16px 18px;text-align:left;background:none;border:0;color:inherit;font:inherit;cursor:pointer}
+.faq-item .guide-badge{width:52px;height:52px;flex:none}
+.faq-item .badge-shape{fill:var(--md-sys-color-secondary-container);stroke:none;transition:fill .35s,rotate .9s var(--spring-default-spatial)}
+.faq-item .faq-ic{position:relative;width:24px;height:24px;color:var(--md-sys-color-on-secondary-container);transition:color .3s}
+.faq-item.open .badge-shape{fill:var(--md-sys-color-primary);rotate:30deg}
+.faq-item.open .faq-ic{color:var(--md-sys-color-on-primary)}
+.faq-item .faq-q{flex:1;min-width:0;margin:0;font-size:1.05rem;font-weight:800;letter-spacing:-.02em;line-height:1.3;color:var(--md-sys-color-on-surface)}
+.faq-item.open .faq-q{color:var(--md-sys-color-on-primary-container)}
+.faq-item .expand-chevron{width:44px;height:44px;border-radius:50%;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);flex:none}
+.faq-item.open .expand-chevron{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+.faq-item .faq-a{margin:0;padding:0 22px 22px 86px;font-size:.98rem;line-height:1.65;color:var(--md-sys-color-on-primary-container);opacity:.9}
+.faq-item .faq-a b{font-weight:800}
+@media(max-width:560px){.faq-item .faq-a{padding:0 20px 20px 20px}.faq-item .faq-head{padding:14px 14px 14px 14px;gap:12px}.faq-item .faq-q{font-size:1rem}}
+
+/* ===== v31: FAQ shown as step tiles (same as Usage), ordered by what users expect first ===== */
+#faq .faq-steps{display:grid;gap:4px;grid-auto-rows:auto;align-content:start}
+#faq .faq-steps .us-step{align-items:flex-start;border-radius:12px!important;background:var(--md-sys-color-surface-container)!important}
+#faq .faq-steps .us-step:first-child{border-radius:40px 40px 12px 12px!important}
+#faq .faq-steps .us-step:last-child{border-radius:12px 12px 40px 40px!important}
+@media(hover:hover) and (pointer:fine){#faq .faq-steps .us-step:hover{border-radius:28px!important}}
+@media(min-width:860px){
+  #faq .faq-steps{grid-template-columns:1fr 1fr}
+  #faq .faq-steps .us-step:nth-child(1){border-radius:40px 12px 12px 12px!important}
+  #faq .faq-steps .us-step:nth-child(2){border-radius:12px 40px 12px 12px!important}
+  #faq .faq-steps .us-step:nth-child(5){border-radius:12px 12px 12px 40px!important}
+  #faq .faq-steps .us-step:nth-child(6){border-radius:12px 12px 40px 12px!important}
+  #faq .faq-steps .us-step:nth-child(3),#faq .faq-steps .us-step:nth-child(4){border-radius:12px!important}
+}
+
+/* ===== v32: FAQ = same expandable step tiles as the Setup Guide ===== */
+#faq .faq-list{display:grid;gap:8px}
+#faq .faq-list::before{display:none}
+#faq .faq-item.m3e-expandable,#faq .faq-item.m3e-expandable:hover,#faq .faq-item.m3e-expandable:has(.expandable-trigger.is-pressed){
+  border:1px solid var(--md-sys-color-outline-variant)!important;border-radius:32px!important;margin:0!important;overflow:hidden;
+  background:var(--md-sys-color-surface-container-low)!important;box-shadow:none!important;
+  transition:border-radius .45s var(--spring-fast-spatial),background-color .3s,border-color .3s!important}
+#faq .faq-item.m3e-expandable.open{background:var(--md-sys-color-surface-container)!important;border-color:var(--md-sys-color-primary)!important}
+@media(hover:hover) and (pointer:fine){#faq .faq-item.m3e-expandable:not(.open):hover{border-radius:24px!important;background:var(--md-sys-color-surface-container)!important}}
+#faq .faq-head{display:flex;align-items:center;gap:16px;width:100%;padding:16px 18px;text-align:left;background:none;border:0;color:inherit;font:inherit;cursor:pointer}
+#faq .faq-badge{position:relative;flex:none;width:56px;height:56px;display:grid;place-items:center}
+#faq .faq-badge .badge-shape{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-secondary-container);stroke:none;transition:fill .35s,rotate .9s var(--spring-default-spatial)}
+#faq .faq-num{position:relative;font-size:1.4rem;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--md-sys-color-on-secondary-container);transition:color .3s}
+#faq .faq-item.open .faq-badge .badge-shape{fill:var(--md-sys-color-primary);rotate:30deg}
+#faq .faq-item.open .faq-num{color:var(--md-sys-color-on-primary)}
+#faq .faq-q{flex:1;min-width:0;margin:0;font-size:1.08rem;font-weight:800;letter-spacing:-.025em;line-height:1.3;color:var(--md-sys-color-on-surface)}
+#faq .expand-chevron{width:44px;height:44px;border-radius:50%;flex:none;background:var(--md-sys-color-surface-container-highest);color:var(--md-sys-color-on-surface);display:grid;place-items:center}
+#faq .faq-item.open .expand-chevron{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+#faq .faq-a{margin:0;padding:4px 22px 22px 90px;font-size:.97rem;line-height:1.65;color:var(--md-sys-color-on-surface-variant)}
+#faq .faq-a b{color:var(--md-sys-color-on-surface);font-weight:800}
+@media(max-width:560px){#faq .faq-a{padding:4px 20px 20px 20px}#faq .faq-head{padding:14px;gap:12px}#faq .faq-q{font-size:1rem}}
 </style>
 </head>
 <body>
@@ -4441,6 +4500,16 @@ html.gated,html.gated body{overflow:hidden}
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="step-section-header">
+      <span class="step-label" data-i="faqLbl">FAQ</span>
+      <h2 class="step-headline" data-i="faqHead">Frequently asked questions</h2>
+      <p class="step-summary" data-i="faqSub">Quick answers to the things people ask most.</p>
+    </div>
+    <div class="guide-list faq-list" id="faqList"></div>
+  </section>
+
   <!-- SUPPORT -->
   <section id="bugs">
     <div class="step-section-header">
@@ -4503,6 +4572,7 @@ html.gated,html.gated body{overflow:hidden}
           <a href="#video" class="m3e-chip m3e-state"><svg class="ic"><use href="#icPlayCircle"/></svg><span data-i="videoLbl">Video</span></a>
           <a href="#usage" class="m3e-chip m3e-state"><svg class="ic"><use href="#icTune"/></svg><span data-i="useLbl">Usage</span></a>
           <a href="#pricing" class="m3e-chip m3e-state"><svg class="ic"><use href="#icKey"/></svg><span data-i="lblLicense">License</span></a>
+          <a href="#faq" class="m3e-chip m3e-state"><svg class="ic"><use href="#icHelp"/></svg><span data-i="faqLbl">FAQ</span></a>
           <a href="#bugs" class="m3e-chip m3e-state"><svg class="ic"><use href="#icBug"/></svg><span data-i="lblSupport">Support</span></a>
         </div>
       </nav>
@@ -4687,7 +4757,9 @@ const I18N = {
     ftTelegramSub: "Developer contact",
     ftProjectSub: "Project and releases",
     ftNavTitle: "Explore",
-    ftReleaseLabel: "APK release v1.0"
+    ftReleaseLabel: "APK release v1.0",
+    faqLbl: "FAQ", faqHead: "Frequently asked questions", faqSub: "Quick answers to the things people ask most.",
+    faqItems: [["Why choose Replica?", "The automation is well tested and developed, and users are satisfied with it. It is designed to save your time, so you can spend it on other things while earning a side income. It does everything like a human would, replacing your manual work while still behaving like you."], ["Is it safe to use?", "Yes. Unlike other automation tools, it never asks for your Instagram password or login details. It does most things on your device to keep you safe and protected."], ["How do I update my license after purchasing, or switch from Trial to License?", "Open the Replica app, go to the <b>Credentials</b> tab, enter your new <b>License Key</b> in place of the trial key and tap <b>Save</b>. If it does not activate, contact the developer."], ["How do I add or remove a VIP account?", "Use the Replica app. Open the <b>Accounts</b> tab and add or remove accounts from there, then tap <b>Save</b>."], ["Can I use my phone while automation is running?", "No. You cannot use your phone for other work while automation is running. When it is not running, you can use your phone normally."], ["Why does verification fail sometimes?", "The AI cannot be 100% correct all the time, and verification is also kept cautious to maintain stability, so it sometimes fails. This is normal and you are safe."]]
   },
   uk: {
     monetPaletteTitle: "Палітра кольорів",
@@ -4838,7 +4910,9 @@ const I18N = {
     ftTelegramSub: "Зв’язок із розробником",
     ftProjectSub: "Проєкт і релізи",
     ftNavTitle: "Навігація",
-    ftReleaseLabel: "Реліз APK v1.0"
+    ftReleaseLabel: "Реліз APK v1.0",
+    faqLbl: "FAQ", faqHead: "Часті запитання", faqSub: "Швидкі відповіді на те, про що питають найчастіше.",
+    faqItems: [["Чому обрати Replica?", "Автоматизація добре протестована та розроблена, а користувачі нею задоволені. Вона створена, щоб економити ваш час, тож ви можете займатися іншим і заробляти додатковий дохід. Вона робить усе так, як людина, замінює вашу ручну роботу й при цьому поводиться як ви."], ["Чи безпечно це використовувати?", "Так. На відміну від інших автоматизацій, вона ніколи не просить пароль чи дані для входу в Instagram. Більшість дій виконується на вашому пристрої для вашої безпеки та захисту."], ["Як оновити ліцензію після купівлі або перейти з пробного періоду на ліцензію?", "Відкрийте додаток Replica, перейдіть на вкладку <b>Credentials</b>, введіть новий <b>License Key</b> замість пробного ключа та натисніть <b>Save</b>. Якщо ліцензія не активується, напишіть розробнику."], ["Як додати або видалити VIP-акаунт?", "Скористайтеся додатком Replica. Відкрийте вкладку <b>Accounts</b>, додайте або видаліть акаунти там і натисніть <b>Save</b>."], ["Чи можна користуватися телефоном під час роботи автоматизації?", "Ні. Поки автоматизація працює, телефоном для інших справ користуватися не можна. Коли вона не працює, телефоном можна користуватися як завжди."], ["Чому верифікація іноді не проходить?", "ШІ не може бути правим на 100% щоразу, а верифікація також навмисно обережна для стабільності, тому іноді вона не проходить. Це нормально, і ви в безпеці."]]
   },
   ru: {
     monetPaletteTitle: "Палитра цветов",
@@ -4989,7 +5063,9 @@ const I18N = {
     ftTelegramSub: "Связь с разработчиком",
     ftProjectSub: "Проект и релизы",
     ftNavTitle: "Разделы",
-    ftReleaseLabel: "Релиз APK v1.0"
+    ftReleaseLabel: "Релиз APK v1.0",
+    faqLbl: "FAQ", faqHead: "Частые вопросы", faqSub: "Быстрые ответы на то, о чём спрашивают чаще всего.",
+    faqItems: [["Почему стоит выбрать Replica?", "Автоматизация хорошо протестирована и разработана, а пользователи ею довольны. Она создана, чтобы экономить ваше время, так что вы можете заниматься другим и получать дополнительный доход. Она делает всё как человек, заменяет вашу ручную работу и при этом ведёт себя как вы."], ["Это безопасно?", "Да. В отличие от других автоматизаций, она никогда не просит пароль или данные для входа в Instagram. Большинство действий выполняется на вашем устройстве для вашей безопасности и защиты."], ["Как обновить лицензию после покупки или перейти с пробного периода на лицензию?", "Откройте приложение Replica, перейдите на вкладку <b>Credentials</b>, введите новый <b>License Key</b> вместо пробного ключа и нажмите <b>Save</b>. Если лицензия не активируется, напишите разработчику."], ["Как добавить или удалить VIP-аккаунт?", "Используйте приложение Replica. Откройте вкладку <b>Accounts</b>, добавьте или удалите аккаунты там и нажмите <b>Save</b>."], ["Можно ли пользоваться телефоном во время работы автоматизации?", "Нет. Пока автоматизация работает, пользоваться телефоном для других дел нельзя. Когда она не работает, телефоном можно пользоваться как обычно."], ["Почему верификация иногда не проходит?", "ИИ не может быть прав на 100% каждый раз, а верификация также намеренно осторожна ради стабильности, поэтому иногда она не проходит. Это нормально, и вы в безопасности."]]
   }
 };
 
@@ -5143,6 +5219,7 @@ function applyI18n() {
     if (dict[k] !== undefined) el.innerHTML = dict[k].replace('{y}', year);
   });
   renderGuide(dict);
+  renderFaq(dict);
   renderVideo(dict);
 }
 
@@ -5163,6 +5240,40 @@ function animatePanel(wrap, open) {
     { duration: open ? 520 : 400, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
   );
   return anim.finished.catch(() => {});
+}
+
+
+/* ===== FAQ ===== */
+let openFaq = -1;
+function renderFaq(dict) {
+  const list = $('#faqList');
+  if (!list || !dict.faqItems) return;
+  list.innerHTML = dict.faqItems.map((it, i) => `
+    <article class="m3e-expandable faq-item${i === openFaq ? ' open' : ''}" data-faq="${i}">
+      <button class="expandable-trigger faq-head" type="button" aria-expanded="${i === openFaq}" aria-controls="fa-${i}">
+        <span class="faq-badge" aria-hidden="true">
+          <svg class="badge-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+          <span class="faq-num">${i + 1}</span>
+        </span>
+        <h3 class="faq-q">${it[0]}</h3>
+        <span class="expand-chevron"><svg class="ic"><use href="#icChevron"/></svg></span>
+      </button>
+      <div class="expandable-panel" id="fa-${i}"><div class="expandable-content"><p class="faq-a">${it[1]}</p></div></div>
+    </article>`).join('');
+}
+function setupFaq() {
+  $('#faqList').addEventListener('click', e => {
+    const head = e.target.closest('.faq-head');
+    if (!head) return;
+    const i = +head.closest('.faq-item').dataset.faq;
+    const willOpen = openFaq !== i;
+    openFaq = willOpen ? i : -1;
+    haptic(willOpen ? 'open' : 'close');
+    $$('#faqList .faq-item').forEach((el, k) => {
+      const on = k === openFaq;
+      if (on !== el.classList.contains('open')) animatePanel(el, on);
+    });
+  });
 }
 
 /* ===== SETUP GUIDE ===== */
@@ -5792,6 +5903,7 @@ function init() {
     Object.values(FONT_SAMPLE).forEach(t => ['400', '600', '800'].forEach(w => document.fonts.load(`${w} 1em "Plus Jakarta Sans"`, t).catch(() => {})));
   }
   setupGuide();
+  setupFaq();
   applyHue(hue);
   applyMode(mode);
   applyI18n();
