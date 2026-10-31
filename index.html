@@ -3768,6 +3768,25 @@ html.gated, html.gated body { overflow: hidden; }
   transition:border-radius .5s var(--spring-default-spatial),outline-color .3s ease,outline-offset .5s var(--spring-default-spatial)!important}
 #swatchGrid .monet-swatch.active{border-radius:50%!important;outline-color:var(--md-sys-color-primary)!important;outline-offset:3px!important}
 #swatchGrid .monet-swatch.is-pressed{border-radius:10px!important}
+
+/* ===== v22: slim bezel, Realme P3 Ultra corners, clean wrap (no YouTube UI) ===== */
+#video .vb .vb-player.portrait{--sw:min(300px,78vw);--b:3px;--fr:calc((var(--sw) - var(--b) * 2) * .108)}
+#video .vb .vb-player.portrait .vb-stage{
+  max-width:var(--sw);padding:var(--b);border-radius:calc(var(--fr) + var(--b));
+  background:linear-gradient(160deg,oklch(.4 .01 var(--h)),oklch(.2 .008 var(--h)) 50%,oklch(.32 .01 var(--h)));
+  box-shadow:0 0 0 1px oklch(.08 .005 var(--h)),
+    0 44px 70px -30px color-mix(in oklch,var(--md-sys-color-primary) 70%,black),0 14px 28px -12px rgba(0,0,0,.5)}
+#video .vb .vb-player.portrait .vb-stage::after{right:-3px;width:2.5px;top:23%;height:11%}
+#video .vb .vb-player.portrait .vb-stage .video-frame{
+  border-radius:var(--fr);overflow:hidden;isolation:isolate;
+  clip-path:inset(0 round var(--fr));-webkit-clip-path:inset(0 round var(--fr));
+  transform:translateZ(0);background:var(--md-sys-color-secondary-container)}
+#video .vb .vb-player.portrait .vb-stage .video-frame[data-playing]{background:#000}
+#video .video-frame.vy iframe{border-radius:0!important;outline:0;filter:none}
+#video .video-frame.vy:fullscreen,#video .video-frame.vy:-webkit-full-screen{clip-path:none;-webkit-clip-path:none;border-radius:0}
+#video .vp,#video .vq{border-radius:inherit}
+#video .vc-top{top:calc(var(--fr) * .55);right:calc(var(--fr) * .55)}
+#video .vc-bar{left:calc(var(--fr) * .7);right:calc(var(--fr) * .7);bottom:calc(var(--fr) * .75)}
 </style>
 </head>
 <body>
@@ -5300,7 +5319,7 @@ function mountPlayer(frame, host, ui) {
     const w = frame.clientWidth, h = frame.clientHeight;
     if (!w || !h) return;
     const fsOn = document.fullscreenElement === frame || document.webkitFullscreenElement === frame;
-    frame.style.setProperty('--vs', Math.min(w / bw, h / bh) * (fsOn ? 1 : 1.012));
+    frame.style.setProperty('--vs', Math.min(w / bw, h / bh) * (fsOn ? 1 : 1.03));
   };
   if (window.ResizeObserver) { vyRO = new ResizeObserver(fit); vyRO.observe(frame); }
   fit();
