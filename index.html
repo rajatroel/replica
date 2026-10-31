@@ -2715,6 +2715,41 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 }
 @media(max-width:420px){.ft-links{grid-template-columns:1fr}.ft-cta{width:100%}}
 @media(prefers-reduced-motion:reduce){.ft-brand-tile::after,.prereq-badge .badge-shape{animation:none}}
+
+/* ===== v15: license buttons + footer connect icons ===== */
+#pricing .license-action-buttons{grid-template-columns:1fr;gap:4px}
+#pricing .license-choice{display:grid!important;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;min-height:92px;padding:14px 18px 14px 14px;text-align:left;
+  transition:border-radius .22s cubic-bezier(.2,0,0,1),background-color .2s ease,color .2s ease!important}
+#pricing .license-choice-trial{border-radius:40px 40px 12px 12px!important}
+#pricing .license-choice-license{border-radius:12px 12px 40px 40px!important}
+#pricing .license-choice .lc-ic{position:relative;isolation:isolate;width:56px;height:56px;display:grid;place-items:center}
+#pricing .license-choice .lc-ic::before{content:'';position:absolute;inset:0;z-index:-1;-webkit-mask:var(--scallop) center/100% 100% no-repeat;mask:var(--scallop) center/100% 100% no-repeat;animation:m3eCurlySpin 18s linear infinite}
+#pricing .license-choice .lc-ic .ic{width:26px;height:26px}
+#pricing .license-choice-trial .lc-ic::before{background:var(--md-sys-color-on-primary)}
+#pricing .license-choice-trial .lc-ic{color:var(--md-sys-color-primary)}
+#pricing .license-choice-license .lc-ic::before{background:var(--md-sys-color-primary)}
+#pricing .license-choice-license .lc-ic{color:var(--md-sys-color-on-primary)}
+#pricing .lc-text{display:grid;gap:2px;min-width:0}
+#pricing .lc-text b{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+#pricing .lc-text small{font-size:.8rem;font-weight:600;opacity:.8;line-height:1.35}
+#pricing .lc-arrow{width:24px;height:24px;transition:translate .3s var(--spring-fast-spatial)}
+@media(hover:hover) and (pointer:fine){
+  #pricing .license-choice:hover{border-radius:28px!important;translate:none!important}
+  #pricing .license-choice:hover .lc-arrow{translate:4px 0!important}
+}
+#pricing .license-choice.is-pressed.is-pressed,#pricing .license-choice.is-pressed.is-pressed:hover{border-radius:16px!important}
+@media(prefers-reduced-motion:reduce){#pricing .license-choice .lc-ic::before{animation:none}}
+@media(min-width:721px){#pricing .license-action-buttons{align-content:stretch;grid-template-rows:1fr 1fr}}
+
+.ft-icon-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ft-icon-btn{height:72px;display:grid;place-items:center;border:0;text-decoration:none;border-radius:36px;
+  transition:border-radius .22s cubic-bezier(.2,0,0,1),background-color .2s ease,color .2s ease}
+.ft-icon-btn .ic{width:28px;height:28px}
+.ft-icon-btn.i-tg{background:var(--md-sys-color-tertiary);color:var(--md-sys-color-on-tertiary)}
+.ft-icon-btn.i-mail{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+.ft-icon-btn.i-gh{background:var(--md-sys-color-secondary);color:var(--md-sys-color-on-secondary)}
+@media(hover:hover) and (pointer:fine){.ft-icon-btn:hover{border-radius:24px}}
+.ft-icon-btn.is-pressed.is-pressed,.ft-icon-btn.is-pressed.is-pressed:hover{border-radius:14px}
 </style>
 </head>
 <body>
@@ -2828,6 +2863,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
     <symbol id="icSettings" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="7"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4"/></g></symbol>
     <symbol id="icLink" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></g></symbol>
     <symbol id="icRocket" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c3.6 1.6 6 5 6 9l-3 3.2H9L6 11.8c0-4 2.4-7.4 6-9Z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M9 15.5 7 20l4-1.2M15 15.5l2 4.5-4-1.2"/></g></symbol>
+    <symbol id="icMail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="5" width="18.4" height="14" rx="4"/><path d="m5.5 8.5 5.6 4.2a1.6 1.6 0 0 0 1.8 0l5.6-4.2"/></g></symbol>
   </defs>
 </svg>
 <script>
@@ -3027,12 +3063,14 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 
         <div class="license-action-buttons" aria-label="License options">
           <a class="m3e-btn m3e-state license-choice license-choice-trial" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a free trial from the developer">
-            <svg class="ic" aria-hidden="true"><use href="#icPlayCircle"/></svg>
-            <span data-i="btnGetTrial">Get Trial</span>
+            <span class="lc-ic" aria-hidden="true"><svg class="ic"><use href="#icRocket"/></svg></span>
+            <span class="lc-text"><b data-i="btnGetTrial">Get Trial</b><small data-i="btnGetTrialSub">Try it free first</small></span>
+            <svg class="ic lc-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
           </a>
           <a class="m3e-btn m3e-state license-choice license-choice-license" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Request a license from the developer">
-            <svg class="ic" aria-hidden="true"><use href="#icKey"/></svg>
-            <span data-i="btnGetLicense">Get License</span>
+            <span class="lc-ic" aria-hidden="true"><svg class="ic"><use href="#icKey"/></svg></span>
+            <span class="lc-text"><b data-i="btnGetLicense">Get License</b><small data-i="btnGetLicenseSub">$10 / month per device</small></span>
+            <svg class="ic lc-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
           </a>
         </div>
       </article>
@@ -3100,17 +3138,10 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 
       <section class="ft-tile ft-links-tile" aria-labelledby="ftConnectHeading">
         <h2 class="ft-heading" id="ftConnectHeading" data-i="ftConnectTitle">Connect</h2>
-        <div class="ft-social-links">
-          <a class="ft-social-link m3e-state" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Telegram, developer contact">
-            <span class="ft-social-icon"><svg class="ic"><use href="#icSend"/></svg></span>
-            <span class="ft-social-copy"><strong>Telegram</strong><small data-i="ftTelegramSub">Developer contact</small></span>
-            <svg class="ic ft-social-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
-          </a>
-          <a class="ft-social-link m3e-state" href="https://github.com/rajatroel/replica" target="_blank" rel="noopener noreferrer" aria-label="GitHub, project and releases">
-            <span class="ft-social-icon alt"><svg class="ic"><use href="#icGithub"/></svg></span>
-            <span class="ft-social-copy"><strong>GitHub</strong><small data-i="ftProjectSub">Project and releases</small></span>
-            <svg class="ic ft-social-arrow" aria-hidden="true"><use href="#icArrowRight"/></svg>
-          </a>
+        <div class="ft-icon-row">
+          <a class="ft-icon-btn m3e-state i-tg" href="https://t.me/iamrajatroel" data-tg target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram"><svg class="ic"><use href="#icSend"/></svg></a>
+          <a class="ft-icon-btn m3e-state i-mail" href="mailto:imrajatroel@gmail.com" aria-label="Email" title="imrajatroel@gmail.com"><svg class="ic"><use href="#icMail"/></svg></a>
+          <a class="ft-icon-btn m3e-state i-gh" href="https://github.com/rajatroel/replica" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg class="ic"><use href="#icGithub"/></svg></a>
         </div>
       </section>
 
@@ -3262,6 +3293,8 @@ const I18N = {
     multiBadge: "Multi-device enquiries welcome",
     btnGetTrial: "Get Trial",
     btnGetLicense: "Get License",
+    btnGetTrialSub: "Try it free first",
+    btnGetLicenseSub: "$10 / month per device",
     feature1: "Automated Instagram tasks for SMM Kingdom",
     feature2: "Runs smoothly on Android 11+",
     feature3: "Direct support & regular updates",
@@ -3391,6 +3424,8 @@ const I18N = {
     multiBadge: "Запити щодо кількох пристроїв вітаються",
     btnGetTrial: "Отримати пробний період",
     btnGetLicense: "Отримати ліцензію",
+    btnGetTrialSub: "Спершу спробуйте безкоштовно",
+    btnGetLicenseSub: "$10 / місяць за пристрій",
     feature1: "Автоматизація завдань Instagram для SMM Kingdom",
     feature2: "Працює плавно на Android 11+",
     feature3: "Пряма підтримка та регулярні оновлення",
@@ -3520,6 +3555,8 @@ const I18N = {
     multiBadge: "Можно обсудить несколько устройств",
     btnGetTrial: "Получить пробный период",
     btnGetLicense: "Получить лицензию",
+    btnGetTrialSub: "Сначала попробуйте бесплатно",
+    btnGetLicenseSub: "$10 / месяц за устройство",
     feature1: "Автоматизация Instagram для бота SMM Kingdom",
     feature2: "Плавная работа на Android 11+",
     feature3: "Прямая поддержка и регулярные обновления",
@@ -3590,7 +3627,7 @@ function haptic(kind = 'tap') {
 
 /* PRESS EFFECT: touch presses show only after a short hold and are cancelled
    as soon as the finger moves (scrolling) or the browser takes over the gesture */
-const PRESS_SEL = '.ft-social-link, .ft-brand, .lang-seg-btn, .shape-fab, .m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
+const PRESS_SEL = '.ft-icon-btn, .ft-social-link, .ft-brand, .lang-seg-btn, .shape-fab, .m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
 const MIN_PRESS_MS = 160;
 let pend = null;
 
