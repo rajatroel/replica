@@ -3437,6 +3437,13 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   transparent 22%,transparent 62%,
   color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 90%,transparent) 100%)}
 @media(prefers-reduced-motion:reduce){.is-loading .vq-shape{animation:none}}
+
+/* ===== v14: static play button; slow spin only while loading ===== */
+.vq-shape{animation:none}
+.vq-hero::before{display:none}
+.vq:hover .vq-btn{scale:1}
+.is-loading .vq-shape{animation:vpSpin 4s linear infinite}
+@media(prefers-reduced-motion:reduce){.is-loading .vq-shape{animation:none}}
 </style>
 </head>
 <body>
@@ -3736,10 +3743,7 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
         <div class="vb-tags" aria-hidden="true">
           <span class="vb-tag">Replica</span><span class="vb-tag">Termux</span><span class="vb-tag">ADB</span><span class="vb-tag">Telegram</span>
         </div>
-        <a class="m3e-btn tonal m3e-state vb-open" id="videoOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>
-          <svg class="ic"><use href="#icPlay"/></svg><span data-i="videoOpenYt">Open on YouTube</span>
-        </a>
-      </article>
+        </article>
 
       <div class="vb-player">
         <div class="vb-stage"><div class="video-frame" id="videoFrame"></div></div>
