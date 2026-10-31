@@ -3343,6 +3343,70 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 @media(hover:hover) and (pointer:fine){.vq:hover .vq-btn{scale:1.08}.vq:hover .vq-cta{border-radius:16px}}
 .vq:active .vq-cta{scale:.97}
 @media(prefers-reduced-motion:reduce){.vq-blob.b1,.vq-shape,.vq-btn::before{animation:none}}
+
+/* ===== v11: centered poster, MD3E in-page player, no YouTube chrome ===== */
+.vq{justify-content:center!important;gap:clamp(18px,4.5vh,32px);padding:28px 16px!important}
+.vq-hero{width:74%;margin-top:0}
+.vq-hero::before{content:'';position:absolute;inset:6%;border-radius:50%;background:var(--md-sys-color-primary);opacity:.4;animation:vpPulse 2.4s var(--ease-expressive-standard) infinite}
+.vq-btn{position:absolute;inset:0;width:auto;aspect-ratio:auto;border-radius:0;background:none;box-shadow:none;color:var(--md-sys-color-on-primary)}
+.vq-btn::before{display:none}
+.vq-btn .ic{width:30%;height:30%;margin-left:3%;transition:opacity .2s}
+.vq-spin{position:absolute;left:50%;top:50%;width:26%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;opacity:0;
+  border:4px solid color-mix(in oklch,var(--md-sys-color-on-primary) 28%,transparent);border-top-color:var(--md-sys-color-on-primary);animation:vcSpin .9s linear infinite}
+.is-loading .vq-btn .ic{opacity:0}.is-loading .vq-spin{opacity:1}
+.vq-copy{gap:14px}.vq-title{font-size:1.45rem}
+.vq-tags b{font-size:.74rem;padding:6px 12px;border-radius:12px}
+@keyframes vcSpin{to{rotate:360deg}}
+@media(prefers-reduced-motion:reduce){.vq-hero::before{animation:none}}
+
+/* iframe is oversized a hair so no sliver of black can show at the edges, taps go to our controls */
+.video-frame.vy{--vc-acc:oklch(.87 .12 var(--h));--vc-on:oklch(.2 .07 var(--h));background:#000!important}
+.video-frame.vy iframe{inset:auto;left:50%;top:50%;width:104%;height:104%;translate:-50% -50%;pointer-events:none;border-radius:0!important}
+.vy .vp{z-index:2;transition:opacity .45s var(--ease-expressive-standard),visibility .45s}
+.vy.vy-on .vp{opacity:0;visibility:hidden;pointer-events:none}
+.vy:not(.vy-on)::after{display:none!important}
+.video-frame.vy:fullscreen{width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0}
+.video-frame.vy:fullscreen iframe{width:100%;height:100%}
+.video-frame.vy:-webkit-full-screen{width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0}
+
+.vc{position:absolute;inset:0;z-index:3;display:none;color:#fff;font-family:inherit;touch-action:manipulation;cursor:pointer}
+.vy-on .vc{display:block}
+.vc-scrim{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s var(--ease-expressive-standard);
+  background:linear-gradient(rgba(0,0,0,.5),transparent 26%,transparent 55%,rgba(0,0,0,.72))}
+.vc.show .vc-scrim{opacity:1}
+.vc-mid,.vc-top,.vc-bar{opacity:0;pointer-events:none;transition:opacity .3s var(--ease-expressive-standard),scale .4s var(--spring-fast-spatial),translate .3s var(--ease-expressive-standard)}
+.vc.show .vc-mid,.vc.show .vc-top,.vc.show .vc-bar{opacity:1;pointer-events:auto}
+.vc-mid{position:absolute;left:0;right:0;top:50%;translate:0 -50%;display:flex;justify-content:center;align-items:center;gap:14px;scale:.9}
+.vc.show .vc-mid{scale:1}
+.vc-b{border:0;cursor:pointer;display:grid;place-items:center;color:inherit;font-family:inherit;
+  background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  transition:border-radius .45s var(--spring-fast-spatial),scale .3s var(--spring-fast-spatial)}
+.vc-b:active{scale:.9}
+.vc-b svg{width:26px;height:26px;fill:currentColor}
+.vc-skip{width:50px;height:50px;border-radius:18px}
+.vc-main{width:68px;height:68px;border-radius:26px;background:var(--vc-acc);color:var(--vc-on);-webkit-backdrop-filter:none;backdrop-filter:none}
+.vc-main svg{width:32px;height:32px}
+.vc.is-playing .vc-main{border-radius:50%}
+.vc-main .i-pause,.vc.is-playing .vc-main .i-play{display:none}
+.vc.is-playing .vc-main .i-pause{display:block}
+.vc-top{position:absolute;top:16px;right:12px}
+.vc-fs{width:40px;height:40px;border-radius:14px}.vc-fs svg{width:22px;height:22px}
+.vc-fs[hidden]{display:none}
+.vc-bar{position:absolute;left:14px;right:14px;bottom:16px;display:flex;align-items:center;gap:10px;translate:0 8px;
+  font-size:.72rem;font-weight:700;font-variant-numeric:tabular-nums}
+.vc.show .vc-bar{translate:0 0}
+.vc-track{position:relative;flex:1;height:28px;touch-action:none;cursor:pointer}
+.vc-track::before,.vc-buf,.vc-fill{content:'';position:absolute;left:0;top:50%;height:6px;translate:0 -50%;border-radius:3px}
+.vc-track::before{right:0;background:rgba(255,255,255,.28)}
+.vc-buf{width:0;background:rgba(255,255,255,.3)}
+.vc-fill{width:0;background:var(--vc-acc)}
+.vc-knob{position:absolute;top:50%;left:0;width:16px;height:16px;border-radius:50%;translate:-50% -50%;background:var(--vc-acc);box-shadow:0 0 0 4px rgba(0,0,0,.25)}
+.vc-mini{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--vc-acc);transition:opacity .3s;pointer-events:none}
+.vc.show .vc-mini{opacity:0}
+.vc-spin{position:absolute;left:50%;top:50%;width:92px;height:92px;translate:-50% -50%;border-radius:50%;opacity:0;pointer-events:none;
+  border:4px solid rgba(255,255,255,.22);border-top-color:var(--vc-acc);animation:vcSpin .9s linear infinite;transition:opacity .2s}
+.vc.buffering .vc-spin{opacity:1}
+@media(prefers-reduced-motion:reduce){.vc-spin,.vq-spin{animation-duration:2s}.vc-b,.vc-mid,.vc-bar{transition:none}}
 </style>
 </head>
 <body>
@@ -4532,12 +4596,160 @@ function setupGuide() {
 
 /* ===== VIDEO ===== */
 let videoAspect = null;   // detected from YouTube (auto: true)
-function playVideo(frame) {
+function plainPlay(frame) {
   const v = CONFIG.video;
   const q = `rel=0&modestbranding=1&playsinline=1&cc_load_policy=1&cc_lang_pref=${lang}&hl=${lang}&autoplay=1`;
   const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?${q}`;
   frame.dataset.playing = '1';
   frame.innerHTML = `<iframe src="${src}" title="${I18N[lang].videoCardTitle}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+}
+
+let ytApiPromise = null, vyPlayer = null, vyTimer = 0;
+function loadYT() {
+  if (window.YT && YT.Player) return Promise.resolve();
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise((res, rej) => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (prev) prev(); res(); };
+    const sc = document.createElement('script');
+    sc.src = 'https://www.youtube.com/iframe_api'; sc.async = true;
+    sc.onerror = () => { ytApiPromise = null; rej(new Error('yt')); };
+    document.head.appendChild(sc);
+    setTimeout(() => { if (!(window.YT && YT.Player)) { ytApiPromise = null; rej(new Error('timeout')); } }, 8000);
+  });
+  return ytApiPromise;
+}
+const fmtT = t => { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+function stopVY(frame) {
+  clearInterval(vyTimer);
+  try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+  try { vyPlayer && vyPlayer.destroy(); } catch (e) {}
+  vyPlayer = null;
+  frame.className = 'video-frame';
+  delete frame.dataset.playing;
+}
+const VC_ICONS = {
+  play: '<svg class="i-play" viewBox="0 0 24 24"><path d="M8 5.6v12.8a.6.6 0 0 0 .92.5l10.2-6.4a.6.6 0 0 0 0-1L8.92 5.1A.6.6 0 0 0 8 5.6z"/></svg>',
+  pause: '<svg class="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="4" height="14" rx="1.6"/><rect x="13.5" y="5" width="4" height="14" rx="1.6"/></svg>',
+  back: '<svg viewBox="0 0 24 24"><path d="M12 5V2L7.5 6.5 12 11V8a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/><text x="12" y="16.3" text-anchor="middle" font-size="6.6" font-weight="800" font-family="inherit">10</text></svg>',
+  fwd: '<svg viewBox="0 0 24 24"><g transform="translate(24 0) scale(-1 1)"><path d="M12 5V2L7.5 6.5 12 11V8a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></g><text x="12" y="16.3" text-anchor="middle" font-size="6.6" font-weight="800" font-family="inherit">10</text></svg>',
+  fs: '<svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>'
+};
+function playVideo(frame) {
+  if (frame.dataset.playing === '1') return;
+  frame.dataset.playing = '1';
+  frame.classList.add('vy', 'is-loading');
+  const host = document.createElement('div');
+  const ui = document.createElement('div');
+  ui.className = 'vc';
+  ui.innerHTML = `<div class="vc-scrim"></div>
+    <div class="vc-top"><button class="vc-b vc-fs" type="button" data-a="fs" aria-label="Fullscreen">${VC_ICONS.fs}</button></div>
+    <div class="vc-mid">
+      <button class="vc-b vc-skip" type="button" data-a="back" aria-label="Back 10 seconds">${VC_ICONS.back}</button>
+      <button class="vc-b vc-main" type="button" data-a="toggle" aria-label="Play / pause">${VC_ICONS.play}${VC_ICONS.pause}</button>
+      <button class="vc-b vc-skip" type="button" data-a="fwd" aria-label="Forward 10 seconds">${VC_ICONS.fwd}</button>
+    </div>
+    <i class="vc-spin"></i>
+    <div class="vc-bar"><span class="vc-t">0:00</span>
+      <div class="vc-track"><i class="vc-buf"></i><i class="vc-fill"></i><i class="vc-knob"></i></div>
+      <span class="vc-d">0:00</span></div>
+    <i class="vc-mini"></i>`;
+  frame.append(host, ui);
+  loadYT().then(() => mountPlayer(frame, host, ui)).catch(() => {
+    host.remove(); ui.remove(); frame.className = 'video-frame'; plainPlay(frame);
+  });
+}
+function mountPlayer(frame, host, ui) {
+  const v = CONFIG.video, q = s => ui.querySelector(s);
+  const fill = q('.vc-fill'), knob = q('.vc-knob'), buf = q('.vc-buf'), mini = q('.vc-mini');
+  const tCur = q('.vc-t'), tDur = q('.vc-d'), track = q('.vc-track'), fsBtn = q('.vc-fs');
+  let dur = 0, dragging = false, started = false, hideT = 0, lastTap = 0, seekT = 0;
+  const isPlaying = () => ui.classList.contains('is-playing');
+  const showUI = stay => {
+    ui.classList.add('show'); clearTimeout(hideT);
+    if (!stay && isPlaying()) hideT = setTimeout(() => { if (!dragging) ui.classList.remove('show'); }, 2800);
+  };
+  const setProg = t => {
+    const f = dur ? Math.min(1, Math.max(0, t / dur)) : 0;
+    fill.style.width = knob.style.left = (f * 100) + '%';
+    mini.style.width = (f * 100) + '%';
+    tCur.textContent = fmtT(t); tDur.textContent = fmtT(dur);
+  };
+  const reveal = () => {
+    if (started) return;
+    started = true; frame.classList.add('vy-on'); frame.classList.remove('is-loading');
+  };
+  const skip = d => {
+    const t = Math.min(dur || 1e9, Math.max(0, vyPlayer.getCurrentTime() + d));
+    vyPlayer.seekTo(t, true); setProg(t);
+  };
+  const toggleFS = () => {
+    const d = document;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { const f = frame.requestFullscreen || frame.webkitRequestFullscreen; if (f) f.call(frame); }
+  };
+  if (!(frame.requestFullscreen || frame.webkitRequestFullscreen)) fsBtn.hidden = true;
+
+  const cc = { cc_load_policy: 1, cc_lang_pref: lang, hl: lang };
+  const vars = Object.assign({ autoplay: 1, controls: 0, disablekb: 1, fs: 0, rel: 0, modestbranding: 1, playsinline: 1, iv_load_policy: 3 }, cc,
+    /^https?:/.test(location.protocol) ? { origin: location.origin } : {});
+  vyPlayer = new YT.Player(host, {
+    host: 'https://www.youtube-nocookie.com', videoId: v.id, playerVars: vars,
+    events: {
+      onReady: e => { e.target.playVideo(); },
+      onStateChange: e => {
+        const S = YT.PlayerState;
+        ui.classList.toggle('buffering', e.data === S.BUFFERING && started);
+        if (e.data === S.PLAYING) { reveal(); ui.classList.add('is-playing'); showUI(); }
+        else if (e.data === S.PAUSED) { ui.classList.remove('is-playing'); if (started) showUI(true); }
+        else if (e.data === S.ENDED) setTimeout(() => { stopVY(frame); renderVideo(I18N[lang]); }, 0);
+      },
+      onError: () => { stopVY(frame); renderVideo(I18N[lang]); }
+    }
+  });
+  // if the browser blocks autoplay, still show our controls so the next tap on play works
+  setTimeout(() => { if (!started && vyPlayer) { reveal(); showUI(true); } }, 4000);
+
+  clearInterval(vyTimer);
+  vyTimer = setInterval(() => {
+    if (!vyPlayer || !vyPlayer.getCurrentTime) return;
+    dur = vyPlayer.getDuration() || dur;
+    if (!dragging) setProg(vyPlayer.getCurrentTime());
+    buf.style.width = ((vyPlayer.getVideoLoadedFraction() || 0) * 100) + '%';
+  }, 250);
+
+  const seekAt = ev => {
+    const r = track.getBoundingClientRect();
+    seekT = Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * dur; setProg(seekT);
+  };
+  track.addEventListener('pointerdown', ev => { ev.stopPropagation(); dragging = true; track.setPointerCapture(ev.pointerId); seekAt(ev); showUI(true); });
+  track.addEventListener('pointermove', ev => { if (dragging) seekAt(ev); });
+  const endDrag = ev => {
+    if (!dragging) return;
+    if (ev.type === 'pointerup') seekAt(ev);
+    dragging = false; vyPlayer.seekTo(seekT, true); showUI();
+  };
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
+
+  ui.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-a]');
+    if (b) {
+      ev.stopPropagation();
+      const a = b.dataset.a;
+      if (a === 'toggle') (isPlaying() ? vyPlayer.pauseVideo() : vyPlayer.playVideo());
+      else if (a === 'back') skip(-10);
+      else if (a === 'fwd') skip(10);
+      else if (a === 'fs') toggleFS();
+      showUI(a === 'toggle' && isPlaying() ? false : undefined);
+      return;
+    }
+    if (!started || ev.target.closest('.vc-bar')) return;
+    const r = ui.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width, now = Date.now();
+    if (now - lastTap < 300 && (x < .33 || x > .67)) { skip(x < .5 ? -10 : 10); lastTap = 0; showUI(); return; }
+    lastTap = now;
+    if (ui.classList.contains('show') && isPlaying()) { ui.classList.remove('show'); clearTimeout(hideT); } else showUI();
+  });
 }
 function renderVideo(dict) {
   const frame = $('#videoFrame');
@@ -4553,17 +4765,17 @@ function renderVideo(dict) {
     if (open) { open.href = 'https://youtu.be/' + encodeURIComponent(v.id); open.hidden = false; }
     if (frame.dataset.playing === '1') return;          // keep a playing video untouched
     const id = encodeURIComponent(v.id);
+    setTimeout(() => loadYT().catch(() => {}), 1500);
     frame.innerHTML = `<button class="vp vq" type="button" aria-label="${dict.videoPlay}">
       <span class="vq-bg" aria-hidden="true"><i class="vq-blob b1"></i><i class="vq-blob b2"></i><i class="vq-blob b3"></i></span>
       <span class="vq-hero" aria-hidden="true">
         <svg class="vq-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-        <span class="vq-btn"><svg class="ic"><use href="#icPlay"/></svg></span>
+        <span class="vq-btn"><svg class="ic"><use href="#icPlay"/></svg><i class="vq-spin"></i></span>
       </span>
       <span class="vq-copy">
         <span class="vq-title">${dict.videoCardTitle}</span>
         <span class="vq-tags" aria-hidden="true"><b>Replica</b><b>Termux</b><b>ADB</b><b>Telegram</b></span>
       </span>
-      <span class="vq-cta"><svg class="ic"><use href="#icPlay"/></svg><span>${dict.videoPlay}</span></span>
     </button>`;
     frame.querySelector('.vp').addEventListener('click', () => playVideo(frame));
   } else {
