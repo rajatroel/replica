@@ -3214,6 +3214,54 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 .ph-status{font-weight:700;letter-spacing:-.01em;padding:0 8px}
 .ph-sys{gap:5px}
 .ph-sys svg{display:block;flex:none}
+
+/* ===== v8: video poster player (MD3 Expressive) ===== */
+.vb-open[hidden]{display:none!important}
+.vb-open{height:48px!important;padding:0 22px 0 16px!important;margin-top:2px}
+.vb-open .ic{width:18px;height:18px}
+
+.vp{
+  position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;border:0;cursor:pointer;
+  background:var(--md-sys-color-secondary-container);color:#fff;overflow:hidden;border-radius:inherit;
+  font-family:inherit;
+}
+.vp-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  transition:scale .8s var(--ease-expressive-emphasized)}
+.vp-scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,.08) 55%,rgba(0,0,0,.18))}
+
+.vp-play{
+  position:absolute;left:50%;top:46%;translate:-50% -50%;
+  width:84px;height:84px;display:grid;place-items:center;
+  color:var(--md-sys-color-on-primary);
+  transition:scale .45s var(--spring-fast-spatial);
+}
+.vp-bg{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-primary);stroke:none;
+  filter:drop-shadow(0 8px 18px rgba(0,0,0,.35))}
+.vp-play .ic{position:relative;width:32px;height:32px;margin-left:3px;transition:rotate .45s var(--spring-fast-spatial)}
+
+.vp-chip{
+  position:absolute;left:50%;bottom:14px;translate:-50% 0;max-width:calc(100% - 24px);
+  display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px 0 12px;border-radius:19px;
+  background:color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 88%,transparent);
+  color:var(--md-sys-color-on-surface);font-size:.84rem;font-weight:800;white-space:nowrap;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+}
+.vp-chip .ic{width:18px;height:18px;color:var(--md-sys-color-primary);flex:none}
+.vp-chip span{overflow:hidden;text-overflow:ellipsis}
+
+@media(hover:hover) and (pointer:fine){
+  .vp:hover .vp-img{scale:1.05}
+  .vp:hover .vp-play{scale:1.08}
+  .vp:hover .vp-play .ic{rotate:-10deg}
+}
+.vp:active .vp-play{scale:.92}
+.vp:focus-visible{outline:3px solid var(--md-sys-color-primary);outline-offset:-3px}
+
+/* landscape: a bit larger button */
+.vb-player:not(.portrait) .vp-play{width:96px;height:96px}
+.vb-player:not(.portrait) .vp-play .ic{width:36px;height:36px}
+@media(prefers-reduced-motion:reduce){.vp-img,.vp-play,.vp-play .ic{transition:none}}
 </style>
 </head>
 <body>
@@ -3513,6 +3561,9 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
         <div class="vb-tags" aria-hidden="true">
           <span class="vb-tag">Replica</span><span class="vb-tag">Termux</span><span class="vb-tag">ADB</span><span class="vb-tag">Telegram</span>
         </div>
+        <a class="m3e-btn tonal m3e-state vb-open" id="videoOpen" href="#" target="_blank" rel="noopener noreferrer" hidden>
+          <svg class="ic"><use href="#icPlay"/></svg><span data-i="videoOpenYt">Open on YouTube</span>
+        </a>
       </article>
 
       <div class="vb-player">
@@ -3682,8 +3733,8 @@ const CONFIG = {
     termuxApiApk: 'https://github.com/rajatroel/replica/releases/download/v1.0/termux-api.apk',
     telegram: 'https://t.me/iamrajatroel'
   },
-  /* Put your YouTube video ID below (the part after v= in the link). aspect: '9 / 16' (portrait, default) or '16 / 9' (landscape). */
-  video: { id: '', aspect: '9 / 16' },
+  /* Put your YouTube video ID below (the part after v= in the link). aspect: '9 / 16' (portrait) or '16 / 9' (landscape) is the fallback; with auto: true the page detects the real shape itself. */
+  video: { id: 'ZqXO3BRm9qc', aspect: '9 / 16', auto: true },
   monetHues: [
     { hue: 154, name: 'Emerald' }, { hue: 185, name: 'Cyan' }, { hue: 220, name: 'Cobalt' }, { hue: 250, name: 'Indigo' },
     { hue: 280, name: 'Amethyst' }, { hue: 310, name: 'Magenta' }, { hue: 345, name: 'Rose' }, { hue: 18, name: 'Coral' },
@@ -3701,7 +3752,7 @@ const I18N = {
     btnHeroLicense: "Get a License",
     chipSetupText: "Setup",
     chipTutorialText: "Video",
-    heroPhBalance: "Cash coins", heroTk1: "Task 1", heroTk2: "Task 2", heroTk3: "Task 3", heroTkDone: "Task completed",
+    videoPlay: "Play tutorial", videoOpenYt: "Open on YouTube", heroPhBalance: "Cash coins", heroTk1: "Task 1", heroTk2: "Task 2", heroTk3: "Task 3", heroTkDone: "Task completed",
     lbl1: "Step 01", lblDev: "Step 02", lbl2: "Step 03", lblApi: "Step 04", lblPhone: "Step 05", lblSetup: "Step 06", lbl3: "Video", lblLicense: "License",
     st1Head: "Disable Play Protect",
     st1Sub: "Android may block sideloaded automation apps. Turn off scanning first.",
@@ -3833,7 +3884,7 @@ const I18N = {
     btnHeroLicense: "Отримати ліцензію",
     chipSetupText: "Налаштування",
     chipTutorialText: "Відео",
-    heroPhBalance: "Кеш-коїни", heroTk1: "Завдання 1", heroTk2: "Завдання 2", heroTk3: "Завдання 3", heroTkDone: "Завдання виконано",
+    videoPlay: "Дивитись урок", videoOpenYt: "Відкрити на YouTube", heroPhBalance: "Кеш-коїни", heroTk1: "Завдання 1", heroTk2: "Завдання 2", heroTk3: "Завдання 3", heroTkDone: "Завдання виконано",
     lbl1: "Крок 01", lblDev: "Крок 02", lbl2: "Крок 03", lblApi: "Крок 04", lblPhone: "Крок 05", lblSetup: "Крок 06", lbl3: "Відео", lblLicense: "Ліцензія",
     st1Head: "Вимкніть Play Захист",
     st1Sub: "Android може блокувати додатки не з маркету. Спочатку вимкніть сканування.",
@@ -3965,7 +4016,7 @@ const I18N = {
     btnHeroLicense: "Получить лицензию",
     chipSetupText: "Настройка",
     chipTutorialText: "Видео",
-    heroPhBalance: "Кэш-коины", heroTk1: "Задание 1", heroTk2: "Задание 2", heroTk3: "Задание 3", heroTkDone: "Задание выполнено",
+    videoPlay: "Смотреть урок", videoOpenYt: "Открыть на YouTube", heroPhBalance: "Кэш-коины", heroTk1: "Задание 1", heroTk2: "Задание 2", heroTk3: "Задание 3", heroTkDone: "Задание выполнено",
     lbl1: "Шаг 01", lblDev: "Шаг 02", lbl2: "Шаг 03", lblApi: "Шаг 04", lblPhone: "Шаг 05", lblSetup: "Шаг 06", lbl3: "Видео", lblLicense: "Лицензия",
     st1Head: "Отключите Play Защиту",
     st1Sub: "Android может блокировать внешние скрипты. Сначала отключите сканирование.",
@@ -4399,26 +4450,62 @@ function setupGuide() {
 
 
 /* ===== VIDEO ===== */
+let videoAspect = null;   // detected from YouTube (auto: true)
+function playVideo(frame) {
+  const v = CONFIG.video;
+  const q = `rel=0&modestbranding=1&playsinline=1&cc_load_policy=1&cc_lang_pref=${lang}&hl=${lang}&autoplay=1`;
+  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?${q}`;
+  frame.dataset.playing = '1';
+  frame.innerHTML = `<iframe src="${src}" title="${I18N[lang].videoCardTitle}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+}
 function renderVideo(dict) {
   const frame = $('#videoFrame');
   if (!frame) return;
   const v = CONFIG.video;
-  const portrait = /^\s*9\s*\/\s*16/.test(v.aspect);
-  frame.style.setProperty('--ar', v.aspect);
+  const ar = videoAspect || v.aspect;
+  const portrait = /^\s*9\s*\/\s*16/.test(ar);
+  frame.style.setProperty('--ar', ar);
   frame.closest('.vb-player').classList.toggle('portrait', portrait);
+  const open = $('#videoOpen');
   if (v.id) {
-    const q = `rel=0&modestbranding=1&playsinline=1&cc_load_policy=1&cc_lang_pref=${lang}&hl=${lang}`;
-    const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?${q}`;
-    if (frame.dataset.src !== src) {
-      frame.dataset.src = src;
-      frame.innerHTML = `<iframe src="${src}" title="${dict.videoCardTitle}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-    }
+    if (open) { open.href = 'https://youtu.be/' + encodeURIComponent(v.id); open.hidden = false; }
+    if (frame.dataset.playing === '1') return;          // keep a playing video untouched
+    const id = encodeURIComponent(v.id);
+    frame.innerHTML = `<button class="vp" type="button" aria-label="${dict.videoPlay}">
+      <img class="vp-img" src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" alt="" decoding="async">
+      <span class="vp-scrim" aria-hidden="true"></span>
+      <span class="vp-play" aria-hidden="true">
+        <svg class="vp-bg" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
+        <svg class="ic"><use href="#icPlay"/></svg>
+      </span>
+      <span class="vp-chip"><svg class="ic"><use href="#icPlay"/></svg><span>${dict.videoPlay}</span></span>
+    </button>`;
+    const img = frame.querySelector('.vp-img');
+    img.onerror = () => { img.onerror = null; img.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; };
+    frame.querySelector('.vp').addEventListener('click', () => playVideo(frame));
   } else {
     frame.dataset.src = '';
     frame.innerHTML = `<div class="video-empty"><div class="shape-fab play-shape">
       <svg class="shape-fab-bg" viewBox="0 0 100 100" aria-hidden="true"><use href="#scallopShape"/></svg>
       <svg class="ic"><use href="#icPlay"/></svg></div><p>${dict.videoSoon}</p></div>`;
   }
+}
+async function detectVideoAspect() {
+  const v = CONFIG.video;
+  if (!v.id || !v.auto) return;
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 4000);
+    const r = await fetch('https://www.youtube.com/oembed?format=json&url=' +
+      encodeURIComponent('https://www.youtube.com/watch?v=' + v.id), { signal: ctrl.signal });
+    clearTimeout(t);
+    if (!r.ok) return;
+    const j = await r.json();
+    if (j && j.width && j.height) {
+      videoAspect = j.width >= j.height ? '16 / 9' : '9 / 16';
+      renderVideo(I18N[lang]);
+    }
+  } catch (e) { /* keep the configured fallback shape */ }
 }
 
 const FONT_SAMPLE = { en: 'Aa', uk: 'Привіт Ґґ Єє Її Іі', ru: 'Привет Ёё Ъъ Ыы' };
@@ -4572,6 +4659,7 @@ function init() {
   applyHue(hue);
   applyMode(mode);
   applyI18n();
+  detectVideoAspect();
   markActiveLang();
   setupMotion();
 
