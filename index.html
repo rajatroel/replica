@@ -3361,12 +3361,11 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
 
 /* iframe is oversized a hair so no sliver of black can show at the edges, taps go to our controls */
 .video-frame.vy{--vc-acc:oklch(.87 .12 var(--h));--vc-on:oklch(.2 .07 var(--h));background:#000!important}
-.video-frame.vy iframe{inset:auto;left:50%;top:50%;width:101.2%;height:101.2%;translate:-50% -50%;pointer-events:none;border-radius:0!important}
+.video-frame.vy iframe{position:absolute;inset:auto;left:50%;top:50%;max-width:none;translate:-50% -50%;scale:var(--vs,.3);transform-origin:center;pointer-events:none;border-radius:0!important}
 .vy .vp{z-index:2;transition:opacity .45s var(--ease-expressive-standard),visibility .45s}
 .vy.vy-on .vp{opacity:0;visibility:hidden;pointer-events:none}
 .vy:not(.vy-on)::after{display:none!important}
 .video-frame.vy:fullscreen{width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0}
-.video-frame.vy:fullscreen iframe{width:100%;height:100%}
 .video-frame.vy:-webkit-full-screen{width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0}
 
 .vc{position:absolute;inset:0;z-index:3;display:none;color:#fff;font-family:inherit;touch-action:manipulation;cursor:pointer}
@@ -3407,6 +3406,24 @@ footer .wrapper { display: grid; justify-items: stretch; gap: 22px; }
   border:4px solid rgba(255,255,255,.22);border-top-color:var(--vc-acc);animation:vcSpin .9s linear infinite;transition:opacity .2s}
 .vc.buffering .vc-spin{opacity:1}
 @media(prefers-reduced-motion:reduce){.vc-spin,.vq-spin{animation-duration:2s}.vc-b,.vc-mid,.vc-bar{transition:none}}
+
+/* ===== v12: light fade + theme colours for the player ===== */
+.video-frame.vy{--vc-acc:var(--md-sys-color-primary);--vc-on:var(--md-sys-color-on-primary);background:var(--md-sys-color-surface-container-lowest)!important}
+.vc{color:var(--md-sys-color-on-surface)}
+.vc-scrim{background:linear-gradient(to bottom,
+  color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 94%,transparent) 0,
+  color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 55%,transparent) 11%,
+  transparent 27%,transparent 56%,
+  color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 70%,transparent) 78%,
+  color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 96%,transparent) 100%)}
+.vc-b{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);
+  -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:var(--elevation-1)}
+.vc-main{background:var(--vc-acc);color:var(--vc-on);box-shadow:var(--elevation-2)}
+.vc-track::before{background:color-mix(in oklch,var(--md-sys-color-on-surface) 16%,transparent)}
+.vc-buf{background:color-mix(in oklch,var(--md-sys-color-on-surface) 18%,transparent)}
+.vc-knob{box-shadow:0 0 0 4px color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 85%,transparent),var(--elevation-1)}
+.vc-spin{border-color:color-mix(in oklch,var(--md-sys-color-on-surface) 14%,transparent);border-top-color:var(--vc-acc)}
+.vc-mini{box-shadow:0 0 0 .5px color-mix(in oklch,var(--md-sys-color-surface-container-lowest) 60%,transparent)}
 </style>
 </head>
 <body>
@@ -4604,7 +4621,7 @@ function plainPlay(frame) {
   frame.innerHTML = `<iframe src="${src}" title="${I18N[lang].videoCardTitle}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
 }
 
-let ytApiPromise = null, vyPlayer = null, vyTimer = 0;
+let ytApiPromise = null, vyPlayer = null, vyTimer = 0, vyRO = null;
 function loadYT() {
   if (window.YT && YT.Player) return Promise.resolve();
   if (ytApiPromise) return ytApiPromise;
@@ -4622,6 +4639,7 @@ function loadYT() {
 const fmtT = t => { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
 function stopVY(frame) {
   clearInterval(vyTimer);
+  if (vyRO) { vyRO.disconnect(); vyRO = null; }
   try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
   try { vyPlayer && vyPlayer.destroy(); } catch (e) {}
   vyPlayer = null;
@@ -4696,17 +4714,30 @@ function mountPlayer(frame, host, ui) {
   vyPlayer = new YT.Player(host, {
     host: 'https://www.youtube-nocookie.com', videoId: v.id, playerVars: vars,
     events: {
-      onReady: e => { e.target.playVideo(); },
+      onReady: e => { try { e.target.setPlaybackQuality('highres'); } catch (_) {} e.target.playVideo(); },
       onStateChange: e => {
         const S = YT.PlayerState;
         ui.classList.toggle('buffering', e.data === S.BUFFERING && started);
-        if (e.data === S.PLAYING) { reveal(); ui.classList.add('is-playing'); showUI(); }
+        if (e.data === S.PLAYING) { try { vyPlayer.setPlaybackQualityRange('highres', 'highres'); vyPlayer.setPlaybackQuality('highres'); } catch (_) {} reveal(); ui.classList.add('is-playing'); showUI(); }
         else if (e.data === S.PAUSED) { ui.classList.remove('is-playing'); if (started) showUI(true); }
         else if (e.data === S.ENDED) setTimeout(() => { stopVY(frame); renderVideo(I18N[lang]); }, 0);
       },
       onError: () => { stopVY(frame); renderVideo(I18N[lang]); }
     }
   });
+  let [bw, bh] = String(v.aspect).split('/').map(parseFloat);
+  if (!bw || !bh) { bw = 872; bh = 1920; }
+  if (bh < 1200) { bw = bw * 1920 / bh; bh = 1920; }
+  const ifr = vyPlayer.getIframe();
+  ifr.style.width = bw + 'px'; ifr.style.height = bh + 'px';
+  const fit = () => {
+    const w = frame.clientWidth, h = frame.clientHeight;
+    if (!w || !h) return;
+    const fsOn = document.fullscreenElement === frame || document.webkitFullscreenElement === frame;
+    frame.style.setProperty('--vs', Math.min(w / bw, h / bh) * (fsOn ? 1 : 1.012));
+  };
+  if (window.ResizeObserver) { vyRO = new ResizeObserver(fit); vyRO.observe(frame); }
+  fit();
   // if the browser blocks autoplay, still show our controls so the next tap on play works
   setTimeout(() => { if (!started && vyPlayer) { reveal(); showUI(true); } }, 4000);
 
