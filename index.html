@@ -4883,19 +4883,10 @@ footer.site-footer{border-radius:40px 40px 0 0!important}
   <section id="guide">
     <div class="step-section-header">
       <span class="step-label" data-i="guideLbl">Setup Guide</span>
-      <h2 class="step-headline" data-i="guideHead">Set up in 9 simple steps</h2>
-      <p class="step-summary" data-i="guideSub">Follow the steps in order. Tap a step to open it, then mark it done.</p>
+      <h2 class="step-headline" data-i="guideHead">Set up in 3 simple steps</h2>
+      <p class="step-summary" data-i="guideSub">Do these three things in order. Tap Done on each one as you finish.</p>
     </div>
-
-    <div class="gz-hero" aria-live="polite">
-      <span class="gz-cookie" aria-hidden="true"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b id="gzPct">0%</b></span>
-      <div class="gz-hero-t">
-        <span class="gz-ptext" id="guideProgressText"></span>
-        <div class="gz-track"><span class="gz-fill" id="guideFill"></span></div>
-      </div>
-    </div>
-
-    <div class="gz-main" id="guideList"></div>
+    <div class="sg" id="guideList"></div>
   </section>
 
   <!-- VIDEO (with setup-problem help merged in) -->
@@ -4903,7 +4894,7 @@ footer.site-footer{border-radius:40px 40px 0 0!important}
     <div class="step-section-header">
       <span class="step-label" data-i="videoLbl">Video</span>
       <h2 class="step-headline" data-i="videoHead">Having trouble<br>setting up?</h2>
-      <p class="step-summary" data-i="videoSub">Facing trouble following the steps? Complete steps 1–6, then follow the video tutorial for the last five.</p>
+      <p class="step-summary" data-i="videoSub">You can also see the tutorial video below if you are having any problem.</p>
     </div>
 
     <div class="vb">
@@ -4915,9 +4906,9 @@ footer.site-footer{border-radius:40px 40px 0 0!important}
           </span>
           <h3 data-i="videoCardTitle">Video tutorial</h3>
         </div>
-        <p data-i="videoCardSub">Watch steps 5–9 on screen, from setting up Replica and Termux to pairing and logging in.</p>
+        <p data-i="videoCardSub">Watch the whole setup on screen, from downloading Replica to following its instructions.</p>
         <div class="vb-foot vb-tags" aria-hidden="true">
-          <span class="vb-tag">Replica</span><span class="vb-tag">Termux</span><span class="vb-tag" data-i="vbTagA">Pairing</span><span class="vb-tag" data-i="vbTagB">Login</span>
+          <span class="vb-tag">Replica</span><span class="vb-tag" data-i="vbTagA">Setup</span>
         </div>
       </article>
 
@@ -5511,10 +5502,23 @@ const I18N = {
       "You will now see your <b>App api_id</b> (numbers) and <b>App api_hash</b> (letters and numbers).",
       "Copy both and save them in your <b>Notes</b> app so you can use them later."
     ],
-    guideLbl: "Setup Guide", guideHead: "9 simple steps", guideSub: "Follow the steps in order. Tap a step to open it, then mark it done.",
+    guideLbl: "Setup Guide", guideHead: "Set up in 3 simple steps", guideSub: "Do these three things in order. Tap Done on each one as you finish.",
+    sgT: ["Get your API ID & Hash", "Disable Play Protect", "Install Replica & follow the setup"],
+    sgSub: ["About 2 minutes", "Takes 30 seconds", "Replica guides you on screen"],
+    sgS: [["Open <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">my.telegram.org</a> and log in with the Telegram number <b>you want to automate</b>.", "Enter the code Telegram sends you.", "Tap <b>API development tools</b>, type any title, then tap <b>Create application</b>.", "Copy your <b>api_id</b> and <b>api_hash</b> and save them in your <b>Notes</b> app."], ["Open <b>Play Store</b> and tap your profile picture.", "Tap <b>Play Protect</b>, then the <b>gear icon</b>.", "Turn off <b>Scan apps with Play Protect</b> and confirm."], ["Tap <b>Download Replica</b> below and install it. Allow installs from your browser if Android asks.", "Open <b>Replica</b> and follow the instructions on screen. That is the whole setup."]],
+    sgBtn1: "Get your credentials",
+    sgBtn3: "Download Replica",
+    sgDone: "Mark as done",
+    sgDoneOn: "Done",
+    sgProg: "{n} of 3 done",
+    sgProgAll: "All 3 steps done",
+    sgHeroT: "Your progress",
+    sgHelpT: "Stuck anywhere?",
+    sgHelpD: "You can also see the tutorial video below if you are having any problem.",
+    sgHelpBtn: "Watch tutorial video",
+    sgStep: "Step",
     guideDone: "{n} of {m} done", guideNext: "Mark as done", guideFinish: "Done, finish",
     devChips: ["Pixel / Motorola", "Samsung", "Xiaomi / Redmi / POCO", "OnePlus / OPPO / Realme", "vivo / iQOO", "Huawei"],
-    guideSteps: [{"t": "Telegram API", "s": "", "steps": ["Open this <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">website</a> and log in with the number of the Telegram account <b>you want to automate</b>.", "Enter the code Telegram sends you.", "Tap <b>API development tools</b>, fill in any title and short name, then tap <b>Create application</b>.", "Copy your <b>api_id</b> and <b>api_hash</b> and save them in your <b>Notes</b> app."]}, {"t": "Play Protect", "s": "", "steps": ["Open <b>Play Store</b> and tap your profile picture.", "Tap <b>Play Protect</b>, then the <b>gear icon</b>.", "Turn off <b>Scan apps with Play Protect</b> and confirm."]}, {"t": "Second phone", "s": "", "steps": ["Log in to the official <b>Telegram</b> app with the <b>same account</b> you used for the API ID.", "Open <b>Settings → Devices</b> and check that the scanner works.", "Black screen? Allow Telegram the <b>Camera</b> permission."]}, {"t": "Install apps", "s": "", "steps": ["Install both apps below. They are needed for the next steps."]}, {"t": "Replica setup", "s": "", "steps": ["Open the <b>Replica</b> app. It guides you through four permissions. Do not skip any.", "<b>Storage:</b> tap <b>Continue</b>, turn <b>ON</b> <b>Allow access to manage all files</b> for Replica, then return. Repeat the same for <b>Termux</b>.", "<b>Notifications:</b> tap <b>Continue</b>, turn <b>ON</b> <b>Allow notifications</b> for Replica (keep banners enabled), then return. Repeat for <b>Termux</b>.", "On the <b>Credentials</b> tab, enter your <b>API ID</b>, <b>API Hash</b> and <b>License Key</b>, then tap <b>Save</b>.", "Open the <b>Accounts</b> tab and type the VIP username <b>without the @</b>. Tap <b>+ Add</b> for more accounts, then tap <b>Save</b>."]}, {"t": "Pair ADB", "s": "", "steps": ["In Replica, open the <b>Setup</b> tab (gear icon). The <b>Enable Developer options</b> card shows the exact steps for your phone.", "Tap <b>Open settings</b> and follow the card. Come back when you see <b>You are now in Developer mode!</b>", "On the <b>Connect ADB</b> card, tap <b>Connect</b> and make sure the main Developer options switch is <b>ON</b>.", "Turn <b>ON</b> <b>USB debugging</b> and tap <b>OK</b>.", "Connect to <b>Wi-Fi</b> (or another phone's hotspot) from Quick Settings.", "Turn <b>ON</b> <b>Wireless debugging</b>, tick <b>Always allow on this network</b> and tap <b>Allow</b>.", "Tap the words <b>Wireless debugging</b>, then <b>Pair device with pairing code</b>. Keep the 6-digit code popup open.", "Swipe down the notification shade, find Replica's <b>Enter pairing code</b>, tap <b>Enter code</b>, type the code and tap the send arrow.", "Wait until the <b>Replica notification</b> disappears, then go back to the <b>Replica</b> app."], "note": "Make sure your device is connected to <b>Wi-Fi</b>. If it isn't, connect to Wi-Fi first, then follow these steps."}, {"t": "Allow ADB", "s": "", "steps": ["On the <b>Allow ADB commands</b> card, review the list of toggles.", "Tap <b>Open Developer options</b>, scroll through the whole list and turn <b>ON</b> every listed setting your phone has. Names vary by brand, so skip any you can't find.", "Go back to Replica and tap <b>Confirm</b>.", "Optional: you can now turn Wi-Fi off and use mobile data."]}, {"t": "Start Termux", "s": "", "steps": ["On the <b>Setup</b> tab in Replica, tap the arrow (→) button next to <b>Telegram</b>. Termux opens and installs its packages.", "Wait until <b>Preparing</b> reaches <b>100%</b>. Do not close the app.", "Tap <b>Allow</b> on <b>Let app always run in background?</b>", "Termux shows <b>STORAGE PERMISSION GRANTED</b>, then <b>CHECKING ADB</b>. On <b>Allow USB debugging?</b> tick <b>Always allow from this computer</b> and tap <b>Allow</b>."]}, {"t": "Telegram login", "s": "", "steps": ["On the <b>TELEGRAM LOGIN</b> screen, tap <b>LOGIN WITH QR</b> and wait for the QR code.", "On your second phone, open <b>Settings → Devices → Link Desktop Device</b> and scan the code.", "When <b>ENTER THE 2FA PASSWORD</b> appears, type your Telegram 2FA password and press Enter (✓).", "<b>LOGGED IN</b> appears, then the <b>AUTOMATION DASHBOARD</b>. Check that DEVICE, ACCOUNT, LICENSE, VIP and CASHCOINS are filled and the logs say <b>READY TO START</b>.", "Tap the red <b>EXIT</b> button to finish the setup."]}],
     videoLbl: "Video",
     useLbl: "Usage",
     useHead: "How to operate",
@@ -5534,15 +5538,15 @@ const I18N = {
     useHelpT: "Something not working?",
     useHelpD: "Tap <b>SHARE</b> in System Logs and send the log to the developer with a short description.",
     videoHead: "Having trouble<br>setting up?",
-    videoSub: "Facing trouble following the steps? Complete steps 1–6, then follow the video tutorial for the last five.",
+    videoSub: "You can also see the tutorial video below if you are having any problem.",
     videoFlow1: "Do steps 1–6",
     videoFlow2: "Follow the video",
     videoFlow1Sub: "Security to Device",
     videoFlow2Sub: "Replica, Termux, Pairing & Login",
-    vbTagA: "Pairing",
+    vbTagA: "Setup",
     vbTagB: "Login",
     videoCardTitle: "Video tutorial",
-    videoCardSub: "Watch steps 5–9 on screen, from setting up Replica and Termux to pairing and logging in.",
+    videoCardSub: "Watch the whole setup on screen, from downloading Replica to following its instructions.",
     videoSoon: "Video coming soon",
     devHead: "Enable Developer Options",
     devSub: "A hidden Android setting that Replica needs. Follow the steps for your phone.",
@@ -5684,10 +5688,23 @@ const I18N = {
       "З'являться ваші <b>App api_id</b> (цифри) та <b>App api_hash</b> (літери й цифри).",
       "Скопіюйте обидва значення та збережіть у додатку <b>Нотатки</b>, щоб скористатися ними пізніше."
     ],
-    guideLbl: "Інструкція", guideHead: "9 простих кроків", guideSub: "Виконуйте кроки по черзі. Торкніться кроку, щоб відкрити його, потім позначте виконаним.",
+    guideLbl: "Інструкція", guideHead: "Налаштування за 3 прості кроки", guideSub: "Виконайте ці три дії по черзі. Натискайте «Виконано» після кожної.",
+    sgT: ["Отримайте API ID і Hash", "Вимкніть Play Захист", "Встановіть Replica і виконайте налаштування"],
+    sgSub: ["Близько 2 хвилин", "Займає 30 секунд", "Replica веде вас на екрані"],
+    sgS: [["Відкрийте <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">my.telegram.org</a> і увійдіть за номером Telegram, <b>який хочете автоматизувати</b>.", "Введіть код, який надішле Telegram.", "Торкніться <b>API development tools</b>, введіть будь-яку назву, потім торкніться <b>Create application</b>.", "Скопіюйте <b>api_id</b> та <b>api_hash</b> і збережіть у додатку <b>Нотатки</b>."], ["Відкрийте <b>Play Маркет</b> і торкніться фото профілю.", "Торкніться <b>Play Захист</b>, потім <b>значка налаштувань</b>.", "Вимкніть <b>Сканувати додатки за допомогою Play Захисту</b> і підтвердьте."], ["Натисніть <b>Завантажити Replica</b> нижче та встановіть додаток. Дозвольте встановлення з браузера, якщо Android запитає.", "Відкрийте <b>Replica</b> і виконуйте інструкції на екрані. Це і є все налаштування."]],
+    sgBtn1: "Отримати дані доступу",
+    sgBtn3: "Завантажити Replica",
+    sgDone: "Позначити виконаним",
+    sgDoneOn: "Виконано",
+    sgProg: "{n} з 3 виконано",
+    sgProgAll: "Усі 3 кроки виконано",
+    sgHeroT: "Ваш прогрес",
+    sgHelpT: "Виникли труднощі?",
+    sgHelpD: "Ви також можете переглянути відеоурок нижче, якщо виникли якісь проблеми.",
+    sgHelpBtn: "Дивитися відеоурок",
+    sgStep: "Крок",
     guideDone: "{n} з {m} виконано", guideNext: "Позначити виконаним", guideFinish: "Готово, завершити",
     devChips: ["Pixel / Motorola", "Samsung", "Xiaomi / Redmi / POCO", "OnePlus / OPPO / Realme", "vivo / iQOO", "Huawei"],
-    guideSteps: [{"t": "Telegram API", "s": "", "steps": ["Відкрийте цей <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">сайт</a> і увійдіть за номером Telegram-акаунта, <b>який хочете автоматизувати</b>.", "Введіть код, який надішле Telegram.", "Натисніть <b>API development tools</b>, введіть будь-яку назву й коротке ім'я та натисніть <b>Create application</b>.", "Скопіюйте <b>api_id</b> та <b>api_hash</b> і збережіть у додатку <b>Нотатки</b>."]}, {"t": "Play Protect", "s": "", "steps": ["Відкрийте <b>Play Маркет</b> і торкніться фото профілю.", "Торкніться <b>Play Захист</b>, потім <b>значка налаштувань</b>.", "Вимкніть <b>Сканувати додатки за допомогою Play Захисту</b> і підтвердьте."]}, {"t": "Другий телефон", "s": "", "steps": ["Увійдіть в офіційний додаток <b>Telegram</b> у <b>той самий акаунт</b>, який ви використали для API ID.", "Відкрийте <b>Налаштування → Пристрої</b> і перевірте, що сканер працює.", "Чорний екран? Дозвольте Telegram доступ до <b>камери</b>."]}, {"t": "Встановлення", "s": "", "steps": ["Встановіть обидва додатки нижче. Вони потрібні для наступних кроків."]}, {"t": "Налаштування Replica", "s": "", "steps": ["Відкрийте додаток <b>Replica</b>. Він проведе вас через чотири дозволи. Не пропускайте жодного.", "<b>Сховище:</b> натисніть <b>Continue</b>, увімкніть <b>Allow access to manage all files</b> для Replica і поверніться. Повторіть те саме для <b>Termux</b>.", "<b>Сповіщення:</b> натисніть <b>Continue</b>, увімкніть <b>Allow notifications</b> для Replica (банери мають лишатися ввімкненими) і поверніться. Повторіть для <b>Termux</b>.", "На вкладці <b>Credentials</b> введіть <b>API ID</b>, <b>API Hash</b> і <b>License Key</b>, потім натисніть <b>Save</b>.", "Відкрийте вкладку <b>Accounts</b> і введіть VIP-ім'я користувача <b>без @</b>. Для додаткових акаунтів натисніть <b>+ Add</b>, потім <b>Save</b>."]}, {"t": "Підключення ADB", "s": "", "steps": ["У Replica відкрийте вкладку <b>Setup</b> (значок шестірні). Картка <b>Enable Developer options</b> показує точні кроки для вашого телефона.", "Натисніть <b>Open settings</b> і виконайте кроки на картці. Поверніться, коли побачите <b>You are now in Developer mode!</b>", "На картці <b>Connect ADB</b> натисніть <b>Connect</b> і переконайтеся, що головний перемикач параметрів розробника <b>увімкнений</b>.", "Увімкніть <b>USB debugging</b> і натисніть <b>OK</b>.", "Підключіться до <b>Wi-Fi</b> (або до точки доступу іншого телефона) у швидких налаштуваннях.", "Увімкніть <b>Wireless debugging</b>, поставте галочку <b>Always allow on this network</b> і натисніть <b>Allow</b>.", "Торкніться слів <b>Wireless debugging</b>, потім <b>Pair device with pairing code</b>. Не закривайте вікно з 6-значним кодом.", "Відкрийте шторку сповіщень, знайдіть сповіщення Replica <b>Enter pairing code</b>, натисніть <b>Enter code</b>, введіть код і натисніть стрілку надсилання.", "Зачекайте, поки <b>сповіщення Replica</b> зникне, потім поверніться до додатка <b>Replica</b>."], "note": "Переконайтеся, що пристрій підключено до <b>Wi-Fi</b>. Якщо ні, спочатку підключіться до Wi-Fi, а потім виконуйте ці кроки."}, {"t": "Дозволи ADB", "s": "", "steps": ["На картці <b>Allow ADB commands</b> перегляньте список перемикачів.", "Натисніть <b>Open Developer options</b>, прокрутіть увесь список і увімкніть кожен зазначений параметр, який є на вашому телефоні. Назви залежать від бренду, тож пропустіть ті, яких не знайдете.", "Поверніться до Replica та натисніть <b>Confirm</b>.", "Необов'язково: тепер можна вимкнути Wi-Fi і користуватися мобільним інтернетом."]}, {"t": "Запуск Termux", "s": "", "steps": ["На вкладці <b>Setup</b> у Replica натисніть кнопку зі стрілкою (→) біля <b>Telegram</b>. Termux відкриється й встановить свої пакети.", "Дочекайтеся, поки <b>Preparing</b> досягне <b>100%</b>. Не закривайте додаток.", "Натисніть <b>Allow</b> у вікні <b>Let app always run in background?</b>", "Termux покаже <b>STORAGE PERMISSION GRANTED</b>, потім <b>CHECKING ADB</b>. У вікні <b>Allow USB debugging?</b> поставте галочку <b>Always allow from this computer</b> і натисніть <b>Allow</b>."]}, {"t": "Вхід у Telegram", "s": "", "steps": ["На екрані <b>TELEGRAM LOGIN</b> натисніть <b>LOGIN WITH QR</b> і зачекайте на QR-код.", "На другому телефоні відкрийте <b>Settings → Devices → Link Desktop Device</b> і скануйте код.", "Коли з'явиться <b>ENTER THE 2FA PASSWORD</b>, введіть пароль двоетапної перевірки Telegram і натисніть Enter (✓).", "З'явиться <b>LOGGED IN</b>, потім <b>AUTOMATION DASHBOARD</b>. Переконайтеся, що DEVICE, ACCOUNT, LICENSE, VIP і CASHCOINS заповнені, а в логах <b>READY TO START</b>.", "Натисніть червону кнопку <b>EXIT</b>, щоб завершити налаштування."]}],
     videoLbl: "Відео",
     useLbl: "Використання",
     useHead: "Як користуватися",
@@ -5707,15 +5724,15 @@ const I18N = {
     useHelpT: "Щось не працює?",
     useHelpD: "Натисніть <b>SHARE</b> у System Logs і надішліть журнал розробнику з коротким описом проблеми.",
     videoHead: "Виникли труднощі<br>з налаштуванням?",
-    videoSub: "Важко виконувати кроки? Виконайте кроки 1–6, а останні п'ять повторіть за відеоінструкцією.",
+    videoSub: "Ви також можете переглянути відеоурок нижче, якщо виникли якісь проблеми.",
     videoFlow1: "Виконайте кроки 1–6",
     videoFlow2: "Дивіться відео",
     videoFlow1Sub: "Від «Безпека» до «Пристрій»",
     videoFlow2Sub: "Replica, Termux, Підключення і Вхід",
-    vbTagA: "Підключення",
+    vbTagA: "Налаштування",
     vbTagB: "Вхід",
     videoCardTitle: "Відеоурок",
-    videoCardSub: "Дивіться кроки 5–9 на екрані: від налаштування Replica і Termux до підключення та входу.",
+    videoCardSub: "Дивіться все налаштування на екрані: від завантаження Replica до виконання її інструкцій.",
     videoSoon: "Відео незабаром",
     devHead: "Увімкніть режим розробника",
     devSub: "Прихований параметр Android, потрібний для Replica. Виконайте кроки для вашого телефону.",
@@ -5857,10 +5874,23 @@ const I18N = {
       "Появятся ваши <b>App api_id</b> (цифры) и <b>App api_hash</b> (буквы и цифры).",
       "Скопируйте оба значения и сохраните в приложении <b>Заметки</b>, чтобы воспользоваться ими позже."
     ],
-    guideLbl: "Инструкция", guideHead: "9 простых шагов", guideSub: "Выполняйте шаги по порядку. Нажмите на шаг, чтобы открыть его, затем отметьте выполненным.",
+    guideLbl: "Инструкция", guideHead: "Настройка за 3 простых шага", guideSub: "Выполните эти три действия по порядку. Нажимайте «Готово» после каждого.",
+    sgT: ["Получите API ID и Hash", "Отключите Play Защиту", "Установите Replica и выполните настройку"],
+    sgSub: ["Около 2 минут", "Займёт 30 секунд", "Replica ведёт вас на экране"],
+    sgS: [["Откройте <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">my.telegram.org</a> и войдите по номеру Telegram, <b>который хотите автоматизировать</b>.", "Введите код, который пришлёт Telegram.", "Нажмите <b>API development tools</b>, введите любое название, затем нажмите <b>Create application</b>.", "Скопируйте <b>api_id</b> и <b>api_hash</b> и сохраните в приложении <b>Заметки</b>."], ["Откройте <b>Play Маркет</b> и нажмите на фото профиля.", "Нажмите <b>Play Защита</b>, затем <b>значок настроек</b>.", "Отключите <b>Сканировать приложения с помощью Play Защиты</b> и подтвердите."], ["Нажмите <b>Скачать Replica</b> ниже и установите приложение. Разрешите установку из браузера, если Android спросит.", "Откройте <b>Replica</b> и следуйте инструкциям на экране. Это и есть вся настройка."]],
+    sgBtn1: "Получить данные доступа",
+    sgBtn3: "Скачать Replica",
+    sgDone: "Отметить выполненным",
+    sgDoneOn: "Готово",
+    sgProg: "{n} из 3 выполнено",
+    sgProgAll: "Все 3 шага выполнены",
+    sgHeroT: "Ваш прогресс",
+    sgHelpT: "Возникли трудности?",
+    sgHelpD: "Вы также можете посмотреть видеоурок ниже, если возникли какие-либо проблемы.",
+    sgHelpBtn: "Смотреть видеоурок",
+    sgStep: "Шаг",
     guideDone: "{n} из {m} выполнено", guideNext: "Отметить выполненным", guideFinish: "Готово, завершить",
     devChips: ["Pixel / Motorola", "Samsung", "Xiaomi / Redmi / POCO", "OnePlus / OPPO / Realme", "vivo / iQOO", "Huawei"],
-    guideSteps: [{"t": "Telegram API", "s": "", "steps": ["Откройте этот <a href=\"https://my.telegram.org\" target=\"_blank\" rel=\"noopener noreferrer\">сайт</a> и войдите по номеру Telegram-аккаунта, <b>который хотите автоматизировать</b>.", "Введите код, который пришлёт Telegram.", "Нажмите <b>API development tools</b>, введите любое название и короткое имя, затем нажмите <b>Create application</b>.", "Скопируйте <b>api_id</b> и <b>api_hash</b> и сохраните в приложении <b>Заметки</b>."]}, {"t": "Play Protect", "s": "", "steps": ["Откройте <b>Play Маркет</b> и нажмите на фото профиля.", "Нажмите <b>Play Защита</b>, затем <b>значок настроек</b>.", "Отключите <b>Сканировать приложения с помощью Play Защиты</b> и подтвердите."]}, {"t": "Второй телефон", "s": "", "steps": ["Войдите в официальное приложение <b>Telegram</b> в <b>тот же аккаунт</b>, который вы использовали для API ID.", "Откройте <b>Настройки → Устройства</b> и проверьте, что сканер работает.", "Чёрный экран? Разрешите Telegram доступ к <b>камере</b>."]}, {"t": "Установка", "s": "", "steps": ["Установите оба приложения ниже. Они нужны для следующих шагов."]}, {"t": "Настройка Replica", "s": "", "steps": ["Откройте приложение <b>Replica</b>. Оно проведёт вас через четыре разрешения. Не пропускайте ни одного.", "<b>Хранилище:</b> нажмите <b>Continue</b>, включите <b>Allow access to manage all files</b> для Replica и вернитесь. Повторите то же для <b>Termux</b>.", "<b>Уведомления:</b> нажмите <b>Continue</b>, включите <b>Allow notifications</b> для Replica (баннеры должны оставаться включёнными) и вернитесь. Повторите для <b>Termux</b>.", "На вкладке <b>Credentials</b> введите <b>API ID</b>, <b>API Hash</b> и <b>License Key</b>, затем нажмите <b>Save</b>.", "Откройте вкладку <b>Accounts</b> и введите VIP-имя пользователя <b>без @</b>. Для дополнительных аккаунтов нажмите <b>+ Add</b>, затем <b>Save</b>."]}, {"t": "Подключение ADB", "s": "", "steps": ["В Replica откройте вкладку <b>Setup</b> (значок шестерёнки). Карточка <b>Enable Developer options</b> показывает точные шаги для вашего телефона.", "Нажмите <b>Open settings</b> и выполните шаги на карточке. Вернитесь, когда увидите <b>You are now in Developer mode!</b>", "На карточке <b>Connect ADB</b> нажмите <b>Connect</b> и убедитесь, что главный переключатель параметров разработчика <b>включён</b>.", "Включите <b>USB debugging</b> и нажмите <b>OK</b>.", "Подключитесь к <b>Wi-Fi</b> (или к точке доступа другого телефона) в быстрых настройках.", "Включите <b>Wireless debugging</b>, поставьте галочку <b>Always allow on this network</b> и нажмите <b>Allow</b>.", "Нажмите на слова <b>Wireless debugging</b>, затем <b>Pair device with pairing code</b>. Не закрывайте окно с 6-значным кодом.", "Откройте шторку уведомлений, найдите уведомление Replica <b>Enter pairing code</b>, нажмите <b>Enter code</b>, введите код и нажмите стрелку отправки.", "Дождитесь, пока <b>уведомление Replica</b> исчезнет, затем вернитесь в приложение <b>Replica</b>."], "note": "Убедитесь, что устройство подключено к <b>Wi-Fi</b>. Если нет, сначала подключитесь к Wi-Fi, а затем выполняйте эти шаги."}, {"t": "Разрешения ADB", "s": "", "steps": ["На карточке <b>Allow ADB commands</b> просмотрите список переключателей.", "Нажмите <b>Open Developer options</b>, прокрутите весь список и включите каждый указанный параметр, который есть на вашем телефоне. Названия зависят от бренда, поэтому пропустите те, что не найдёте.", "Вернитесь в Replica и нажмите <b>Confirm</b>.", "Необязательно: теперь можно выключить Wi-Fi и пользоваться мобильным интернетом."]}, {"t": "Запуск Termux", "s": "", "steps": ["На вкладке <b>Setup</b> в Replica нажмите кнопку со стрелкой (→) рядом с <b>Telegram</b>. Termux откроется и установит свои пакеты.", "Дождитесь, пока <b>Preparing</b> дойдёт до <b>100%</b>. Не закрывайте приложение.", "Нажмите <b>Allow</b> в окне <b>Let app always run in background?</b>", "Termux покажет <b>STORAGE PERMISSION GRANTED</b>, затем <b>CHECKING ADB</b>. В окне <b>Allow USB debugging?</b> поставьте галочку <b>Always allow from this computer</b> и нажмите <b>Allow</b>."]}, {"t": "Вход в Telegram", "s": "", "steps": ["На экране <b>TELEGRAM LOGIN</b> нажмите <b>LOGIN WITH QR</b> и дождитесь QR-кода.", "На втором телефоне откройте <b>Settings → Devices → Link Desktop Device</b> и отсканируйте код.", "Когда появится <b>ENTER THE 2FA PASSWORD</b>, введите пароль двухэтапной проверки Telegram и нажмите Enter (✓).", "Появится <b>LOGGED IN</b>, затем <b>AUTOMATION DASHBOARD</b>. Убедитесь, что DEVICE, ACCOUNT, LICENSE, VIP и CASHCOINS заполнены, а в логах <b>READY TO START</b>.", "Нажмите красную кнопку <b>EXIT</b>, чтобы завершить настройку."]}],
     videoLbl: "Видео",
     useLbl: "Использование",
     useHead: "Как пользоваться",
@@ -5880,15 +5910,15 @@ const I18N = {
     useHelpT: "Что-то не работает?",
     useHelpD: "Нажмите <b>SHARE</b> в System Logs и отправьте журнал разработчику с кратким описанием проблемы.",
     videoHead: "Возникли трудности<br>с настройкой?",
-    videoSub: "Трудно следовать шагам? Выполните шаги 1–6, а последние пять повторяйте по видеоинструкции.",
+    videoSub: "Вы также можете посмотреть видеоурок ниже, если возникли какие-либо проблемы.",
     videoFlow1: "Выполните шаги 1–6",
     videoFlow2: "Смотрите видео",
     videoFlow1Sub: "От «Безопасность» до «Устройство»",
     videoFlow2Sub: "Replica, Termux, Сопряжение и Вход",
-    vbTagA: "Сопряжение",
+    vbTagA: "Настройка",
     vbTagB: "Вход",
     videoCardTitle: "Видеоурок",
-    videoCardSub: "Смотрите шаги 5–9 на экране: от настройки Replica и Termux до сопряжения и входа.",
+    videoCardSub: "Смотрите всю настройку на экране: от загрузки Replica до выполнения её инструкций.",
     videoSoon: "Видео скоро появится",
     devHead: "Включите режим разработчика",
     devSub: "Скрытая настройка Android, необходимая для Replica. Выполните шаги для вашего телефона.",
@@ -6037,7 +6067,7 @@ function haptic(kind = 'tap') {
 
 /* PRESS EFFECT: touch presses show only after a short hold and are cancelled
    as soon as the finger moves (scrolling) or the browser takes over the gesture */
-const PRESS_SEL = '.ft-icon-btn, .ft-social-link, .ft-brand, .lang-seg-btn, .shape-fab, .m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger';
+const PRESS_SEL = '.ft-icon-btn, .ft-social-link, .ft-brand, .lang-seg-btn, .shape-fab, .m3e-btn, .tile-action-btn, .m3e-chip.m3e-state, .m3e-action-btn, .monet-swatch, .m3e-switch, .expandable-trigger, .mx-btn, .mx-plan, .ox-nb, .vp, .gt-pick, .license-choice, .help-btn, .multi-btn';
 const MIN_PRESS_MS = 160;
 let pend = null;
 
@@ -6209,342 +6239,81 @@ function setupFaq() {
   (desk.addEventListener ? desk.addEventListener('change', sync) : desk.addListener(sync));
 }
 
-/* ===== SETUP GUIDE ===== */
-const GUIDE_TYPES = ['list', 'list', 'list', 'install', 'list', 'list', 'list', 'list', 'list'];
-const PHASE_AT = {0: 0, 4: 1, 7: 2};
-const PHASE_ICONS = ['icShield', 'icTune', 'icRocket'];
-let doneSteps = new Set();
+/* ===== SETUP GUIDE (3 steps) ===== */
+const SG_ICONS = ['icKey', 'icShield', 'icAndroid'];
+const SG_ROLES = ['primary', 'secondary', 'tertiary'];
+let sgDone = new Set();
 try {
-  doneSteps = new Set(JSON.parse(store.get('replica_done') || '[]'));
-  if (store.get('replica_done_v') !== '4') {   // step order changed: reset saved progress
-    doneSteps = new Set();
-    store.set('replica_done', '[]');
-    store.set('replica_done_v', '4');
-  }
+  sgDone = new Set(JSON.parse(store.get('replica_done_v3') || '[]').filter(n => n >= 0 && n < 3));
 } catch (_) {}
-let openStep = -2;     // -2 = not decided yet, -1 = all closed
-let devIdx = 0;
-
-function saveDone() { store.set('replica_done', JSON.stringify([...doneSteps])); }
-
-/* ===== DEVICE PICKER DATA (developer step) ===== */
-const VERS = [11, 12, 13, 14, 15, 16, 17];
-const T7 = n => `Tap <b>${n}</b> rapidly <b>7 times</b>.`;
-const PIN = 'Enter your lock screen PIN, pattern, or password when prompted.';
-const DEV = [
-  { n: 'Pixel / Motorola / Stock', full: 'Google Pixel, Motorola & Stock Android',
-    on: v => ['Open <b>Settings</b>.', 'Scroll to the bottom and tap <b>About phone</b> (or <b>About tablet</b>).', 'Scroll down to find <b>Build number</b>.', T7('Build number'), PIN],
-    loc: v => v >= 12 ? ['Return to <b>Settings</b>.', 'Tap <b>System</b>.', 'Select <b>Developer options</b>.']
-      : ['Return to <b>Settings</b>.', 'Tap <b>System</b>.', 'Expand <b>Advanced</b>.', 'Select <b>Developer options</b>.'] },
-  { n: 'Samsung', full: 'Samsung Galaxy (One UI)',
-    on: v => ['Open <b>Settings</b>.', 'Scroll down to the bottom and tap <b>About phone</b>.', 'Tap <b>Software information</b>.', T7('Build number'), 'Enter your device PIN, pattern, or password to confirm.'],
-    loc: v => ['Press back <b>twice</b> to return to the main <b>Settings</b> screen.', 'Scroll to the very bottom. <b>Developer options</b> appears directly below <b>About phone</b>.'] },
-  { n: 'Xiaomi / Redmi / POCO', full: 'Xiaomi, Redmi & POCO (MIUI & HyperOS)',
-    on: v => ['Open <b>Settings</b>.', 'Tap <b>About phone</b> (or <b>My device</b>) at the top of the menu.',
-      v >= 14 ? 'Tap <b>OS version</b> rapidly <b>7 times</b> (HyperOS).' : 'Tap <b>MIUI version</b> rapidly <b>7 times</b>.',
-      'You will see the message <b>You are now a developer!</b>'],
-    loc: v => ['Return to the main <b>Settings</b>.', 'Scroll down and tap <b>Additional settings</b>.', 'Select <b>Developer options</b>.'] },
-  { n: 'OnePlus', full: 'OnePlus (OxygenOS)',
-    on: v => ['Open <b>Settings</b>.', v === 11 ? 'Scroll down and tap <b>About phone</b>.' : 'Scroll down and tap <b>About device</b>.',
-      ...(v === 11 ? [] : ['Tap <b>Version</b>.']), T7('Build number</b> (or <b>Version number'), 'Enter your lock screen PIN or password.'],
-    loc: v => v >= 13 ? ['Return to <b>Settings</b>.', 'Tap <b>Additional settings</b> (or <b>System settings</b>).', 'Tap <b>Developer options</b>.']
-      : v === 12 ? ['Return to <b>Settings</b>.', 'Tap <b>System settings</b>.', 'Tap <b>Developer options</b>.']
-      : ['Return to <b>Settings</b>.', 'Tap <b>System</b>.', 'Tap <b>Developer options</b>.'] },
-  { n: 'OPPO / realme', full: 'OPPO & realme (ColorOS & realme UI)',
-    on: v => ['Open <b>Settings</b>.', 'Scroll down and tap <b>About device</b> (or <b>About phone</b>).', 'Tap <b>Version</b>.', T7('Version number</b> (or <b>Build number'), 'Enter your screen lock PIN or password.'],
-    loc: v => ['Return to <b>Settings</b>.', 'Tap <b>Additional settings</b> (or <b>System settings</b>).', 'Select <b>Developer options</b>.'] },
-  { n: 'Vivo / iQOO', full: 'Vivo & iQOO (Funtouch OS & OriginOS)',
-    on: v => ['Open <b>Settings</b>.', 'Scroll to the bottom and tap <b>About phone</b>.', 'Tap <b>Software info</b> (or <b>Software information</b>).', T7('Build number'), 'Enter your lock screen PIN or password.'],
-    loc: v => ['Return to <b>Settings</b>.', 'Scroll down and tap <b>System</b>.', 'Select <b>Developer options</b>.'] },
-  { n: 'Tecno / Infinix / itel', full: 'Transsion (Tecno HiOS, Infinix XOS, itel itelOS)',
-    on: v => ['Open <b>Settings</b>.', 'Tap <b>My Phone</b> at the very top.', 'Scroll down to find <b>Build number</b>.', T7('Build number'), 'Enter your security PIN or pattern.'],
-    loc: v => ['Return to the main <b>Settings</b>.', 'Scroll to the bottom and tap <b>System</b>.', 'Select <b>Developer options</b>.'] }
-];
-const DEV_UI = {
-  en: { brandQ: 'Which phone brand do you have?', verQ: 'Which Android version?', verHint: 'Find it in Settings \u203A About phone \u203A Android version.',
-    onT: 'How to enable Developer options', locT: 'Where to find Developer options',
-    find: 'Open <b>Settings</b>, tap the <b>search bar</b> at the top, type <b>Developer options</b> (or <b>Developer settings</b>) and open it.', chB: 'Change brand', chV: 'Change Android version', pick: 'Pick your phone in step 6 first. The exact path will appear here.', go: 'Go to step 6', android: 'Android', search: 'Tip: you can also type <b>Build number</b> in the Settings search bar.' },
-  uk: { brandQ: '\u042F\u043A\u0438\u0439 \u0443 \u0432\u0430\u0441 \u0431\u0440\u0435\u043D\u0434 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430?', verQ: '\u042F\u043A\u0430 \u0432\u0435\u0440\u0441\u0456\u044F Android?', verHint: '\u0414\u0438\u0432\u0456\u0442\u044C\u0441\u044F: \u041D\u0430\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u043D\u043D\u044F \u203A \u041F\u0440\u043E \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u203A \u0412\u0435\u0440\u0441\u0456\u044F Android.',
-    onT: '\u042F\u043A \u0443\u0432\u0456\u043C\u043A\u043D\u0443\u0442\u0438 \u0440\u0435\u0436\u0438\u043C \u0440\u043E\u0437\u0440\u043E\u0431\u043D\u0438\u043A\u0430', locT: '\u0414\u0435 \u0437\u043D\u0430\u0439\u0442\u0438 \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u0438 \u0440\u043E\u0437\u0440\u043E\u0431\u043D\u0438\u043A\u0430',
-    find: '\u0412\u0456\u0434\u043A\u0440\u0438\u0439\u0442\u0435 <b>\u041D\u0430\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u043D\u043D\u044F</b>, \u0442\u0430\u043F\u043D\u0456\u0442\u044C <b>\u043F\u043E\u0448\u0443\u043A</b> \u0443\u0433\u043E\u0440\u0456, \u0432\u0432\u0435\u0434\u0456\u0442\u044C <b>Developer options</b> (\u0430\u0431\u043E <b>Developer settings</b>) \u0456 \u0432\u0456\u0434\u043A\u0440\u0438\u0439\u0442\u0435 \u0446\u0435\u0439 \u043F\u0443\u043D\u043A\u0442.', chB: '\u0417\u043C\u0456\u043D\u0438\u0442\u0438 \u0431\u0440\u0435\u043D\u0434', chV: '\u0417\u043C\u0456\u043D\u0438\u0442\u0438 \u0432\u0435\u0440\u0441\u0456\u044E Android', pick: '\u0421\u043F\u0435\u0440\u0448\u0443 \u043E\u0431\u0435\u0440\u0456\u0442\u044C \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0443 \u043A\u0440\u043E\u043A\u0443 6. \u0422\u0443\u0442 \u0437\u02BC\u044F\u0432\u0438\u0442\u044C\u0441\u044F \u0442\u043E\u0447\u043D\u0438\u0439 \u0448\u043B\u044F\u0445.', go: '\u0414\u043E \u043A\u0440\u043E\u043A\u0443 6', android: 'Android', search: '\u041F\u043E\u0440\u0430\u0434\u0430: \u043C\u043E\u0436\u043D\u0430 \u0432\u0432\u0435\u0441\u0442\u0438 <b>Build number</b> \u0443 \u043F\u043E\u0448\u0443\u043A\u0443 \u043D\u0430\u043B\u0430\u0448\u0442\u0443\u0432\u0430\u043D\u044C.' },
-  ru: { brandQ: '\u041A\u0430\u043A\u043E\u0439 \u0443 \u0432\u0430\u0441 \u0431\u0440\u0435\u043D\u0434 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430?', verQ: '\u041A\u0430\u043A\u0430\u044F \u0432\u0435\u0440\u0441\u0438\u044F Android?', verHint: '\u0421\u043C\u043E\u0442\u0440\u0438\u0442\u0435: \u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u203A \u041E \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0435 \u203A \u0412\u0435\u0440\u0441\u0438\u044F Android.',
-    onT: '\u041A\u0430\u043A \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u0447\u0438\u043A\u0430', locT: '\u0413\u0434\u0435 \u043D\u0430\u0439\u0442\u0438 \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u0447\u0438\u043A\u0430',
-    find: '\u041E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 <b>\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438</b>, \u043D\u0430\u0436\u043C\u0438\u0442\u0435 <b>\u043F\u043E\u0438\u0441\u043A</b> \u0432\u0432\u0435\u0440\u0445\u0443, \u0432\u0432\u0435\u0434\u0438\u0442\u0435 <b>Developer options</b> (\u0438\u043B\u0438 <b>Developer settings</b>) \u0438 \u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u044D\u0442\u043E\u0442 \u043F\u0443\u043D\u043A\u0442.', chB: '\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u0431\u0440\u0435\u043D\u0434', chV: '\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u0432\u0435\u0440\u0441\u0438\u044E Android', pick: '\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0432 \u0448\u0430\u0433\u0435 6. \u0417\u0434\u0435\u0441\u044C \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0442\u043E\u0447\u043D\u044B\u0439 \u043F\u0443\u0442\u044C.', go: '\u041A \u0448\u0430\u0433\u0443 6', android: 'Android', search: '\u0421\u043E\u0432\u0435\u0442: \u043C\u043E\u0436\u043D\u043E \u0432\u0432\u0435\u0441\u0442\u0438 <b>Build number</b> \u0432 \u043F\u043E\u0438\u0441\u043A\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043A.' }
-};
-let devBrand = null, devVer = null;
-try {
-  const b = store.get('replica_dev_brand'), v = store.get('replica_dev_ver');
-  if (b !== null && b !== undefined && b !== '' && DEV[+b]) devBrand = +b;
-  if (v && VERS.includes(+v)) devVer = +v;
-} catch (_) {}
-
-const stepsHtml = arr => '<div class="gsteps">' + arr.map((t, n) =>
-  `<div class="gstep step-point" style="--i:${n}"><span class="gnum">${n + 1}</span><div class="gtext">${t}</div></div>`).join('') + '</div>';
-
-function devPickHtml() {
-  const u = DEV_UI[lang] || DEV_UI.en;
-  const back = (act, label) => `<button class="m3e-btn tonal m3e-state dev-act" type="button" data-act="${act}"><svg class="ic" style="rotate:180deg"><use href="#icArrowRight"/></svg><span>${label}</span></button>`;
-  if (devBrand === null) {
-    return `<div class="dev-q">${u.brandQ}</div><div class="brand-chips" role="radiogroup">${DEV.map((d, n) =>
-      `<button class="m3e-chip m3e-state brand-chip" data-b="${n}" role="radio" aria-checked="false">${d.n}</button>`).join('')}</div>`;
-  }
-  const d = DEV[devBrand];
-  if (devVer === null) {
-    return `<div class="dev-q">${u.verQ} <span class="dev-sel">${d.n}</span></div><div class="brand-chips" role="radiogroup">${VERS.map(v =>
-      `<button class="m3e-chip m3e-state brand-chip" data-v="${v}" role="radio" aria-checked="false">${u.android} ${v}</button>`).join('')}</div>
-      <p class="brand-note">${u.verHint}</p><div class="dev-actions">${back('brand', u.chB)}</div>`;
-  }
-  return `<div class="brand-item dev-result"><div class="brand-name">${d.full} \u00B7 ${u.android} ${devVer}</div>
-    <div class="brand-line"><span>${u.onT}</span></div>${stepsHtml(d.on(devVer))}
-    <p class="brand-note">${u.search}</p></div>
-    <div class="dev-actions">${back('brand', u.chB)}${back('ver', u.chV)}</div>`;
-}
-function devLocHtml() {
-  const u = DEV_UI[lang] || DEV_UI.en;
-  if (devBrand === null || devVer === null) {
-    return `<div class="step-note"><svg class="ic"><use href="#icShield"/></svg><div>${u.pick}<br>
-      <button class="m3e-btn tonal m3e-state dev-goto" type="button"><span>${u.go}</span></button></div></div>`;
-  }
-  const d = DEV[devBrand];
-  return `<div class="brand-item dev-result"><div class="brand-name">${d.full} \u00B7 ${u.android} ${devVer}</div>
-    <div class="brand-line"><span>${u.locT}</span></div>${stepsHtml(d.loc(devVer))}</div>`;
-}
-function refreshDev(animate) {
-  const p = $('#devPick'), l = $('#devLoc');
-  if (p) p.innerHTML = devPickHtml();
-  if (l) l.innerHTML = devLocHtml();
-  if (animate && p) { const r = p.firstElementChild; if (r && !reduceMotion) p.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(0.2,0,0,1)' }); }
-}
-
-function brandHtml(dict) {
-  const b = dict.devBrands[devIdx];
-  return `<div class="brand-name">${b[0]}</div>
-    <div class="brand-line"><span>${dict.devBrandTap}</span> ${b[1]}</div>
-    <div class="brand-line"><span>${dict.devBrandFind}</span> ${b[2]}</div>
-    <p class="brand-note">${dict.devBrandNote}</p>`;
-}
-
-const GZ_PH = {en: ["Prepare", "Set up the phone", "Connect & log in"], uk: ["Підготовка", "Налаштування телефона", "Підключення і вхід"], ru: ["Подготовка", "Настройка телефона", "Подключение и вход"]};
-const GZ_DL = [
-  ['icAndroid', '', 'dlReplicaAnchor', 'titleReplica', 'descReplica', 'btnDlReplica', 'replicaApk', 'replica.apk'],
-  ['icTerminal', 'alt', 'dlTermuxAnchor', 'titleTermux', 'descTermux', 'btnDlTermux', 'termuxApk', 'termux.apk']
-];
-function guidePhase(i) { let p = 0; for (const k in PHASE_AT) { if (+k <= i) p = PHASE_AT[k]; } return p; }
-
-function stepBody(dict, i) {
-  const g = dict.guideSteps[i], type = GUIDE_TYPES[i];
-  let k = 0;
-  const stepList = type === 'devloc' ? [(DEV_UI[lang] || DEV_UI.en).find, ...g.steps.slice(1)] : g.steps;
-  let body = '<div class="gsteps">' + stepList.map((txt, n) =>
-    `<div class="step-point gstep" style="--i:${k++}"><span class="gnum">${n + 1}</span><div class="gtext">${txt}</div></div>`).join('') + '</div>';
-  if (type === 'devloc') {
-    const last = stepList.length - 1;
-    body = `<div class="step-point step-note" style="--i:${k++}"><svg class="ic"><use href="#icHelp"/></svg><div>${stepList[last]}</div></div>` + stepsHtml(stepList.slice(0, last));
-  }
-  if (type === 'dev') {
-    body = `<div class="step-point" style="--i:${k++}"><div class="brand-area" id="devPick">${devPickHtml()}</div></div>`;
-  }
-  if (g.note) {
-    body = `<div class="step-point step-note" style="--i:${k++}"><svg class="ic"><use href="#icHelp"/></svg><div>${g.note}</div></div>` + body;
-  }
-  if (type === 'install') {
-    body += GZ_DL.map(([ic, cls, id, tt, dd, bb, hk, file]) => `
-      <div class="step-point dl-row" style="--i:${k++}">
-        <div class="dl-info">
-          <div class="sym-shape-frame ${cls}"><svg class="ic"><use href="#${ic}"/></svg></div>
-          <div class="dl-text"><b class="step-title">${dict[tt]}</b><span>${dict[dd]}</span></div>
-        </div>
-        <a class="dl-fab m3e-state" id="${id}" href="${CONFIG.links[hk]}" download="${file}" rel="noopener noreferrer" aria-label="${dict[bb]}" title="${dict[bb]}">
-          <svg class="ic"><use href="#icDownload"/></svg></a>
-      </div>`).join('');
-  }
-  if (i === 0) {
-    body += `<div class="step-point step-note" style="--i:${k++}"><svg class="ic"><use href="#icShield"/></svg>
-      <div><b>${dict.apiNoteTitle}</b><br>${dict.apiNoteText}</div></div>`;
-  }
-  return body;
-}
+function sgSave() { store.set('replica_done_v3', JSON.stringify([...sgDone])); }
 
 function renderGuide(dict) {
   const list = $('#guideList');
   if (!list) return;
-  const total = dict.guideSteps.length;
-  if (openStep < 0 || openStep >= total) {
-    openStep = 0;
-    for (let i = 0; i < total; i++) { if (!doneSteps.has(i)) { openStep = i; break; } }
-  }
-  const names = GZ_PH[lang] || GZ_PH.en;
-  let rail = `<nav class="gz-rail" aria-label="${dict.guideLbl}">`;
-  dict.guideSteps.forEach((g, i) => {
-    if (PHASE_AT[i] !== undefined) {
-      if (i) rail += '</div>';
-      rail += `<div class="gz-ph" data-ph="${PHASE_AT[i]}"><div class="gz-phl"><i>${PHASE_AT[i] + 1}</i><span>${names[PHASE_AT[i]] || ''}</span></div>`;
-    }
-    rail += `<button type="button" class="gz-node" data-idx="${i}" data-ph="${guidePhase(i)}">
-      <span class="gz-n" aria-hidden="true"><svg class="gz-sh" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>${i + 1}</b><svg class="ic gz-ck"><use href="#icCheck"/></svg></span>
-      <span class="gz-nt">${g.t}</span></button>`;
-  });
-  rail += '</div></nav>';
-  list.innerHTML = rail + '<article class="gz-card" id="gzCard"></article>';
-  renderCard(false);
-  syncRail(false);
-  updateProgress(dict);
-}
-
-var gzWin = false;
-const GZ_WIN = {
-  en: { t: 'All done!', d: 'You finished all {n} steps. Replica is ready to run.', tiles: ['Steps done', 'Complete', 'Ready to run'], rv: 'Review steps', rs: 'Start over' },
-  uk: { t: 'Все готово!', d: 'Ви виконали всі {n} кроків. Replica готова до роботи.', tiles: ['Кроків виконано', 'Завершено', 'Готово до роботи'], rv: 'Переглянути кроки', rs: 'Почати знову' },
-  ru: { t: 'Всё готово!', d: 'Вы выполнили все {n} шагов. Replica готова к работе.', tiles: ['Шагов выполнено', 'Завершено', 'Готово к работе'], rv: 'Просмотреть шаги', rs: 'Начать заново' }
-};
-function gzParticles() {
-  const A = [-165, -125, -85, -45, -5, 30, 150, 185], out = [];
-  A.forEach((deg, k) => {
-    const a = deg * Math.PI / 180, d = k % 2 ? 190 : 150, z = k % 2 ? 24 : 14;
-    out.push(`<i class="gz-pt s${k % 2} c${k % 3}" style="--x:${Math.round(Math.cos(a) * d)}px;--y:${Math.round(Math.sin(a) * d * .66)}px;--r:${k * 25}deg;--z:${z}px;--dl:${k * 45}ms;--b:${(2.6 + (k % 3) * .5).toFixed(1)}s"></i>`);
-  });
-  return out.join('');
-}
-function renderWin(animate) {
-  const dict = I18N[lang], total = dict.guideSteps.length, w = GZ_WIN[lang] || GZ_WIN.en;
-  const card = $('#gzCard');
-  if (!card) return;
-  card.dataset.ph = 0;
-  card.innerHTML = `
-    <div class="gz-win${animate ? ' fresh' : ''}" role="status">
-      <div class="gz-win-hero">
-        <div class="gz-burst" aria-hidden="true">${gzParticles()}</div>
-        <div class="gz-win-cookie" aria-hidden="true">
-          <svg class="ring" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-          <svg class="bg" viewBox="0 0 100 100"><use href="#scallopShape"/></svg>
-          <svg class="ck" viewBox="0 0 24 24"><path d="M5.5 12.8l4.2 4.2L18.5 8" pathLength="1"/></svg>
-        </div>
-        <h3>${w.t}</h3>
-        <p>${w.d.replace('{n}', total)}</p>
+  const cards = dict.sgT.map((title, i) => {
+    const steps = dict.sgS[i].map((t, n) =>
+      `<li class="sg-li"><span class="sg-n">${n + 1}</span><span class="sg-tx">${t}</span></li>`).join('');
+    const note = i === 0 ? `<div class="sg-note"><svg class="ic"><use href="#icShield"/></svg><div><b>${dict.apiNoteTitle}</b><br>${dict.apiNoteText}</div></div>` : '';
+    const cta = i === 0
+      ? `<a class="m3e-btn filled m3e-state sg-cta" href="https://my.telegram.org" target="_blank" rel="noopener noreferrer"><svg class="ic"><use href="#icSend"/></svg><span>${dict.sgBtn1}</span></a>`
+      : i === 2
+        ? `<a class="m3e-btn filled m3e-state sg-cta" id="dlReplicaAnchor" href="${CONFIG.links.replicaApk}" download="replica.apk" rel="noopener noreferrer"><svg class="ic"><use href="#icDownload"/></svg><span>${dict.sgBtn3}</span></a>`
+        : '';
+    return `<article class="sg-card" data-n="${i}" data-role="${SG_ROLES[i]}">
+      <header class="sg-head">
+        <span class="sg-badge" aria-hidden="true"><svg class="sg-shape" viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b class="sg-num">${i + 1}</b><svg class="ic sg-ck"><use href="#icCheck"/></svg></span>
+        <div class="sg-ht"><span class="sg-kicker">${dict.sgStep} ${i + 1} · ${dict.sgSub[i]}</span><h3>${title}</h3></div>
+        <svg class="ic sg-hic" aria-hidden="true"><use href="#${SG_ICONS[i]}"/></svg>
+      </header>
+      <ol class="sg-list">${steps}</ol>
+      ${note}
+      <div class="sg-actions">${cta}
+        <button type="button" class="m3e-btn tonal m3e-state sg-done" data-n="${i}" aria-pressed="false"><svg class="ic"><use href="#icCheck"/></svg><span class="sg-dl"></span></button>
       </div>
-      <div class="gz-win-tiles">
-        <div class="gz-wt a"><b>${total}/${total}</b><span>${w.tiles[0]}</span></div>
-        <div class="gz-wt b"><b>100%</b><span>${w.tiles[1]}</span></div>
-        <div class="gz-wt c"><svg class="ic"><use href="#icRocket"/></svg><span>${w.tiles[2]}</span></div>
-      </div>
-      <div class="gz-win-foot">
-        <button type="button" class="gz-review"><span>${w.rv}</span></button>
-        <button type="button" class="gz-reset"><span>${w.rs}</span></button>
-      </div>
-    </div>`;
-  if (animate && !reduceMotion && card.animate) {
-    card.animate([{ opacity: .4, transform: 'scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(0.2,0,0,1)' });
-  }
+    </article>`;
+  }).join('');
+  list.innerHTML = `
+    <div class="sg-hero" aria-live="polite">
+      <span class="sg-cookie" aria-hidden="true"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b id="sgPct">0/3</b></span>
+      <div class="sg-hero-t"><span class="sg-hero-k">${dict.sgHeroT}</span><strong id="sgProg"></strong>
+        <div class="sg-bar" aria-hidden="true"><i></i><i></i><i></i></div></div>
+    </div>${cards}`;
+  sgSync();
 }
 
-function renderCard(animate) {
-  const dict0 = I18N[lang];
-  if (gzWin && doneSteps.size === dict0.guideSteps.length) { renderWin(animate); return; }
-  gzWin = false;
-  const dict = I18N[lang], i = openStep, total = dict.guideSteps.length, g = dict.guideSteps[i];
-  const card = $('#gzCard');
-  if (!card || !g) return;
-  const ph = guidePhase(i), names = GZ_PH[lang] || GZ_PH.en;
-  card.dataset.ph = ph;
-  card.innerHTML = `
-    <div class="gz-head">
-      <span class="gz-big" aria-hidden="true"><svg viewBox="0 0 100 100"><use href="#scallopShape"/></svg><b>${i + 1}</b></span>
-      <div class="gz-ht"><div class="gz-chips"><span class="gz-chip">${names[ph] || ''}</span><span class="gz-chip gz-cnt">${i + 1} / ${total}</span></div><h3>${g.t}</h3></div>
-    </div>
-    <div class="gz-body">${stepBody(dict, i)}</div>
-    <div class="gz-foot">
-      <button type="button" class="gz-pn gz-prev" aria-label="Previous step"${i === 0 ? ' disabled' : ''}><svg class="ic"><use href="#icArrowRight"/></svg></button>
-      <button type="button" class="gz-done${doneSteps.has(i) ? ' is-done' : ''}" data-next="${i}"><span>${dict.guideNext}</span><svg class="ic"><use href="#icCheck"/></svg></button>
-      <button type="button" class="gz-pn gz-skip" aria-label="Next step"${i === total - 1 ? ' disabled' : ''}><svg class="ic"><use href="#icArrowRight"/></svg></button>
-    </div>`;
-  if (animate && !reduceMotion && card.animate) {
-    card.animate([{ opacity: .35, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(0.2,0,0,1)' });
-  }
-}
-
-function syncRail(scroll) {
-  const rail = $('#guideList .gz-rail');
-  if (!rail) return;
-  rail.querySelectorAll('.gz-node').forEach(b => {
-    const k = +b.dataset.idx, on = k === openStep;
-    b.classList.toggle('on', on);
-    b.classList.toggle('done', doneSteps.has(k));
-    if (on) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+function sgSync() {
+  const dict = I18N[lang], list = $('#guideList');
+  if (!list) return;
+  const n = sgDone.size;
+  list.querySelectorAll('.sg-card').forEach(c => {
+    const i = +c.dataset.n, on = sgDone.has(i);
+    c.classList.toggle('done', on);
+    const b = c.querySelector('.sg-done');
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.classList.toggle('is-on', on);
+    b.querySelector('.sg-dl').textContent = on ? dict.sgDoneOn : dict.sgDone;
   });
-  const on = rail.querySelector('.on');
-  if (scroll && on && rail.scrollWidth > rail.clientWidth && getComputedStyle(rail).display === 'flex') {
-    rail.scrollTo({ left: on.offsetLeft - (rail.clientWidth - on.offsetWidth) / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
-  }
-}
-
-function updateProgress(dict = I18N[lang]) {
-  const total = dict.guideSteps.length, n = doneSteps.size;
-  $('#guideFill').style.width = (n / total * 100) + '%';
-  $('#guideProgressText').textContent = dict.guideDone.replace('{n}', n).replace('{m}', total);
-  const pct = $('#gzPct'); if (pct) { pct.textContent = Math.round(n / total * 100) + '%'; pct.parentElement.classList.toggle('all', n === total); }
-  const seg = $('#flowSteps');
-  if (seg) seg.classList.toggle('done', [0, 1, 2, 3].every(k => doneSteps.has(k)));
-}
-
-function gotoStep(i) {
-  const total = I18N[lang].guideSteps.length;
-  i = Math.max(0, Math.min(total - 1, i));
-  if (i === openStep && !gzWin) return;
-  gzWin = false;
-  openStep = i;
-  syncRail(true);
-  renderCard(true);
-  const card = $('#gzCard');
-  if (card) {
-    const top = card.getBoundingClientRect().top;
-    if (top < 90 || top > innerHeight * 0.7) window.scrollTo({ top: window.scrollY + top - 100, behavior: reduceMotion ? 'auto' : 'smooth' });
-  }
+  list.querySelectorAll('.sg-bar i').forEach((seg, k) => seg.classList.toggle('on', k < n));
+  const pct = $('#sgPct'); if (pct) { pct.textContent = n + '/3'; pct.parentElement.classList.toggle('all', n === 3); }
+  const pr = $('#sgProg'); if (pr) pr.textContent = n === 3 ? dict.sgProgAll : dict.sgProg.replace('{n}', n);
 }
 
 function setupGuide() {
   const list = $('#guideList');
+  if (!list) return;
   list.addEventListener('click', e => {
-    const chip = e.target.closest('.brand-chip');
-    if (chip) {
-      if (chip.dataset.b !== undefined) {
-        devBrand = +chip.dataset.b; devVer = null;
-        store.set('replica_dev_brand', String(devBrand)); store.set('replica_dev_ver', '');
-      } else if (chip.dataset.v !== undefined) {
-        devVer = +chip.dataset.v;
-        store.set('replica_dev_ver', String(devVer));
+    const btn = e.target.closest('.sg-done');
+    if (!btn) return;
+    const i = +btn.dataset.n;
+    if (sgDone.has(i)) sgDone.delete(i); else sgDone.add(i);
+    sgSave(); haptic('toggle'); sgSync();
+    if (sgDone.has(i) && i < 2) {
+      const next = list.querySelector('.sg-card[data-n="' + (i + 1) + '"]');
+      if (next) {
+        const top = next.getBoundingClientRect().top;
+        if (top > innerHeight * 0.55) window.scrollTo({ top: window.scrollY + top - 96, behavior: reduceMotion ? 'auto' : 'smooth' });
       }
-      haptic('toggle');
-      refreshDev(true);
-      return;
-    }
-    const act = e.target.closest('.dev-act');
-    if (act) {
-      if (act.dataset.act === 'brand') { devBrand = null; devVer = null; store.set('replica_dev_brand', ''); store.set('replica_dev_ver', ''); }
-      else { devVer = null; store.set('replica_dev_ver', ''); }
-      haptic('toggle');
-      refreshDev(true);
-      return;
-    }
-    if (e.target.closest('.dev-goto')) { haptic('select'); gotoStep(5); return; }
-    const node = e.target.closest('.gz-node');
-    if (node) { haptic('select'); gotoStep(+node.dataset.idx); return; }
-    if (e.target.closest('.gz-prev')) { haptic('select'); gotoStep(openStep - 1); return; }
-    if (e.target.closest('.gz-skip')) { haptic('select'); gotoStep(openStep + 1); return; }
-    if (e.target.closest('.gz-review')) { haptic('select'); gzWin = false; openStep = 0; syncRail(true); renderCard(true); return; }
-    if (e.target.closest('.gz-reset')) { haptic('toggle'); doneSteps.clear(); saveDone(); gzWin = false; openStep = 0; updateProgress(); syncRail(true); renderCard(true); return; }
-    const done = e.target.closest('.gz-done');
-    if (done) {
-      const i = +done.dataset.next, total = I18N[lang].guideSteps.length;
-      doneSteps.add(i); saveDone();
-      haptic('toggle');
-      updateProgress();
-      if (doneSteps.size === total) {
-        gzWin = true; syncRail(false); renderCard(true);
-        const c = $('#gzCard'); const top = c.getBoundingClientRect().top;
-        if (top < 90 || top > innerHeight * 0.5) window.scrollTo({ top: window.scrollY + top - 100, behavior: reduceMotion ? 'auto' : 'smooth' });
-      }
-      else if (i < total - 1) { gotoStep(i + 1); syncRail(true); }
-      else { syncRail(false); renderCard(true); }
     }
   });
 }
@@ -7212,12 +6981,102 @@ go_(1,true);})();
 #usage .ox .sc-cv .sc-sb .si-bat{height:11px;width:auto;margin-right:-1.5px}
 </style>
 <style>
-/* All-done screen fills the same height as the step list (desktop side-by-side layout) */
-@media(min-width:860px){
-  #guide .gz-card:has(.gz-win){grid-template-rows:minmax(0,1fr)}
-  #guide .gz-win{height:100%;grid-template-rows:minmax(0,1fr) auto auto}
-  #guide .gz-win-hero{align-content:center}
+/* ===== SETUP GUIDE: Material 3 Expressive, 3 steps ===== */
+#guide .sg{display:grid;gap:4px;max-width:820px;margin-inline:auto}
+#guide .sg *{box-sizing:border-box}
+#guide .sg .ic{width:24px;height:24px;flex:none;display:block}
+#guide .sg h3{margin:0}
+#guide .sg p{margin:0}
+
+/* progress hero */
+#guide .sg-hero{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;gap:20px;padding:22px 24px;border-radius:48px 48px 14px 14px;background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+#guide .sg-hero::after{content:'';position:absolute;z-index:-1;width:180px;aspect-ratio:1;right:-56px;top:-70px;background:var(--md-sys-color-on-primary);opacity:.1;-webkit-mask:var(--scallop) center/100% 100% no-repeat;mask:var(--scallop) center/100% 100% no-repeat;animation:m3eCurlySpin 60s linear infinite}
+#guide .sg-cookie{position:relative;flex:none;width:84px;height:84px;display:grid;place-items:center}
+#guide .sg-cookie svg{position:absolute;inset:0;width:100%;height:100%;fill:var(--md-sys-color-on-primary);animation:m3eCurlySpin 40s linear infinite}
+#guide .sg-cookie b{position:relative;font-size:1.35rem;font-weight:800;letter-spacing:-.03em;color:var(--md-sys-color-primary)}
+#guide .sg-cookie.all svg{fill:var(--md-sys-color-tertiary-container)}
+#guide .sg-cookie.all b{color:var(--md-sys-color-on-tertiary-container)}
+#guide .sg-hero-t{flex:1;min-width:0;display:grid;gap:4px}
+#guide .sg-hero-k{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+#guide .sg-hero-t strong{font-size:1.35rem;line-height:1.2;font-weight:800;letter-spacing:-.02em}
+#guide .sg-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+#guide .sg-bar i{height:12px;border-radius:6px;background:color-mix(in oklch,var(--md-sys-color-on-primary) 25%,transparent);transition:background-color .35s,scale .5s var(--spring-fast-spatial,cubic-bezier(.2,0,0,1))}
+#guide .sg-bar i.on{background:var(--md-sys-color-on-primary);scale:1 1.15}
+
+/* step cards */
+#guide .sg-card{--c:var(--md-sys-color-primary);--on-c:var(--md-sys-color-on-primary);--cc:var(--md-sys-color-primary-container);--on-cc:var(--md-sys-color-on-primary-container);
+  display:grid;gap:14px;padding:22px;border-radius:14px;background:var(--cc);color:var(--on-cc);border:0;
+  transition:border-radius .5s var(--spring-fast-spatial,cubic-bezier(.2,0,0,1)),background-color .35s}
+#guide .sg-card[data-role=secondary]{--c:var(--md-sys-color-secondary);--on-c:var(--md-sys-color-on-secondary);--cc:var(--md-sys-color-secondary-container);--on-cc:var(--md-sys-color-on-secondary-container)}
+#guide .sg-card[data-role=tertiary]{--c:var(--md-sys-color-tertiary);--on-c:var(--md-sys-color-on-tertiary);--cc:var(--md-sys-color-tertiary-container);--on-cc:var(--md-sys-color-on-tertiary-container)}
+@media (hover:hover) and (pointer:fine){#guide .sg-card:hover{border-radius:30px}}
+#guide .sg-head{display:flex;align-items:center;gap:16px}
+#guide .sg-badge{position:relative;flex:none;width:68px;height:68px;display:grid;place-items:center}
+#guide .sg-shape{position:absolute;inset:0;width:100%;height:100%;fill:var(--c);transition:rotate .6s var(--spring-fast-spatial,cubic-bezier(.2,0,0,1)),fill .3s}
+#guide .sg-card:hover .sg-shape{rotate:30deg}
+#guide .sg-num{position:relative;font-size:1.7rem;font-weight:800;color:var(--on-c);transition:opacity .2s,scale .3s}
+#guide .sg-ck{position:absolute;inset:0;margin:auto;width:32px;height:32px;color:var(--on-c);opacity:0;scale:.3;transition:opacity .2s,scale .35s var(--spring-fast-spatial,cubic-bezier(.2,0,0,1))}
+#guide .sg-card.done .sg-num{opacity:0;scale:.3}
+#guide .sg-card.done .sg-ck{opacity:1;scale:1}
+#guide .sg-ht{flex:1;min-width:0;display:grid;gap:4px}
+#guide .sg-kicker{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;opacity:.75}
+#guide .sg-ht h3{font-size:clamp(1.35rem,4.6vw,1.8rem);line-height:1.12;font-weight:800;letter-spacing:-.03em;text-wrap:balance}
+#guide .sg-hic{width:40px;height:40px;opacity:.28}
+
+/* numbered instructions */
+#guide .sg-list{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+#guide .sg-li{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-radius:12px;background:color-mix(in oklch,var(--md-sys-color-surface) 62%,transparent);color:var(--md-sys-color-on-surface);font-size:1rem;line-height:1.5}
+#guide .sg-li:first-child{border-radius:26px 26px 12px 12px}
+#guide .sg-li:last-child{border-radius:12px 12px 26px 26px}
+#guide .sg-li:only-child{border-radius:26px}
+#guide .sg-n{flex:none;width:32px;height:32px;border-radius:11px;display:grid;place-items:center;background:var(--c);color:var(--on-c);font-weight:800;font-size:.95rem}
+#guide .sg-tx{padding-top:4px;min-width:0;overflow-wrap:anywhere}
+#guide .sg-tx b{color:var(--md-sys-color-on-surface)}
+#guide .sg-tx a{color:var(--md-sys-color-primary);font-weight:800;text-decoration:none}
+#guide .sg-note{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:20px;background:color-mix(in oklch,var(--md-sys-color-surface) 40%,transparent);font-size:.92rem;line-height:1.5}
+#guide .sg-note .ic{margin-top:2px;color:var(--c)}
+
+/* actions */
+#guide .sg-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+#guide .sg-cta,#guide .sg-done{min-height:56px;padding-inline:22px;border-radius:28px;font-weight:800;font-size:1rem;gap:10px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer}
+#guide .sg-card .sg-cta{flex:1 1 220px;background:#fff!important;color:var(--c)!important;border:0!important;box-shadow:0 2px 10px color-mix(in oklch,var(--c) 30%,transparent)!important}
+:root[data-mode="dark"] #guide .sg-card .sg-cta{background:var(--md-sys-color-on-surface)!important;color:var(--md-sys-color-surface)!important}
+#guide .sg-done{flex:1 1 180px;background:color-mix(in oklch,var(--md-sys-color-surface) 70%,transparent)!important;color:var(--md-sys-color-on-surface)!important;border:2px solid color-mix(in oklch,var(--on-cc) 35%,transparent)!important;box-shadow:none!important}
+#guide .sg-done .ic{display:none}
+#guide .sg-done.is-on{background:var(--c)!important;color:var(--on-c)!important;border-color:transparent!important}
+#guide .sg-done.is-on .ic{display:block}
+#guide .sg-card.done .sg-list{opacity:.7}
+/* same button motion as the Replica app: pill at rest, squarer + shrinks while pressed */
+#guide .sg-cta,#guide .sg-done{transition:border-radius .4s var(--spring-fast-spatial),scale .4s var(--spring-fast-spatial),box-shadow .3s var(--spring-fast-effects),background-color .2s ease,color .2s ease,border-color .2s ease}
+@media (hover:hover) and (pointer:fine){#guide .sg-cta:hover,#guide .sg-done:hover{border-radius:var(--r-btn-hover,22px)}}
+#guide .sg-cta.is-pressed,#guide .sg-done.is-pressed,#guide .sg-cta.is-pressed:hover,#guide .sg-done.is-pressed:hover{border-radius:12px!important;scale:.95!important;box-shadow:var(--press-shadow)!important}
+#guide .sg-cta,#guide .sg-done{transition:border-radius .45s var(--spring-fast-spatial),scale .45s var(--spring-fast-spatial),box-shadow .3s var(--spring-fast-effects),background-color .2s ease,color .2s ease,border-color .2s ease!important}
+#guide .sg-cta .ic,#guide .sg-done .ic{transition:rotate .45s var(--spring-fast-spatial),translate .45s var(--spring-fast-spatial)}
+#guide .sg-cta.is-pressed .ic,#guide .sg-done.is-pressed .ic{rotate:-10deg!important;translate:0 1px!important}
+/* last card closes the group */
+#guide .sg-card:last-child{border-radius:14px 14px 48px 48px}
+@media (hover:hover) and (pointer:fine){#guide .sg-card:last-child:hover{border-radius:14px 14px 30px 30px}}
+
+@media (max-width:520px){
+  #guide .sg-hero{padding:18px;gap:14px}#guide .sg-cookie{width:68px;height:68px}
+  #guide .sg-card,#guide .sg-help{padding:16px}#guide .sg-badge{width:58px;height:58px}#guide .sg-hic{display:none}
+  #guide .sg-li{padding:12px 12px;gap:12px}
 }
+@media (prefers-reduced-motion:reduce){#guide .sg *,#guide .sg-hero::after{animation:none!important;transition:none!important}}
+</style>
+<style>
+/* ===== ONE PRESS MOTION FOR EVERY BUTTON: same spring transition + shape morph as the guide Done button ===== */
+html:not(#u) :is(.m3e-btn,.tile-action-btn,.m3e-chip.m3e-state,.m3e-action-btn,.ft-icon-btn,.ft-social-link,.ft-brand,.lang-seg-btn,.license-choice,.help-btn,.multi-btn,.brand-chip,.mx-btn,.mx-plan,.ox-nb,.vp,.gt-pick,.shape-fab){transition:border-radius .45s var(--spring-fast-spatial),scale .45s var(--spring-fast-spatial),box-shadow .3s var(--spring-fast-effects),background-color .2s ease,color .2s ease,border-color .2s ease!important}
+html:not(#u) :is(.m3e-btn,.tile-action-btn,.m3e-chip.m3e-state,.m3e-action-btn,.ft-icon-btn,.ft-social-link,.ft-brand,.lang-seg-btn,.license-choice,.help-btn,.multi-btn,.brand-chip,.mx-btn,.mx-plan,.ox-nb,.vp,.gt-pick,.shape-fab).is-pressed.is-pressed,
+html:not(#u) :is(.m3e-btn,.tile-action-btn,.m3e-chip.m3e-state,.m3e-action-btn,.ft-icon-btn,.ft-social-link,.ft-brand,.lang-seg-btn,.license-choice,.help-btn,.multi-btn,.brand-chip,.mx-btn,.mx-plan,.ox-nb,.vp,.gt-pick,.shape-fab).is-pressed.is-pressed:hover{border-radius:12px!important;scale:.95!important;rotate:none!important;translate:none!important;transform:none!important;box-shadow:var(--press-shadow)!important}
+/* buttons that already rest at 12px: morph to a tighter 6px so the press is still visible; big tiles shrink a little less */
+html:not(#u) :is(.mx-btn,.mx-plan,.ox-nb).is-pressed.is-pressed.is-pressed,
+html:not(#u) :is(.mx-btn,.mx-plan,.ox-nb).is-pressed.is-pressed.is-pressed:hover{border-radius:6px!important}
+html:not(#u) :is(.mx-btn,.mx-plan,.vp).is-pressed.is-pressed.is-pressed,
+html:not(#u) :is(.mx-btn,.mx-plan,.vp).is-pressed.is-pressed.is-pressed:hover{scale:.975!important}
+html:not(#u) :is(.m3e-btn,.tile-action-btn,.m3e-chip.m3e-state,.m3e-action-btn,.ft-icon-btn,.ft-social-link,.ft-brand,.lang-seg-btn,.license-choice,.help-btn,.multi-btn,.brand-chip,.mx-btn,.mx-plan,.ox-nb,.vp,.gt-pick,.shape-fab) :is(.ic,svg){transition:rotate .45s var(--spring-fast-spatial),translate .45s var(--spring-fast-spatial)}
+html:not(#u) :is(.m3e-btn,.tile-action-btn,.m3e-chip.m3e-state,.m3e-action-btn,.ft-icon-btn,.ft-social-link,.ft-brand,.lang-seg-btn,.license-choice,.help-btn,.multi-btn,.brand-chip,.mx-btn,.mx-plan,.ox-nb,.vp,.gt-pick,.shape-fab).is-pressed.is-pressed :is(.ic,svg){rotate:-10deg!important;translate:0 1px!important}
+@media (prefers-reduced-motion:reduce){html:not(#u) :is(.m3e-btn,.tile-action-btn,.m3e-chip.m3e-state,.m3e-action-btn,.ft-icon-btn,.ft-social-link,.ft-brand,.lang-seg-btn,.license-choice,.help-btn,.multi-btn,.brand-chip,.mx-btn,.mx-plan,.ox-nb,.vp,.gt-pick,.shape-fab){transition:none!important}}
 </style>
 </body>
 </html>
